@@ -1,5 +1,5 @@
-#ifndef __MULTIDIM_HPP__
-#define __MULTIDIM_HPP__
+#ifndef __KDTOOLS_H__
+#define __KDTOOLS_H__
 
 #include <algorithm>
 #include <thread>
@@ -351,12 +351,9 @@ void kd_range_query(Iter first, Iter last,
                     const TupleType& upper,
                     OutIter outp)
 {
-  if (distance(first, last) == 0) return;
-  if (distance(first, last) == 1)
-  {
-    if (contains(*first, lower, upper)) *outp++ = *first;
-    return;
-  }
+  switch(distance(first, last)) {
+  case 1 : if (contains(*first, lower, upper)) *outp++ = *first;
+  case 0 : return; }
   auto pivot = find_pivot<I>(first, last);
   constexpr auto J = incr_wrap<I, TupleType>::value;
   if (contains(*pivot, lower, upper)) *outp++ = *pivot;
@@ -368,6 +365,23 @@ void kd_range_query(Iter first, Iter last,
 }
 
 }; // namespace detail
+
+using detail::all_less;
+using detail::none_less;
+using detail::contains;
+
+using detail::midpos;
+using detail::is_last;
+using detail::is_not_last;
+using detail::incr_wrap;
+
+using detail::kd_less;
+using detail::less_nth;
+using detail::kd_compare;
+using detail::make_kd_compare;
+
+using detail::l2dist;
+using detail::sum_of_squares;
 
 template <typename Iter>
 void kd_sort(Iter first, Iter last)
@@ -403,7 +417,7 @@ template <typename Iter, typename TupleType>
 bool kd_binary_search(Iter first, Iter last, const TupleType& value)
 {
   first = detail::kd_lower_bound<0>(first, last, value);
-  return first != last && detail::none_less(value, *first);
+  return first != last && none_less(value, *first);
 }
 
 template <typename Iter, typename Value>
@@ -433,9 +447,9 @@ void kd_range_query(Iter first, Iter last,
 template <typename Iter>
 void lex_sort(Iter first, Iter last)
 {
-  std::sort(first, last, detail::kd_less<0>());
+  std::sort(first, last, kd_less<0>());
 }
 
 }; // namespace kdtools
 
-#endif // __MULTIDIM_HPP__
+#endif // __KDTOOLS_H__

@@ -20,11 +20,11 @@ library(microbenchmark)
 ```
 
 ```{r}
-des = expand.grid(nr = 10 ^ (1:7), nc = seq(1, 9, 2))
+des = expand.grid(nr = seq(1e1, 1e7, length = 7), nc = seq(1, 9, 2))
 timer = function(nr, nc)
 {
   x = matrix_to_tuples(matrix(runif(nr * nc), nr))
-  summary(microbenchmark(kd_sort(x), times = 1), unit = "s")$median
+  summary(microbenchmark(kd_sort(x, T, T), times = 1), unit = "s")$median
 }
 t = numeric(nrow(des))
 for (i in 1:length(t))
@@ -36,20 +36,48 @@ df = cbind(des, t)
 ggplot(df) +
   aes(x = nr, y = t, color = as.factor(nc)) +
   geom_line() + geom_point() +
-  scale_x_log10() + scale_y_log10() +
-  guides(color = FALSE)
-  
+  #scale_x_log10() + scale_y_log10() +
+  #guides(color = FALSE) +
+  xlab("Tuples") + ylab("Seconds") +
+  theme(legend.position = "bottom") +
+  labs(color = "D")
 ```
 
 ```{r}
-x = matrix(runif(200), nc = 2)
+des = expand.grid(nr = seq(1e1, 1e7, length = 7), nc = seq(1, 9, 2))
+timer = function(nr, nc)
+{
+  x = matrix_to_tuples(matrix(runif(nr * nc), nr))
+  summary(microbenchmark(lex_sort(x, T), times = 1), unit = "s")$median
+}
+t = numeric(nrow(des))
+for (i in 1:length(t))
+  t[i] = timer(des[i, 1], des[i, 2])
+df = cbind(des, t)
+```
+
+```{r}
+ggplot(df) +
+  aes(x = nr, y = t, color = as.factor(nc)) +
+  geom_line() + geom_point() +
+  #scale_x_log10() + scale_y_log10() +
+  #guides(color = FALSE) +
+  xlab("Tuples") + ylab("Seconds") +
+  theme(legend.position = "bottom") +
+  labs(color = "D")
+```
+
+```{r}
+nr = 1e3
+x = matrix(runif(nr), nc = 2)
 y = kd_sort(matrix_to_tuples(x))
 z = as.data.frame(tuples_to_matrix(y))
 z$i = 1:nrow(z)
 names(z) = c("x", "y", "i")
 ggplot(z, aes(x, y)) +
-  geom_path() +
-  geom_point(aes(color = i), alpha = 0.25, size = 4) +
+  geom_path(color = "darkgrey") +
+  geom_point(size = 0.25) + 
+  geom_point(aes(color = i), alpha = 0.15, size = 5) +
   scale_color_gradientn(colors = rainbow(100)) +
   guides(color = FALSE) +
   coord_fixed()

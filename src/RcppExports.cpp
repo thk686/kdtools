@@ -41,6 +41,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// lex_sort_
+List lex_sort_(List x, bool inplace);
+RcppExport SEXP _kdtools_lex_sort_(SEXP xSEXP, SEXP inplaceSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type x(xSEXP);
+    Rcpp::traits::input_parameter< bool >::type inplace(inplaceSEXP);
+    rcpp_result_gen = Rcpp::wrap(lex_sort_(x, inplace));
+    return rcpp_result_gen;
+END_RCPP
+}
 // kd_lower_bound_
 int kd_lower_bound_(List x, NumericVector value);
 RcppExport SEXP _kdtools_kd_lower_bound_(SEXP xSEXP, SEXP valueSEXP) {
@@ -78,14 +90,41 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// kd_nearest_neighbor_
+int kd_nearest_neighbor_(List x, NumericVector value);
+RcppExport SEXP _kdtools_kd_nearest_neighbor_(SEXP xSEXP, SEXP valueSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type value(valueSEXP);
+    rcpp_result_gen = Rcpp::wrap(kd_nearest_neighbor_(x, value));
+    return rcpp_result_gen;
+END_RCPP
+}
+// kd_binary_search_
+bool kd_binary_search_(List x, NumericVector value);
+RcppExport SEXP _kdtools_kd_binary_search_(SEXP xSEXP, SEXP valueSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type value(valueSEXP);
+    rcpp_result_gen = Rcpp::wrap(kd_binary_search_(x, value));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_matrix_to_tuples", (DL_FUNC) &_kdtools_matrix_to_tuples, 1},
     {"_kdtools_tuples_to_matrix", (DL_FUNC) &_kdtools_tuples_to_matrix, 1},
     {"_kdtools_kd_sort_", (DL_FUNC) &_kdtools_kd_sort_, 3},
+    {"_kdtools_lex_sort_", (DL_FUNC) &_kdtools_lex_sort_, 2},
     {"_kdtools_kd_lower_bound_", (DL_FUNC) &_kdtools_kd_lower_bound_, 2},
     {"_kdtools_kd_upper_bound_", (DL_FUNC) &_kdtools_kd_upper_bound_, 2},
     {"_kdtools_kd_range_query_", (DL_FUNC) &_kdtools_kd_range_query_, 3},
+    {"_kdtools_kd_nearest_neighbor_", (DL_FUNC) &_kdtools_kd_nearest_neighbor_, 2},
+    {"_kdtools_kd_binary_search_", (DL_FUNC) &_kdtools_kd_binary_search_, 2},
     {NULL, NULL, 0}
 };
 

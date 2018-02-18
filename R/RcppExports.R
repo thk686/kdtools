@@ -13,6 +13,10 @@ kd_sort_ <- function(x, inplace = FALSE, parallel = FALSE) {
     .Call(`_kdtools_kd_sort_`, x, inplace, parallel)
 }
 
+lex_sort_ <- function(x, inplace = FALSE) {
+    .Call(`_kdtools_lex_sort_`, x, inplace)
+}
+
 kd_lower_bound_ <- function(x, value) {
     .Call(`_kdtools_kd_lower_bound_`, x, value)
 }
@@ -23,5 +27,13 @@ kd_upper_bound_ <- function(x, value) {
 
 kd_range_query_ <- function(x, lower, upper) {
     .Call(`_kdtools_kd_range_query_`, x, lower, upper)
+}
+
+kd_nearest_neighbor_ <- function(x, value) {
+    .Call(`_kdtools_kd_nearest_neighbor_`, x, value)
+}
+
+kd_binary_search_ <- function(x, value) {
+    .Call(`_kdtools_kd_binary_search_`, x, value)
 }
 

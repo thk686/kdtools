@@ -1,12 +1,7 @@
 ---
-title: "An Introduction to KD-Tools"
+title: 'KD-Sort: A compact, tree-free, locality-preserving sorting and searching method for multi-dimensional data'
 author: "Timothy H. Keitt"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Vignette Title}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include = FALSE}
@@ -15,56 +10,12 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 library(kdtools)
+library(cowplot)
 library(tidyverse)
 library(microbenchmark)
-```
-
-```{r}
-des = expand.grid(nr = seq(1e1, 1e7, length = 7), nc = seq(1, 9, 2))
-timer = function(nr, nc)
-{
-  x = matrix_to_tuples(matrix(runif(nr * nc), nr))
-  summary(microbenchmark(kd_sort(x, T, T), times = 1), unit = "s")$median
-}
-t = numeric(nrow(des))
-for (i in 1:length(t))
-  t[i] = timer(des[i, 1], des[i, 2])
-df = cbind(des, t)
-```
-
-```{r}
-ggplot(df) +
-  aes(x = nr, y = t, color = as.factor(nc)) +
-  geom_line() + geom_point() +
-  #scale_x_log10() + scale_y_log10() +
-  #guides(color = FALSE) +
-  xlab("Tuples") + ylab("Seconds") +
-  theme(legend.position = "bottom") +
-  labs(color = "D")
-```
-
-```{r}
-des = expand.grid(nr = seq(1e1, 1e7, length = 7), nc = seq(1, 9, 2))
-timer = function(nr, nc)
-{
-  x = matrix_to_tuples(matrix(runif(nr * nc), nr))
-  summary(microbenchmark(lex_sort(x, T), times = 1), unit = "s")$median
-}
-t = numeric(nrow(des))
-for (i in 1:length(t))
-  t[i] = timer(des[i, 1], des[i, 2])
-df = cbind(des, t)
-```
-
-```{r}
-ggplot(df) +
-  aes(x = nr, y = t, color = as.factor(nc)) +
-  geom_line() + geom_point() +
-  #scale_x_log10() + scale_y_log10() +
-  #guides(color = FALSE) +
-  xlab("Tuples") + ylab("Seconds") +
-  theme(legend.position = "bottom") +
-  labs(color = "D")
+library(foreach)
+library(doMC)
+registerDoMC()
 ```
 
 ```{r}
@@ -83,5 +34,84 @@ ggplot(z, aes(x, y)) +
   coord_fixed()
   
 ```
+
+```{r}
+nr_steps = 7
+nr_min = 1
+nr_max = 7
+des = expand.grid(nr = seq(nr_min, nr_max, length = nr_steps), nc = seq(1, 9, 2))
+timer = function(nr, nc)
+{
+  x = matrix_to_tuples(matrix(runif(10^nr * nc), 10^nr))
+  summary(microbenchmark(kd_sort(x, T), times = 1), unit = "s")$median
+}
+t = foreach(i = 1:nrow(des), .combine = c) %dopar% timer(des[i, 1], des[i, 2])
+df = cbind(des, t)
+```
+
+```{r}
+ggplot(df) +
+  aes(x = nr, y = t, color = as.factor(nc)) +
+  geom_line() + geom_point() +
+  #scale_x_log10() + scale_y_log10() +
+  #guides(color = FALSE) +
+  xlab("log10 Tuples") + ylab("Seconds") +
+  theme(legend.position = "bottom") +
+  labs(color = "D") -> p1
+```
+
+```{r}
+des = expand.grid(nr = seq(nr_min, nr_max, length = nr_steps), nc = seq(1, 9, 2))
+timer = function(nr, nc)
+{
+  x = matrix_to_tuples(matrix(runif(10^nr * nc), 10^nr))
+  summary(microbenchmark(kd_sort(x, T, T), times = 1), unit = "s")$median
+}
+t = foreach(i = 1:nrow(des), .combine = c) %dopar% timer(des[i, 1], des[i, 2])
+df = cbind(des, t)
+```
+
+```{r}
+ggplot(df) +
+  aes(x = nr, y = t, color = as.factor(nc)) +
+  geom_line() + geom_point() +
+  #scale_x_log10() + scale_y_log10() +
+  #guides(color = FALSE) +
+  xlab("log10 Tuples") + ylab("Seconds") +
+  theme(legend.position = "bottom") +
+  labs(color = "D") -> p2
+```
+
+```{r}
+des = expand.grid(nr = seq(nr_min, nr_max, length = nr_steps), nc = seq(1, 9, 2))
+timer = function(nr, nc)
+{
+  x = matrix_to_tuples(matrix(runif(10^nr * nc), 10^nr))
+  summary(microbenchmark(lex_sort(x, T), times = 1), unit = "s")$median
+}
+t = foreach(i = 1:nrow(des), .combine = c) %dopar% timer(des[i, 1], des[i, 2])
+df = cbind(des, t)
+```
+
+```{r}
+ggplot(df) +
+  aes(x = nr, y = t, color = as.factor(nc)) +
+  geom_line() + geom_point() +
+  #scale_x_log10() + scale_y_log10() +
+  #guides(color = FALSE) +
+  xlab("log10 Tuples") + ylab("Seconds") +
+  theme(legend.position = "bottom") +
+  labs(color = "D") -> p3
+```
+
+```{r fig.height = 4, fig.width = 8}
+plots = plot_grid(p1 + ylim(0, 5) + theme(legend.position = "none"),
+                  p2 + ylim(0, 5) + theme(legend.position = "none") + ylab(""),
+                  p3 + ylim(0, 5) + theme(legend.position = "none") + ylab(""),
+                  align = "v", axis = "l", nrow = 1)
+legend = plot_grid(ggplot(), get_legend(p1), ggplot())
+plot_grid(plots, legend, nrow = 2, rel_heights = c(1, 0.15), align = "vh")
+```
+
 
 

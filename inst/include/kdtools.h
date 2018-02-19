@@ -2,7 +2,11 @@
 #define __KDTOOLS_H__
 
 #include <algorithm>
+#include <utility>
 #include <thread>
+#include <vector>
+#include <limits>
+#include <queue>
 #include <tuple>
 #include <cmath>
 
@@ -26,13 +30,17 @@ namespace detail {
 
 using std::abs;
 using std::next;
+using std::pair;
 using std::size_t;
 using std::thread;
+using std::vector;
 using std::distance;
 using std::enable_if;
 using std::partition;
 using std::nth_element;
 using std::tuple_element;
+using std::numeric_limits;
+using std::priority_queue;
 using std::iterator_traits;
 using std::partition_point;
 using std::placeholders::_1;
@@ -120,10 +128,13 @@ T make_kd_compare(const Pred& pred)
   return kd_compare<Pred, I>(pred);
 }
 
+template <typename T>
+using iter_value_t = typename iterator_traits<T>::value_type;
+
 template <size_t I, typename Iter>
 void kd_sort(Iter first, Iter last)
 {
-  using TupleType = typename iterator_traits<Iter>::value_type;
+  using TupleType = iter_value_t<Iter>;
   constexpr auto J = incr_wrap<I, TupleType>::value;
   if (distance(first, last) > 1)
   {
@@ -139,8 +150,8 @@ void kd_sort(Iter first, Iter last)
 template <size_t I, typename Iter, typename Compare>
 void kd_sort(Iter first, Iter last, const Compare& comp)
 {
-  using TupleType = typename iterator_traits<Iter>::value_type;
-  constexpr auto J = (I + 1) % tuple_size<TupleType>::value;
+  using TupleType = iter_value_t<Iter>;
+  constexpr auto J = incr_wrap<I, TupleType>::value;
   if (distance(first, last) > 1)
   {
     auto pivot = midpos(first, last);
@@ -157,7 +168,7 @@ void kd_sort_threaded(Iter first, Iter last,
                       int max_threads = std::thread::hardware_concurrency(),
                       int thread_depth = 0)
 {
-  using TupleType = typename iterator_traits<Iter>::value_type;
+  using TupleType = iter_value_t<Iter>;
   constexpr auto J = incr_wrap<I, TupleType>::value;
   if (distance(first, last) > 1)
   {
@@ -334,6 +345,39 @@ Iter kd_nearest_neighbor(Iter first, Iter last, const TupleType& value)
   return first;
 }
 
+template <size_t I, typename Iter, typename TupleType>
+Iter kd_nearest_neighbor(Iter first, Iter last, const TupleType& value, double eps)
+{
+  constexpr auto J = incr_wrap<I, TupleType>::value;
+  if (distance(first, last) > 1)
+  {
+    auto pivot = find_pivot<I>(first, last);
+    auto min_dist = l2dist(*pivot, value);
+    if (min_dist < eps) return pivot;
+    auto search_left = less_nth<I>()(value, *pivot);
+    auto search = search_left ?
+      kd_nearest_neighbor<J>(first, pivot, value) :
+        kd_nearest_neighbor<J>(next(pivot), last, value);
+    if (search == last) search = pivot;
+    else
+    {
+      auto sdist = l2dist(*search, value);
+      if (sdist < eps) return search;
+      if (sdist < min_dist) min_dist = sdist;
+      else search = pivot;
+    }
+    if (abs(get<I>(value) - get<I>(*pivot)) < min_dist - eps)
+    {
+      auto s2 = search_left ?
+        kd_nearest_neighbor<J>(next(pivot), last, value) :
+          kd_nearest_neighbor<J>(first, pivot, value);
+      if (s2 != last && l2dist(*s2, value) < min_dist) search = s2;
+    }
+    return search;
+  }
+  return first;
+}
+
 template <typename TupleType>
 bool contains(const TupleType& value,
               const TupleType& lower,
@@ -364,6 +408,66 @@ void kd_range_query(Iter first, Iter last,
   return;
 }
 
+template <typename Iter, typename Key = double>
+struct n_best
+{
+  using qmem_t = pair<Key, Iter>;
+  using qcont_t = vector<qmem_t>;
+  using qcomp_t = less_nth<0>;
+  using queue_t = priority_queue<qmem_t, qcont_t, qcomp_t>;
+  size_t m_n;
+  queue_t q;
+  n_best(size_t n) : m_n(n), q(qcomp_t()) {}
+  Key max_key()
+  {
+    return q.empty() ?
+      numeric_limits<Key>::max() :
+        q.top().first;
+  }
+  void add(Key dist, Iter it)
+  {
+    q.emplace(dist, it);
+    if (q.size() > m_n) q.pop();
+  }
+  template <typename OutIter>
+  void copy(OutIter outp)
+  {
+    while (!q.empty())
+    {
+      *outp++ = *q.top().second;
+      q.pop();
+    }
+  }
+};
+
+template <size_t I,
+          typename Iter,
+          typename TupleType,
+          typename QType>
+void knn(Iter first, Iter last,
+         const TupleType& value,
+         QType& q)
+{
+  switch(distance(first, last)) {
+  case 1 : q.add(l2dist(*first, value), first);
+  case 0 : return; }
+  auto pivot = find_pivot<I>(first, last);
+  q.add(l2dist(*pivot, value), pivot);
+  auto search_left = less_nth<I>()(value, *pivot);
+  constexpr auto J = incr_wrap<I, TupleType>::value;
+  if (search_left)
+    knn<J>(first, pivot, value, q);
+  else
+    knn<J>(next(pivot), last, value, q);
+  if (abs(get<I>(value) - get<I>(*pivot)) <= q.max_key())
+  {
+    if (search_left)
+      knn<J>(next(pivot), last, value, q);
+    else
+      knn<J>(first, pivot, value, q);
+  }
+}
+
 }; // namespace detail
 
 using detail::all_less;
@@ -371,6 +475,8 @@ using detail::none_less;
 using detail::contains;
 
 using detail::midpos;
+using detail::find_pivot;
+
 using detail::is_last;
 using detail::is_not_last;
 using detail::incr_wrap;
@@ -433,6 +539,12 @@ Iter kd_nearest_neighbor(Iter first, Iter last, const TupleType& value)
   return detail::kd_nearest_neighbor<0>(first, last, value);
 }
 
+template <typename Iter, typename TupleType>
+Iter kd_nearest_neighbor(Iter first, Iter last, const TupleType& value, double eps)
+{
+  return detail::kd_nearest_neighbor<0>(first, last, value, eps);
+}
+
 template <typename Iter,
           typename TupleType,
           typename OutIter>
@@ -448,6 +560,24 @@ template <typename Iter>
 void lex_sort(Iter first, Iter last)
 {
   std::sort(first, last, kd_less<0>());
+}
+
+template <typename Iter, typename Compare>
+void lex_sort(Iter first, Iter last, const Compare& comp)
+{
+  std::sort(first, last, make_kd_compare(comp));
+}
+
+template <typename Iter,
+          typename TupleType,
+          typename OutIter>
+void kd_nearest_neighbors(Iter first, Iter last,
+                          const TupleType& value,
+                          size_t n, OutIter outp)
+{
+  detail::n_best<Iter> q(n);
+  detail::knn<0>(first, last, value, q);
+  q.copy(outp);
 }
 
 }; // namespace kdtools

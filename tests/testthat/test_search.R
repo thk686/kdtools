@@ -68,12 +68,12 @@ test_that("range query works", {
   }
 })
 
-r_search = function(x, y)
-{
+r_search <- function(x, y) {
   for (i in 1:nrow(x))
-    if (all(x[i, ] == y))
-      return(TRUE);
-  return(FALSE);
+    if (all(x[i, ] == y)) {
+      return(TRUE)
+    }
+  return(FALSE)
 }
 
 test_that("binary search works", {
@@ -82,7 +82,7 @@ test_that("binary search works", {
     for (n in 1:9)
     {
       x <- kd_sort(matrix(runif(n * 100), ncol = n))
-      y <- x[sample(1:nrow(x), 1),, drop = FALSE]
+      y <- x[sample(1:nrow(x), 1), , drop = FALSE]
       expect_equal(r_search(x, y), kd_binary_search(x, y))
       expect_equal(r_search(x, rep(-1, n)), kd_binary_search(x, rep(-1, n)))
     }

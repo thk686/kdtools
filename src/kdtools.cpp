@@ -1,70 +1,6 @@
-#include <Rcpp.h>
-using Rcpp::NumericVector;
-using Rcpp::XPtr;
-using Rcpp::stop;
-using Rcpp::List;
-using Rcpp::as;
-
-#include <iterator>
-using std::begin;
-using std::end;
-
-#include <algorithm>
-using std::copy;
-
-#include <string>
-using std::string;
-
-#include <vector>
-using std::vector;
-
-#include <array>
-using std::array;
-
+#include "arrayvec.h"
 #include "kdtools.h"
-
-template <size_t I>
-using arrayvec = vector<array<double, I>>;
-
-template <typename T>
-XPtr<T> make_xptr(T* x)
-{
-  return XPtr<T>(x);
-}
-
-template <size_t I, typename T>
-XPtr<arrayvec<I>> get_ptr(const T& x)
-{
-  return as<XPtr<arrayvec<I>>>(x["xptr"]);
-}
-
-template <size_t I>
-List wrap_ptr(const XPtr<arrayvec<I>>& q)
-{
-  List res;
-  res["xptr"] = wrap(q);
-  res["nrow"] = q->size();
-  res["ncol"] = I;
-  res.attr("class") = "arrayvec";
-  return res;
-}
-
-template <size_t I>
-array<double, I> vec_to_array(const NumericVector& x)
-{
-  if (x.length() != I)
-    stop("Invalid dimensions for value");
-  array<double, I> y;
-  copy(begin(x), end(x), begin(y));
-  return y;
-}
-
-int arrayvec_dim(const List& x)
-{
-  if (!x.inherits("arrayvec"))
-    stop("Expecting arrayvec object");
-  return as<int>(x["ncol"]);
-}
+using namespace kdtools;
 
 template <size_t I>
 List kd_sort__(List x, bool inplace, bool parallel)
@@ -72,15 +8,15 @@ List kd_sort__(List x, bool inplace, bool parallel)
   auto p = get_ptr<I>(x);
   if (inplace)
   {
-    if (parallel) kdtools::kd_sort_threaded(std::begin(*p), std::end(*p));
-    else kdtools::kd_sort(std::begin(*p), std::end(*p));
+    if (parallel) kd_sort_threaded(begin(*p), end(*p));
+    else kd_sort(begin(*p), end(*p));
     return x;
   }
   else
   {
     auto q = make_xptr(new arrayvec<I>(*p));
-    if (parallel) kdtools::kd_sort_threaded(std::begin(*q), std::end(*q));
-    else kdtools::kd_sort(std::begin(*q), std::end(*q));
+    if (parallel) kd_sort_threaded(begin(*q), end(*q));
+    else kd_sort(begin(*q), end(*q));
     return wrap_ptr(q);
   }
 }
@@ -109,13 +45,13 @@ List lex_sort__(List x, bool inplace)
   auto p = get_ptr<I>(x);
   if (inplace)
   {
-    kdtools::lex_sort(std::begin(*p), std::end(*p));
+    lex_sort(begin(*p), end(*p));
     return x;
   }
   else
   {
     auto q = make_xptr(new arrayvec<I>(*p));
-    kdtools::lex_sort(std::begin(*q), std::end(*q));
+    lex_sort(begin(*q), end(*q));
     return wrap_ptr(q);
   }
 }
@@ -143,7 +79,7 @@ int kd_lower_bound__(List x, NumericVector v)
 {
   auto p = get_ptr<I>(x);
   auto w = vec_to_array<I>(v);
-  auto lv = kdtools::kd_lower_bound(begin(*p), end(*p), w);
+  auto lv = kd_lower_bound(begin(*p), end(*p), w);
   if (lv == end(*p)) return NA_INTEGER;
   return distance(begin(*p), lv) + 1;
 }
@@ -172,7 +108,7 @@ int kd_upper_bound__(List x, NumericVector v)
   auto p = get_ptr<I>(x);
   array<double, I> w;
   w = vec_to_array<I>(v);
-  auto lv = kdtools::kd_upper_bound(begin(*p), end(*p), w);
+  auto lv = kd_upper_bound(begin(*p), end(*p), w);
   if (lv == end(*p)) return NA_INTEGER;
   return distance(begin(*p), lv) + 1;
 }
@@ -198,14 +134,12 @@ int kd_upper_bound_(List x, NumericVector value)
 template <size_t I>
 List kd_range_query__(List x, NumericVector lower, NumericVector upper)
 {
-  if (lower.length() != I || upper.length() != I)
-    stop("Invalid dimensions for lower or upper");
   auto p = get_ptr<I>(x);
   auto q = make_xptr(new arrayvec<I>);
   auto oi = back_inserter(*q);
   auto l = vec_to_array<I>(lower),
     u = vec_to_array<I>(upper);
-  kdtools::kd_range_query(begin(*p), end(*p), l, u, oi);
+  kd_range_query(begin(*p), end(*p), l, u, oi);
   return wrap_ptr(q);
 }
 
@@ -232,7 +166,7 @@ int kd_nearest_neighbor__(List x, NumericVector v)
 {
   auto p = get_ptr<I>(x);
   auto w = vec_to_array<I>(v);
-  auto nn = kdtools::kd_nearest_neighbor(begin(*p), end(*p), w);
+  auto nn = kd_nearest_neighbor(begin(*p), end(*p), w);
   if (nn >= end(*p)) stop("Search failed");
   return distance(begin(*p), nn) + 1;
 }
@@ -256,11 +190,39 @@ int kd_nearest_neighbor_(List x, NumericVector value)
 }
 
 template <size_t I>
+int kd_approx_nn__(List x, NumericVector v, double eps)
+{
+  auto p = get_ptr<I>(x);
+  auto w = vec_to_array<I>(v);
+  auto nn = kd_nearest_neighbor(begin(*p), end(*p), w, eps);
+  if (nn >= end(*p)) stop("Search failed");
+  return distance(begin(*p), nn) + 1;
+}
+
+// [[Rcpp::export]]
+int kd_approx_nn_(List x, NumericVector value, double eps)
+{
+  switch(arrayvec_dim(x))
+  {
+  case 1: return kd_approx_nn__<1>(x, value, eps);
+  case 2: return kd_approx_nn__<2>(x, value, eps);
+  case 3: return kd_approx_nn__<3>(x, value, eps);
+  case 4: return kd_approx_nn__<4>(x, value, eps);
+  case 5: return kd_approx_nn__<5>(x, value, eps);
+  case 6: return kd_approx_nn__<6>(x, value, eps);
+  case 7: return kd_approx_nn__<7>(x, value, eps);
+  case 8: return kd_approx_nn__<8>(x, value, eps);
+  case 9: return kd_approx_nn__<9>(x, value, eps);
+  default: stop("Invalid dimensions");
+  }
+}
+
+template <size_t I>
 bool kd_binary_search__(List x, NumericVector v)
 {
   auto p = get_ptr<I>(x);
   auto w = vec_to_array<I>(v);
-  return kdtools::kd_binary_search(begin(*p), end(*p), w);
+  return kd_binary_search(begin(*p), end(*p), w);
 }
 
 // [[Rcpp::export]]
@@ -281,3 +243,31 @@ bool kd_binary_search_(List x, NumericVector value)
   }
 }
 
+template <size_t I>
+List kd_nearest_neighbors__(List x, NumericVector value, int n)
+{
+  auto p = get_ptr<I>(x);
+  auto q = make_xptr(new arrayvec<I>);
+  auto oi = back_inserter(*q);
+  auto v = vec_to_array<I>(value);
+  kd_nearest_neighbors(begin(*p), end(*p), v, n, oi);
+  return wrap_ptr(q);
+}
+
+// [[Rcpp::export]]
+List kd_nearest_neighbors_(List x, NumericVector value, int n)
+{
+  switch(arrayvec_dim(x))
+  {
+  case 1: return kd_nearest_neighbors__<1>(x, value, n);
+  case 2: return kd_nearest_neighbors__<2>(x, value, n);
+  case 3: return kd_nearest_neighbors__<3>(x, value, n);
+  case 4: return kd_nearest_neighbors__<4>(x, value, n);
+  case 5: return kd_nearest_neighbors__<5>(x, value, n);
+  case 6: return kd_nearest_neighbors__<6>(x, value, n);
+  case 7: return kd_nearest_neighbors__<7>(x, value, n);
+  case 8: return kd_nearest_neighbors__<8>(x, value, n);
+  case 9: return kd_nearest_neighbors__<9>(x, value, n);
+  default: stop("Invalid dimensions");
+  }
+}

@@ -67,6 +67,17 @@ kd_nearest_neighbor.arrayvec <- function(x, v) {
   return(kd_nearest_neighbor_(x, v))
 }
 
+kd_approx_nn <- function(x, v, eps) UseMethod("kd_approx_nn")
+
+kd_approx_nn.matrix <- function(x, v, eps) {
+  y <- matrix_to_tuples(x)
+  return(kd_approx_nn_(y, v, eps))
+}
+
+kd_approx_nn.arrayvec <- function(x, v, eps) {
+  return(kd_approx_nn_(x, v, eps))
+}
+
 kd_binary_search <- function(x, v) UseMethod("kd_binary_search")
 
 kd_binary_search.matrix <- function(x, v) {
@@ -76,4 +87,16 @@ kd_binary_search.matrix <- function(x, v) {
 
 kd_binary_search.arrayvec <- function(x, v) {
   return(kd_binary_search_(x, v))
+}
+
+kd_nearest_neighbors <- function(x, v, n) UseMethod("kd_nearest_neighbors")
+
+kd_nearest_neighbors.matrix <- function(x, v, n) {
+  y <- matrix_to_tuples(x)
+  z <- kd_nearest_neighbors_(y, v, n)
+  return(tuples_to_matrix(z))
+}
+
+kd_nearest_neighbors.arrayvec <- function(x, v, n) {
+  return(kd_nearest_neighbors_(x, v, n))
 }

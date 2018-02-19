@@ -37,12 +37,12 @@ ggplot(z, aes(x, y)) +
 
 ```{r}
 nr_steps = 7
-nr_min = 1
-nr_max = 7
-des = expand.grid(nr = seq(nr_min, nr_max, length = nr_steps), nc = seq(1, 9, 2))
+nr_min = 1e1
+nr_max = 1e7
+des = expand.grid(nr = round(seq(nr_min, nr_max, length = nr_steps)), nc = seq(1, 9, 2))
 timer = function(nr, nc)
 {
-  x = matrix_to_tuples(matrix(runif(10^nr * nc), 10^nr))
+  x = matrix_to_tuples(matrix(runif(nr * nc), nr))
   summary(microbenchmark(kd_sort(x, T), times = 1), unit = "s")$median
 }
 t = foreach(i = 1:nrow(des), .combine = c) %dopar% timer(des[i, 1], des[i, 2])
@@ -55,7 +55,7 @@ ggplot(df) +
   geom_line() + geom_point() +
   #scale_x_log10() + scale_y_log10() +
   #guides(color = FALSE) +
-  xlab("log10 Tuples") + ylab("Seconds") +
+  xlab("Tuples") + ylab("Seconds") +
   theme(legend.position = "bottom") +
   labs(color = "D") -> p1
 ```
@@ -64,7 +64,7 @@ ggplot(df) +
 des = expand.grid(nr = seq(nr_min, nr_max, length = nr_steps), nc = seq(1, 9, 2))
 timer = function(nr, nc)
 {
-  x = matrix_to_tuples(matrix(runif(10^nr * nc), 10^nr))
+  x = matrix_to_tuples(matrix(runif(nr * nc), nr))
   summary(microbenchmark(kd_sort(x, T, T), times = 1), unit = "s")$median
 }
 t = foreach(i = 1:nrow(des), .combine = c) %dopar% timer(des[i, 1], des[i, 2])
@@ -77,7 +77,7 @@ ggplot(df) +
   geom_line() + geom_point() +
   #scale_x_log10() + scale_y_log10() +
   #guides(color = FALSE) +
-  xlab("log10 Tuples") + ylab("Seconds") +
+  xlab("Tuples") + ylab("Seconds") +
   theme(legend.position = "bottom") +
   labs(color = "D") -> p2
 ```
@@ -86,7 +86,7 @@ ggplot(df) +
 des = expand.grid(nr = seq(nr_min, nr_max, length = nr_steps), nc = seq(1, 9, 2))
 timer = function(nr, nc)
 {
-  x = matrix_to_tuples(matrix(runif(10^nr * nc), 10^nr))
+  x = matrix_to_tuples(matrix(runif(nr * nc), nr))
   summary(microbenchmark(lex_sort(x, T), times = 1), unit = "s")$median
 }
 t = foreach(i = 1:nrow(des), .combine = c) %dopar% timer(des[i, 1], des[i, 2])
@@ -99,7 +99,7 @@ ggplot(df) +
   geom_line() + geom_point() +
   #scale_x_log10() + scale_y_log10() +
   #guides(color = FALSE) +
-  xlab("log10 Tuples") + ylab("Seconds") +
+  xlab("Tuples") + ylab("Seconds") +
   theme(legend.position = "bottom") +
   labs(color = "D") -> p3
 ```

@@ -102,6 +102,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// kd_approx_nn_
+int kd_approx_nn_(List x, NumericVector value, double eps);
+RcppExport SEXP _kdtools_kd_approx_nn_(SEXP xSEXP, SEXP valueSEXP, SEXP epsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type value(valueSEXP);
+    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
+    rcpp_result_gen = Rcpp::wrap(kd_approx_nn_(x, value, eps));
+    return rcpp_result_gen;
+END_RCPP
+}
 // kd_binary_search_
 bool kd_binary_search_(List x, NumericVector value);
 RcppExport SEXP _kdtools_kd_binary_search_(SEXP xSEXP, SEXP valueSEXP) {
@@ -111,6 +124,19 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< List >::type x(xSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type value(valueSEXP);
     rcpp_result_gen = Rcpp::wrap(kd_binary_search_(x, value));
+    return rcpp_result_gen;
+END_RCPP
+}
+// kd_nearest_neighbors_
+List kd_nearest_neighbors_(List x, NumericVector value, int n);
+RcppExport SEXP _kdtools_kd_nearest_neighbors_(SEXP xSEXP, SEXP valueSEXP, SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type value(valueSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(kd_nearest_neighbors_(x, value, n));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -124,7 +150,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_kd_upper_bound_", (DL_FUNC) &_kdtools_kd_upper_bound_, 2},
     {"_kdtools_kd_range_query_", (DL_FUNC) &_kdtools_kd_range_query_, 3},
     {"_kdtools_kd_nearest_neighbor_", (DL_FUNC) &_kdtools_kd_nearest_neighbor_, 2},
+    {"_kdtools_kd_approx_nn_", (DL_FUNC) &_kdtools_kd_approx_nn_, 3},
     {"_kdtools_kd_binary_search_", (DL_FUNC) &_kdtools_kd_binary_search_, 2},
+    {"_kdtools_kd_nearest_neighbors_", (DL_FUNC) &_kdtools_kd_nearest_neighbors_, 3},
     {NULL, NULL, 0}
 };
 

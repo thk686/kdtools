@@ -28,6 +28,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// tuples_to_matrix_rows
+NumericMatrix tuples_to_matrix_rows(List x, int a, int b);
+RcppExport SEXP _kdtools_tuples_to_matrix_rows(SEXP xSEXP, SEXP aSEXP, SEXP bSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type x(xSEXP);
+    Rcpp::traits::input_parameter< int >::type a(aSEXP);
+    Rcpp::traits::input_parameter< int >::type b(bSEXP);
+    rcpp_result_gen = Rcpp::wrap(tuples_to_matrix_rows(x, a, b));
+    return rcpp_result_gen;
+END_RCPP
+}
 // kd_sort_
 List kd_sort_(List x, bool inplace, bool parallel);
 RcppExport SEXP _kdtools_kd_sort_(SEXP xSEXP, SEXP inplaceSEXP, SEXP parallelSEXP) {
@@ -38,6 +51,17 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type inplace(inplaceSEXP);
     Rcpp::traits::input_parameter< bool >::type parallel(parallelSEXP);
     rcpp_result_gen = Rcpp::wrap(kd_sort_(x, inplace, parallel));
+    return rcpp_result_gen;
+END_RCPP
+}
+// kd_is_sorted_
+bool kd_is_sorted_(List x);
+RcppExport SEXP _kdtools_kd_is_sorted_(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(kd_is_sorted_(x));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -140,11 +164,24 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// sort_strings
+void sort_strings(CharacterVector c1, CharacterVector c2);
+RcppExport SEXP _kdtools_sort_strings(SEXP c1SEXP, SEXP c2SEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< CharacterVector >::type c1(c1SEXP);
+    Rcpp::traits::input_parameter< CharacterVector >::type c2(c2SEXP);
+    sort_strings(c1, c2);
+    return R_NilValue;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_matrix_to_tuples", (DL_FUNC) &_kdtools_matrix_to_tuples, 1},
     {"_kdtools_tuples_to_matrix", (DL_FUNC) &_kdtools_tuples_to_matrix, 1},
+    {"_kdtools_tuples_to_matrix_rows", (DL_FUNC) &_kdtools_tuples_to_matrix_rows, 3},
     {"_kdtools_kd_sort_", (DL_FUNC) &_kdtools_kd_sort_, 3},
+    {"_kdtools_kd_is_sorted_", (DL_FUNC) &_kdtools_kd_is_sorted_, 1},
     {"_kdtools_lex_sort_", (DL_FUNC) &_kdtools_lex_sort_, 2},
     {"_kdtools_kd_lower_bound_", (DL_FUNC) &_kdtools_kd_lower_bound_, 2},
     {"_kdtools_kd_upper_bound_", (DL_FUNC) &_kdtools_kd_upper_bound_, 2},
@@ -153,6 +190,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_kd_approx_nn_", (DL_FUNC) &_kdtools_kd_approx_nn_, 3},
     {"_kdtools_kd_binary_search_", (DL_FUNC) &_kdtools_kd_binary_search_, 2},
     {"_kdtools_kd_nearest_neighbors_", (DL_FUNC) &_kdtools_kd_nearest_neighbors_, 3},
+    {"_kdtools_sort_strings", (DL_FUNC) &_kdtools_sort_strings, 2},
     {NULL, NULL, 0}
 };
 

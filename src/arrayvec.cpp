@@ -1,5 +1,6 @@
 #include "arrayvec.h"
 
+//' @export
 // [[Rcpp::export]]
 List matrix_to_tuples(const NumericMatrix& x)
 {
@@ -18,6 +19,7 @@ List matrix_to_tuples(const NumericMatrix& x)
   }
 }
 
+//' @export
 // [[Rcpp::export]]
 NumericMatrix tuples_to_matrix(List x)
 {
@@ -34,6 +36,26 @@ NumericMatrix tuples_to_matrix(List x)
   case 7: return tuples_to_matrix_<7>(x);
   case 8: return tuples_to_matrix_<8>(x);
   case 9: return tuples_to_matrix_<9>(x);
+  default: stop("Invalid dimensions");
+  }
+}
+
+// [[Rcpp::export]]
+NumericMatrix tuples_to_matrix_rows(List x, int a, int b)
+{
+  if (!x.inherits("arrayvec"))
+    stop("Expecting arrayvec object");
+  switch(arrayvec_dim(x))
+  {
+  case 1: return tuples_to_matrix_<1>(x, a, b);
+  case 2: return tuples_to_matrix_<2>(x, a, b);
+  case 3: return tuples_to_matrix_<3>(x, a, b);
+  case 4: return tuples_to_matrix_<4>(x, a, b);
+  case 5: return tuples_to_matrix_<5>(x, a, b);
+  case 6: return tuples_to_matrix_<6>(x, a, b);
+  case 7: return tuples_to_matrix_<7>(x, a, b);
+  case 8: return tuples_to_matrix_<8>(x, a, b);
+  case 9: return tuples_to_matrix_<9>(x, a, b);
   default: stop("Invalid dimensions");
   }
 }

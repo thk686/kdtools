@@ -91,6 +91,25 @@ NumericMatrix tuples_to_matrix_(List x)
 }
 
 template <size_t I>
+NumericMatrix tuples_to_matrix_(List x, size_t a, size_t b)
+{
+  auto nr = b - a + 1;
+  auto p = get_ptr<I>(x);
+  if (b < a || p->size() < b + 1) stop("Invalid range");
+  NumericMatrix res(nr, I);
+  auto begin_ = begin(*p) + a,
+       end_ = begin(*p) + b + 1;
+  transform(begin_, end_, begin(res), begin(res),
+            [&](const array<double, I>& u, double& v)
+            {
+              auto i = make_strided(&v, nr);
+              copy(begin(u), end(u), i);
+              return v;
+            });
+  return res;
+}
+
+template <size_t I>
 array<double, I> vec_to_array(const NumericVector& x)
 {
   if (x.length() != I)

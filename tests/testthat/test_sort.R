@@ -31,6 +31,8 @@ test_that("correct sort order", {
   {
     x <- matrix(runif(nr * nc), nr)
     y <- kd_sort(x)
+    expect_false(kd_is_sorted(x))
+    expect_true(kd_is_sorted(y))
     expect_false(check_median(x))
     expect_true(check_median(y))
   }

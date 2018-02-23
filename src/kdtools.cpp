@@ -40,6 +40,31 @@ List kd_sort_(List x, bool inplace = false, bool parallel = false)
 }
 
 template <size_t I>
+bool kd_is_sorted__(List x)
+{
+  auto p = get_ptr<I>(x);
+  return kd_is_sorted(begin(*p), end(*p));
+}
+
+// [[Rcpp::export]]
+bool kd_is_sorted_(List x)
+{
+  switch(arrayvec_dim(x))
+  {
+  case 1: return kd_is_sorted__<1>(x);
+  case 2: return kd_is_sorted__<2>(x);
+  case 3: return kd_is_sorted__<3>(x);
+  case 4: return kd_is_sorted__<4>(x);
+  case 5: return kd_is_sorted__<5>(x);
+  case 6: return kd_is_sorted__<6>(x);
+  case 7: return kd_is_sorted__<7>(x);
+  case 8: return kd_is_sorted__<8>(x);
+  case 9: return kd_is_sorted__<9>(x);
+  default: stop("Invalid dimensions");
+  }
+}
+
+template <size_t I>
 List lex_sort__(List x, bool inplace)
 {
   auto p = get_ptr<I>(x);

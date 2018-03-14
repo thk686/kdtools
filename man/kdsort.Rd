@@ -32,6 +32,10 @@ The matrix version will be slower because of data structure
 }
 \examples{
 x = kd_sort(matrix(runif(200), 100))
+kd_is_sorted(x)
 plot(x, type = "o", pch = 19, col = "steelblue", asp = 1)
 
+}
+\seealso{
+\code{\link{arrayvec}}
 }

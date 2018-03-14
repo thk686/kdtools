@@ -126,19 +126,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// kd_approx_nn_
-int kd_approx_nn_(List x, NumericVector value, double eps);
-RcppExport SEXP _kdtools_kd_approx_nn_(SEXP xSEXP, SEXP valueSEXP, SEXP epsSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type x(xSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type value(valueSEXP);
-    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
-    rcpp_result_gen = Rcpp::wrap(kd_approx_nn_(x, value, eps));
-    return rcpp_result_gen;
-END_RCPP
-}
 // kd_binary_search_
 bool kd_binary_search_(List x, NumericVector value);
 RcppExport SEXP _kdtools_kd_binary_search_(SEXP xSEXP, SEXP valueSEXP) {
@@ -164,17 +151,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// sort_strings
-void sort_strings(CharacterVector c1, CharacterVector c2);
-RcppExport SEXP _kdtools_sort_strings(SEXP c1SEXP, SEXP c2SEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< CharacterVector >::type c1(c1SEXP);
-    Rcpp::traits::input_parameter< CharacterVector >::type c2(c2SEXP);
-    sort_strings(c1, c2);
-    return R_NilValue;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_matrix_to_tuples", (DL_FUNC) &_kdtools_matrix_to_tuples, 1},
@@ -187,10 +163,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_kd_upper_bound_", (DL_FUNC) &_kdtools_kd_upper_bound_, 2},
     {"_kdtools_kd_range_query_", (DL_FUNC) &_kdtools_kd_range_query_, 3},
     {"_kdtools_kd_nearest_neighbor_", (DL_FUNC) &_kdtools_kd_nearest_neighbor_, 2},
-    {"_kdtools_kd_approx_nn_", (DL_FUNC) &_kdtools_kd_approx_nn_, 3},
     {"_kdtools_kd_binary_search_", (DL_FUNC) &_kdtools_kd_binary_search_, 2},
     {"_kdtools_kd_nearest_neighbors_", (DL_FUNC) &_kdtools_kd_nearest_neighbors_, 3},
-    {"_kdtools_sort_strings", (DL_FUNC) &_kdtools_sort_strings, 2},
     {NULL, NULL, 0}
 };
 

@@ -3,14 +3,11 @@
 \name{kd_nearest_neighbors}
 \alias{kd_nearest_neighbors}
 \alias{kd_nearest_neighbor}
-\alias{kd_approx_nn}
 \title{Find nearest neighbors}
 \usage{
 kd_nearest_neighbors(x, v, n)
 
 kd_nearest_neighbor(x, v)
-
-kd_approx_nn(x, v, eps)
 }
 \arguments{
 \item{x}{an object sorted by \code{\link{kd_sort}}}
@@ -18,9 +15,15 @@ kd_approx_nn(x, v, eps)
 \item{v}{a vector specifying where to look}
 
 \item{n}{the number of neighbors to return}
-
-\item{eps}{maximum allowable distance error}
 }
 \description{
 Find nearest neighbors
+}
+\examples{
+x = matrix(runif(200), 100)
+y = matrix_to_tuples(x)
+kd_sort(y, inplace = TRUE)
+y[kd_nearest_neighbor(y, c(1/2, 1/2)),]
+kd_nearest_neighbors(y, c(1/2, 1/2), 3)
+
 }

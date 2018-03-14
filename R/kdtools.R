@@ -15,8 +15,10 @@ NULL
 #'   conversions.
 #' @examples
 #' x = kd_sort(matrix(runif(200), 100))
+#' kd_is_sorted(x)
 #' plot(x, type = "o", pch = 19, col = "steelblue", asp = 1)
 #'
+#' @seealso \code{\link{arrayvec}}
 #' @rdname kdsort
 #' @export
 kd_sort <- function(x, ...) UseMethod("kd_sort")
@@ -74,6 +76,16 @@ lex_sort.arrayvec <- function(x, inplace = FALSE) {
 #' Search sorted data
 #' @param x an object sorted by \code{\link{kd_sort}}
 #' @param v a vector specifying where to look
+#' @examples
+#' x = matrix(runif(200), 100)
+#' y = matrix_to_tuples(x)
+#' kd_sort(y, inplace = TRUE)
+#' y[kd_lower_bound(y, c(1/2, 1/2)),]
+#' y[kd_upper_bound(y, c(1/2, 1/2)),]
+#' kd_binary_search(y, c(1/2, 1/2))
+#' kd_range_query(y, c(1/3, 1/3), c(2/3, 2/3))
+#'
+#' @aliases kd_lower_bound
 #' @rdname search
 #' @export
 kd_lower_bound <- function(x, v) UseMethod("kd_lower_bound")
@@ -110,12 +122,14 @@ kd_upper_bound.arrayvec <- function(x, v) {
 #' @export
 kd_range_query <- function(x, l, u) UseMethod("kd_range_query")
 
+#' @export
 kd_range_query.matrix <- function(x, l, u) {
   y <- matrix_to_tuples(x)
   z <- kd_range_query_(y, l, u)
   return(tuples_to_matrix(z))
 }
 
+#' @export
 kd_range_query.arrayvec <- function(x, l, u) {
   return(kd_range_query_(x, l, u))
 }
@@ -124,11 +138,13 @@ kd_range_query.arrayvec <- function(x, l, u) {
 #' @export
 kd_binary_search <- function(x, v) UseMethod("kd_binary_search")
 
+#' @export
 kd_binary_search.matrix <- function(x, v) {
   y <- matrix_to_tuples(x)
   return(kd_binary_search_(y, v))
 }
 
+#' @export
 kd_binary_search.arrayvec <- function(x, v) {
   return(kd_binary_search_(x, v))
 }
@@ -137,16 +153,26 @@ kd_binary_search.arrayvec <- function(x, v) {
 #' @param x an object sorted by \code{\link{kd_sort}}
 #' @param v a vector specifying where to look
 #' @param n the number of neighbors to return
+#'
+#' @examples
+#' x = matrix(runif(200), 100)
+#' y = matrix_to_tuples(x)
+#' kd_sort(y, inplace = TRUE)
+#' y[kd_nearest_neighbor(y, c(1/2, 1/2)),]
+#' kd_nearest_neighbors(y, c(1/2, 1/2), 3)
+#'
 #' @rdname nneighb
 #' @export
 kd_nearest_neighbors <- function(x, v, n) UseMethod("kd_nearest_neighbors")
 
+#' @export
 kd_nearest_neighbors.matrix <- function(x, v, n) {
   y <- matrix_to_tuples(x)
   z <- kd_nearest_neighbors_(y, v, n)
   return(tuples_to_matrix(z))
 }
 
+#' @export
 kd_nearest_neighbors.arrayvec <- function(x, v, n) {
   return(kd_nearest_neighbors_(x, v, n))
 }
@@ -164,21 +190,5 @@ kd_nearest_neighbor.matrix <- function(x, v) {
 #' @export
 kd_nearest_neighbor.arrayvec <- function(x, v) {
   return(kd_nearest_neighbor_(x, v))
-}
-
-#' @param eps maximum allowable distance error
-#' @rdname nneighb
-#' @export
-kd_approx_nn <- function(x, v, eps) UseMethod("kd_approx_nn")
-
-#' @export
-kd_approx_nn.matrix <- function(x, v, eps) {
-  y <- matrix_to_tuples(x)
-  return(kd_approx_nn_(y, v, eps))
-}
-
-#' @export
-kd_approx_nn.arrayvec <- function(x, v, eps) {
-  return(kd_approx_nn_(x, v, eps))
 }
 

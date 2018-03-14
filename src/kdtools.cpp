@@ -8,15 +8,15 @@ List kd_sort__(List x, bool inplace, bool parallel)
   auto p = get_ptr<I>(x);
   if (inplace)
   {
-    if (parallel) kd_sort_threaded(begin(*p), end(*p));
-    else kd_sort(begin(*p), end(*p));
+    if (parallel) kd_sort_threaded(*p);
+    else kd_sort(*p);
     return x;
   }
   else
   {
     auto q = make_xptr(new arrayvec<I>(*p));
-    if (parallel) kd_sort_threaded(begin(*q), end(*q));
-    else kd_sort(begin(*q), end(*q));
+    if (parallel) kd_sort_threaded(*q);
+    else kd_sort(*q);
     return wrap_ptr(q);
   }
 }
@@ -42,8 +42,7 @@ List kd_sort_(List x, bool inplace = false, bool parallel = false)
 template <size_t I>
 bool kd_is_sorted__(List x)
 {
-  auto p = get_ptr<I>(x);
-  return kd_is_sorted(begin(*p), end(*p));
+  return kd_is_sorted(*get_ptr<I>(x));
 }
 
 // [[Rcpp::export]]
@@ -70,13 +69,13 @@ List lex_sort__(List x, bool inplace)
   auto p = get_ptr<I>(x);
   if (inplace)
   {
-    lex_sort(begin(*p), end(*p));
+    lex_sort(*p);
     return x;
   }
   else
   {
     auto q = make_xptr(new arrayvec<I>(*p));
-    lex_sort(begin(*q), end(*q));
+    lex_sort(*q);
     return wrap_ptr(q);
   }
 }
@@ -210,34 +209,6 @@ int kd_nearest_neighbor_(List x, NumericVector value)
   case 7: return kd_nearest_neighbor__<7>(x, value);
   case 8: return kd_nearest_neighbor__<8>(x, value);
   case 9: return kd_nearest_neighbor__<9>(x, value);
-  default: stop("Invalid dimensions");
-  }
-}
-
-template <size_t I>
-int kd_approx_nn__(List x, NumericVector v, double eps)
-{
-  auto p = get_ptr<I>(x);
-  auto w = vec_to_array<I>(v);
-  auto nn = kd_nearest_neighbor(begin(*p), end(*p), w, eps);
-  if (nn >= end(*p)) stop("Search failed");
-  return distance(begin(*p), nn) + 1;
-}
-
-// [[Rcpp::export]]
-int kd_approx_nn_(List x, NumericVector value, double eps)
-{
-  switch(arrayvec_dim(x))
-  {
-  case 1: return kd_approx_nn__<1>(x, value, eps);
-  case 2: return kd_approx_nn__<2>(x, value, eps);
-  case 3: return kd_approx_nn__<3>(x, value, eps);
-  case 4: return kd_approx_nn__<4>(x, value, eps);
-  case 5: return kd_approx_nn__<5>(x, value, eps);
-  case 6: return kd_approx_nn__<6>(x, value, eps);
-  case 7: return kd_approx_nn__<7>(x, value, eps);
-  case 8: return kd_approx_nn__<8>(x, value, eps);
-  case 9: return kd_approx_nn__<9>(x, value, eps);
   default: stop("Invalid dimensions");
   }
 }

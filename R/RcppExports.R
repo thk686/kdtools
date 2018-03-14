@@ -43,20 +43,11 @@ kd_nearest_neighbor_ <- function(x, value) {
     .Call(`_kdtools_kd_nearest_neighbor_`, x, value)
 }
 
-kd_approx_nn_ <- function(x, value, eps) {
-    .Call(`_kdtools_kd_approx_nn_`, x, value, eps)
-}
-
 kd_binary_search_ <- function(x, value) {
     .Call(`_kdtools_kd_binary_search_`, x, value)
 }
 
 kd_nearest_neighbors_ <- function(x, value, n) {
     .Call(`_kdtools_kd_nearest_neighbors_`, x, value, n)
-}
-
-#' @export
-sort_strings <- function(c1, c2) {
-    invisible(.Call(`_kdtools_sort_strings`, c1, c2))
 }
 

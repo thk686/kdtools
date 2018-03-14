@@ -4,6 +4,8 @@
 #'   on a vector of arrays. An \code{arrayvec} object is a wrapper around a
 #'   pointer to a vector of arrays. These functions provide some ability to
 #'   manipulate the data as if it were a matrix.
+#'
+#' @aliases arrayvec
 #' @rdname arrayvec
 #' @export
 dim.arrayvec <- function(x) {

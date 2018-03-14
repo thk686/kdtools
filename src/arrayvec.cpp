@@ -1,5 +1,22 @@
 #include "arrayvec.h"
 
+//' Convert a matrix to a vector of arrays
+//'
+//' @param x object to be converted
+//'
+//' @details The algorithms in kdtools can accept either matrices or an
+//' \link{arrayvec} object. When a matrix is passed, it is converted to
+//' an arrayvec object internally and the results are converted back to
+//' a matrix. For optimal performance, pre-convert matrices.
+//'
+//' @examples
+//' x = matrix(1:10, 5)
+//' y = matrix_to_tuples(x)
+//' str(x)
+//' str(y)
+//' y[1:2, ]
+//'
+//' @rdname convert
 //' @export
 // [[Rcpp::export]]
 List matrix_to_tuples(const NumericMatrix& x)
@@ -19,6 +36,7 @@ List matrix_to_tuples(const NumericMatrix& x)
   }
 }
 
+//' @rdname convert
 //' @export
 // [[Rcpp::export]]
 NumericMatrix tuples_to_matrix(List x)

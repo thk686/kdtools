@@ -2,6 +2,7 @@
 % Please edit documentation in R/arrayvec.R
 \name{dim.arrayvec}
 \alias{dim.arrayvec}
+\alias{arrayvec}
 \alias{as.matrix.arrayvec}
 \alias{as.data.frame.arrayvec}
 \alias{[.arrayvec}

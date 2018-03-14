@@ -14,28 +14,13 @@ knitr::opts_chunk$set(
 ```
 # kdtools
 
-The goal of kdtools is to ...
+The kdtools package exports a C++ header implementing sorting and searching on ranges of tuple-like objects without using trees. It is based on a kd-tree-like recursive sorting algorithm. Once sorted, one can perform a range- or nearest-neighbor- query.
 
-## Example
-
-This is a basic example which shows you how to solve a common problem:
-
-```{r example}
-## basic example code
+```{r}
+library(kdtools)
+x = kd_sort(matrix(runif(400), 200))
+plot(x, type  = 'l', asp = 1, axes = FALSE, xlab = NA, ylab = NA)
+points(x, pch = 19, col = rainbow(200, alpha = 0.25), cex = 2)
+y = kd_range_query(x, c(1/4, 1/4), c(3/4, 3/4))
+points(y, pch = 19, cex = 0.5, col = "red")
 ```
-
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
-
-```{r cars}
-summary(cars)
-```
-
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date.
-
-You can also embed plots, for example:
-
-```{r pressure, echo = FALSE}
-plot(pressure)
-```
-
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub!

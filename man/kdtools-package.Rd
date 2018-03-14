@@ -10,4 +10,8 @@ Provides various tools for working with multidimensional
 data in R and C++, including extremely fast nearest-neighbor- and range-
 queries without the overhead of linked tree nodes.
 }
+\author{
+\strong{Maintainer}: Timothy Keitt \email{tkeitt@gmail.com}
+
+}
 \keyword{internal}

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>kdtools: Tools for Working with Multidimensional Data — kdtools-package • kdtools</title>
+<title>Convert a matrix to a vector of arrays — matrix_to_tuples • kdtools</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -83,27 +83,55 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>kdtools: Tools for Working with Multidimensional Data</h1>
+    <h1>Convert a matrix to a vector of arrays</h1>
     </div>
 
     
-    <p>Provides various tools for working with multidimensional
-data in R and C++, including extremely fast nearest-neighbor- and range-
-queries without the overhead of linked tree nodes.</p>
+    <p>Convert a matrix to a vector of arrays</p>
     
 
-        
+    <pre class="usage"><span class='fu'>matrix_to_tuples</span>(<span class='no'>x</span>)
 
+<span class='fu'>tuples_to_matrix</span>(<span class='no'>x</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>x</th>
+      <td><p>object to be converted</p></td>
+    </tr>
+    </table>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The algorithms in kdtools can accept either matrices or an
+<a href='arrayvec.html'>arrayvec</a> object. When a matrix is passed, it is converted to
+an arrayvec object internally and the results are converted back to
+a matrix. For optimal performance, pre-convert matrices.</p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='no'>x</span> <span class='kw'>=</span> <span class='fu'>matrix</span>(<span class='fl'>1</span>:<span class='fl'>10</span>, <span class='fl'>5</span>)
+<span class='no'>y</span> <span class='kw'>=</span> <span class='fu'>matrix_to_tuples</span>(<span class='no'>x</span>)
+<span class='fu'>str</span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;  int [1:5, 1:2] 1 2 3 4 5 6 7 8 9 10</div><div class='input'><span class='fu'>str</span>(<span class='no'>y</span>)</div><div class='output co'>#&gt; List of 3
+#&gt;  $ xptr: num 1
+#&gt;  $ nrow: num 2
+#&gt;  $ ncol: num 3
+#&gt;  - attr(*, "class")= chr "arrayvec"</div><div class='input'><span class='no'>y</span>[<span class='fl'>1</span>:<span class='fl'>2</span>, ]</div><div class='output co'>#&gt;      [,1] [,2]
+#&gt; [1,]    1    6
+#&gt; [2,]    2    7</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-                </ul>
-
-    <h2>Author</h2>
-    
-<strong>Maintainer</strong>: Timothy Keitt <a href='mailto:tkeitt@gmail.com'>tkeitt@gmail.com</a>
-
+      <li><a href="#arguments">Arguments</a></li>
+      
+      <li><a href="#details">Details</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

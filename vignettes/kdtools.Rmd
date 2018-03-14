@@ -23,8 +23,8 @@ library(tidytext)
 library(printr)
 library(scales)
 theme_set(theme_classic())
-bench_ntuples = 1e5
-bench_ntrials = 5
+bench_ntuples = 1e7
+bench_ntrials = 21
 ```
 
 ## Introduction

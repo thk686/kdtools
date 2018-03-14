@@ -41,7 +41,14 @@
   <a href="reference/index.html">Reference</a>
 </li>
       </ul>
-<ul class="nav navbar-nav navbar-right"></ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="https://github.com/thk686/kdtools">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
 <!--/.nav-collapse -->
   </div>
@@ -66,20 +73,28 @@
 x =<span class="st"> </span><span class="kw"><a href="reference/kdsort.html">kd_sort</a></span>(<span class="kw">matrix</span>(<span class="kw">runif</span>(<span class="dv">400</span>), <span class="dv">200</span>))
 <span class="kw">plot</span>(x, <span class="dt">type  =</span> <span class="st">'l'</span>, <span class="dt">asp =</span> <span class="dv">1</span>, <span class="dt">axes =</span> <span class="ot">FALSE</span>, <span class="dt">xlab =</span> <span class="ot">NA</span>, <span class="dt">ylab =</span> <span class="ot">NA</span>)
 <span class="kw">points</span>(x, <span class="dt">pch =</span> <span class="dv">19</span>, <span class="dt">col =</span> <span class="kw">rainbow</span>(<span class="dv">200</span>, <span class="dt">alpha =</span> <span class="fl">0.25</span>), <span class="dt">cex =</span> <span class="dv">2</span>)
-y =<span class="st"> </span><span class="kw"><a href="reference/search.html">kd_range_query</a></span>(x, <span class="kw">c</span>(<span class="dv">1</span><span class="op">/</span><span class="dv">3</span>, <span class="dv">1</span><span class="op">/</span><span class="dv">3</span>), <span class="kw">c</span>(<span class="dv">2</span><span class="op">/</span><span class="dv">3</span>, <span class="dv">2</span><span class="op">/</span><span class="dv">3</span>))
+y =<span class="st"> </span><span class="kw"><a href="reference/search.html">kd_range_query</a></span>(x, <span class="kw">c</span>(<span class="dv">1</span><span class="op">/</span><span class="dv">4</span>, <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>), <span class="kw">c</span>(<span class="dv">3</span><span class="op">/</span><span class="dv">4</span>, <span class="dv">3</span><span class="op">/</span><span class="dv">4</span>))
 <span class="kw">points</span>(y, <span class="dt">pch =</span> <span class="dv">19</span>, <span class="dt">cex =</span> <span class="fl">0.5</span>, <span class="dt">col =</span> <span class="st">"red"</span>)</code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-1-1.png" width="100%"></p>
+<p><a href="https://travis-ci.org/thk686/kdtools"><img src="https://travis-ci.org/thk686/kdtools.svg?branch=master" alt="Travis build status"></a> <a href="https://ci.appveyor.com/project/thk686/kdtools"><img src="https://ci.appveyor.com/api/projects/status/github/thk686/kdtools?branch=master&amp;svg=true" alt="AppVeyor build status"></a></p>
 </div>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2 class="hasAnchor">
-<a href="#sidebar" class="anchor"></a>License</h2>
+<a href="#sidebar" class="anchor"></a>Links</h2>
+<ul class="list-unstyled">
+<li>Browse source code at <br><a href="https://github.com/thk686/kdtools">https://​github.com/​thk686/​kdtools</a>
+</li>
+<li>Report a bug at <br><a href="https://github.com/thk686/kdtools/issues">https://​github.com/​thk686/​kdtools/​issues</a>
+</li>
+</ul>
+<h2>License</h2>
 <p>GPL</p>
 <h2>Developers</h2>
 <ul class="list-unstyled">
-<li>Timothy H. Keitt <br><small class="roles"> Author, maintainer </small> </li>
+<li>Timothy Keitt <br><small class="roles"> Author, maintainer </small> </li>
 </ul>
 </div>
 
@@ -87,7 +102,7 @@ y =<span class="st"> </span><span class="kw"><a href="reference/search.html">kd_
 
 
       <footer><div class="copyright">
-  <p>Developed by Timothy H. Keitt.</p>
+  <p>Developed by Timothy Keitt.</p>
 </div>
 
 <div class="pkgdown">

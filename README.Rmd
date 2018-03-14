@@ -24,3 +24,5 @@ points(x, pch = 19, col = rainbow(200, alpha = 0.25), cex = 2)
 y = kd_range_query(x, c(1/4, 1/4), c(3/4, 3/4))
 points(y, pch = 19, cex = 0.5, col = "red")
 ```
+
+[![Travis build status](https://travis-ci.org/thk686/kdtools.svg?branch=master)](https://travis-ci.org/thk686/kdtools)

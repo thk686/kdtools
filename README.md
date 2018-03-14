@@ -15,3 +15,5 @@ points(y, pch = 19, cex = 0.5, col = "red")
 ```
 
 <img src="man/figures/README-unnamed-chunk-1-1.png" width="100%" />
+
+[![Travis build status](https://travis-ci.org/thk686/kdtools.svg?branch=master)](https://travis-ci.org/thk686/kdtools)

@@ -15,16 +15,13 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 library(kdtools)
-library(tidyverse)
-library(microbenchmark)
-library(foreach)
-library(doMC)
+library(ggplot2)
 library(tidytext)
 library(printr)
 library(scales)
 theme_set(theme_classic())
-bench_ntuples = 1e7
-bench_ntrials = 21
+bench_ntuples = 1e3
+bench_ntrials = 5
 ```
 
 ## Introduction
@@ -677,6 +674,7 @@ using std::string;
 #include <kdtools.h>
 using kdtools::kd_sort;
 using kdtools::kd_range_query;
+using kdtools::kd_nearest_neighbors;
 
 using key_type = tuple<double, string>;
 using range_type = vector<key_type>;
@@ -709,6 +707,39 @@ struct make_key
 {
   key_type operator()(const double a, const char* b){ return key_type(a, b); }
 };
+
+template<class InputIt1, class InputIt2>
+double set_similarity(InputIt1 first1, InputIt1 last1,
+                      InputIt2 first2, InputIt2 last2)
+{
+  double num = 0, denom = 0;
+  while (first1 != last1 && first2 != last2) {
+    if (*first1 < *first2) {
+      ++first1; ++denom;
+    } else {
+      if (!(*first2 < *first1)) {
+        ++first1; ++num;
+      }
+      ++first2; ++denom;
+    }
+  }
+  denom += std::distance(first1, last1) + std::distance(first2, last2);
+  return num / denom;
+}
+
+namespace kdtools {
+
+template <>
+double scalar_diff(const std::string& lhs, const std::string& rhs)
+{
+  std::string a(lhs), b(rhs);
+  std::sort(begin(a), end(a));
+  std::sort(begin(b), end(b));
+  return 1 - set_similarity(begin(a), end(a),
+                            begin(b), end(b));
+}
+
+}; // namespace kdtools
 '
 
 header_file = "mixed_query.h"
@@ -758,6 +789,21 @@ void mixed_query(NumericVector c1, CharacterVector c2)
 
   Rcout << "\nFirst and last 5 elements of query return:\n" << std::endl;
   kd_sort(begin(result), end(result)); print_range(result);
+  
+  result.clear();
+  
+  auto v = time_it([&]{
+    
+    kd_nearest_neighbors(begin(data), end(data),
+                         key_type(0.5, "kdtools"), 100,
+                         back_inserter(result));
+    
+  });
+  
+  Rcout << "\nNeighbors query time: " << v.count() << " seconds" << std::endl;
+
+  Rcout << "\nFirst and last 5 elements of neighbors query return:\n" << std::endl;
+  kd_sort(begin(result), end(result)); print_range(result);
 }
 ```
 
@@ -771,6 +817,45 @@ mixed_query(signif(numbers, 4), strings)
 ```
 
 The timing results indicate that sorting $2 \times 10 ^ 5$ tuples is on the order of 1/10th second, whereas the range query returned in less than a millisecond.
+
+Nearest neighbor searching requires a suitable distance function be defined for all types. The computation above uses the following definitions.
+
+```{Rcpp eval=FALSE}
+template<class InputIt1, class InputIt2>
+double set_similarity(InputIt1 first1, InputIt1 last1,
+                      InputIt2 first2, InputIt2 last2)
+{
+  double num = 0, denom = 0;
+  while (first1 != last1 && first2 != last2) {
+    if (*first1 < *first2) {
+      ++first1; ++denom;
+    } else {
+      if (!(*first2 < *first1)) {
+        ++first1; ++num;
+      }
+      ++first2; ++denom;
+    }
+  }
+  denom += std::distance(first1, last1) + std::distance(first2, last2);
+  return num / denom;
+}
+
+namespace kdtools {
+
+template <>
+double scalar_diff(const std::string& lhs, const std::string& rhs)
+{
+  std::string a(lhs), b(rhs);
+  std::sort(begin(a), end(a));
+  std::sort(begin(b), end(b));
+  return 1 - set_similarity(begin(a), end(a),
+                            begin(b), end(b));
+}
+
+}; // namespace kdtools
+```
+
+The ```set_similarity``` template is adapted from the STL ```set_intersection``` template and produces a number between 0 and 1. I have not attempted to prove this distance is metric, so the results may not be entirely correct. Also, there is no facility currently available to weight distances in different dimensions or override the default root-sum-of-squares algorithm for the multivariate distance.
 
 ## Conclusions
 

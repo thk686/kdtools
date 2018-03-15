@@ -10,7 +10,7 @@ License: GPL
 Encoding: UTF-8
 LazyData: true
 Imports: Rcpp (>= 0.12.14)
-LinkingTo: Rcpp, strider, BH
+LinkingTo: Rcpp, strider
 Suggests: 
     testthat,
     knitr,

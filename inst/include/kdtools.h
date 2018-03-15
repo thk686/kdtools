@@ -1,3 +1,5 @@
+// Copyright Timothy H. Keitt 2018
+
 #ifndef __KDTOOLS_H__
 #define __KDTOOLS_H__
 
@@ -14,32 +16,8 @@
 
 namespace kdtools {
 
-// Customization points
-
-// template <typename TupleType>
-// struct tuple_size
-// {
-//   using type = typename std::tuple_size<TupleType>::type;
-//   using value_type = typename std::tuple_size<TupleType>::value_type;
-//   static constexpr auto value = std::tuple_size<TupleType>::value;
-// };
-//
-// template <std::size_t I, typename TupleType>
-// struct tuple_element
-// {
-//   using type = typename std::tuple_element<I, TupleType>::type;
-// };
-//
-// template <std::size_t I, typename TupleType>
-// using tuple_element_t = typename tuple_element<I, TupleType>::type;
-//
-// template <std::size_t I, typename T>
-// constexpr tuple_element_t<I, T>& get(T& x)
-// {
-//   return std::get<I>(x);
-// }
-
 // Specialize for non-numeric types
+// TODO: User defined distance functions
 
 template <typename T>
 double scalar_diff(const T& lhs, const T& rhs)
@@ -551,16 +529,21 @@ using detail::sum_of_squares;
 }; // namespace utils
 
 template <typename Iter>
+void lex_sort(Iter first, Iter last)
+{
+  std::sort(first, last, utils::kd_less<0>());
+}
+
+template <typename Iter, typename Compare>
+void lex_sort(Iter first, Iter last, const Compare& comp)
+{
+  std::sort(first, last, utils::make_kd_compare<0>(comp));
+}
+
+template <typename Iter>
 void kd_sort(Iter first, Iter last)
 {
   detail::kd_sort<0>(first, last);
-}
-
-template <typename Range>
-Range& kd_sort(Range& r)
-{
-  kd_sort(begin(r), end(r));
-  return r;
 }
 
 template <typename Iter>
@@ -569,23 +552,10 @@ bool kd_is_sorted(Iter first, Iter last)
   return detail::kd_is_sorted<0>(first, last);
 }
 
-template <typename Range>
-bool kd_is_sorted(Range& r)
-{
-  return kd_is_sorted(begin(r), end(r));
-}
-
 template <typename Iter, typename Compare>
 void kd_sort(Iter first, Iter last, const Compare& comp)
 {
   detail::kd_sort<0>(first, last, comp);
-}
-
-template <typename Range, typename Compare>
-Range& kd_sort(Range& r, const Compare& comp)
-{
-  kd_sort(begin(r), end(r), comp);
-  return r;
 }
 
 template <typename Iter, typename Compare>
@@ -594,23 +564,10 @@ bool kd_is_sorted(Iter first, Iter last, const Compare& comp)
   return detail::kd_is_sorted<0>(first, last, comp);
 }
 
-template <typename Range, typename Compare>
-bool kd_is_sorted(Range& r, const Compare& comp)
-{
-  return kd_is_sorted(begin(r), end(r), comp);
-}
-
 template <typename Iter>
 void kd_sort_threaded(Iter first, Iter last)
 {
   detail::kd_sort_threaded<0>(first, last);
-}
-
-template <typename Range>
-Range& kd_sort_threaded(Range& r)
-{
-  kd_sort_threaded(begin(r), end(r));
-  return r;
 }
 
 template <typename Iter, typename Value>
@@ -656,6 +613,67 @@ void kd_range_query(Iter first, Iter last,
   detail::kd_range_query<0>(first, last, lower, upper, outp);
 }
 
+template <typename Iter,
+          typename TupleType,
+          typename OutIter>
+void kd_nearest_neighbors(Iter first, Iter last,
+                          const TupleType& value,
+                          size_t n, OutIter outp)
+{
+  detail::n_best<Iter> q(n);
+  detail::knn<0>(first, last, value, q);
+  q.copy_to(outp);
+}
+
+// Quasi-range-like versions
+
+template <typename Range>
+Range& lex_sort(Range& r)
+{
+  std::sort(begin(r), end(r), utils::kd_less<0>());
+  return r;
+}
+
+template <typename Range, typename Compare>
+Range& lex_sort(Range& r, const Compare& comp)
+{
+  std::sort(begin(r), end(r), utils::make_kd_compare<0>(comp));
+  return r;
+}
+
+template <typename Range>
+Range& kd_sort(Range& r)
+{
+  kd_sort(begin(r), end(r));
+  return r;
+}
+
+template <typename Range>
+bool kd_is_sorted(Range& r)
+{
+  return kd_is_sorted(begin(r), end(r));
+}
+
+template <typename Range, typename Compare>
+Range& kd_sort(Range& r, const Compare& comp)
+{
+  kd_sort(begin(r), end(r), comp);
+  return r;
+}
+
+template <typename Range, typename Compare>
+bool kd_is_sorted(Range& r, const Compare& comp)
+{
+  return kd_is_sorted(begin(r), end(r), comp);
+}
+
+template <typename Range>
+Range& kd_sort_threaded(Range& r)
+{
+  kd_sort_threaded(begin(r), end(r));
+  return r;
+}
+
 template <typename Range,
           typename TupleType>
 Range kd_range_query(Range& r,
@@ -668,43 +686,6 @@ Range kd_range_query(Range& r,
   return res;
 }
 
-template <typename Iter>
-void lex_sort(Iter first, Iter last)
-{
-  std::sort(first, last, utils::kd_less<0>());
-}
-
-template <typename Range>
-Range& lex_sort(Range& r)
-{
-  std::sort(begin(r), end(r), utils::kd_less<0>());
-  return r;
-}
-
-template <typename Iter, typename Compare>
-void lex_sort(Iter first, Iter last, const Compare& comp)
-{
-  std::sort(first, last, utils::make_kd_compare<0>(comp));
-}
-
-template <typename Range, typename Compare>
-Range& lex_sort(Range& r, const Compare& comp)
-{
-  std::sort(begin(r), end(r), utils::make_kd_compare<0>(comp));
-  return r;
-}
-
-template <typename Iter,
-          typename TupleType,
-          typename OutIter>
-void kd_nearest_neighbors(Iter first, Iter last,
-                          const TupleType& value,
-                          size_t n, OutIter outp)
-{
-  detail::n_best<Iter> q(n);
-  detail::knn<0>(first, last, value, q);
-  q.copy_to(outp);
-}
 
 }; // namespace kdtools
 

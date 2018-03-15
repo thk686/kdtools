@@ -10,6 +10,14 @@ Provides various tools for working with multidimensional
 data in R and C++, including extremely fast nearest-neighbor- and range-
 queries without the overhead of linked tree nodes.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/thk686/kdtools}
+  \item Report bugs at \url{https://github.com/thk686/kdtools/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Timothy Keitt \email{tkeitt@gmail.com}
 

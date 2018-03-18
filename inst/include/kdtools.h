@@ -160,15 +160,20 @@ using iter_value_t = typename iterator_traits<T>::value_type;
 template <size_t I, typename Iter>
 Iter find_pivot(Iter first, Iter last)
 {
-  auto pred = less_nth<I>();
+  using T = iter_value_t<Iter>;
   auto pivot = middle_of(first, last);
-  return partition_point(first, pivot, bind(pred, _1, *pivot));
+  return partition_point(first, pivot, [&](const T& x){
+    return less_nth<I>()(x, *pivot);
+  });
 }
 
 template <typename Iter, typename Pred>
 Iter adjust_pivot(Iter first, Iter pivot, Pred pred)
 {
-  return partition(first, pivot, bind(pred, _1, *pivot));
+  using T = iter_value_t<Iter>;
+  return partition(first, pivot, [&](const T& x){
+    return pred(x, *pivot);
+  });
 }
 
 template <size_t I, typename Iter>
@@ -190,7 +195,10 @@ void kd_sort(Iter first, Iter last)
 template <typename Iter, typename Pred>
 bool check_partition(Iter first, Iter pivot, Iter last, Pred pred)
 {
-  return is_partitioned(first, last, bind(pred, _1, *pivot));
+  using T = iter_value_t<Iter>;
+  return is_partitioned(first, last, [&](const T& x){
+    return pred(x, *pivot);
+  });
 }
 
 template <size_t I, typename Iter>
@@ -427,17 +435,20 @@ void kd_range_query(Iter first, Iter last,
                     const TupleType& upper,
                     OutIter outp)
 {
-  switch(distance(first, last)) {
-  case 1 : if (within(*first, lower, upper)) *outp++ = *first;
-  case 0 : return; } // switch end
-  auto pred = less_nth<I>();
-  auto pivot = find_pivot<I>(first, last);
-  constexpr auto J = next_dim<I, TupleType>::value;
-  if (within(*pivot, lower, upper)) *outp++ = *pivot;
-  if (!pred(*pivot, lower)) // search left
-    kd_range_query<J>(first, pivot, lower, upper, outp);
-  if (pred(*pivot, upper)) // search right
-    kd_range_query<J>(next(pivot), last, lower, upper, outp);
+  if (distance(first, last) > 32) {
+    auto pred = less_nth<I>();
+    auto pivot = find_pivot<I>(first, last);
+    constexpr auto J = next_dim<I, TupleType>::value;
+    if (within(*pivot, lower, upper)) *outp++ = *pivot;
+    if (!pred(*pivot, lower)) // search left
+      kd_range_query<J>(first, pivot, lower, upper, outp);
+    if (pred(*pivot, upper)) // search right
+      kd_range_query<J>(next(pivot), last, lower, upper, outp);
+  } else {
+    copy_if(first, last, outp, [&](const TupleType& x){
+      return within(x, lower, upper);
+    });
+  }
   return;
 }
 
@@ -624,68 +635,6 @@ void kd_nearest_neighbors(Iter first, Iter last,
   detail::knn<0>(first, last, value, q);
   q.copy_to(outp);
 }
-
-// Quasi-range-like versions
-
-template <typename Range>
-Range& lex_sort(Range& r)
-{
-  std::sort(begin(r), end(r), utils::kd_less<0>());
-  return r;
-}
-
-template <typename Range, typename Compare>
-Range& lex_sort(Range& r, const Compare& comp)
-{
-  std::sort(begin(r), end(r), utils::make_kd_compare<0>(comp));
-  return r;
-}
-
-template <typename Range>
-Range& kd_sort(Range& r)
-{
-  kd_sort(begin(r), end(r));
-  return r;
-}
-
-template <typename Range>
-bool kd_is_sorted(Range& r)
-{
-  return kd_is_sorted(begin(r), end(r));
-}
-
-template <typename Range, typename Compare>
-Range& kd_sort(Range& r, const Compare& comp)
-{
-  kd_sort(begin(r), end(r), comp);
-  return r;
-}
-
-template <typename Range, typename Compare>
-bool kd_is_sorted(Range& r, const Compare& comp)
-{
-  return kd_is_sorted(begin(r), end(r), comp);
-}
-
-template <typename Range>
-Range& kd_sort_threaded(Range& r)
-{
-  kd_sort_threaded(begin(r), end(r));
-  return r;
-}
-
-template <typename Range,
-          typename TupleType>
-Range kd_range_query(Range& r,
-                     const TupleType& lower,
-                     const TupleType& upper)
-{
-  Range res;
-  auto outp = std::back_inserter(res);
-  kd_range_query(begin(r), end(r), lower, upper, outp);
-  return res;
-}
-
 
 }; // namespace kdtools
 

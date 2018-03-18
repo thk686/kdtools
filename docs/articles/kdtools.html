@@ -63,7 +63,7 @@
       <h1>Compact multidimensional sorting and searching with kdtools</h1>
                         <h4 class="author">Timothy H. Keitt</h4>
             
-            <h4 class="date">2018-03-14</h4>
+            <h4 class="date">2018-03-18</h4>
           </div>
 
     
@@ -209,10 +209,10 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">t</span>(<span class="kw"><a href="../reference/kdsort.html">kd_sort</a></span>(<span class="kw">cbind</span>(j, k)))</code></pre></div>
 <table class="table"><tbody>
 <tr class="odd">
-<td align="right">2</td>
-<td align="right">3</td>
 <td align="right">1</td>
 <td align="right">4</td>
+<td align="right">3</td>
+<td align="right">2</td>
 <td align="right">5</td>
 <td align="right">6</td>
 <td align="right">8</td>
@@ -220,15 +220,15 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
 <td align="right">7</td>
 </tr>
 <tr class="even">
-<td align="right">1</td>
-<td align="right">5</td>
 <td align="right">6</td>
-<td align="right">7</td>
+<td align="right">5</td>
 <td align="right">8</td>
-<td align="right">3</td>
-<td align="right">2</td>
-<td align="right">4</td>
 <td align="right">9</td>
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">4</td>
+<td align="right">7</td>
 </tr>
 </tbody></table>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">t</span>(<span class="kw"><a href="../reference/kdsort.html">kd_sort</a></span>(<span class="kw">cbind</span>(<span class="dv">0</span>, j, k)))</code></pre></div>
@@ -245,8 +245,8 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
 <td align="right">0</td>
 </tr>
 <tr class="even">
-<td align="right">2</td>
 <td align="right">1</td>
+<td align="right">2</td>
 <td align="right">3</td>
 <td align="right">4</td>
 <td align="right">5</td>
@@ -256,24 +256,24 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
 <td align="right">9</td>
 </tr>
 <tr class="odd">
-<td align="right">1</td>
 <td align="right">6</td>
-<td align="right">5</td>
-<td align="right">7</td>
-<td align="right">8</td>
-<td align="right">3</td>
 <td align="right">9</td>
+<td align="right">8</td>
+<td align="right">5</td>
 <td align="right">2</td>
+<td align="right">1</td>
+<td align="right">7</td>
+<td align="right">3</td>
 <td align="right">4</td>
 </tr>
 </tbody></table>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">t</span>(<span class="kw"><a href="../reference/kdsort.html">kd_sort</a></span>(<span class="kw">cbind</span>(j, k, <span class="dv">0</span>)))</code></pre></div>
 <table class="table"><tbody>
 <tr class="odd">
-<td align="right">2</td>
-<td align="right">3</td>
 <td align="right">1</td>
 <td align="right">4</td>
+<td align="right">3</td>
+<td align="right">2</td>
 <td align="right">5</td>
 <td align="right">6</td>
 <td align="right">8</td>
@@ -281,15 +281,15 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
 <td align="right">7</td>
 </tr>
 <tr class="even">
-<td align="right">1</td>
-<td align="right">5</td>
 <td align="right">6</td>
-<td align="right">7</td>
+<td align="right">5</td>
 <td align="right">8</td>
-<td align="right">3</td>
-<td align="right">2</td>
-<td align="right">4</td>
 <td align="right">9</td>
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">4</td>
+<td align="right">7</td>
 </tr>
 <tr class="odd">
 <td align="right">0</td>
@@ -356,17 +356,20 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
                     <span class="at">const</span> TupleType&amp; upper,
                     OutIter outp)
 {
-  <span class="cf">switch</span>(distance(first, last)) {
-  <span class="cf">case</span> <span class="dv">1</span> : <span class="cf">if</span> (within(*first, lower, upper)) *outp++ = *first;
-  <span class="cf">case</span> <span class="dv">0</span> : <span class="cf">return</span>; } <span class="co">// switch end</span>
-  <span class="kw">auto</span> pred = less_nth&lt;I&gt;();
-  <span class="kw">auto</span> pivot = find_pivot&lt;I&gt;(first, last);
-  <span class="kw">constexpr</span> <span class="kw">auto</span> J = next_dim&lt;I, TupleType&gt;::value;
-  <span class="cf">if</span> (within(*pivot, lower, upper)) *outp++ = *pivot;
-  <span class="cf">if</span> (!pred(*pivot, lower)) <span class="co">// search left</span>
-    kd_range_query&lt;J&gt;(first, pivot, lower, upper, outp);
-  <span class="cf">if</span> (pred(*pivot, upper)) <span class="co">// search right</span>
-    kd_range_query&lt;J&gt;(next(pivot), last, lower, upper, outp);
+  <span class="cf">if</span> (distance(first, last) &gt; <span class="dv">32</span>) {
+    <span class="kw">auto</span> pred = less_nth&lt;I&gt;();
+    <span class="kw">auto</span> pivot = find_pivot&lt;I&gt;(first, last);
+    <span class="kw">constexpr</span> <span class="kw">auto</span> J = next_dim&lt;I, TupleType&gt;::value;
+    <span class="cf">if</span> (within(*pivot, lower, upper)) *outp++ = *pivot;
+    <span class="cf">if</span> (!pred(*pivot, lower)) <span class="co">// search left</span>
+      kd_range_query&lt;J&gt;(first, pivot, lower, upper, outp);
+    <span class="cf">if</span> (pred(*pivot, upper)) <span class="co">// search right</span>
+      kd_range_query&lt;J&gt;(next(pivot), last, lower, upper, outp);
+  } <span class="cf">else</span> {
+    copy_if(first, last, outp, [&amp;](<span class="at">const</span> TupleType&amp; x){
+      <span class="cf">return</span> within(x, lower, upper);
+    });
+  }
   <span class="cf">return</span>;
 }</code></pre></div>
 <p>Here, each pivot element is tested to see whether it falls within the boxed region, in which case, it is assigned to the output iterator. The template <code>find_pivot</code> searches for the partition point whose position may or may not be the middle of the sequence. Leaf tuples are also tested and copied to the output iterator. We check in each dimension whether there might be additional points in the region of interest to the left or right in the array. These are searched recursively until reaching a leaf. In the following plot, the blue points indicate those not meeting the predicate and the aquamarine points are those where the predicate returns true.</p>
@@ -385,28 +388,28 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
 <tbody>
 <tr class="odd">
 <td align="left">kd_sort inplace</td>
-<td align="right">2.88</td>
-<td align="right">1.0</td>
+<td align="right">3.52</td>
+<td align="right">1.00</td>
 </tr>
 <tr class="even">
 <td align="left">kd_sort w/ copy</td>
-<td align="right">3.10</td>
-<td align="right">1.1</td>
+<td align="right">3.66</td>
+<td align="right">1.00</td>
 </tr>
 <tr class="odd">
 <td align="left">kd_sort_threaded</td>
-<td align="right">1.15</td>
-<td align="right">0.4</td>
+<td align="right">1.66</td>
+<td align="right">0.47</td>
 </tr>
 <tr class="even">
 <td align="left">rtree pack linear</td>
-<td align="right">3.63</td>
-<td align="right">1.3</td>
+<td align="right">4.11</td>
+<td align="right">1.20</td>
 </tr>
 <tr class="odd">
 <td align="left">rtree pack quadratic</td>
-<td align="right">3.69</td>
-<td align="right">1.3</td>
+<td align="right">4.08</td>
+<td align="right">1.20</td>
 </tr>
 </tbody>
 </table>
@@ -419,18 +422,18 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
 <tbody>
 <tr class="odd">
 <td align="left">kd_range_query</td>
-<td align="right">0.00109</td>
+<td align="right">0.000832</td>
 <td align="right">1.0</td>
 </tr>
 <tr class="even">
 <td align="left">rtree query linear</td>
-<td align="right">0.00244</td>
-<td align="right">2.2</td>
+<td align="right">0.002590</td>
+<td align="right">3.1</td>
 </tr>
 <tr class="odd">
 <td align="left">rtree query quadratic</td>
-<td align="right">0.00261</td>
-<td align="right">2.4</td>
+<td align="right">0.002680</td>
+<td align="right">3.2</td>
 </tr>
 </tbody>
 </table>
@@ -448,18 +451,18 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
 <tbody>
 <tr class="odd">
 <td align="left">kd_nearest_neighbor</td>
-<td align="right">6.60e-06</td>
+<td align="right">7.80e-06</td>
 <td align="right">1.0</td>
 </tr>
 <tr class="even">
 <td align="left">rtree nearest neighbor linear</td>
-<td align="right">5.54e-05</td>
-<td align="right">8.4</td>
+<td align="right">4.82e-05</td>
+<td align="right">6.2</td>
 </tr>
 <tr class="odd">
 <td align="left">rtree nearest neighbor quadratic</td>
-<td align="right">1.44e-05</td>
-<td align="right">2.2</td>
+<td align="right">1.38e-05</td>
+<td align="right">1.8</td>
 </tr>
 </tbody>
 </table>
@@ -472,18 +475,18 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
 <tbody>
 <tr class="odd">
 <td align="left">kd_nearest_neighbors 100</td>
-<td align="right">2.87e-05</td>
+<td align="right">3.85e-05</td>
 <td align="right">1.0</td>
 </tr>
 <tr class="even">
 <td align="left">rtree nearest 100 linear</td>
-<td align="right">1.30e-04</td>
-<td align="right">4.5</td>
+<td align="right">1.32e-04</td>
+<td align="right">3.4</td>
 </tr>
 <tr class="odd">
 <td align="left">rtree nearest 100 quadratic</td>
-<td align="right">5.75e-05</td>
-<td align="right">2.0</td>
+<td align="right">1.01e-04</td>
+<td align="right">2.6</td>
 </tr>
 </tbody>
 </table>
@@ -533,6 +536,21 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
 
   Rcout &lt;&lt; <span class="st">"</span><span class="sc">\n</span><span class="st">First and last 5 elements of query return:</span><span class="sc">\n</span><span class="st">"</span> &lt;&lt; <span class="bu">std::</span>endl;
   kd_sort(begin(result), end(result)); print_range(result);
+  
+  result.clear();
+  
+  <span class="kw">auto</span> v = time_it([&amp;]{
+    
+    kd_nearest_neighbors(begin(data), end(data),
+                         <span class="dt">key_type</span>(<span class="fl">0.5</span>, <span class="st">"kdtools"</span>), <span class="dv">100</span>,
+                         back_inserter(result));
+    
+  });
+  
+  Rcout &lt;&lt; <span class="st">"</span><span class="sc">\n</span><span class="st">Neighbors query time: "</span> &lt;&lt; v.count() &lt;&lt; <span class="st">" seconds"</span> &lt;&lt; <span class="bu">std::</span>endl;
+
+  Rcout &lt;&lt; <span class="st">"</span><span class="sc">\n</span><span class="st">First and last 5 elements of neighbors query return:</span><span class="sc">\n</span><span class="st">"</span> &lt;&lt; <span class="bu">std::</span>endl;
+  kd_sort(begin(result), end(result)); print_range(result);
 }</code></pre></div>
 <p>First the data are sorted and then a range query is conducted. The range query selects tuples where the first element ranges from <code>0.4</code> to <code>0.6</code> and the second element begins with letters <code>w</code> through <code>y</code>. For the test, we borrow the words from the <code>parts_of_speech</code> dataset from the <code>tidytext</code> package. It contains more than <span class="math inline">\(10^5\)</span> words.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(<span class="st">"parts_of_speech"</span>)
@@ -540,38 +558,88 @@ numbers =<span class="st"> </span><span class="kw">runif</span>(<span class="kw"
 strings =<span class="st"> </span><span class="kw">sample</span>(<span class="kw">tolower</span>(parts_of_speech[[<span class="dv">1</span>]]))
 <span class="kw">mixed_query</span>(<span class="kw">signif</span>(numbers, <span class="dv">4</span>), strings)
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Sort time: 0.103332 seconds</span>
+<span class="co">#&gt; Sort time: 0.135586 seconds</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; First and last 5 elements of sorted data:</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.0004176 abhorrent</span>
-<span class="co">#&gt; 1 0.000716 academicals</span>
-<span class="co">#&gt; 2 0.001479 absorptance</span>
-<span class="co">#&gt; 3 0.0001199 accountancy</span>
-<span class="co">#&gt; 4 0.002476 adder's-mouth</span>
+<span class="co">#&gt; 0 0.0009059 abrazos</span>
+<span class="co">#&gt; 1 0.002198 abfarad</span>
+<span class="co">#&gt; 2 0.002372 aboriginal</span>
+<span class="co">#&gt; 3 0.0007408 accordature</span>
+<span class="co">#&gt; 4 4.309e-05 activities</span>
 <span class="co">#&gt; ...</span>
-<span class="co">#&gt; 208254 0.9989 xty</span>
-<span class="co">#&gt; 208255 0.999 xyster</span>
-<span class="co">#&gt; 208256 0.9992 zigzag</span>
-<span class="co">#&gt; 208257 0.998 zurn</span>
-<span class="co">#&gt; 208258 0.9994 zoroastrianism</span>
+<span class="co">#&gt; 208254 0.9981 yesteryear</span>
+<span class="co">#&gt; 208255 0.9997 yacov</span>
+<span class="co">#&gt; 208256 0.9994 zho</span>
+<span class="co">#&gt; 208257 0.9986 zoha</span>
+<span class="co">#&gt; 208258 0.9997 zoolatrous</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Query time: 0.000256016 seconds</span>
+<span class="co">#&gt; Query time: 0.00016389 seconds</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; First and last 5 elements of query return:</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.4048 waddenzee</span>
-<span class="co">#&gt; 1 0.4071 wadding</span>
-<span class="co">#&gt; 2 0.4101 waals</span>
-<span class="co">#&gt; 3 0.4134 wage-plug</span>
-<span class="co">#&gt; 4 0.408 waikiki</span>
+<span class="co">#&gt; 0 0.4057 wae</span>
+<span class="co">#&gt; 1 0.403 walk-down</span>
+<span class="co">#&gt; 2 0.4073 wallop</span>
+<span class="co">#&gt; 3 0.4097 wadesworth</span>
+<span class="co">#&gt; 4 0.4054 warhorse</span>
 <span class="co">#&gt; ...</span>
-<span class="co">#&gt; 1055 0.5948 yasui</span>
-<span class="co">#&gt; 1056 0.5995 yekaterinoslav</span>
-<span class="co">#&gt; 1057 0.5944 yvonner</span>
-<span class="co">#&gt; 1058 0.5945 yike</span>
-<span class="co">#&gt; 1059 0.5983 yen</span></code></pre></div>
+<span class="co">#&gt; 1108 0.5971 xenocratic</span>
+<span class="co">#&gt; 1109 0.5987 yasht</span>
+<span class="co">#&gt; 1110 0.5926 yell</span>
+<span class="co">#&gt; 1111 0.5935 yuzik</span>
+<span class="co">#&gt; 1112 0.595 yha</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Neighbors query time: 0.000777039 seconds</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; First and last 5 elements of neighbors query return:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; 0 0.1906 kalathos</span>
+<span class="co">#&gt; 1 0.1869 kaleidoscopic</span>
+<span class="co">#&gt; 2 0.3525 katalyzed</span>
+<span class="co">#&gt; 3 0.4117 isologue</span>
+<span class="co">#&gt; 4 0.4134 joust</span>
+<span class="co">#&gt; ...</span>
+<span class="co">#&gt; 95 0.728 ladinos</span>
+<span class="co">#&gt; 96 0.7198 loferski</span>
+<span class="co">#&gt; 97 0.7304 lowsest</span>
+<span class="co">#&gt; 98 0.7435 lousewort</span>
+<span class="co">#&gt; 99 0.7477 lovesome</span></code></pre></div>
 <p>The timing results indicate that sorting <span class="math inline">\(2 \times 10 ^ 5\)</span> tuples is on the order of 1/10th second, whereas the range query returned in less than a millisecond.</p>
+<p>Nearest neighbor searching requires a suitable distance function be defined for all types. The computation above uses the following definitions.</p>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">template</span>&lt;<span class="kw">class</span> InputIt1, <span class="kw">class</span> InputIt2&gt;
+<span class="dt">double</span> set_similarity(InputIt1 first1, InputIt1 last1,
+                      InputIt2 first2, InputIt2 last2)
+{
+  <span class="dt">double</span> num = <span class="dv">0</span>, denom = <span class="dv">0</span>;
+  <span class="cf">while</span> (first1 != last1 &amp;&amp; first2 != last2) {
+    <span class="cf">if</span> (*first1 &lt; *first2) {
+      ++first1; ++denom;
+    } <span class="cf">else</span> {
+      <span class="cf">if</span> (!(*first2 &lt; *first1)) {
+        ++first1; ++num;
+      }
+      ++first2; ++denom;
+    }
+  }
+  denom += <span class="bu">std::</span>distance(first1, last1) + <span class="bu">std::</span>distance(first2, last2);
+  <span class="cf">return</span> num / denom;
+}
+
+<span class="kw">namespace</span> kdtools {
+
+<span class="kw">template</span> &lt;&gt;
+<span class="dt">double</span> scalar_diff(<span class="at">const</span> <span class="bu">std::</span>string&amp; lhs, <span class="at">const</span> <span class="bu">std::</span>string&amp; rhs)
+{
+  <span class="bu">std::</span>string a(lhs), b(rhs);
+  <span class="bu">std::</span>sort(begin(a), end(a));
+  <span class="bu">std::</span>sort(begin(b), end(b));
+  <span class="cf">return</span> <span class="dv">1</span> - set_similarity(begin(a), end(a),
+                            begin(b), end(b));
+}
+
+}; <span class="co">// namespace kdtools</span></code></pre></div>
+<p>The <code>set_similarity</code> template is adapted from the STL <code>set_intersection</code> template and produces a number between 0 and 1. I have not attempted to prove this distance is metric, so the results may not be entirely correct. Also, there is no facility currently available to weight distances in different dimensions or override the default root-sum-of-squares algorithm for the multivariate distance.</p>
 </div>
 </div>
 <div id="conclusions" class="section level2">

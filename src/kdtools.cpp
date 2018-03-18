@@ -8,15 +8,15 @@ List kd_sort__(List x, bool inplace, bool parallel)
   auto p = get_ptr<I>(x);
   if (inplace)
   {
-    if (parallel) kd_sort_threaded(*p);
-    else kd_sort(*p);
+    if (parallel) kd_sort_threaded(begin(*p), end(*p));
+    else kd_sort(begin(*p), end(*p));
     return x;
   }
   else
   {
     auto q = make_xptr(new arrayvec<I>(*p));
-    if (parallel) kd_sort_threaded(*q);
-    else kd_sort(*q);
+    if (parallel) kd_sort_threaded(begin(*q), end(*q));
+    else kd_sort(begin(*q), end(*q));
     return wrap_ptr(q);
   }
 }
@@ -42,7 +42,8 @@ List kd_sort_(List x, bool inplace = false, bool parallel = false)
 template <size_t I>
 bool kd_is_sorted__(List x)
 {
-  return kd_is_sorted(*get_ptr<I>(x));
+  auto p = get_ptr<I>(x);
+  return kd_is_sorted(begin(*p), end(*p));
 }
 
 // [[Rcpp::export]]
@@ -69,13 +70,13 @@ List lex_sort__(List x, bool inplace)
   auto p = get_ptr<I>(x);
   if (inplace)
   {
-    lex_sort(*p);
+    lex_sort(begin(*p), end(*p));
     return x;
   }
   else
   {
     auto q = make_xptr(new arrayvec<I>(*p));
-    lex_sort(*q);
+    lex_sort(begin(*q), end(*q));
     return wrap_ptr(q);
   }
 }
@@ -267,3 +268,4 @@ List kd_nearest_neighbors_(List x, NumericVector value, int n)
   default: stop("Invalid dimensions");
   }
 }
+

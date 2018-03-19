@@ -12,22 +12,27 @@ dim.arrayvec <- function(x) {
   return(c(x$nrow, x$ncol))
 }
 
+#' @param ... other parameters
 #' @rdname arrayvec
 #' @export
-as.matrix.arrayvec <- function(x) {
+as.matrix.arrayvec <- function(x, ...) {
   return(tuples_to_matrix(x))
 }
 
 #' @rdname arrayvec
 #' @export
-as.data.frame.arrayvec <- function(x) {
+as.data.frame.arrayvec <- function(x, ...) {
   return(as.data.frame(as.matrix(x)))
 }
 
+#' @param i row
+#' @param j column
+#' @param drop drop singleton dimensions if true
 #' @rdname arrayvec
 #' @export
 `[.arrayvec` <- function(x, i, j, drop = TRUE) {
-  if (missing(i)) i <- 1:nrow(x); rng = range(i - 1)
+  if (missing(i)) i <- 1:nrow(x)
+  rng <- range(i - 1)
   tuples_to_matrix_rows(x, rng[1], rng[2])[i - rng[1], j, drop = drop]
 }
 
@@ -39,17 +44,17 @@ as.data.frame.arrayvec <- function(x) {
 
 #' @rdname arrayvec
 #' @export
-print.arrayvec <- function(x) {
-  if (nrow(x) > 5)
-  {
-    if (ncol(x) > 5)
-    {
+print.arrayvec <- function(x, ...) {
+  if (nrow(x) > 5) {
+    if (ncol(x) > 5) {
       print(x[1:5, 1:5, FALSE])
       cat("(continues for", nrow(x) - 5, "and", ncol(x) - 5, "more rows and columns)\n")
     } else {
-      print(x[1:5,, FALSE])
+      print(x[1:5, , FALSE])
       cat("(continues for", nrow(x) - 5, "more rows)\n")
     }
   }
-  else print(as.matrix(x))
+  else {
+    print(as.matrix(x))
+  }
 }

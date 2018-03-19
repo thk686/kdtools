@@ -4,8 +4,7 @@ NULL
 
 #' Sort multidimensional data
 #' @param x a matrix or arrayvec object
-#' @param inplace update object inplace if true
-#' @param parallel use multithreading if true
+#' @param ... other arguments
 #' @details The algorithm used is a divide-and-conquer quicksort variant that
 #'   recursively partions an range of tuples using the median of each successive
 #'   dimension. Ties are resolved by cycling over successive dimensions. The
@@ -24,14 +23,14 @@ NULL
 kd_sort <- function(x, ...) UseMethod("kd_sort")
 
 #' @export
-kd_sort.matrix <- function(x, parallel = FALSE) {
+kd_sort.matrix <- function(x, parallel = FALSE, ...) {
   y <- matrix_to_tuples(x)
   kd_sort_(y, inplace = TRUE, parallel = parallel)
   return(tuples_to_matrix(y))
 }
 
 #' @export
-kd_sort.arrayvec <- function(x, inplace = FALSE, parallel = FALSE) {
+kd_sort.arrayvec <- function(x, inplace = FALSE, parallel = FALSE, ...) {
   return(kd_sort_(x, inplace = inplace, parallel = parallel))
 }
 
@@ -51,7 +50,7 @@ kd_is_sorted.arrayvec <- function(x) {
 
 #' Sort a matrix into lexicographical order
 #' @param x a matrix or arrayvec object
-#' @param inplace update object inplace if true
+#' @param ... other parameters
 #' @details Sorts a range of tuples into lexicographical order.
 #' @examples
 #' x = lex_sort(matrix(runif(200), 100))
@@ -62,14 +61,14 @@ kd_is_sorted.arrayvec <- function(x) {
 lex_sort <- function(x, ...) UseMethod("lex_sort")
 
 #' @export
-lex_sort.matrix <- function(x) {
+lex_sort.matrix <- function(x, ...) {
   y <- matrix_to_tuples(x)
   lex_sort_(y, inplace = TRUE)
   return(tuples_to_matrix(y))
 }
 
 #' @export
-lex_sort.arrayvec <- function(x, inplace = FALSE) {
+lex_sort.arrayvec <- function(x, inplace = FALSE, ...) {
   return(lex_sort_(x, inplace = inplace))
 }
 
@@ -191,4 +190,3 @@ kd_nearest_neighbor.matrix <- function(x, v) {
 kd_nearest_neighbor.arrayvec <- function(x, v) {
   return(kd_nearest_neighbor_(x, v))
 }
-

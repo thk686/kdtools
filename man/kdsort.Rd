@@ -12,9 +12,7 @@ kd_is_sorted(x)
 \arguments{
 \item{x}{a matrix or arrayvec object}
 
-\item{inplace}{update object inplace if true}
-
-\item{parallel}{use multithreading if true}
+\item{...}{other arguments}
 }
 \description{
 Sort multidimensional data

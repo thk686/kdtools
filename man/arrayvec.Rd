@@ -12,18 +12,26 @@
 \usage{
 \method{dim}{arrayvec}(x)
 
-\method{as.matrix}{arrayvec}(x)
+\method{as.matrix}{arrayvec}(x, ...)
 
-\method{as.data.frame}{arrayvec}(x)
+\method{as.data.frame}{arrayvec}(x, ...)
 
 \method{[}{arrayvec}(x, i, j, drop = TRUE)
 
 \method{[[}{arrayvec}(x, ...)
 
-\method{print}{arrayvec}(x)
+\method{print}{arrayvec}(x, ...)
 }
 \arguments{
 \item{x}{an arrayvec object}
+
+\item{...}{other parameters}
+
+\item{i}{row}
+
+\item{j}{column}
+
+\item{drop}{drop singleton dimensions if true}
 }
 \description{
 Support for C++ vector of arrays

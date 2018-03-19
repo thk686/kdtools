@@ -9,7 +9,7 @@ lex_sort(x, ...)
 \arguments{
 \item{x}{a matrix or arrayvec object}
 
-\item{inplace}{update object inplace if true}
+\item{...}{other parameters}
 }
 \description{
 Sort a matrix into lexicographical order

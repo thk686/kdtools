@@ -63,7 +63,7 @@
       <h1>Compact multidimensional sorting and searching with kdtools</h1>
                         <h4 class="author">Timothy H. Keitt</h4>
             
-            <h4 class="date">2018-03-18</h4>
+            <h4 class="date">2018-03-19</h4>
           </div>
 
     
@@ -210,9 +210,9 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
 <table class="table"><tbody>
 <tr class="odd">
 <td align="right">1</td>
-<td align="right">4</td>
-<td align="right">3</td>
 <td align="right">2</td>
+<td align="right">3</td>
+<td align="right">4</td>
 <td align="right">5</td>
 <td align="right">6</td>
 <td align="right">8</td>
@@ -220,15 +220,15 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
 <td align="right">7</td>
 </tr>
 <tr class="even">
-<td align="right">6</td>
-<td align="right">5</td>
-<td align="right">8</td>
-<td align="right">9</td>
 <td align="right">2</td>
 <td align="right">1</td>
-<td align="right">3</td>
-<td align="right">4</td>
 <td align="right">7</td>
+<td align="right">9</td>
+<td align="right">8</td>
+<td align="right">4</td>
+<td align="right">3</td>
+<td align="right">5</td>
+<td align="right">6</td>
 </tr>
 </tbody></table>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">t</span>(<span class="kw"><a href="../reference/kdsort.html">kd_sort</a></span>(<span class="kw">cbind</span>(<span class="dv">0</span>, j, k)))</code></pre></div>
@@ -245,8 +245,8 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
 <td align="right">0</td>
 </tr>
 <tr class="even">
-<td align="right">1</td>
 <td align="right">2</td>
+<td align="right">1</td>
 <td align="right">3</td>
 <td align="right">4</td>
 <td align="right">5</td>
@@ -256,24 +256,24 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
 <td align="right">9</td>
 </tr>
 <tr class="odd">
-<td align="right">6</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">7</td>
 <td align="right">9</td>
 <td align="right">8</td>
-<td align="right">5</td>
-<td align="right">2</td>
-<td align="right">1</td>
-<td align="right">7</td>
-<td align="right">3</td>
 <td align="right">4</td>
+<td align="right">6</td>
+<td align="right">3</td>
+<td align="right">5</td>
 </tr>
 </tbody></table>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">t</span>(<span class="kw"><a href="../reference/kdsort.html">kd_sort</a></span>(<span class="kw">cbind</span>(j, k, <span class="dv">0</span>)))</code></pre></div>
 <table class="table"><tbody>
 <tr class="odd">
 <td align="right">1</td>
-<td align="right">4</td>
-<td align="right">3</td>
 <td align="right">2</td>
+<td align="right">3</td>
+<td align="right">4</td>
 <td align="right">5</td>
 <td align="right">6</td>
 <td align="right">8</td>
@@ -281,15 +281,15 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
 <td align="right">7</td>
 </tr>
 <tr class="even">
-<td align="right">6</td>
-<td align="right">5</td>
-<td align="right">8</td>
-<td align="right">9</td>
 <td align="right">2</td>
 <td align="right">1</td>
-<td align="right">3</td>
-<td align="right">4</td>
 <td align="right">7</td>
+<td align="right">9</td>
+<td align="right">8</td>
+<td align="right">4</td>
+<td align="right">3</td>
+<td align="right">5</td>
+<td align="right">6</td>
 </tr>
 <tr class="odd">
 <td align="right">0</td>
@@ -344,7 +344,7 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
 <div id="searching" class="section level3">
 <h3 class="hasAnchor">
 <a href="#searching" class="anchor"></a>Searching</h3>
-<p>Once data are ordered appropriately, searching can be achieved efficiently. The <code>kdtools</code> package provides analogs of the STL <code>lower_bound</code>, <code>upper_bound</code>, <code>equal_range</code> and <code>binary_search</code> functions for querying sorted ranges. An additional function, <code>kd_range_query</code>, does efficient searching within a boxed region.</p>
+<p>Once data are ordered appropriately, searching can be achieved efficiently. The <code>kdtools</code> package provides analogs of the STL <a href="http://en.cppreference.com/w/cpp/algorithm/lower_bound"><code>lower_bound</code></a>, <a href="http://en.cppreference.com/w/cpp/algorithm/upper_bound"><code>upper_bound</code></a>, <a href="http://en.cppreference.com/w/cpp/algorithm/equal_range"><code>equal_range</code></a> and <a href="http://en.cppreference.com/w/cpp/algorithm/binary_search"><code>binary_search</code></a> functions for querying sorted ranges. An additional function, <code>kd_range_query</code>, does efficient searching within a boxed region.</p>
 <p>The <code>kd_lower_bound</code>, <code>kd_upper_bound</code> and <code>kd_equal_range</code> algorithms behave differently than their unidimensional analogs. This is because the only reasonable definition of multidimensional less is to require less in all dimensions simultaneously. As illustrated below, this leads to cases where some, but not all, elements are less to be included in the interval spanned by <code>kd_lower_bound</code>, <code>kd_upper_bound</code> and <code>kd_equal_range</code>. In other words, in a single dimension, these routines are both necessary and sufficient, whereas in multiple-dimensions, they are necessary, but not sufficient to uniquely identify elements in a boxed region.</p>
 <p>In other schemes, such as <a href="https://en.wikipedia.org/wiki/Z-order_curve">Morton codes</a>, elaborate subroutines are required to prune the extra elements falling outside the region of interest (see lower-left panel below). This is a result of using a fundamentally unidimensional search on multidimensional data. Instead <code>kd_sort</code> implements direct binary search for points falling within a boxed region.</p>
 <div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">template</span> &lt;<span class="dt">size_t</span> I,
@@ -372,7 +372,7 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
   }
   <span class="cf">return</span>;
 }</code></pre></div>
-<p>Here, each pivot element is tested to see whether it falls within the boxed region, in which case, it is assigned to the output iterator. The template <code>find_pivot</code> searches for the partition point whose position may or may not be the middle of the sequence. Leaf tuples are also tested and copied to the output iterator. We check in each dimension whether there might be additional points in the region of interest to the left or right in the array. These are searched recursively until reaching a leaf. In the following plot, the blue points indicate those not meeting the predicate and the aquamarine points are those where the predicate returns true.</p>
+<p>Here, each pivot element is tested to see whether it falls within the boxed region, in which case, it is assigned to the output iterator. The template <code>find_pivot</code> searches for the partition point whose position may or may not be the middle of the sequence. Leaf tuples are also tested and copied to the output iterator. We check in each dimension whether there might be additional points in the region of interest to the left or right in the array. These are searched recursively until reaching the span falls below a threshold and is more profitably searched via sequential scan. In the following plot, the blue points indicate those not meeting the predicate and the aquamarine points are those where the predicate returns true.</p>
 <p><img src="kdtools_files/figure-html/unnamed-chunk-9-1.png" width="480"></p>
 </div>
 <div id="performance-comparison-to-boost-geometry" class="section level3">
@@ -388,27 +388,27 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
 <tbody>
 <tr class="odd">
 <td align="left">kd_sort inplace</td>
-<td align="right">3.52</td>
+<td align="right">3.140</td>
 <td align="right">1.00</td>
 </tr>
 <tr class="even">
 <td align="left">kd_sort w/ copy</td>
-<td align="right">3.66</td>
+<td align="right">3.260</td>
 <td align="right">1.00</td>
 </tr>
 <tr class="odd">
 <td align="left">kd_sort_threaded</td>
-<td align="right">1.66</td>
-<td align="right">0.47</td>
+<td align="right">0.512</td>
+<td align="right">0.16</td>
 </tr>
 <tr class="even">
 <td align="left">rtree pack linear</td>
-<td align="right">4.11</td>
+<td align="right">3.820</td>
 <td align="right">1.20</td>
 </tr>
 <tr class="odd">
 <td align="left">rtree pack quadratic</td>
-<td align="right">4.08</td>
+<td align="right">3.800</td>
 <td align="right">1.20</td>
 </tr>
 </tbody>
@@ -422,18 +422,18 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
 <tbody>
 <tr class="odd">
 <td align="left">kd_range_query</td>
-<td align="right">0.000832</td>
+<td align="right">0.00108</td>
 <td align="right">1.0</td>
 </tr>
 <tr class="even">
 <td align="left">rtree query linear</td>
-<td align="right">0.002590</td>
+<td align="right">0.00339</td>
 <td align="right">3.1</td>
 </tr>
 <tr class="odd">
 <td align="left">rtree query quadratic</td>
-<td align="right">0.002680</td>
-<td align="right">3.2</td>
+<td align="right">0.00312</td>
+<td align="right">2.9</td>
 </tr>
 </tbody>
 </table>
@@ -451,18 +451,18 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
 <tbody>
 <tr class="odd">
 <td align="left">kd_nearest_neighbor</td>
-<td align="right">7.80e-06</td>
+<td align="right">1.07e-05</td>
 <td align="right">1.0</td>
 </tr>
 <tr class="even">
 <td align="left">rtree nearest neighbor linear</td>
-<td align="right">4.82e-05</td>
-<td align="right">6.2</td>
+<td align="right">6.08e-05</td>
+<td align="right">5.7</td>
 </tr>
 <tr class="odd">
 <td align="left">rtree nearest neighbor quadratic</td>
-<td align="right">1.38e-05</td>
-<td align="right">1.8</td>
+<td align="right">1.73e-05</td>
+<td align="right">1.6</td>
 </tr>
 </tbody>
 </table>
@@ -475,18 +475,18 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
 <tbody>
 <tr class="odd">
 <td align="left">kd_nearest_neighbors 100</td>
-<td align="right">3.85e-05</td>
+<td align="right">4.23e-05</td>
 <td align="right">1.0</td>
 </tr>
 <tr class="even">
 <td align="left">rtree nearest 100 linear</td>
-<td align="right">1.32e-04</td>
-<td align="right">3.4</td>
+<td align="right">1.61e-04</td>
+<td align="right">3.8</td>
 </tr>
 <tr class="odd">
 <td align="left">rtree nearest 100 quadratic</td>
-<td align="right">1.01e-04</td>
-<td align="right">2.6</td>
+<td align="right">6.00e-05</td>
+<td align="right">1.4</td>
 </tr>
 </tbody>
 </table>
@@ -496,7 +496,7 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
 <div id="mixed-type-searches" class="section level3">
 <h3 class="hasAnchor">
 <a href="#mixed-type-searches" class="anchor"></a>Mixed-type searches</h3>
-<p>Notice that the only requirement of the algorithms is that the <code>get&lt;I&gt;</code> function return an object meeting the <a href="http://en.cppreference.com/w/cpp/concept/EqualityComparable">EqualityComparable</a> and <a href="http://en.cppreference.com/w/cpp/concept/LessThanComparable">LessThanComparable</a> C++ concepts. This means that different dimensions can contain different data types, including strings, for example. The current implementation uses <code>std::get</code> and so is restricted to <code>std::pair</code>, <code>std::tuple</code> and <code>std::array</code>, unless one chooses to specializes in the <code>std</code> namespace, which is generally not recommended. A suitable mechanism for providing type-specific specializations is to-be-implemented. The following example demonstrates sorting and searching a container holding keys of type <code>std::tuple&lt;double, std::string&gt;</code>.</p>
+<p>Notice that the only requirement of the algorithms is that the <code>get&lt;I&gt;</code> function return a type meeting the <a href="http://en.cppreference.com/w/cpp/concept/EqualityComparable">EqualityComparable</a> and <a href="http://en.cppreference.com/w/cpp/concept/LessThanComparable">LessThanComparable</a> C++ concepts. This means that different dimensions can contain different data types, including strings, for example. The current implementation uses <code>std::get</code> and so is restricted to <code>std::pair</code>, <code>std::tuple</code> and <code>std::array</code>, unless one chooses to specializes in the <code>std</code> namespace, which is generally not recommended. A suitable mechanism for providing type-specific specializations is to-be-implemented. The following example demonstrates sorting and searching a container holding keys of type <code>std::tuple&lt;double, std::string&gt;</code>.</p>
 <div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="co">// [[Rcpp::depends(kdtools)]]</span>
 <span class="co">// [[Rcpp::plugins(cpp11)]]</span>
 
@@ -550,7 +550,7 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
   Rcout &lt;&lt; <span class="st">"</span><span class="sc">\n</span><span class="st">Neighbors query time: "</span> &lt;&lt; v.count() &lt;&lt; <span class="st">" seconds"</span> &lt;&lt; <span class="bu">std::</span>endl;
 
   Rcout &lt;&lt; <span class="st">"</span><span class="sc">\n</span><span class="st">First and last 5 elements of neighbors query return:</span><span class="sc">\n</span><span class="st">"</span> &lt;&lt; <span class="bu">std::</span>endl;
-  kd_sort(begin(result), end(result)); print_range(result);
+  print_range(result);
 }</code></pre></div>
 <p>First the data are sorted and then a range query is conducted. The range query selects tuples where the first element ranges from <code>0.4</code> to <code>0.6</code> and the second element begins with letters <code>w</code> through <code>y</code>. For the test, we borrow the words from the <code>parts_of_speech</code> dataset from the <code>tidytext</code> package. It contains more than <span class="math inline">\(10^5\)</span> words.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(<span class="st">"parts_of_speech"</span>)
@@ -558,55 +558,55 @@ numbers =<span class="st"> </span><span class="kw">runif</span>(<span class="kw"
 strings =<span class="st"> </span><span class="kw">sample</span>(<span class="kw">tolower</span>(parts_of_speech[[<span class="dv">1</span>]]))
 <span class="kw">mixed_query</span>(<span class="kw">signif</span>(numbers, <span class="dv">4</span>), strings)
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Sort time: 0.135586 seconds</span>
+<span class="co">#&gt; Sort time: 0.131767 seconds</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; First and last 5 elements of sorted data:</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.0009059 abrazos</span>
-<span class="co">#&gt; 1 0.002198 abfarad</span>
-<span class="co">#&gt; 2 0.002372 aboriginal</span>
-<span class="co">#&gt; 3 0.0007408 accordature</span>
-<span class="co">#&gt; 4 4.309e-05 activities</span>
+<span class="co">#&gt; 0 0.0005166 abiu</span>
+<span class="co">#&gt; 1 0.001755 ablock</span>
+<span class="co">#&gt; 2 0.001756 abjuratory</span>
+<span class="co">#&gt; 3 0.0009345 abruptly</span>
+<span class="co">#&gt; 4 8.281e-05 acnemia</span>
 <span class="co">#&gt; ...</span>
-<span class="co">#&gt; 208254 0.9981 yesteryear</span>
-<span class="co">#&gt; 208255 0.9997 yacov</span>
-<span class="co">#&gt; 208256 0.9994 zho</span>
-<span class="co">#&gt; 208257 0.9986 zoha</span>
-<span class="co">#&gt; 208258 0.9997 zoolatrous</span>
+<span class="co">#&gt; 208254 0.9965 youlton</span>
+<span class="co">#&gt; 208255 0.9998 xylem</span>
+<span class="co">#&gt; 208256 0.9963 yseult</span>
+<span class="co">#&gt; 208257 0.9979 zeolite</span>
+<span class="co">#&gt; 208258 0.9995 zap</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Query time: 0.00016389 seconds</span>
+<span class="co">#&gt; Query time: 0.000132336 seconds</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; First and last 5 elements of query return:</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.4057 wae</span>
-<span class="co">#&gt; 1 0.403 walk-down</span>
-<span class="co">#&gt; 2 0.4073 wallop</span>
-<span class="co">#&gt; 3 0.4097 wadesworth</span>
-<span class="co">#&gt; 4 0.4054 warhorse</span>
+<span class="co">#&gt; 0 0.4007 wadeable</span>
+<span class="co">#&gt; 1 0.4013 wandle</span>
+<span class="co">#&gt; 2 0.4051 wanderoos</span>
+<span class="co">#&gt; 3 0.4084 wammuses</span>
+<span class="co">#&gt; 4 0.4074 warrensburg</span>
 <span class="co">#&gt; ...</span>
-<span class="co">#&gt; 1108 0.5971 xenocratic</span>
-<span class="co">#&gt; 1109 0.5987 yasht</span>
-<span class="co">#&gt; 1110 0.5926 yell</span>
-<span class="co">#&gt; 1111 0.5935 yuzik</span>
-<span class="co">#&gt; 1112 0.595 yha</span>
+<span class="co">#&gt; 1078 0.5981 yellowlegs</span>
+<span class="co">#&gt; 1079 0.5999 yeorgi</span>
+<span class="co">#&gt; 1080 0.5878 yuma</span>
+<span class="co">#&gt; 1081 0.5925 yggdrasil</span>
+<span class="co">#&gt; 1082 0.5993 yuquillas</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Neighbors query time: 0.000777039 seconds</span>
+<span class="co">#&gt; Neighbors query time: 0.000915024 seconds</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; First and last 5 elements of neighbors query return:</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.1906 kalathos</span>
-<span class="co">#&gt; 1 0.1869 kaleidoscopic</span>
-<span class="co">#&gt; 2 0.3525 katalyzed</span>
-<span class="co">#&gt; 3 0.4117 isologue</span>
-<span class="co">#&gt; 4 0.4134 joust</span>
+<span class="co">#&gt; 0 0.3601 lotze</span>
+<span class="co">#&gt; 1 0.6366 kolar</span>
+<span class="co">#&gt; 2 0.6348 kristofer</span>
+<span class="co">#&gt; 3 0.6321 kelsi</span>
+<span class="co">#&gt; 4 0.6304 lasso</span>
 <span class="co">#&gt; ...</span>
-<span class="co">#&gt; 95 0.728 ladinos</span>
-<span class="co">#&gt; 96 0.7198 loferski</span>
-<span class="co">#&gt; 97 0.7304 lowsest</span>
-<span class="co">#&gt; 98 0.7435 lousewort</span>
-<span class="co">#&gt; 99 0.7477 lovesome</span></code></pre></div>
+<span class="co">#&gt; 95 0.3495 kosti</span>
+<span class="co">#&gt; 96 0.3719 kookiest</span>
+<span class="co">#&gt; 97 0.3744 loxodont</span>
+<span class="co">#&gt; 98 0.5431 kentwood</span>
+<span class="co">#&gt; 99 0.6411 kelotomies</span></code></pre></div>
 <p>The timing results indicate that sorting <span class="math inline">\(2 \times 10 ^ 5\)</span> tuples is on the order of 1/10th second, whereas the range query returned in less than a millisecond.</p>
-<p>Nearest neighbor searching requires a suitable distance function be defined for all types. The computation above uses the following definitions.</p>
+<p>Nearest neighbor searching requires a suitable distance function be defined for all types. There are two specialization points: the templates <code>scalar_diff</code>, which returns a possibly signed difference between to objects, and <code>scalar_dist</code>, which returns the distance along a single dimension. Currently, nearest neighbor distances are hardwired as the L2 norm of the returned scalar differences computed for each dimension. The computation above uses the following definitions.</p>
 <div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">template</span>&lt;<span class="kw">class</span> InputIt1, <span class="kw">class</span> InputIt2&gt;
 <span class="dt">double</span> set_similarity(InputIt1 first1, InputIt1 last1,
                       InputIt2 first2, InputIt2 last2)

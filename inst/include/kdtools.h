@@ -16,6 +16,12 @@
 
 namespace kdtools {
 
+template <typename T>
+struct ndim
+{
+  static constexpr auto value = std::tuple_size<T>::value;
+};
+
 // Specialize for non-numeric types
 // TODO: User defined distance functions
 
@@ -43,7 +49,6 @@ using std::vector;
 using std::distance;
 using std::enable_if;
 using std::partition;
-using std::tuple_size;
 using std::nth_element;
 using std::tuple_element;
 using std::numeric_limits;
@@ -90,19 +95,19 @@ struct incr_wrap
 template <size_t I, typename T>
 struct next_dim
 {
-  static constexpr auto value = incr_wrap<I, tuple_size<T>::value>::value;
+  static constexpr auto value = incr_wrap<I, ndim<T>::value>::value;
 };
 
 template <size_t I, typename TupleType>
 struct is_not_last
 {
-  static constexpr auto value = I != tuple_size<TupleType>::value - 1;
+  static constexpr auto value = I != ndim<TupleType>::value - 1;
 };
 
 template<size_t I, typename TupleType>
 struct is_last
 {
-  static constexpr auto value = I == tuple_size<TupleType>::value - 1;
+  static constexpr auto value = I == ndim<TupleType>::value - 1;
 };
 
 template <size_t I, size_t K = 0>

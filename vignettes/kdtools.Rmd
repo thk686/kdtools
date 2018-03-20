@@ -217,7 +217,7 @@ Notice that ```kd_sort``` falls-back to the quicksort algorithm in one dimension
 
 ### Searching
 
-Once data are ordered appropriately, searching can be achieved efficiently. The ```kdtools``` package provides analogs of the STL ```lower_bound```, ```upper_bound```, ```equal_range``` and ```binary_search``` functions for querying sorted ranges. An additional function, ```kd_range_query```, does efficient searching within a boxed region.
+Once data are ordered appropriately, searching can be achieved efficiently. The ```kdtools``` package provides analogs of the STL [```lower_bound```](http://en.cppreference.com/w/cpp/algorithm/lower_bound), [```upper_bound```](http://en.cppreference.com/w/cpp/algorithm/upper_bound), [```equal_range```](http://en.cppreference.com/w/cpp/algorithm/equal_range) and [```binary_search```](http://en.cppreference.com/w/cpp/algorithm/binary_search) functions for querying sorted ranges. An additional function, ```kd_range_query```, does efficient searching within a boxed region.
 
 The ```kd_lower_bound```, ```kd_upper_bound``` and ```kd_equal_range``` algorithms behave differently than their unidimensional analogs. This is because the only reasonable definition of multidimensional less is to require less in all dimensions simultaneously. As illustrated below, this leads to cases where some, but not all, elements are less to be included in the interval spanned by ```kd_lower_bound```, ```kd_upper_bound``` and ```kd_equal_range```. In other words, in a single dimension, these routines are both necessary and sufficient, whereas in multiple-dimensions, they are necessary, but not sufficient to uniquely identify elements in a boxed region. 
 
@@ -251,7 +251,7 @@ void kd_range_query(Iter first, Iter last,
 }
 ```
 
-Here, each pivot element is tested to see whether it falls within the boxed region, in which case, it is assigned to the output iterator. The template ```find_pivot``` searches for the partition point whose position may or may not be the middle of the sequence. Leaf tuples are also tested and copied to the output iterator. We check in each dimension whether there might be additional points in the region of interest to the left or right in the array. These are searched recursively until reaching a leaf. In the following plot, the blue points indicate those not meeting the predicate and the aquamarine points are those where the predicate returns true.
+Here, each pivot element is tested to see whether it falls within the boxed region, in which case, it is assigned to the output iterator. The template ```find_pivot``` searches for the partition point whose position may or may not be the middle of the sequence. Leaf tuples are also tested and copied to the output iterator. We check in each dimension whether there might be additional points in the region of interest to the left or right in the array. These are searched recursively until reaching the span falls below a threshold and is more profitably searched via sequential scan. In the following plot, the blue points indicate those not meeting the predicate and the aquamarine points are those where the predicate returns true.
 
 ```{r fig.width=5, fig.height=5, echo=FALSE}
 xy = matrix(runif(1e3), nc = 2)
@@ -649,7 +649,7 @@ As before, the results show kdtools to be as fast or faster than Boost Geometry 
 
 ### Mixed-type searches
 
-Notice that the only requirement of the algorithms is that the ```get<I>``` function return an object meeting the [EqualityComparable](http://en.cppreference.com/w/cpp/concept/EqualityComparable) and [LessThanComparable](http://en.cppreference.com/w/cpp/concept/LessThanComparable) C++ concepts. This means that different dimensions can contain different data types, including strings, for example. The current implementation uses ```std::get``` and so is restricted to ```std::pair```, ```std::tuple``` and ```std::array```, unless one chooses to specializes in the ```std``` namespace, which is generally not recommended. A suitable mechanism for providing type-specific specializations is to-be-implemented. The following example demonstrates sorting and searching a container holding keys of type ```std::tuple<double, std::string>```.
+Notice that the only requirement of the algorithms is that the ```get<I>``` function return a type meeting the [EqualityComparable](http://en.cppreference.com/w/cpp/concept/EqualityComparable) and [LessThanComparable](http://en.cppreference.com/w/cpp/concept/LessThanComparable) C++ concepts. This means that different dimensions can contain different data types, including strings, for example. The current implementation uses ```std::get``` and so is restricted to ```std::pair```, ```std::tuple``` and ```std::array```, unless one chooses to specializes in the ```std``` namespace, which is generally not recommended. A suitable mechanism for providing type-specific specializations is to-be-implemented. The following example demonstrates sorting and searching a container holding keys of type ```std::tuple<double, std::string>```.
 
 ```{r include=FALSE}
 header_code = '

@@ -8,6 +8,23 @@
 #' @aliases arrayvec
 #' @rdname arrayvec
 #' @export
+print.arrayvec <- function(x, ...) {
+  if (nrow(x) > 5) {
+    if (ncol(x) > 5) {
+      print(x[1:5, 1:5, FALSE])
+      cat("(continues for", nrow(x) - 5, "and", ncol(x) - 5, "more rows and columns)\n")
+    } else {
+      print(x[1:5, , FALSE])
+      cat("(continues for", nrow(x) - 5, "more rows)\n")
+    }
+  }
+  else {
+    print(as.matrix(x))
+  }
+}
+
+#' @rdname arrayvec
+#' @export
 dim.arrayvec <- function(x) {
   return(c(x$nrow, x$ncol))
 }
@@ -42,19 +59,3 @@ as.data.frame.arrayvec <- function(x, ...) {
   as.matrix(x)[[...]]
 }
 
-#' @rdname arrayvec
-#' @export
-print.arrayvec <- function(x, ...) {
-  if (nrow(x) > 5) {
-    if (ncol(x) > 5) {
-      print(x[1:5, 1:5, FALSE])
-      cat("(continues for", nrow(x) - 5, "and", ncol(x) - 5, "more rows and columns)\n")
-    } else {
-      print(x[1:5, , FALSE])
-      cat("(continues for", nrow(x) - 5, "more rows)\n")
-    }
-  }
-  else {
-    print(as.matrix(x))
-  }
-}

@@ -21,7 +21,7 @@ test_that("nearest neighbors works", {
 })
 
 r_nns <- function(x, y, n) {
-  x[which(rank(sapply(1:nrow(x), function(i) dist(rbind(x[i, ], y)))) <= n),, drop = FALSE]
+  x[which(rank(sapply(1:nrow(x), function(i) dist(rbind(x[i, ], y)))) <= n), , drop = FALSE]
 }
 
 test_that("nearest neighbors works", {

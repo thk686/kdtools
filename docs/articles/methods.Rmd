@@ -27,7 +27,7 @@ bench_ntrials = 21
 
 ## Introduction
 
-Sorting and searching are fundamental operations in computer and data science. The objective of the ```kdtools``` is to expose a C++ header file implementing efficient sorting and searching methods for multidimensional tuple-like data. The interface mirrors that of the  [C++ Standard Template Library (STL)](http://en.cppreference.com/w/) sorting and searching functions. It is a single header-only library with no external dependencies other than ```std```.
+Sorting and searching are fundamental operations in computer and data science. The objective of the ```kdtools``` is to expose a C++ header file implementing efficient sorting and searching methods for multidimensional tuple-like data. The interface mirrors that of the  [C++ Standard Template Library (STL)](http://en.cppreference.com/w/) sorting and searching functions.
 
 A common approach to improving search performance is to place data into an ordered tree structure, the most common being a binary tree and its variants. Computer textbooks and introductory courses are littered with examples of tree structures, however it [has been pointed out by practitioners](http://scottmeyers.blogspot.com/2015/09/should-you-be-using-something-instead.html) that many tree-type data structures have considerable storage overhead and poor memory locality. This results from using linked-list-like pointers to connect nodes. In many cases, a fully or partially sorted sequence combined with binary search will outperform pointer-based trees. Indeed, [the STL contains a set of algorithms](http://en.cppreference.com/w/cpp/algorithm) for sorting or partitioning a data sequence and searching within partitioned sequences.
 
@@ -124,8 +124,6 @@ double get_timing()
 
 ```{r include=FALSE}
 cache_file = "../inst/extdata/sort_benchmark_data"
-if (!file.exists(cache_file))
-  cache_file = system.file("extdata/sort_benchmark_data", package = "kdtools")
 if (use_cached_data && file.exists(cache_file)) {
   load(cache_file)
 } else {
@@ -482,8 +480,6 @@ Rcpp::List time_query(int n, int m)
 
 ```{r, echo=FALSE}
 cache_file = "../inst/extdata/query_benchmark_data"
-if (!file.exists(cache_file))
-  cache_file = system.file("extdata/query_benchmark_data", package = "kdtools")
 if (use_cached_data && file.exists(cache_file)) {
   load(cache_file)
 } else {
@@ -652,8 +648,6 @@ Rcpp::List time_nn(int n, int m)
 
 ```{r, echo=FALSE}
 cache_file = "../inst/extdata/nn_benchmark_data"
-if (!file.exists(cache_file))
-  cache_file = system.file("extdata/nn_benchmark_data", package = "kdtools")
 if (use_cached_data && file.exists(cache_file)) {
   load(cache_file)
 } else {

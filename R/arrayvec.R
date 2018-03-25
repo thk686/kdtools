@@ -58,4 +58,3 @@ as.data.frame.arrayvec <- function(x, ...) {
 `[[.arrayvec` <- function(x, ...) {
   as.matrix(x)[[...]]
 }
-

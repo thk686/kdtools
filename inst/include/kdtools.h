@@ -3,6 +3,7 @@
 #ifndef __KDTOOLS_H__
 #define __KDTOOLS_H__
 
+#include <functional>
 #include <algorithm>
 #include <iterator>
 #include <iostream>
@@ -517,7 +518,7 @@ void knn(Iter first, Iter last,
   }
 }
 
-}; // namespace detail
+} // namespace detail
 
 namespace utils {
 
@@ -542,7 +543,7 @@ using detail::make_kd_compare;
 using detail::l2dist;
 using detail::sum_of_squares;
 
-}; // namespace utils
+} // namespace utils
 
 template <typename Iter>
 void lex_sort(Iter first, Iter last)
@@ -641,6 +642,6 @@ void kd_nearest_neighbors(Iter first, Iter last,
   q.copy_to(outp);
 }
 
-}; // namespace kdtools
+} // namespace kdtools
 
 #endif // __KDTOOLS_H__

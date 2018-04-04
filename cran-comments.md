@@ -15,3 +15,4 @@ This is a new release, so there are no reverse dependencies.
 
 ---
 
+Fixed some C++ header issues

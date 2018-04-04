@@ -1,11 +1,12 @@
 #include "arrayvec.h"
+#include "indexed.h"
 #include "kdtools.h"
 using namespace kdtools;
 
 template <size_t I>
 List kd_sort__(List x, bool inplace, bool parallel)
 {
-  auto p = get_ptr<I>(x);
+  auto p = get_av_ptr<I>(x);
   if (inplace)
   {
     if (parallel) kd_sort_threaded(begin(*p), end(*p));
@@ -17,7 +18,7 @@ List kd_sort__(List x, bool inplace, bool parallel)
     auto q = make_xptr(new arrayvec<I>(*p));
     if (parallel) kd_sort_threaded(begin(*q), end(*q));
     else kd_sort(begin(*q), end(*q));
-    return wrap_ptr(q);
+    return wrap_av_ptr(q);
   }
 }
 
@@ -40,9 +41,46 @@ List kd_sort_(List x, bool inplace = false, bool parallel = false)
 }
 
 template <size_t I>
+List kd_order__(List x, bool inplace, bool parallel)
+{
+  auto p = get_idx_ptr<I>(x);
+  if (inplace)
+  {
+    if (parallel) kd_sort_threaded(begin(*p), end(*p));
+    else kd_sort(begin(*p), end(*p));
+    return x;
+  }
+  else
+  {
+    auto q = make_xptr(new indexvec<I>(*p));
+    if (parallel) kd_sort_threaded(begin(*q), end(*q));
+    else kd_sort(begin(*q), end(*q));
+    return wrap_idx_ptr(q);
+  }
+}
+
+// [[Rcpp::export]]
+List kd_order_(List x, bool inplace = false, bool parallel = false)
+{
+  switch(indexvec_dim(x))
+  {
+  case 1: return kd_order__<1>(x, inplace, parallel);
+  case 2: return kd_order__<2>(x, inplace, parallel);
+  case 3: return kd_order__<3>(x, inplace, parallel);
+  case 4: return kd_order__<4>(x, inplace, parallel);
+  case 5: return kd_order__<5>(x, inplace, parallel);
+  case 6: return kd_order__<6>(x, inplace, parallel);
+  case 7: return kd_order__<7>(x, inplace, parallel);
+  case 8: return kd_order__<8>(x, inplace, parallel);
+  case 9: return kd_order__<9>(x, inplace, parallel);
+  default: stop("Invalid dimensions");
+  }
+}
+
+template <size_t I>
 bool kd_is_sorted__(List x)
 {
-  auto p = get_ptr<I>(x);
+  auto p = get_av_ptr<I>(x);
   return kd_is_sorted(begin(*p), end(*p));
 }
 
@@ -67,7 +105,7 @@ bool kd_is_sorted_(List x)
 template <size_t I>
 List lex_sort__(List x, bool inplace)
 {
-  auto p = get_ptr<I>(x);
+  auto p = get_av_ptr<I>(x);
   if (inplace)
   {
     lex_sort(begin(*p), end(*p));
@@ -77,7 +115,7 @@ List lex_sort__(List x, bool inplace)
   {
     auto q = make_xptr(new arrayvec<I>(*p));
     lex_sort(begin(*q), end(*q));
-    return wrap_ptr(q);
+    return wrap_av_ptr(q);
   }
 }
 
@@ -102,7 +140,7 @@ List lex_sort_(List x, bool inplace = false)
 template <size_t I>
 int kd_lower_bound__(List x, NumericVector v)
 {
-  auto p = get_ptr<I>(x);
+  auto p = get_av_ptr<I>(x);
   auto w = vec_to_array<I>(v);
   auto lv = kd_lower_bound(begin(*p), end(*p), w);
   if (lv == end(*p)) return NA_INTEGER;
@@ -130,7 +168,7 @@ int kd_lower_bound_(List x, NumericVector value)
 template <size_t I>
 int kd_upper_bound__(List x, NumericVector v)
 {
-  auto p = get_ptr<I>(x);
+  auto p = get_av_ptr<I>(x);
   array<double, I> w;
   w = vec_to_array<I>(v);
   auto lv = kd_upper_bound(begin(*p), end(*p), w);
@@ -159,13 +197,13 @@ int kd_upper_bound_(List x, NumericVector value)
 template <size_t I>
 List kd_range_query__(List x, NumericVector lower, NumericVector upper)
 {
-  auto p = get_ptr<I>(x);
+  auto p = get_av_ptr<I>(x);
   auto q = make_xptr(new arrayvec<I>);
   auto oi = back_inserter(*q);
   auto l = vec_to_array<I>(lower),
     u = vec_to_array<I>(upper);
   kd_range_query(begin(*p), end(*p), l, u, oi);
-  return wrap_ptr(q);
+  return wrap_av_ptr(q);
 }
 
 // [[Rcpp::export]]
@@ -189,7 +227,7 @@ List kd_range_query_(List x, NumericVector lower, NumericVector upper)
 template <size_t I>
 int kd_nearest_neighbor__(List x, NumericVector v)
 {
-  auto p = get_ptr<I>(x);
+  auto p = get_av_ptr<I>(x);
   auto w = vec_to_array<I>(v);
   auto nn = kd_nearest_neighbor(begin(*p), end(*p), w);
   if (nn >= end(*p)) stop("Search failed");
@@ -217,7 +255,7 @@ int kd_nearest_neighbor_(List x, NumericVector value)
 template <size_t I>
 bool kd_binary_search__(List x, NumericVector v)
 {
-  auto p = get_ptr<I>(x);
+  auto p = get_av_ptr<I>(x);
   auto w = vec_to_array<I>(v);
   return kd_binary_search(begin(*p), end(*p), w);
 }
@@ -243,12 +281,12 @@ bool kd_binary_search_(List x, NumericVector value)
 template <size_t I>
 List kd_nearest_neighbors__(List x, NumericVector value, int n)
 {
-  auto p = get_ptr<I>(x);
+  auto p = get_av_ptr<I>(x);
   auto q = make_xptr(new arrayvec<I>);
   auto oi = back_inserter(*q);
   auto v = vec_to_array<I>(value);
   kd_nearest_neighbors(begin(*p), end(*p), v, n, oi);
-  return wrap_ptr(q);
+  return wrap_av_ptr(q);
 }
 
 // [[Rcpp::export]]

@@ -3,16 +3,24 @@
 \name{matrix_to_tuples}
 \alias{matrix_to_tuples}
 \alias{tuples_to_matrix}
+\alias{matrix_to_indexed}
+\alias{indexed_to_matrix}
 \title{Convert a matrix to a vector of arrays}
 \usage{
 matrix_to_tuples(x)
 
 tuples_to_matrix(x)
+
+matrix_to_indexed(x)
+
+indexed_to_matrix(x)
 }
 \arguments{
 \item{x}{object to be converted}
 }
 \description{
+Convert a matrix to a vector of arrays
+
 Convert a matrix to a vector of arrays
 }
 \details{
@@ -24,6 +32,12 @@ a matrix. For optimal performance, pre-convert matrices.
 \examples{
 x = matrix(1:10, 5)
 y = matrix_to_tuples(x)
+str(x)
+str(y)
+y[1:2, ]
+
+x = matrix(1:10, 5)
+y = matrix_to_indexed(x)
 str(x)
 str(y)
 y[1:2, ]

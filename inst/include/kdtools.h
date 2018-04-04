@@ -50,7 +50,6 @@ using std::distance;
 using std::enable_if;
 using std::partition;
 using std::nth_element;
-using std::tuple_element;
 using std::numeric_limits;
 using std::priority_queue;
 using std::is_partitioned;

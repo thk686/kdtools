@@ -41,6 +41,41 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// matrix_to_indexed
+List matrix_to_indexed(const NumericMatrix& x);
+RcppExport SEXP _kdtools_matrix_to_indexed(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(matrix_to_indexed(x));
+    return rcpp_result_gen;
+END_RCPP
+}
+// indexed_to_matrix
+NumericMatrix indexed_to_matrix(List x);
+RcppExport SEXP _kdtools_indexed_to_matrix(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(indexed_to_matrix(x));
+    return rcpp_result_gen;
+END_RCPP
+}
+// indexed_to_matrix_rows
+NumericMatrix indexed_to_matrix_rows(List x, int a, int b);
+RcppExport SEXP _kdtools_indexed_to_matrix_rows(SEXP xSEXP, SEXP aSEXP, SEXP bSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type x(xSEXP);
+    Rcpp::traits::input_parameter< int >::type a(aSEXP);
+    Rcpp::traits::input_parameter< int >::type b(bSEXP);
+    rcpp_result_gen = Rcpp::wrap(indexed_to_matrix_rows(x, a, b));
+    return rcpp_result_gen;
+END_RCPP
+}
 // kd_sort_
 List kd_sort_(List x, bool inplace, bool parallel);
 RcppExport SEXP _kdtools_kd_sort_(SEXP xSEXP, SEXP inplaceSEXP, SEXP parallelSEXP) {
@@ -51,6 +86,19 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type inplace(inplaceSEXP);
     Rcpp::traits::input_parameter< bool >::type parallel(parallelSEXP);
     rcpp_result_gen = Rcpp::wrap(kd_sort_(x, inplace, parallel));
+    return rcpp_result_gen;
+END_RCPP
+}
+// kd_order_
+List kd_order_(List x, bool inplace, bool parallel);
+RcppExport SEXP _kdtools_kd_order_(SEXP xSEXP, SEXP inplaceSEXP, SEXP parallelSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type x(xSEXP);
+    Rcpp::traits::input_parameter< bool >::type inplace(inplaceSEXP);
+    Rcpp::traits::input_parameter< bool >::type parallel(parallelSEXP);
+    rcpp_result_gen = Rcpp::wrap(kd_order_(x, inplace, parallel));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -156,7 +204,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_matrix_to_tuples", (DL_FUNC) &_kdtools_matrix_to_tuples, 1},
     {"_kdtools_tuples_to_matrix", (DL_FUNC) &_kdtools_tuples_to_matrix, 1},
     {"_kdtools_tuples_to_matrix_rows", (DL_FUNC) &_kdtools_tuples_to_matrix_rows, 3},
+    {"_kdtools_matrix_to_indexed", (DL_FUNC) &_kdtools_matrix_to_indexed, 1},
+    {"_kdtools_indexed_to_matrix", (DL_FUNC) &_kdtools_indexed_to_matrix, 1},
+    {"_kdtools_indexed_to_matrix_rows", (DL_FUNC) &_kdtools_indexed_to_matrix_rows, 3},
     {"_kdtools_kd_sort_", (DL_FUNC) &_kdtools_kd_sort_, 3},
+    {"_kdtools_kd_order_", (DL_FUNC) &_kdtools_kd_order_, 3},
     {"_kdtools_kd_is_sorted_", (DL_FUNC) &_kdtools_kd_is_sorted_, 1},
     {"_kdtools_lex_sort_", (DL_FUNC) &_kdtools_lex_sort_, 2},
     {"_kdtools_kd_lower_bound_", (DL_FUNC) &_kdtools_kd_lower_bound_, 2},

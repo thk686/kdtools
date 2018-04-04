@@ -41,7 +41,7 @@ XPtr<T> make_xptr(T* x)
 }
 
 template <size_t I>
-List wrap_ptr(const XPtr<arrayvec<I>>& q)
+List wrap_av_ptr(const XPtr<arrayvec<I>>& q)
 {
   List res;
   res["xptr"] = wrap(q);
@@ -66,11 +66,11 @@ List matrix_to_tuples_(const NumericMatrix& x)
               copy(i, i + I, begin(a));
               return a;
             });
-  return wrap_ptr(p);
+  return wrap_av_ptr(p);
 }
 
 template <size_t I, typename T>
-XPtr<arrayvec<I>> get_ptr(const T& x)
+XPtr<arrayvec<I>> get_av_ptr(const T& x)
 {
   return as<XPtr<arrayvec<I>>>(x["xptr"]);
 }
@@ -78,7 +78,7 @@ XPtr<arrayvec<I>> get_ptr(const T& x)
 template <size_t I>
 NumericMatrix tuples_to_matrix_(List x)
 {
-  auto p = get_ptr<I>(x);
+  auto p = get_av_ptr<I>(x);
   NumericMatrix res(p->size(), I);
   transform(begin(*p), end(*p), begin(res), begin(res),
             [&](const array<double, I>& a, double& v)
@@ -94,7 +94,7 @@ template <size_t I>
 NumericMatrix tuples_to_matrix_(List x, size_t a, size_t b)
 {
   auto nr = b - a + 1;
-  auto p = get_ptr<I>(x);
+  auto p = get_av_ptr<I>(x);
   if (b < a || p->size() < b + 1) stop("Invalid range");
   NumericMatrix res(nr, I);
   auto begin_ = begin(*p) + a,

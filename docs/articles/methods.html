@@ -82,7 +82,7 @@
       <h1>Compact multidimensional sorting and searching with kdtools</h1>
                         <h4 class="author">Timothy H. Keitt</h4>
             
-            <h4 class="date">2018-03-25</h4>
+            <h4 class="date">2018-04-06</h4>
       
       <small>Source: <a href="https://github.com/thk686/kdtools/blob/master/vignettes/methods.Rmd"><code>vignettes/methods.Rmd</code></a></small>
 
@@ -231,25 +231,25 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">t</span>(<span class="kw"><a href="../reference/kdsort.html">kd_sort</a></span>(<span class="kw">cbind</span>(j, k)))</code></pre></div>
 <table class="table"><tbody>
 <tr class="odd">
-<td align="right">1</td>
-<td align="right">4</td>
 <td align="right">2</td>
+<td align="right">4</td>
 <td align="right">3</td>
+<td align="right">1</td>
 <td align="right">5</td>
-<td align="right">6</td>
-<td align="right">9</td>
-<td align="right">7</td>
 <td align="right">8</td>
+<td align="right">9</td>
+<td align="right">6</td>
+<td align="right">7</td>
 </tr>
 <tr class="even">
-<td align="right">2</td>
-<td align="right">4</td>
-<td align="right">5</td>
-<td align="right">7</td>
-<td align="right">9</td>
 <td align="right">1</td>
-<td align="right">3</td>
+<td align="right">5</td>
 <td align="right">6</td>
+<td align="right">9</td>
+<td align="right">7</td>
+<td align="right">2</td>
+<td align="right">3</td>
+<td align="right">4</td>
 <td align="right">8</td>
 </tr>
 </tbody></table>
@@ -267,8 +267,8 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
 <td align="right">0</td>
 </tr>
 <tr class="even">
-<td align="right">1</td>
 <td align="right">2</td>
+<td align="right">1</td>
 <td align="right">3</td>
 <td align="right">4</td>
 <td align="right">5</td>
@@ -278,39 +278,39 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
 <td align="right">9</td>
 </tr>
 <tr class="odd">
-<td align="right">2</td>
+<td align="right">1</td>
+<td align="right">9</td>
+<td align="right">6</td>
 <td align="right">5</td>
 <td align="right">7</td>
 <td align="right">4</td>
-<td align="right">9</td>
-<td align="right">1</td>
-<td align="right">6</td>
 <td align="right">8</td>
+<td align="right">2</td>
 <td align="right">3</td>
 </tr>
 </tbody></table>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">t</span>(<span class="kw"><a href="../reference/kdsort.html">kd_sort</a></span>(<span class="kw">cbind</span>(j, k, <span class="dv">0</span>)))</code></pre></div>
 <table class="table"><tbody>
 <tr class="odd">
-<td align="right">1</td>
-<td align="right">4</td>
 <td align="right">2</td>
+<td align="right">4</td>
 <td align="right">3</td>
+<td align="right">1</td>
 <td align="right">5</td>
-<td align="right">6</td>
-<td align="right">9</td>
-<td align="right">7</td>
 <td align="right">8</td>
+<td align="right">9</td>
+<td align="right">6</td>
+<td align="right">7</td>
 </tr>
 <tr class="even">
-<td align="right">2</td>
-<td align="right">4</td>
-<td align="right">5</td>
-<td align="right">7</td>
-<td align="right">9</td>
 <td align="right">1</td>
-<td align="right">3</td>
+<td align="right">5</td>
 <td align="right">6</td>
+<td align="right">9</td>
+<td align="right">7</td>
+<td align="right">2</td>
+<td align="right">3</td>
+<td align="right">4</td>
 <td align="right">8</td>
 </tr>
 <tr class="odd">
@@ -580,53 +580,53 @@ numbers =<span class="st"> </span><span class="kw">runif</span>(<span class="kw"
 strings =<span class="st"> </span><span class="kw">sample</span>(<span class="kw">tolower</span>(parts_of_speech[[<span class="dv">1</span>]]))
 <span class="kw">mixed_query</span>(<span class="kw">signif</span>(numbers, <span class="dv">4</span>), strings)
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Sort time: 0.119292 seconds</span>
+<span class="co">#&gt; Sort time: 0.102355 seconds</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; First and last 5 elements of sorted data:</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.0006198 abundantly</span>
-<span class="co">#&gt; 1 0.002095 abridgable</span>
-<span class="co">#&gt; 2 0.002677 abakan</span>
-<span class="co">#&gt; 3 7.238e-05 actinomycin</span>
-<span class="co">#&gt; 4 0.001191 adria</span>
+<span class="co">#&gt; 0 0.0003716 acatalectic</span>
+<span class="co">#&gt; 1 0.0006013 abran</span>
+<span class="co">#&gt; 2 0.0009814 abolisher</span>
+<span class="co">#&gt; 3 0.0005773 accessorize</span>
+<span class="co">#&gt; 4 8.098e-05 adept</span>
 <span class="co">#&gt; ...</span>
-<span class="co">#&gt; 208254 0.9966 wrongfulness</span>
-<span class="co">#&gt; 208255 0.9999 writhingly</span>
-<span class="co">#&gt; 208256 0.9965 zarathustrian</span>
-<span class="co">#&gt; 208257 0.9975 zimbabwe</span>
-<span class="co">#&gt; 208258 0.9975 zorina</span>
+<span class="co">#&gt; 208254 0.9971 yerkovich</span>
+<span class="co">#&gt; 208255 0.9983 wrigglework</span>
+<span class="co">#&gt; 208256 0.9975 yeuk</span>
+<span class="co">#&gt; 208257 0.9978 zinfandel</span>
+<span class="co">#&gt; 208258 0.9985 zacharie</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Query time: 6.5928e-05 seconds</span>
+<span class="co">#&gt; Query time: 0.000114048 seconds</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; First and last 5 elements of query return:</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.4051 wail</span>
-<span class="co">#&gt; 1 0.4051 waiving</span>
-<span class="co">#&gt; 2 0.4074 wabbling</span>
-<span class="co">#&gt; 3 0.4079 wakashan</span>
-<span class="co">#&gt; 4 0.4052 warded</span>
+<span class="co">#&gt; 0 0.4004 wadset</span>
+<span class="co">#&gt; 1 0.4068 waldheim</span>
+<span class="co">#&gt; 2 0.4081 wageworking</span>
+<span class="co">#&gt; 3 0.4086 waers</span>
+<span class="co">#&gt; 4 0.4009 wander</span>
 <span class="co">#&gt; ...</span>
-<span class="co">#&gt; 1038 0.5987 yate</span>
-<span class="co">#&gt; 1039 0.5945 yokum</span>
-<span class="co">#&gt; 1040 0.5917 yucca</span>
-<span class="co">#&gt; 1041 0.5948 yoo</span>
-<span class="co">#&gt; 1042 0.5949 yowl</span>
+<span class="co">#&gt; 1078 0.5959 yardarm</span>
+<span class="co">#&gt; 1079 0.5869 yawl</span>
+<span class="co">#&gt; 1080 0.593 youthfulness</span>
+<span class="co">#&gt; 1081 0.5936 yo-yos</span>
+<span class="co">#&gt; 1082 0.5992 yeo</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Neighbors query time: 0.000888374 seconds</span>
+<span class="co">#&gt; Neighbors query time: 0.000646911 seconds</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; First and last 5 elements of neighbors query return:</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.7848 katholikoi</span>
-<span class="co">#&gt; 1 0.6271 kathodic</span>
-<span class="co">#&gt; 2 0.6231 katalase</span>
-<span class="co">#&gt; 3 0.6097 kingbolt</span>
-<span class="co">#&gt; 4 0.8272 kiddos</span>
+<span class="co">#&gt; 0 0.5207 kaolinization</span>
+<span class="co">#&gt; 1 0.5029 interfold</span>
+<span class="co">#&gt; 2 0.5011 insolvent</span>
+<span class="co">#&gt; 3 0.5009 isotropic</span>
+<span class="co">#&gt; 4 0.6597 ladies'-tobaccos</span>
 <span class="co">#&gt; ...</span>
-<span class="co">#&gt; 95 0.2173 koto</span>
-<span class="co">#&gt; 96 0.553 doorsill</span>
-<span class="co">#&gt; 97 0.5027 doorstep</span>
-<span class="co">#&gt; 98 0.3995 katholikos</span>
-<span class="co">#&gt; 99 0.5156 donetsk</span></code></pre></div>
+<span class="co">#&gt; 95 0.6696 lost</span>
+<span class="co">#&gt; 96 0.605 kyoodle</span>
+<span class="co">#&gt; 97 0.4574 kelotomies</span>
+<span class="co">#&gt; 98 0.475 katholikos</span>
+<span class="co">#&gt; 99 0.5772 loosest</span></code></pre></div>
 <p>The timing results indicate that sorting <span class="math inline">\(2 \times 10 ^ 5\)</span> tuples is on the order of 1/10th second, whereas the range query returned in less than a millisecond.</p>
 <p>Nearest neighbor searching requires a suitable distance function be defined for all types. There are two specialization points: the templates <code>scalar_diff</code>, which returns a possibly signed difference between to objects, and <code>scalar_dist</code>, which returns the distance along a single dimension. Currently, nearest neighbor distances are hardwired as the L2 norm of the returned scalar differences computed for each dimension. The computation above uses the following definitions.</p>
 <div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">template</span>&lt;<span class="kw">class</span> InputIt1, <span class="kw">class</span> InputIt2&gt;

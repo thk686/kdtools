@@ -102,13 +102,13 @@ struct next_dim
 template <size_t I, typename TupleType>
 struct is_not_last
 {
-  static constexpr auto value = I != ndim<TupleType>::value - 1;
+  static constexpr auto value = (I != (ndim<TupleType>::value - 1));
 };
 
 template<size_t I, typename TupleType>
 struct is_last
 {
-  static constexpr auto value = I == ndim<TupleType>::value - 1;
+  static constexpr auto value = (I == (ndim<TupleType>::value - 1));
 };
 
 template <size_t I, size_t K = 0>

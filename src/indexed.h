@@ -19,13 +19,13 @@ namespace std {
 template<size_t I, size_t N>
 double& get(indexed<N> &x)
 {
-  return x.m_data[I];
+  return std::get<I>(x.m_data);
 }
 
 template<size_t I, size_t N>
 const double& get(const indexed<N> &x)
 {
-  return x.m_data[I];
+  return std::get<I>(x.m_data);
 }
 
 template <size_t I>
@@ -35,7 +35,7 @@ public:
   static constexpr auto value = indexed<I>::tuple_size;
 };
 
-}; // namespace std
+} // namespace std
 
 template <size_t I>
 using indexvec = vector<indexed<I>>;
@@ -65,21 +65,22 @@ List matrix_to_indexed_(const NumericMatrix& x)
   auto data_p = get_av_ptr<I>(data);
   auto indx_p = make_xptr(new indexvec<I>);
   indx_p->reserve(nr);
-  auto data_i = begin(*data_p);
   for (size_t i = 0; i != nr; ++i)
-    indx_p->push_back(indexed<I>(*data_i++, i + 1));
+    indx_p->emplace_back(data_p->at(i), i + 1);
   return wrap_idx_ptr(indx_p);
 }
 
 template <size_t I>
 NumericMatrix indexed_to_matrix_(List x)
 {
+  if (!x.inherits("indexvec"))
+    stop("Expecting indexvec object");
   auto p = get_idx_ptr<I>(x);
   NumericMatrix res(p->size(), I + 1);
   for (size_t i = 0; i != p->size(); ++i) {
     for (size_t j = 0; j != I; ++j)
-      res(i, j) = (*p)[i].m_data[j];
-    res(i, I) = (*p)[i].m_index;
+      res(i, j) = p->at(i).m_data[j];
+    res(i, I) = p->at(i).m_index;
   }
   return res;
 }
@@ -87,14 +88,16 @@ NumericMatrix indexed_to_matrix_(List x)
 template <size_t I>
 NumericMatrix indexed_to_matrix_(List x, size_t a, size_t b)
 {
+  if (!x.inherits("indexvec"))
+    stop("Expecting indexvec object");
   auto nr = b - a + 1;
   auto p = get_idx_ptr<I>(x);
   if (b < a || p->size() < b + 1) stop("Invalid range");
   NumericMatrix res(nr, I + 1);
-  for (size_t i = a; i != b; ++i) {
+  for (size_t i = 0; i != nr; ++i) {
     for (size_t j = 0; j != I; ++j)
-      res(i, j) = (*p)[i].m_data[j];
-    res(i, I) = (*p)[i].m_index;
+      res(i + a, j) = (p->at(i + a)).m_data.at(j);
+    res(i + a, I) = (p->at(i + a)).m_index;
   }
   return res;
 }
@@ -102,9 +105,7 @@ NumericMatrix indexed_to_matrix_(List x, size_t a, size_t b)
 inline
 int indexvec_dim(const List& x)
 {
-  if (!x.inherits("indexvec"))
-    stop("Expecting indexvec object");
-  return as<int>(x["ncol"]);
+  return as<int>(x["ncol"]) - 1;
 }
 
 #endif // __INDEXED_H__

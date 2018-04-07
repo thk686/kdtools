@@ -78,6 +78,8 @@ XPtr<arrayvec<I>> get_av_ptr(const T& x)
 template <size_t I>
 NumericMatrix tuples_to_matrix_(List x)
 {
+  if (!x.inherits("arrayvec"))
+    stop("Expecting arrayvec object");
   auto p = get_av_ptr<I>(x);
   NumericMatrix res(p->size(), I);
   transform(begin(*p), end(*p), begin(res), begin(res),
@@ -93,6 +95,8 @@ NumericMatrix tuples_to_matrix_(List x)
 template <size_t I>
 NumericMatrix tuples_to_matrix_(List x, size_t a, size_t b)
 {
+  if (!x.inherits("arrayvec"))
+    stop("Expecting arrayvec object");
   auto nr = b - a + 1;
   auto p = get_av_ptr<I>(x);
   if (b < a || p->size() < b + 1) stop("Invalid range");
@@ -122,8 +126,6 @@ array<double, I> vec_to_array(const NumericVector& x)
 inline
 int arrayvec_dim(const List& x)
 {
-  if (!x.inherits("arrayvec"))
-    stop("Expecting arrayvec object");
   return as<int>(x["ncol"]);
 }
 

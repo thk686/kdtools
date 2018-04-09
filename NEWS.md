@@ -1,3 +1,5 @@
+# kdtools 0.3.0
+
 # kdtools 0.2.0
 
 * For upload to CRAN

@@ -1,5 +1,7 @@
 # kdtools 0.3.0
 
+* Bug fix in lower/upper_bound
+
 # kdtools 0.2.0
 
 * For upload to CRAN

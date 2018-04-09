@@ -6,12 +6,6 @@ r:
   - release
   - devel
 
-env:
-  - PKG_CXXFLAGS='-fsanitize=address -fsanitize=thread -fsanitize=memory -fsanitize=undefined'
-
-compilers:
-  - clang
-
 cache: packages
 
 after_success:

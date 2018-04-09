@@ -9,3 +9,4 @@
 
 * This is a new release.
 * Fixed MAKE redefine
+* Fixed potential buffer overrun

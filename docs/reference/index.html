@@ -18,16 +18,13 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
-<!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-<meta property="og:title" content="Function reference" />
-
-
+  
+  
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -50,12 +47,8 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">kdtools</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.0</span>
-      </span>
+      <a class="navbar-brand" href="../index.html">kdtools</a>
     </div>
-
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
@@ -65,7 +58,7 @@
   </a>
 </li>
 <li>
-  <a href="../articles/kdtools.html">Get started</a>
+  <a href="../articles/kdtools.html">Get Started</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -81,6 +74,9 @@
       <a href="../articles/methods.html">Compact multidimensional sorting and searching with kdtools</a>
     </li>
   </ul>
+</li>
+<li>
+  <a href="../news/index.html">News</a>
 </li>
       </ul>
       
@@ -102,7 +98,10 @@
       <div class="row">
   <div class="col-md-9">
     <div class="page-header">
-      <h1>Reference</h1>
+      <h1>
+        Reference
+        <small>version&nbsp;0.2.0</small>
+      </h1>
     </div>
 
     <div class="contents">
@@ -123,37 +122,37 @@
         <tr>
           <!--  -->
           <td>
-            <p><code><a href="arrayvec.html">print(<i>&lt;arrayvec&gt;</i>)</a></code> <code><a href="arrayvec.html">dim(<i>&lt;arrayvec&gt;</i>)</a></code> <code><a href="arrayvec.html">as.matrix(<i>&lt;arrayvec&gt;</i>)</a></code> <code><a href="arrayvec.html">as.data.frame(<i>&lt;arrayvec&gt;</i>)</a></code> <code><a href="arrayvec.html">`[`(<i>&lt;arrayvec&gt;</i>)</a></code> <code><a href="arrayvec.html">`[[`(<i>&lt;arrayvec&gt;</i>)</a></code> </p>
+            <p><code><a href="arrayvec.html">print.arrayvec</a></code> </p>
           </td>
           <td><p>Support for C++ vector of arrays</p></td>
         </tr><tr>
           <!--  -->
           <td>
-            <p><code><a href="convert.html">matrix_to_tuples()</a></code> <code><a href="convert.html">tuples_to_matrix()</a></code> </p>
+            <p><code><a href="convert.html">matrix_to_tuples</a></code> <code><a href="convert.html">tuples_to_matrix</a></code> </p>
           </td>
           <td><p>Convert a matrix to a vector of arrays</p></td>
         </tr><tr>
           <!--  -->
           <td>
-            <p><code><a href="kdsort.html">kd_sort()</a></code> <code><a href="kdsort.html">kd_is_sorted()</a></code> </p>
+            <p><code><a href="kdsort.html">kd_sort</a></code> <code><a href="kdsort.html">kd_is_sorted</a></code> </p>
           </td>
           <td><p>Sort multidimensional data</p></td>
         </tr><tr>
           <!--  -->
           <td>
-            <p><code><a href="lexsort.html">lex_sort()</a></code> </p>
+            <p><code><a href="lexsort.html">lex_sort</a></code> </p>
           </td>
           <td><p>Sort a matrix into lexicographical order</p></td>
         </tr><tr>
           <!--  -->
           <td>
-            <p><code><a href="nneighb.html">kd_nearest_neighbors()</a></code> <code><a href="nneighb.html">kd_nearest_neighbor()</a></code> </p>
+            <p><code><a href="nneighb.html">kd_nearest_neighbors</a></code> <code><a href="nneighb.html">kd_nearest_neighbor</a></code> </p>
           </td>
           <td><p>Find nearest neighbors</p></td>
         </tr><tr>
           <!--  -->
           <td>
-            <p><code><a href="search.html">kd_lower_bound()</a></code> <code><a href="search.html">kd_upper_bound()</a></code> <code><a href="search.html">kd_range_query()</a></code> <code><a href="search.html">kd_binary_search()</a></code> </p>
+            <p><code><a href="search.html">kd_lower_bound</a></code> <code><a href="search.html">kd_upper_bound</a></code> <code><a href="search.html">kd_range_query</a></code> <code><a href="search.html">kd_binary_search</a></code> </p>
           </td>
           <td><p>Search sorted data</p></td>
         </tr>
@@ -176,7 +175,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
 </div>
 
       </footer>
@@ -184,4 +183,3 @@
 
   </body>
 </html>
-

@@ -3,7 +3,7 @@
 kdtools
 =======
 
-The kdtools package exports a C++ header implementing sorting and searching on ranges of tuple-like objects without using trees. It is based on a kd-tree-like recursive sorting algorithm. Once sorted, one can perform a range- or nearest-neighbor- query. More details are [here](https://thk686.github.io/kdtools/).
+The kdtools package exports a C++ header implementing sorting and searching on ranges of tuple-like objects without using trees. It is based on a kd-tree-like recursive sorting algorithm. Once sorted, one can perform a range- or nearest-neighbor- query. More details are [here](https://thk686.github.io/kdtools/). Methods and benchmarks are [here](https://thk686.github.io/kdtools/articles/methods.html).
 
 ``` r
 library(kdtools)

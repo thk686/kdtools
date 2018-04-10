@@ -1,49 +1,20 @@
 #ifndef __INDEXED_H__
 #define __INDEXED_H__
 
+#include "kdtools.h"
+using kdtools::key_value;
+
 #include "arrayvec.h"
 
 template <size_t I>
-struct indexed
-{
-  static constexpr auto tuple_size = I;
-  indexed(const array<double, I>& data, size_t index)
-    : m_data(data), m_index(index) {}
-  array<double, I> m_data;
-  size_t m_index;
-};
-
-// WARNING Here be dragons!
-namespace std {
-
-template<size_t I, size_t N>
-double& get(indexed<N> &x)
-{
-  return std::get<I>(x.m_data);
-}
-
-template<size_t I, size_t N>
-const double& get(const indexed<N> &x)
-{
-  return std::get<I>(x.m_data);
-}
-
-template <size_t I>
-class tuple_size<indexed<I>>
-{
-public:
-  static constexpr auto value = indexed<I>::tuple_size;
-};
-
-} // namespace std
-
-template <size_t I>
-using indexvec = vector<indexed<I>>;
+using indexvec = vector<key_value<array<double, I>, size_t>>;
 
 template <size_t I, typename T>
 XPtr<indexvec<I>> get_idx_ptr(const T& x)
 {
-  return as<XPtr<indexvec<I>>>(x["xptr"]);
+  auto p = as<XPtr<indexvec<I>>>(x["xptr"]);
+  if (!p) stop("Pointer is null");
+  return p;
 }
 
 template <size_t I>
@@ -79,8 +50,8 @@ NumericMatrix indexed_to_matrix_(List x)
   NumericMatrix res(p->size(), I + 1);
   for (size_t i = 0; i != p->size(); ++i) {
     for (size_t j = 0; j != I; ++j)
-      res(i, j) = p->at(i).m_data[j];
-    res(i, I) = p->at(i).m_index;
+      res(i, j) = p->at(i).key().at(j);
+    res(i, I) = p->at(i).value();
   }
   return res;
 }
@@ -96,8 +67,8 @@ NumericMatrix indexed_to_matrix_(List x, size_t a, size_t b)
   NumericMatrix res(nr, I + 1);
   for (size_t i = 0; i != nr; ++i) {
     for (size_t j = 0; j != I; ++j)
-      res(i + a, j) = (p->at(i + a)).m_data.at(j);
-    res(i + a, I) = (p->at(i + a)).m_index;
+      res(i, j) = (p->at(i + a)).key().at(j);
+    res(i, I) = (p->at(i + a)).value();
   }
   return res;
 }

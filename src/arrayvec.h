@@ -72,7 +72,9 @@ List matrix_to_tuples_(const NumericMatrix& x)
 template <size_t I, typename T>
 XPtr<arrayvec<I>> get_av_ptr(const T& x)
 {
-  return as<XPtr<arrayvec<I>>>(x["xptr"]);
+  auto p = as<XPtr<arrayvec<I>>>(x["xptr"]);
+  if (!p) stop("Pointer is null");
+  return p;
 }
 
 template <size_t I>

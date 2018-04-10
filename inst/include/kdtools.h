@@ -166,7 +166,7 @@ struct kd_less
   template <typename T, typename U>
   bool operator()(const key_value<T, U>& lhs, const key_value<T, U>& rhs) const
   {
-    return kd_less<I, K>(lhs.key(), rhs.key());
+    return kd_less<I, K>()(lhs.key(), rhs.key());
   }
 };
 
@@ -194,7 +194,7 @@ struct kd_compare
   template <typename T, typename U>
   bool operator()(const key_value<T, U>& lhs, const key_value<T, U>& rhs) const
   {
-    return kd_compare<Pred, I, K>(lhs.key(), rhs.key());
+    return kd_compare<Pred, I, K>()(lhs.key(), rhs.key());
   }
 };
 
@@ -339,7 +339,7 @@ struct all_less_
   template <typename T, typename U>
   bool operator()(const key_value<T, U>& lhs, const key_value<T, U>& rhs) const
   {
-    return all_less_<I>(lhs.key(), rhs.key());
+    return all_less_<I>()(lhs.key(), rhs.key());
   }
 };
 
@@ -367,7 +367,7 @@ struct none_less_
   template <typename T, typename U>
   bool operator()(const key_value<T, U>& lhs, const key_value<T, U>& rhs) const
   {
-    return none_less_<I>(lhs.key(), rhs.key());
+    return none_less_<I>()(lhs.key(), rhs.key());
   }
 };
 

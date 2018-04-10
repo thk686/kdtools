@@ -87,12 +87,12 @@ template <size_t I>
 struct less_nth
 {
   template <typename KeyType>
-  bool operator()(const KeyType& lhs, const KeyType& rhs)
+  bool operator()(const KeyType& lhs, const KeyType& rhs) const
   {
     return get<I>(lhs) < get<I>(rhs);
   }
   template <typename T, typename U>
-  bool operator()(const key_value<T, U>& lhs, const key_value<T, U>& rhs)
+  bool operator()(const key_value<T, U>& lhs, const key_value<T, U>& rhs) const
   {
     return less_nth<I>(lhs.key(), rhs.key());
   }
@@ -355,13 +355,13 @@ struct none_less_
 {
   template <typename KeyType>
   typename enable_if<is_not_last<I, KeyType>::value, bool>::type
-  operator()(const KeyType& lhs, const KeyType& rhs)
+  operator()(const KeyType& lhs, const KeyType& rhs) const
   {
     return get<I>(lhs) >= get<I>(rhs) && none_less_<I + 1>()(lhs, rhs);
   }
   template <typename KeyType>
   typename enable_if<is_last<I, KeyType>::value, bool>::type
-  operator()(const KeyType& lhs, const KeyType& rhs)
+  operator()(const KeyType& lhs, const KeyType& rhs) const
   {
     return get<I>(lhs) >= get<I>(rhs);
   }
@@ -460,15 +460,14 @@ Iter kd_nearest_neighbor(Iter first, Iter last, const KeyType& value)
       kd_nearest_neighbor<J>(first, pivot, value) :
         kd_nearest_neighbor<J>(next(pivot), last, value);
     auto min_dist = l2dist(*pivot, value);
-    if (search == last) search = pivot;
-    else
-    {
+    if (search == last) {
+      search = pivot;
+    } else {
       auto sdist = l2dist(*search, value);
       if (sdist < min_dist) min_dist = sdist;
       else search = pivot;
     }
-    if (dist_nth<I>(value, *pivot) < min_dist)
-    {
+    if (dist_nth<I>(value, *pivot) < min_dist) {
       auto s2 = search_left ?
         kd_nearest_neighbor<J>(next(pivot), last, value) :
           kd_nearest_neighbor<J>(first, pivot, value);
@@ -564,8 +563,7 @@ void knn(Iter first, Iter last,
     knn<J>(first, pivot, value, q);
   else
     knn<J>(next(pivot), last, value, q);
-  if (dist_nth<I>(value, *pivot) <= q.max_key())
-  {
+  if (dist_nth<I>(value, *pivot) <= q.max_key()) {
     if (search_left)
       knn<J>(next(pivot), last, value, q);
     else

@@ -4,7 +4,7 @@ author: "Timothy H. Keitt"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{Compact multidimensional sorting and searching with kdtools}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -774,7 +774,7 @@ header_file = "mixed_query.h"
 cat(header_code, file = file.path(tempdir(), header_file))
 pkg_cppflags = Sys.getenv("PKG_CPPFLAGS")
 pkg_cppflags = paste(pkg_cppflags, paste0("-I\"", tempdir(), "\""))
-Sys.setenv(PKG_CPPFLAGS = pkg_cppflags, MAKE = "make -j2")
+Sys.setenv(PKG_CPPFLAGS = pkg_cppflags)
 ```
 
 ```{Rcpp}

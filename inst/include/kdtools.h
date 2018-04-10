@@ -3,6 +3,7 @@
 #ifndef __KDTOOLS_H__
 #define __KDTOOLS_H__
 
+#include <functional>
 #include <algorithm>
 #include <iterator>
 #include <iostream>
@@ -100,13 +101,13 @@ struct next_dim
 template <size_t I, typename TupleType>
 struct is_not_last
 {
-  static constexpr auto value = I != ndim<TupleType>::value - 1;
+  static constexpr auto value = (I != (ndim<TupleType>::value - 1));
 };
 
 template<size_t I, typename TupleType>
 struct is_last
 {
-  static constexpr auto value = I == ndim<TupleType>::value - 1;
+  static constexpr auto value = (I == (ndim<TupleType>::value - 1));
 };
 
 template <size_t I, size_t K = 0>
@@ -333,9 +334,9 @@ Iter kd_lower_bound(Iter first, Iter last, const TupleType& value)
     if (all_less(*pivot, value))
       return kd_lower_bound<J>(next(pivot), last, value);
     auto it = kd_lower_bound<J>(first, pivot, value);
-    if (none_less(*it, value)) return it;
+    if (it == last || none_less(*it, value)) return it;
     it = kd_lower_bound<J>(next(pivot), last, value);
-    if (none_less(*it, value)) return it;
+    if (it == last || none_less(*it, value)) return it;
     return last;
   }
   return none_less(*first, value) ? first : last;
@@ -353,9 +354,9 @@ Iter kd_upper_bound(Iter first, Iter last, const TupleType& value)
     if (none_less(value, *pivot))
       return kd_upper_bound<J>(next(pivot), last, value);
     auto it = kd_upper_bound<J>(first, pivot, value);
-    if (all_less(value, *it)) return it;
+    if (it == last || all_less(value, *it)) return it;
     it = kd_upper_bound<J>(next(pivot), last, value);
-    if (all_less(value, *it)) return it;
+    if (it == last || all_less(value, *it)) return it;
     return last;
   }
   return all_less(value, *first) ? first : last;
@@ -516,7 +517,7 @@ void knn(Iter first, Iter last,
   }
 }
 
-}; // namespace detail
+} // namespace detail
 
 namespace utils {
 
@@ -541,7 +542,7 @@ using detail::make_kd_compare;
 using detail::l2dist;
 using detail::sum_of_squares;
 
-}; // namespace utils
+} // namespace utils
 
 template <typename Iter>
 void lex_sort(Iter first, Iter last)
@@ -640,6 +641,6 @@ void kd_nearest_neighbors(Iter first, Iter last,
   q.copy_to(outp);
 }
 
-}; // namespace kdtools
+} // namespace kdtools
 
 #endif // __KDTOOLS_H__

@@ -12,8 +12,13 @@ test_that("correct lower bound", {
   {
     for (n in 1:9)
     {
-      x <- kd_sort(matrix(runif(n * 100), ncol = n))
       y <- rep(0.5, n)
+      x <- kd_sort(matrix(runif(n * 100), ncol = n))
+      i <- kd_lower_bound(x, y)
+      j <- r_lower_bound(x, y)
+      expect_equal(i, j)
+      y <- sample(c(-1, 2), n, replace = TRUE)
+      x <- kd_sort(matrix(runif(n * 100), ncol = n))
       i <- kd_lower_bound(x, y)
       j <- r_lower_bound(x, y)
       expect_equal(i, j)
@@ -32,8 +37,13 @@ test_that("correct upper bound", {
   {
     for (n in 1:9)
     {
-      x <- kd_sort(matrix(runif(n * 100), ncol = n))
       y <- rep(0.5, n)
+      x <- kd_sort(matrix(runif(n * 100), ncol = n))
+      i <- kd_upper_bound(x, y)
+      j <- r_upper_bound(x, y)
+      expect_equal(i, j)
+      y <- sample(c(-1, 2), n, replace = TRUE)
+      x <- kd_sort(matrix(runif(n * 100), ncol = n))
       i <- kd_upper_bound(x, y)
       j <- r_upper_bound(x, y)
       expect_equal(i, j)

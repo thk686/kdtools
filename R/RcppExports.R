@@ -33,8 +33,37 @@ tuples_to_matrix_rows <- function(x, a, b) {
     .Call(`_kdtools_tuples_to_matrix_rows`, x, a, b)
 }
 
+#' Convert a matrix to a vector of arrays
+#'
+#' @examples
+#' x = matrix(1:10, 5)
+#' y = matrix_to_indexed(x)
+#' str(x)
+#' str(y)
+#' y[1:2, ]
+#'
+#' @rdname convert
+#' @export
+matrix_to_indexed <- function(x) {
+    .Call(`_kdtools_matrix_to_indexed`, x)
+}
+
+#' @rdname convert
+#' @export
+indexed_to_matrix <- function(x) {
+    .Call(`_kdtools_indexed_to_matrix`, x)
+}
+
+indexed_to_matrix_rows <- function(x, a, b) {
+    .Call(`_kdtools_indexed_to_matrix_rows`, x, a, b)
+}
+
 kd_sort_ <- function(x, inplace = FALSE, parallel = FALSE) {
     .Call(`_kdtools_kd_sort_`, x, inplace, parallel)
+}
+
+kd_order_ <- function(x, inplace = FALSE, parallel = FALSE) {
+    .Call(`_kdtools_kd_order_`, x, inplace, parallel)
 }
 
 kd_is_sorted_ <- function(x) {

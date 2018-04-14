@@ -190,3 +190,18 @@ kd_nearest_neighbor.matrix <- function(x, v) {
 kd_nearest_neighbor.arrayvec <- function(x, v) {
   return(kd_nearest_neighbor_(x, v))
 }
+
+kd_order <- function(x, ...) UseMethod("kd_order")
+
+#' @export
+kd_order.matrix <- function(x, parallel = FALSE, ...) {
+  y <- matrix_to_indexed(x)
+  kd_order_(y, inplace = TRUE, parallel = parallel)
+  return(indexed_to_matrix(y))
+}
+
+#' @export
+kd_order.indexvec <- function(x, inplace = FALSE, parallel = FALSE, ...) {
+  return(kd_order_(x, inplace = inplace, parallel = parallel))
+}
+

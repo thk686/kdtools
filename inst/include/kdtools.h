@@ -390,7 +390,6 @@ Iter kd_lower_bound(Iter first, Iter last, const KeyType& value)
     if (all_less(*pivot, value))
       return kd_lower_bound<J>(next(pivot), last, value);
     auto it = kd_lower_bound<J>(first, pivot, value);
-    if (it == last) throw(std::runtime_error("Encountered last iterator in kd_lower_bound"));
     if (it != last && none_less(*it, value)) return it;
     it = kd_lower_bound<J>(next(pivot), last, value);
     if (it != last && none_less(*it, value)) return it;
@@ -408,12 +407,12 @@ Iter kd_upper_bound(Iter first, Iter last, const KeyType& value)
     auto pivot = find_pivot<I>(first, last);
     if (all_less(value, *pivot))
       return kd_upper_bound<J>(first, pivot, value);
-    if (pivot != last && none_less(value, *pivot))
+    if (none_less(value, *pivot))
       return kd_upper_bound<J>(next(pivot), last, value);
     auto it = kd_upper_bound<J>(first, pivot, value);
-    if (all_less(value, *it)) return it;
+    if (it != last && all_less(value, *it)) return it;
     it = kd_upper_bound<J>(next(pivot), last, value);
-    if (all_less(value, *it)) return it;
+    if (it != last && all_less(value, *it)) return it;
     return last;
   }
   return all_less(value, *first) ? first : last;

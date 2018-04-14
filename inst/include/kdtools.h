@@ -330,14 +330,16 @@ Iter kd_lower_bound(Iter first, Iter last, const TupleType& value)
   if (distance(first, last) > 1)
   {
     auto pivot = find_pivot<I>(first, last);
+    if (pivot < first || pivot == last)
+      throw std::runtime_error("invalid pivot");
     if (none_less(*pivot, value))
       return kd_lower_bound<J>(first, pivot, value);
     if (all_less(*pivot, value))
       return kd_lower_bound<J>(next(pivot), last, value);
     auto it = kd_lower_bound<J>(first, pivot, value);
-    if (it == last || none_less(*it, value)) return it;
+    if (it != last && none_less(*it, value)) return it;
     it = kd_lower_bound<J>(next(pivot), last, value);
-    if (it == last || none_less(*it, value)) return it;
+    if (it != last && none_less(*it, value)) return it;
     return last;
   }
   return none_less(*first, value) ? first : last;
@@ -355,9 +357,9 @@ Iter kd_upper_bound(Iter first, Iter last, const TupleType& value)
     if (none_less(value, *pivot))
       return kd_upper_bound<J>(next(pivot), last, value);
     auto it = kd_upper_bound<J>(first, pivot, value);
-    if (it == last || all_less(value, *it)) return it;
+    if (it != last && all_less(value, *it)) return it;
     it = kd_upper_bound<J>(next(pivot), last, value);
-    if (it == last || all_less(value, *it)) return it;
+    if (it != last && all_less(value, *it)) return it;
     return last;
   }
   return all_less(value, *first) ? first : last;

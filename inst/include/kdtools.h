@@ -212,6 +212,7 @@ Iter find_pivot(Iter first, Iter last)
 {
   using T = iter_value_t<Iter>;
   auto pivot = middle_of(first, last);
+  if (pivot == last) throw(std::runtime_error("find_pivot called on empty range"));
   return partition_point(first, pivot, [&](const T& x){
     return less_nth<I>()(x, *pivot);
   });
@@ -389,6 +390,7 @@ Iter kd_lower_bound(Iter first, Iter last, const KeyType& value)
     if (all_less(*pivot, value))
       return kd_lower_bound<J>(next(pivot), last, value);
     auto it = kd_lower_bound<J>(first, pivot, value);
+    if (it == last) throw(std::runtime_error("Encountered last iterator in kd_lower_bound"));
     if (it != last && none_less(*it, value)) return it;
     it = kd_lower_bound<J>(next(pivot), last, value);
     if (it != last && none_less(*it, value)) return it;
@@ -406,12 +408,12 @@ Iter kd_upper_bound(Iter first, Iter last, const KeyType& value)
     auto pivot = find_pivot<I>(first, last);
     if (all_less(value, *pivot))
       return kd_upper_bound<J>(first, pivot, value);
-    if (none_less(value, *pivot))
+    if (pivot != last && none_less(value, *pivot))
       return kd_upper_bound<J>(next(pivot), last, value);
     auto it = kd_upper_bound<J>(first, pivot, value);
-    if (it != last && all_less(value, *it)) return it;
+    if (all_less(value, *it)) return it;
     it = kd_upper_bound<J>(next(pivot), last, value);
-    if (it != last && all_less(value, *it)) return it;
+    if (all_less(value, *it)) return it;
     return last;
   }
   return all_less(value, *first) ? first : last;

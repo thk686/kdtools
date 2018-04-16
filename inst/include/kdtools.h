@@ -212,7 +212,6 @@ Iter find_pivot(Iter first, Iter last)
 {
   using T = iter_value_t<Iter>;
   auto pivot = middle_of(first, last);
-  if (pivot == last) throw(std::runtime_error("find_pivot called on empty range"));
   return partition_point(first, pivot, [&](const T& x){
     return less_nth<I>()(x, *pivot);
   });
@@ -385,8 +384,6 @@ Iter kd_lower_bound(Iter first, Iter last, const KeyType& value)
   if (distance(first, last) > 1)
   {
     auto pivot = find_pivot<I>(first, last);
-    if (pivot < first || pivot == last)
-      throw std::runtime_error("invalid pivot");
     if (none_less(*pivot, value))
       return kd_lower_bound<J>(first, pivot, value);
     if (all_less(*pivot, value))

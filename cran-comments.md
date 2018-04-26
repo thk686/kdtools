@@ -1,10 +1,13 @@
 ## Test environments
 * local OS X install, R 3.4.1
 * ubuntu 14.04 (on travis-ci), R 3.4.1
-* Appveyor 
+* win-builder (devel and release)
 
 ## R CMD check results
 
 0 errors | 0 warnings | 1 note
 
 * This is a new release.
+* I missed an iteratore-out-of-range bug, now fixed
+* I believe that this will eliminate the asan warnings
+* Minor changes otherwise

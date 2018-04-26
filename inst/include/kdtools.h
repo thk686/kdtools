@@ -340,7 +340,7 @@ Iter kd_lower_bound(Iter first, Iter last, const TupleType& value)
     if (it != last && none_less(*it, value)) return it;
     return last;
   }
-  return none_less(*first, value) ? first : last;
+  return first != last && none_less(*first, value) ? first : last;
 }
 
 template <size_t I, typename Iter, typename TupleType>
@@ -360,7 +360,7 @@ Iter kd_upper_bound(Iter first, Iter last, const TupleType& value)
     if (it != last && all_less(value, *it)) return it;
     return last;
   }
-  return all_less(value, *first) ? first : last;
+  return first != last && all_less(value, *first) ? first : last;
 }
 
 template <size_t I>

@@ -1,4 +1,8 @@
 // Copyright Timothy H. Keitt 2018
+// Please see the LICENSE file in the R package
+// By using this header, you agree to cite this
+// work in your product using the DOI found at
+// https://doi.org/10.5281/zenodo.1213797
 
 #ifndef __KDTOOLS_H__
 #define __KDTOOLS_H__

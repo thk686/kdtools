@@ -1,5 +1,7 @@
 # kdtools 0.3.1
 
+* Additional bug fixes
+
 # kdtools 0.3.0
 
 * Bug fix in lower/upper_bound

@@ -151,6 +151,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// kd_order_
+IntegerVector kd_order_(List x);
+RcppExport SEXP _kdtools_kd_order_(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(kd_order_(x));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_matrix_to_tuples", (DL_FUNC) &_kdtools_matrix_to_tuples, 1},
@@ -165,6 +176,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_kd_nearest_neighbor_", (DL_FUNC) &_kdtools_kd_nearest_neighbor_, 2},
     {"_kdtools_kd_binary_search_", (DL_FUNC) &_kdtools_kd_binary_search_, 2},
     {"_kdtools_kd_nearest_neighbors_", (DL_FUNC) &_kdtools_kd_nearest_neighbors_, 3},
+    {"_kdtools_kd_order_", (DL_FUNC) &_kdtools_kd_order_, 1},
     {NULL, NULL, 0}
 };
 

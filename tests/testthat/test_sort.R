@@ -17,6 +17,7 @@ test_that("sort works on single point", {
     expect_equal(kd_sort(matrix(i, nc = i)), matrix(i, nc = i))
 })
 
+
 test_that("handles ties", {
   x <- rnorm(10)
   expect_equal(kd_sort(cbind(0, x)), cbind(0, sort(x)))
@@ -31,6 +32,21 @@ test_that("correct sort order", {
   {
     x <- matrix(runif(nr * nc), nr)
     y <- kd_sort(x)
+    expect_false(kd_is_sorted(x))
+    expect_true(kd_is_sorted(y))
+    expect_false(check_median(x))
+    expect_true(check_median(y))
+  }
+})
+
+kd_order_sort <- function(x) x[kd_order(x),, drop = FALSE]
+
+test_that("correct kd_order works", {
+  nr <- 1e2
+  for (nc in 1:9)
+  {
+    x <- matrix(runif(nr * nc), nr)
+    y <- kd_order_sort(x)
     expect_false(kd_is_sorted(x))
     expect_true(kd_is_sorted(y))
     expect_false(check_median(x))

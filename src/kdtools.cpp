@@ -269,3 +269,37 @@ List kd_nearest_neighbors_(List x, NumericVector value, int n)
   }
 }
 
+template <size_t I>
+IntegerVector kd_order__(List x)
+{
+  auto p = get_ptr<I>(x);
+  std::vector<vec_type<I>*> q(p->size());
+  std::transform(begin(*p), end(*p), begin(q),
+                 [](vec_type<I>& x){ return &x; });
+  kd_sort_ptr(begin(q), end(q));
+  IntegerVector res(q.size());
+  std::transform(begin(q), end(q), begin(res),
+                 [&](vec_type<I>* x){
+                   return std::distance(&(*p)[0], x) + 1;
+                 });
+  return res;
+}
+
+// [[Rcpp::export]]
+IntegerVector kd_order_(List x)
+{
+  switch(arrayvec_dim(x))
+  {
+  case 1: return kd_order__<1>(x);
+  case 2: return kd_order__<2>(x);
+  case 3: return kd_order__<3>(x);
+  case 4: return kd_order__<4>(x);
+  case 5: return kd_order__<5>(x);
+  case 6: return kd_order__<6>(x);
+  case 7: return kd_order__<7>(x);
+  case 8: return kd_order__<8>(x);
+  case 9: return kd_order__<9>(x);
+  default: stop("Invalid dimensions");
+  }
+}
+

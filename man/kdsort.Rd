@@ -2,10 +2,13 @@
 % Please edit documentation in R/kdtools.R
 \name{kd_sort}
 \alias{kd_sort}
+\alias{kd_order}
 \alias{kd_is_sorted}
 \title{Sort multidimensional data}
 \usage{
 kd_sort(x, ...)
+
+kd_order(x, ...)
 
 kd_is_sorted(x)
 }
@@ -23,15 +26,20 @@ The algorithm used is a divide-and-conquer quicksort variant that
   dimension. Ties are resolved by cycling over successive dimensions. The
   result is an ordering of tuples matching their order if they were inserted
   into a kd-tree.
+
+  \code{kd_order} returns permutation vector that will order
+  the rows of the original matrix, exactly as \code{\link{order}}.
 }
 \note{
 The matrix version will be slower because of data structure
   conversions.
 }
 \examples{
-x = kd_sort(matrix(runif(200), 100))
-kd_is_sorted(x)
-plot(x, type = "o", pch = 19, col = "steelblue", asp = 1)
+x = matrix(runif(200), 100)
+y = kd_sort(x)
+kd_is_sorted(y)
+kd_order(x)
+plot(y, type = "o", pch = 19, col = "steelblue", asp = 1)
 
 }
 \seealso{

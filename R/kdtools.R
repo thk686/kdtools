@@ -10,12 +10,17 @@ NULL
 #'   dimension. Ties are resolved by cycling over successive dimensions. The
 #'   result is an ordering of tuples matching their order if they were inserted
 #'   into a kd-tree.
+#'
+#'   \code{kd_order} returns permutation vector that will order
+#'   the rows of the original matrix, exactly as \code{\link{order}}.
 #' @note The matrix version will be slower because of data structure
 #'   conversions.
 #' @examples
-#' x = kd_sort(matrix(runif(200), 100))
-#' kd_is_sorted(x)
-#' plot(x, type = "o", pch = 19, col = "steelblue", asp = 1)
+#' x = matrix(runif(200), 100)
+#' y = kd_sort(x)
+#' kd_is_sorted(y)
+#' kd_order(x)
+#' plot(y, type = "o", pch = 19, col = "steelblue", asp = 1)
 #'
 #' @seealso \code{\link{arrayvec}}
 #' @rdname kdsort
@@ -32,6 +37,21 @@ kd_sort.matrix <- function(x, parallel = FALSE, ...) {
 #' @export
 kd_sort.arrayvec <- function(x, inplace = FALSE, parallel = FALSE, ...) {
   return(kd_sort_(x, inplace = inplace, parallel = parallel))
+}
+
+#' @rdname kdsort
+#' @export
+kd_order <- function(x, ...) UseMethod("kd_order")
+
+#' @export
+kd_order.matrix <- function(x, ...) {
+  y <- matrix_to_tuples(x)
+  return(kd_order_(y))
+}
+
+#' @export
+kd_order.arrayvec <- function(x, ...) {
+  return(kd_order_(x))
 }
 
 #' @rdname kdsort

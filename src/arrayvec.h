@@ -26,6 +26,7 @@ using std::string;
 
 #include <iterator>
 using std::back_inserter;
+using std::distance;
 using std::begin;
 using std::end;
 

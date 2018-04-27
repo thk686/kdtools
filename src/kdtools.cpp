@@ -280,7 +280,7 @@ IntegerVector kd_order__(List x)
   IntegerVector res(q.size());
   std::transform(begin(q), end(q), begin(res),
                  [&](vec_type<I>* x){
-                   return std::distance(&(*p)[0], x) + 1;
+                   return distance(&(*p)[0], x) + 1;
                  });
   return res;
 }

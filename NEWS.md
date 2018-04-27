@@ -1,3 +1,5 @@
+# kdtools 0.4.0
+
 # kdtools 0.3.1
 
 * Additional bug fixes

@@ -276,7 +276,7 @@ IntegerVector kd_order__(List x)
   std::vector<vec_type<I>*> q(p->size());
   std::transform(begin(*p), end(*p), begin(q),
                  [](vec_type<I>& x){ return &x; });
-  kd_sort_ptr(begin(q), end(q));
+  kd_sort(begin(q), end(q));
   IntegerVector res(q.size());
   std::transform(begin(q), end(q), begin(res),
                  [&](vec_type<I>* x){

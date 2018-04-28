@@ -69,7 +69,7 @@ kd_nearest_neighbors_ <- function(x, value, n) {
     .Call(`_kdtools_kd_nearest_neighbors_`, x, value, n)
 }
 
-kd_order_ <- function(x) {
-    .Call(`_kdtools_kd_order_`, x)
+kd_order_ <- function(x, parallel = FALSE) {
+    .Call(`_kdtools_kd_order_`, x, parallel)
 }
 

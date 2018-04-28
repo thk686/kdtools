@@ -44,14 +44,14 @@ kd_sort.arrayvec <- function(x, inplace = FALSE, parallel = FALSE, ...) {
 kd_order <- function(x, ...) UseMethod("kd_order")
 
 #' @export
-kd_order.matrix <- function(x, ...) {
+kd_order.matrix <- function(x, parallel = FALSE, ...) {
   y <- matrix_to_tuples(x)
-  return(kd_order_(y))
+  return(kd_order_(y, parallel = parallel))
 }
 
 #' @export
-kd_order.arrayvec <- function(x, ...) {
-  return(kd_order_(x))
+kd_order.arrayvec <- function(x, parallel = FALSE, ...) {
+  return(kd_order_(x, parallel = parallel))
 }
 
 #' @rdname kdsort

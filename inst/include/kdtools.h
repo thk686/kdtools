@@ -96,6 +96,48 @@ struct less_nth
   }
 };
 
+template <size_t I>
+struct equal_nth
+{
+  template <typename T>
+  typename enable_if<is_not_pointer<T>::value, bool>::type
+  operator()(const T& lhs, const T& rhs)
+  {
+    return get<I>(lhs) == get<I>(rhs);
+  }
+  template <typename T>
+  typename enable_if<is_pointer<T>::value, bool>::type
+  operator()(const T& lhs, const T& rhs)
+  {
+    return get<I>(*lhs) == get<I>(*rhs);
+  }
+};
+
+template <typename Pred, size_t I>
+struct pred_nth
+{
+  Pred m_pred;
+  pred_nth(const Pred& pred) : m_pred(pred) {}
+  template <typename T>
+  typename enable_if<is_not_pointer<T>::value, bool>::type
+  operator()(const T& lhs, const T& rhs)
+  {
+    return m_pred(get<I>(lhs), get<I>(rhs));
+  }
+  template <typename T>
+  typename enable_if<is_pointer<T>::value, bool>::type
+  operator()(const T& lhs, const T& rhs)
+  {
+    return m_pred(get<I>(*lhs), get<I>(*rhs));
+  }
+};
+
+template <size_t I, typename Pred, typename T>
+T make_pred_nth(const Pred& pred)
+{
+  return pred_nth<Pred, I>(pred);
+}
+
 template <size_t I, typename T>
 typename enable_if<is_not_pointer<T>::value, double>::type
 dist_nth(const T& lhs, const T& rhs)
@@ -152,38 +194,19 @@ template <size_t I, size_t K = 0>
 struct kd_less
 {
   template <typename T>
-  typename enable_if<is_not_last<K, T>::value
-    && is_not_pointer<T>::value, bool>::type
+  typename enable_if<is_not_last<K, T>::value, bool>::type
   operator()(const T& lhs, const T& rhs) const
   {
     constexpr auto J = next_dim<I, T>::value;
-    return get<I>(lhs) == get<I>(rhs) ?
+    return equal_nth<I>()(lhs, rhs) ?
       kd_less<J, K + 1>()(lhs, rhs) :
-        get<I>(lhs) < get<I>(rhs);
+        less_nth<I>()(lhs, rhs);
   }
   template <typename T>
-  typename enable_if<is_last<K, T>::value
-    && is_not_pointer<T>::value, bool>::type
+  typename enable_if<is_last<K, T>::value, bool>::type
   operator()(const T& lhs, const T& rhs) const
   {
-    return get<I>(lhs) < get<I>(rhs);
-  }
-  template <typename T>
-  typename enable_if<is_not_last<K, T>::value
-    && is_pointer<T>::value, bool>::type
-  operator()(const T& lhs, const T& rhs) const
-  {
-    constexpr auto J = next_dim<I, T>::value;
-    return get<I>(*lhs) == get<I>(*rhs) ?
-    kd_less<J, K + 1>()(lhs, rhs) :
-      get<I>(*lhs) < get<I>(*rhs);
-  }
-  template <typename T>
-  typename enable_if<is_last<K, T>::value
-    && is_pointer<T>::value, bool>::type
-  operator()(const T& lhs, const T& rhs) const
-  {
-    return get<I>(*lhs) < get<I>(*rhs);
+    return less_nth<I>()(lhs, rhs);
   }
 };
 
@@ -193,40 +216,19 @@ struct kd_compare
   Pred m_pred;
   kd_compare(const Pred& pred) : m_pred(pred) {}
   template <typename T>
-  typename enable_if<is_not_last<K, T>::value
-    && is_not_pointer<T>::value, bool>::type
+  typename enable_if<is_not_last<K, T>::value, bool>::type
   operator()(const T& lhs, const T& rhs) const
   {
+    auto pred = make_pred_nth<I>(m_pred);
     constexpr auto J = next_dim<I, T>::value;
-    return !m_pred(get<I>(lhs), get<I>(rhs)) &&
-      !m_pred(get<I>(rhs), get<I>(lhs)) ?
-      kd_compare<Pred, J, K + 1>(m_pred)(lhs, rhs) :
-      m_pred(get<I>(lhs), get<I>(rhs));
+    return !pred(lhs, rhs) && !pred(lhs, rhs) ?
+      kd_compare<Pred, J, K + 1>(m_pred)(lhs, rhs) : pred(lhs, rhs);
   }
   template <typename T>
-  typename enable_if<is_last<K, T>::value
-    && is_not_pointer<T>::value, bool>::type
+  typename enable_if<is_last<K, T>::value, bool>::type
   operator()(const T& lhs, const T& rhs) const
   {
-    return m_pred(get<I>(lhs), get<I>(rhs));
-  }
-  template <typename T>
-  typename enable_if<is_not_last<K, T>::value
-    && is_pointer<T>::value, bool>::type
-  operator()(const T& lhs, const T& rhs) const
-  {
-    constexpr auto J = next_dim<I, T>::value;
-    return !m_pred(get<I>(*lhs), get<I>(*rhs)) &&
-      !m_pred(get<I>(*rhs), get<I>(*lhs)) ?
-      kd_compare<Pred, J, K + 1>(m_pred)(lhs, rhs) :
-      m_pred(get<I>(*lhs), get<I>(*rhs));
-  }
-  template <typename T>
-  typename enable_if<is_last<K, T>::value
-    && is_pointer<T>::value, bool>::type
-  operator()(const T& lhs, const T& rhs) const
-  {
-    return m_pred(get<I>(*lhs), get<I>(*rhs));
+    return make_pred_nth<I>(m_pred)(lhs, rhs);
   }
 };
 
@@ -357,32 +359,16 @@ template <size_t I>
 struct all_less_
 {
   template <typename T>
-  typename enable_if<is_not_last<I, T>::value
-    && is_not_pointer<T>::value, bool>::type
+  typename enable_if<is_not_last<I, T>::value, bool>::type
   operator()(const T& lhs, const T& rhs) const
   {
-    return get<I>(lhs) < get<I>(rhs) && all_less_<I + 1>()(lhs, rhs);
+    return less_nth<I>()(lhs, rhs) && all_less_<I + 1>()(lhs, rhs);
   }
   template <typename T>
-  typename enable_if<is_last<I, T>::value
-    && is_not_pointer<T>::value, bool>::type
+  typename enable_if<is_last<I, T>::value, bool>::type
   operator()(const T& lhs, const T& rhs) const
   {
-    return get<I>(lhs) < get<I>(rhs);
-  }
-  template <typename T>
-  typename enable_if<is_not_last<I, T>::value
-    && is_pointer<T>::value, bool>::type
-  operator()(const T& lhs, const T& rhs) const
-  {
-    return get<I>(*lhs) < get<I>(*rhs) && all_less_<I + 1>()(lhs, rhs);
-  }
-  template <typename T>
-  typename enable_if<is_last<I, T>::value
-    && is_pointer<T>::value, bool>::type
-  operator()(const T& lhs, const T& rhs) const
-  {
-    return get<I>(*lhs) < get<I>(*rhs);
+    return less_nth<I>()(lhs, rhs);
   }
 };
 
@@ -396,32 +382,16 @@ template <size_t I>
 struct none_less_
 {
   template <typename T>
-  typename enable_if<is_not_last<I, T>::value
-    && is_not_pointer<T>::value, bool>::type
+  typename enable_if<is_not_last<I, T>::value, bool>::type
   operator()(const T& lhs, const T& rhs)
   {
-    return get<I>(lhs) >= get<I>(rhs) && none_less_<I + 1>()(lhs, rhs);
+    return !less_nth<I>()(lhs, rhs) && none_less_<I + 1>()(lhs, rhs);
   }
   template <typename T>
-  typename enable_if<is_last<I, T>::value
-    && is_not_pointer<T>::value, bool>::type
+  typename enable_if<is_last<I, T>::value, bool>::type
   operator()(const T& lhs, const T& rhs)
   {
-    return get<I>(lhs) >= get<I>(rhs);
-  }
-  template <typename T>
-  typename enable_if<is_not_last<I, T>::value
-    && is_pointer<T>::value, bool>::type
-  operator()(const T& lhs, const T& rhs)
-  {
-    return get<I>(*lhs) >= get<I>(*rhs) && none_less_<I + 1>()(lhs, rhs);
-  }
-  template <typename T>
-  typename enable_if<is_last<I, T>::value
-    && is_pointer<T>::value, bool>::type
-  operator()(const T& lhs, const T& rhs)
-  {
-    return get<I>(*lhs) >= get<I>(*rhs);
+    return !less_nth<I>()(lhs, rhs);
   }
 };
 

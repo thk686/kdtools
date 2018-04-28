@@ -192,23 +192,25 @@ To ensure the correct behavior in the presence of multiple ties, or even when al
 template <size_t I, size_t K = 0>
 struct kd_less
 {
-  template <typename TupleType>
-  typename enable_if<is_not_last<K, TupleType>::value, bool>::type
-  operator()(const TupleType& lhs, const TupleType& rhs) const
+  template <typename T>
+  typename enable_if<is_not_last<K, T>::value, bool>::type
+  operator()(const T& lhs, const T& rhs) const
   {
-    constexpr auto J = next_dim<I, TupleType>::value;
-    return get<I>(lhs) == get<I>(rhs) ?
+    constexpr auto J = next_dim<I, T>::value;
+    return equal_nth<I>()(lhs, rhs) ?
       kd_less<J, K + 1>()(lhs, rhs) :
-        get<I>(lhs) < get<I>(rhs);
+        less_nth<I>()(lhs, rhs);
   }
-  template <typename TupleType>
-  typename enable_if<is_last<K, TupleType>::value, bool>::type
-  operator()(const TupleType& lhs, const TupleType& rhs) const
+  template <typename T>
+  typename enable_if<is_last<K, T>::value, bool>::type
+  operator()(const T& lhs, const T& rhs) const
   {
-    return get<I>(lhs) < get<I>(rhs);
+    return less_nth<I>()(lhs, rhs);
   }
 };
 ```
+
+The predicates ```equal_nth``` and ```less_nth``` compare the $I^{th}$ element of the tuple. They have specializations for handling pointers to tuple-like object, so all functions can operate on a range over pointers to tuples, allowing arbitrary indexing into the original data.
 
 A more general function object template ```kd_compare``` that takes an arbitrary binary predicate is also provided by ```kdtools```. Some examples applying ```kd_less```, including degenerate, all-ties cases, are shown here.
 

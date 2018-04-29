@@ -6,6 +6,8 @@ r:
   - release
   - devel
 
+r_check_args: '--use-valgrind'
+
 cache: packages
 
 after_success:

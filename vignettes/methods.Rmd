@@ -716,7 +716,6 @@ void print_range(const range_type& x)
 {
   auto n = x.size();
   if (n < 2 * N) stop("Not enough rows");
-  auto i = begin(x);
   for (int i = 0; i != N; ++i)
     Rcout << i << " "
           << std::get<0>(x[i]) << " " 
@@ -728,7 +727,7 @@ void print_range(const range_type& x)
           << std::get<1>(x[i]) << std::endl;
 }
 
-void print_range_ptr(const pointers_type& x)
+void print_range(const pointers_type& x)
 {
   auto n = x.size();
   if (n < 2 * N) stop("Not enough rows");
@@ -949,8 +948,8 @@ void sort_pointers(NumericVector c1, CharacterVector c2)
   kd_sort(begin(idx2), end(idx2), greater_key());
   
   Rcout << "Original order\n\n"; print_range(data);
-  Rcout << "\nOrder by less\n\n"; print_range_ptr(idx1);
-  Rcout << "\nOrder by greater\n\n"; print_range_ptr(idx2);
+  Rcout << "\nOrder by less\n\n"; print_range(idx1);
+  Rcout << "\nOrder by greater\n\n"; print_range(idx2);
 }
 ```
 

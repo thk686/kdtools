@@ -710,16 +710,19 @@ using key_type = tuple<double, string>;
 using range_type = vector<key_type>;
 using pointers_type = vector<key_type*>;
 
+#define N 3
+
 void print_range(const range_type& x)
 {
   auto n = x.size();
-  if (n < 10) stop("Not enough rows");
-  for (int i = 0; i != 5; ++i)
+  if (n < 2 * N) stop("Not enough rows");
+  auto i = begin(x);
+  for (int i = 0; i != N; ++i)
     Rcout << i << " "
           << std::get<0>(x[i]) << " " 
           << std::get<1>(x[i]) << std::endl;
   Rcout << "..." << std::endl;
-  for (int i = n - 5; i != n; ++i)
+  for (int i = n - N; i != n; ++i)
     Rcout << i << " "
           << std::get<0>(x[i]) << " " 
           << std::get<1>(x[i]) << std::endl;
@@ -728,13 +731,13 @@ void print_range(const range_type& x)
 void print_range_ptr(const pointers_type& x)
 {
   auto n = x.size();
-  if (n < 10) stop("Not enough rows");
-  for (int i = 0; i != 5; ++i)
+  if (n < 2 * N) stop("Not enough rows");
+  for (int i = 0; i != N; ++i)
     Rcout << i << " "
           << std::get<0>(*x[i]) << " " 
           << std::get<1>(*x[i]) << std::endl;
   Rcout << "..." << std::endl;
-  for (int i = n - 5; i != n; ++i)
+  for (int i = n - N; i != n; ++i)
     Rcout << i << " "
           << std::get<0>(*x[i]) << " " 
           << std::get<1>(*x[i]) << std::endl;
@@ -830,7 +833,7 @@ void mixed_query(NumericVector c1, CharacterVector c2)
   });
   Rcout << "\nSort time: " << t.count() << " seconds" << std::endl;
   
-  Rcout << "\nFirst and last 5 elements of sorted data:\n" << std::endl;
+  Rcout << "\nFirst and last " << N << " elements of sorted data:\n" << std::endl;
   print_range(data);
   
   range_type result;
@@ -845,7 +848,7 @@ void mixed_query(NumericVector c1, CharacterVector c2)
   
   Rcout << "\nQuery time: " << u.count() << " seconds" << std::endl;
 
-  Rcout << "\nFirst and last 5 elements of query return:\n" << std::endl;
+  Rcout << "\nFirst and last " << N << " elements of query return:\n" << std::endl;
   kd_sort(begin(result), end(result)); print_range(result);
   
   result.clear();
@@ -860,7 +863,7 @@ void mixed_query(NumericVector c1, CharacterVector c2)
   
   Rcout << "\nNeighbors query time: " << v.count() << " seconds" << std::endl;
 
-  Rcout << "\nFirst and last 5 elements of neighbors query return:\n" << std::endl;
+  Rcout << "\nFirst and last " << N << " elements of neighbors query return:\n" << std::endl;
   print_range(result);
 }
 ```
@@ -935,11 +938,12 @@ void sort_pointers(NumericVector c1, CharacterVector c2)
   
   transform(begin(c1), end(c1), begin(c2), back_inserter(data), make_key());
   
-  pointers_type idx1(data.size()), idx2(data.size());
+  pointers_type idx1(data.size());
   
   auto get_ptr = [](key_type& x){ return &x; };
   transform(begin(data), end(data), begin(idx1), get_ptr);
-  transform(begin(data), end(data), begin(idx2), get_ptr);
+
+  pointers_type idx2 = idx1;
   
   kd_sort(begin(idx1), end(idx1));
   kd_sort(begin(idx2), end(idx2), greater_key());
@@ -955,6 +959,8 @@ Here, ```greater_key``` has overloads for both string and double types.
 ```{r}
 sort_pointers(signif(numbers, 4), strings)
 ```
+
+Note that the forward and reverse sorting do not give exactly the same result (in reverse) owing to ties.
 
 ## Conclusions
 

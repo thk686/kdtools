@@ -8,6 +8,14 @@ r:
 
 r_check_args: '--use-valgrind'
 
+addons:
+  apt:
+    packages:
+      - valgrind
+
+before_install:
+  - cat ./valgrindrc >> ~/.valgrindrc
+
 cache: packages
 
 after_success:

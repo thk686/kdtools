@@ -235,26 +235,26 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">t</span>(<span class="kw"><a href="../reference/kdsort.html">kd_sort</a></span>(<span class="kw">cbind</span>(j, k)))</code></pre></div>
 <table class="table"><tbody>
 <tr class="odd">
-<td align="right">1</td>
 <td align="right">2</td>
-<td align="right">4</td>
 <td align="right">3</td>
+<td align="right">1</td>
+<td align="right">4</td>
 <td align="right">5</td>
 <td align="right">6</td>
+<td align="right">8</td>
 <td align="right">7</td>
 <td align="right">9</td>
-<td align="right">8</td>
 </tr>
 <tr class="even">
-<td align="right">1</td>
-<td align="right">5</td>
-<td align="right">6</td>
-<td align="right">7</td>
 <td align="right">2</td>
-<td align="right">3</td>
-<td align="right">4</td>
+<td align="right">5</td>
 <td align="right">8</td>
 <td align="right">9</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">4</td>
+<td align="right">6</td>
+<td align="right">7</td>
 </tr>
 </tbody></table>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">t</span>(<span class="kw"><a href="../reference/kdsort.html">kd_sort</a></span>(<span class="kw">cbind</span>(<span class="dv">0</span>, j, k)))</code></pre></div>
@@ -271,8 +271,8 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
 <td align="right">0</td>
 </tr>
 <tr class="even">
-<td align="right">1</td>
 <td align="right">2</td>
+<td align="right">1</td>
 <td align="right">3</td>
 <td align="right">4</td>
 <td align="right">5</td>
@@ -282,40 +282,40 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
 <td align="right">9</td>
 </tr>
 <tr class="odd">
-<td align="right">1</td>
-<td align="right">5</td>
-<td align="right">7</td>
-<td align="right">6</td>
 <td align="right">2</td>
-<td align="right">3</td>
-<td align="right">4</td>
-<td align="right">9</td>
 <td align="right">8</td>
+<td align="right">5</td>
+<td align="right">9</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">6</td>
+<td align="right">4</td>
+<td align="right">7</td>
 </tr>
 </tbody></table>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">t</span>(<span class="kw"><a href="../reference/kdsort.html">kd_sort</a></span>(<span class="kw">cbind</span>(j, k, <span class="dv">0</span>)))</code></pre></div>
 <table class="table"><tbody>
 <tr class="odd">
-<td align="right">1</td>
 <td align="right">2</td>
-<td align="right">4</td>
 <td align="right">3</td>
+<td align="right">1</td>
+<td align="right">4</td>
 <td align="right">5</td>
 <td align="right">6</td>
+<td align="right">8</td>
 <td align="right">7</td>
 <td align="right">9</td>
-<td align="right">8</td>
 </tr>
 <tr class="even">
-<td align="right">1</td>
-<td align="right">5</td>
-<td align="right">6</td>
-<td align="right">7</td>
 <td align="right">2</td>
-<td align="right">3</td>
-<td align="right">4</td>
+<td align="right">5</td>
 <td align="right">8</td>
 <td align="right">9</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">4</td>
+<td align="right">6</td>
+<td align="right">7</td>
 </tr>
 <tr class="odd">
 <td align="right">0</td>
@@ -545,7 +545,7 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
   });
   Rcout &lt;&lt; <span class="st">"</span><span class="sc">\n</span><span class="st">Sort time: "</span> &lt;&lt; t.count() &lt;&lt; <span class="st">" seconds"</span> &lt;&lt; <span class="bu">std::</span>endl;
   
-  Rcout &lt;&lt; <span class="st">"</span><span class="sc">\n</span><span class="st">First and last 5 elements of sorted data:</span><span class="sc">\n</span><span class="st">"</span> &lt;&lt; <span class="bu">std::</span>endl;
+  Rcout &lt;&lt; <span class="st">"</span><span class="sc">\n</span><span class="st">First and last "</span> &lt;&lt; N &lt;&lt; <span class="st">" elements of sorted data:</span><span class="sc">\n</span><span class="st">"</span> &lt;&lt; <span class="bu">std::</span>endl;
   print_range(data);
   
   <span class="dt">range_type</span> result;
@@ -560,7 +560,7 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
   
   Rcout &lt;&lt; <span class="st">"</span><span class="sc">\n</span><span class="st">Query time: "</span> &lt;&lt; u.count() &lt;&lt; <span class="st">" seconds"</span> &lt;&lt; <span class="bu">std::</span>endl;
 
-  Rcout &lt;&lt; <span class="st">"</span><span class="sc">\n</span><span class="st">First and last 5 elements of query return:</span><span class="sc">\n</span><span class="st">"</span> &lt;&lt; <span class="bu">std::</span>endl;
+  Rcout &lt;&lt; <span class="st">"</span><span class="sc">\n</span><span class="st">First and last "</span> &lt;&lt; N &lt;&lt; <span class="st">" elements of query return:</span><span class="sc">\n</span><span class="st">"</span> &lt;&lt; <span class="bu">std::</span>endl;
   kd_sort(begin(result), end(result)); print_range(result);
   
   result.clear();
@@ -575,7 +575,7 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
   
   Rcout &lt;&lt; <span class="st">"</span><span class="sc">\n</span><span class="st">Neighbors query time: "</span> &lt;&lt; v.count() &lt;&lt; <span class="st">" seconds"</span> &lt;&lt; <span class="bu">std::</span>endl;
 
-  Rcout &lt;&lt; <span class="st">"</span><span class="sc">\n</span><span class="st">First and last 5 elements of neighbors query return:</span><span class="sc">\n</span><span class="st">"</span> &lt;&lt; <span class="bu">std::</span>endl;
+  Rcout &lt;&lt; <span class="st">"</span><span class="sc">\n</span><span class="st">First and last "</span> &lt;&lt; N &lt;&lt; <span class="st">" elements of neighbors query return:</span><span class="sc">\n</span><span class="st">"</span> &lt;&lt; <span class="bu">std::</span>endl;
   print_range(result);
 }</code></pre></div>
 <p>First the data are sorted and then a range query is conducted. The range query selects tuples where the first element ranges from <code>0.4</code> to <code>0.6</code> and the second element begins with letters <code>w</code> through <code>y</code>. For the test, we borrow the words from the <code>parts_of_speech</code> dataset from the <code>tidytext</code> package. It contains more than <span class="math inline">\(10^5\)</span> words.</p>
@@ -584,53 +584,41 @@ numbers =<span class="st"> </span><span class="kw">runif</span>(<span class="kw"
 strings =<span class="st"> </span><span class="kw">sample</span>(<span class="kw">tolower</span>(parts_of_speech[[<span class="dv">1</span>]]))
 <span class="kw">mixed_query</span>(<span class="kw">signif</span>(numbers, <span class="dv">4</span>), strings)
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Sort time: 0.104461 seconds</span>
+<span class="co">#&gt; Sort time: 0.105486 seconds</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; First and last 5 elements of sorted data:</span>
+<span class="co">#&gt; First and last 3 elements of sorted data:</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.0002264 abbotship</span>
-<span class="co">#&gt; 1 0.001601 abranchiate</span>
-<span class="co">#&gt; 2 0.001638 accelerando</span>
-<span class="co">#&gt; 3 0.00248 accelerate</span>
-<span class="co">#&gt; 4 0.001353 acervately</span>
+<span class="co">#&gt; 0 0.001694 abirritating</span>
+<span class="co">#&gt; 1 0.001771 acarophobia</span>
+<span class="co">#&gt; 2 0.003747 ac-globulin</span>
 <span class="co">#&gt; ...</span>
-<span class="co">#&gt; 208254 0.9968 yadim</span>
-<span class="co">#&gt; 208255 0.9987 y-blennies</span>
-<span class="co">#&gt; 208256 0.9956 yore</span>
-<span class="co">#&gt; 208257 0.998 zohara</span>
-<span class="co">#&gt; 208258 0.9993 zerlina</span>
+<span class="co">#&gt; 208256 0.9977 yee</span>
+<span class="co">#&gt; 208257 0.9981 yellowbark</span>
+<span class="co">#&gt; 208258 1 yucca</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Query time: 9.1339e-05 seconds</span>
+<span class="co">#&gt; Query time: 7.0292e-05 seconds</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; First and last 5 elements of query return:</span>
+<span class="co">#&gt; First and last 3 elements of query return:</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.4023 wailer</span>
-<span class="co">#&gt; 1 0.4042 wallow</span>
-<span class="co">#&gt; 2 0.4051 walterboro</span>
-<span class="co">#&gt; 3 0.4086 wachtel</span>
-<span class="co">#&gt; 4 0.4023 wang</span>
+<span class="co">#&gt; 0 0.4017 wahoos</span>
+<span class="co">#&gt; 1 0.405 wait</span>
+<span class="co">#&gt; 2 0.409 wade</span>
 <span class="co">#&gt; ...</span>
-<span class="co">#&gt; 1038 0.5985 yahiya</span>
-<span class="co">#&gt; 1039 0.5927 yawn</span>
-<span class="co">#&gt; 1040 0.5944 yeisk</span>
-<span class="co">#&gt; 1041 0.5996 ysabel</span>
-<span class="co">#&gt; 1042 0.5997 yoghurt</span>
+<span class="co">#&gt; 1045 0.5937 younglove</span>
+<span class="co">#&gt; 1046 0.5989 yseulta</span>
+<span class="co">#&gt; 1047 0.5999 yquem</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Neighbors query time: 0.000726943 seconds</span>
+<span class="co">#&gt; Neighbors query time: 0.00088178 seconds</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; First and last 5 elements of neighbors query return:</span>
+<span class="co">#&gt; First and last 3 elements of neighbors query return:</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.4384 kolbe</span>
-<span class="co">#&gt; 1 0.4465 kaolinite</span>
-<span class="co">#&gt; 2 0.4467 keratosis</span>
-<span class="co">#&gt; 3 0.4471 kalsomine</span>
-<span class="co">#&gt; 4 0.456 kroon</span>
+<span class="co">#&gt; 0 0.5285 joist</span>
+<span class="co">#&gt; 1 0.5242 joistless</span>
+<span class="co">#&gt; 2 0.5237 hollister</span>
 <span class="co">#&gt; ...</span>
-<span class="co">#&gt; 95 0.4818 lotis</span>
-<span class="co">#&gt; 96 0.4983 loose</span>
-<span class="co">#&gt; 97 0.7074 look</span>
-<span class="co">#&gt; 98 0.4288 jostled</span>
-<span class="co">#&gt; 99 0.5234 kilo-oersted</span></code></pre></div>
+<span class="co">#&gt; 97 0.5914 kotow</span>
+<span class="co">#&gt; 98 0.5853 kyoodled</span>
+<span class="co">#&gt; 99 0.6195 lookout</span></code></pre></div>
 <p>The timing results indicate that sorting <span class="math inline">\(2 \times 10 ^ 5\)</span> tuples is on the order of 1/10th second, whereas the range query returned in less than a millisecond.</p>
 <p>Nearest neighbor searching requires a suitable distance function be defined for all types. There are two specialization points: the templates <code>scalar_diff</code>, which returns a possibly signed difference between to objects, and <code>scalar_dist</code>, which returns the distance along a single dimension. Currently, nearest neighbor distances are hardwired as the L2 norm of the returned scalar differences computed for each dimension. The computation above uses the following definitions.</p>
 <div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">template</span>&lt;<span class="kw">class</span> InputIt1, <span class="kw">class</span> InputIt2&gt;
@@ -686,62 +674,52 @@ strings =<span class="st"> </span><span class="kw">sample</span>(<span class="kw
   
   transform(begin(c1), end(c1), begin(c2), back_inserter(data), make_key());
   
-  <span class="dt">pointers_type</span> idx1(data.size()), idx2(data.size());
+  <span class="dt">pointers_type</span> idx1(data.size());
   
   <span class="kw">auto</span> get_ptr = [](<span class="dt">key_type</span>&amp; x){ <span class="cf">return</span> &amp;x; };
   transform(begin(data), end(data), begin(idx1), get_ptr);
-  transform(begin(data), end(data), begin(idx2), get_ptr);
+
+  <span class="dt">pointers_type</span> idx2 = idx1;
   
   kd_sort(begin(idx1), end(idx1));
   kd_sort(begin(idx2), end(idx2), greater_key());
   
   Rcout &lt;&lt; <span class="st">"Original order</span><span class="sc">\n\n</span><span class="st">"</span>; print_range(data);
-  Rcout &lt;&lt; <span class="st">"</span><span class="sc">\n</span><span class="st">Order by less</span><span class="sc">\n\n</span><span class="st">"</span>; print_range_ptr(idx1);
-  Rcout &lt;&lt; <span class="st">"</span><span class="sc">\n</span><span class="st">Order by greater</span><span class="sc">\n\n</span><span class="st">"</span>; print_range_ptr(idx2);
+  Rcout &lt;&lt; <span class="st">"</span><span class="sc">\n</span><span class="st">Order by less</span><span class="sc">\n\n</span><span class="st">"</span>; print_range(idx1);
+  Rcout &lt;&lt; <span class="st">"</span><span class="sc">\n</span><span class="st">Order by greater</span><span class="sc">\n\n</span><span class="st">"</span>; print_range(idx2);
 }</code></pre></div>
 <p>Here, <code>greater_key</code> has overloads for both string and double types.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sort_pointers</span>(<span class="kw">signif</span>(numbers, <span class="dv">4</span>), strings)
 <span class="co">#&gt; Original order</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.8475 ninefold</span>
-<span class="co">#&gt; 1 0.8419 amber</span>
-<span class="co">#&gt; 2 0.3956 pneumographic</span>
-<span class="co">#&gt; 3 0.5928 booze</span>
-<span class="co">#&gt; 4 0.324 ammiaceous</span>
+<span class="co">#&gt; 0 0.5899 unelated</span>
+<span class="co">#&gt; 1 0.3513 transmentally</span>
+<span class="co">#&gt; 2 0.7159 sulphatization</span>
 <span class="co">#&gt; ...</span>
-<span class="co">#&gt; 208254 0.4178 degradative</span>
-<span class="co">#&gt; 208255 0.6793 unkingly</span>
-<span class="co">#&gt; 208256 0.7422 insusceptibly</span>
-<span class="co">#&gt; 208257 0.372 unjumbled</span>
-<span class="co">#&gt; 208258 0.4419 preexaminer</span>
+<span class="co">#&gt; 208256 0.5851 kodiak</span>
+<span class="co">#&gt; 208257 0.1777 resensitize</span>
+<span class="co">#&gt; 208258 0.2316 burp</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Order by less</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.0002264 abbotship</span>
-<span class="co">#&gt; 1 0.001601 abranchiate</span>
-<span class="co">#&gt; 2 0.001638 accelerando</span>
-<span class="co">#&gt; 3 0.00248 accelerate</span>
-<span class="co">#&gt; 4 0.001353 acervately</span>
+<span class="co">#&gt; 0 0.001694 abirritating</span>
+<span class="co">#&gt; 1 0.001771 acarophobia</span>
+<span class="co">#&gt; 2 0.003747 ac-globulin</span>
 <span class="co">#&gt; ...</span>
-<span class="co">#&gt; 208254 0.9968 yadim</span>
-<span class="co">#&gt; 208255 0.9987 y-blennies</span>
-<span class="co">#&gt; 208256 0.9956 yore</span>
-<span class="co">#&gt; 208257 0.998 zohara</span>
-<span class="co">#&gt; 208258 0.9993 zerlina</span>
+<span class="co">#&gt; 208256 0.9977 yee</span>
+<span class="co">#&gt; 208257 0.9981 yellowbark</span>
+<span class="co">#&gt; 208258 1 yucca</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Order by greater</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; 0 1 undertrader</span>
-<span class="co">#&gt; 1 1 overlive</span>
-<span class="co">#&gt; 2 0.998 zohara</span>
-<span class="co">#&gt; 3 0.9999 verbification</span>
-<span class="co">#&gt; 4 0.8468 zymosis</span>
+<span class="co">#&gt; 0 0.5132 zzt</span>
+<span class="co">#&gt; 1 1 yucca</span>
+<span class="co">#&gt; 2 0.9977 yee</span>
 <span class="co">#&gt; ...</span>
-<span class="co">#&gt; 208254 0.0005855 alcus</span>
-<span class="co">#&gt; 208255 0.00118 adjacencies</span>
-<span class="co">#&gt; 208256 0.0004847 aldrin</span>
-<span class="co">#&gt; 208257 0.0002264 abbotship</span>
-<span class="co">#&gt; 208258 4.983e-05 alana</span></code></pre></div>
+<span class="co">#&gt; 208256 0.001762 aldercy</span>
+<span class="co">#&gt; 208257 0.001771 acarophobia</span>
+<span class="co">#&gt; 208258 0.001694 abirritating</span></code></pre></div>
+<p>Note that the forward and reverse sorting do not give exactly the same result (in reverse) owing to ties.</p>
 </div>
 </div>
 <div id="conclusions" class="section level2">

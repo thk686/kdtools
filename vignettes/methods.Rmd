@@ -708,6 +708,7 @@ using kdtools::kd_nearest_neighbors;
 
 using key_type = tuple<double, string>;
 using range_type = vector<key_type>;
+using pointers_type = vector<key_type*>;
 
 void print_range(const range_type& x)
 {
@@ -724,6 +725,21 @@ void print_range(const range_type& x)
           << std::get<1>(x[i]) << std::endl;
 }
 
+void print_range_ptr(const pointers_type& x)
+{
+  auto n = x.size();
+  if (n < 10) stop("Not enough rows");
+  for (int i = 0; i != 5; ++i)
+    Rcout << i << " "
+          << std::get<0>(*x[i]) << " " 
+          << std::get<1>(*x[i]) << std::endl;
+  Rcout << "..." << std::endl;
+  for (int i = n - 5; i != n; ++i)
+    Rcout << i << " "
+          << std::get<0>(*x[i]) << " " 
+          << std::get<1>(*x[i]) << std::endl;
+}
+
 template <typename T>
 std::chrono::duration<double> time_it(T x)
 {
@@ -738,6 +754,18 @@ struct make_key
   key_type operator()(const double a, const char* b){ return key_type(a, b); }
 };
 
+struct greater_key
+{
+  bool operator()(const double& lhs, const double& rhs)
+  {
+    return lhs > rhs;
+  }
+  bool operator()(const string& lhs, const string& rhs)
+  {
+    return lhs > rhs;
+  }
+};
+  
 template<class InputIt1, class InputIt2>
 double set_similarity(InputIt1 first1, InputIt1 last1,
                       InputIt2 first2, InputIt2 last2)
@@ -886,6 +914,47 @@ double scalar_diff(const std::string& lhs, const std::string& rhs)
 ```
 
 The ```set_similarity``` template is adapted from the STL ```set_intersection``` template and produces a number between 0 and 1. I have not attempted to prove this distance is metric, so the results may not be entirely correct. Also, there is no facility currently available to weight distances in different dimensions or override the default root-sum-of-squares algorithm for the multivariate distance.
+
+### Indexing with pointer arrays
+
+Since version 0.4.0, ```kd_tools``` all predicates and distance functions have specializations or overloads to handle pointers to tuple-like objects. Hence, any of the routines can sort or search a vector of pointers to tuples, which act as indices into the original data.
+
+```{Rcpp}
+// [[Rcpp::depends(kdtools)]]
+// [[Rcpp::plugins(cpp11)]]
+
+#include "mixed_query.h"
+
+// [[Rcpp::export]]
+void sort_pointers(NumericVector c1, CharacterVector c2)
+{
+  auto n = c1.size();
+  
+  range_type data;
+  data.reserve(n);
+  
+  transform(begin(c1), end(c1), begin(c2), back_inserter(data), make_key());
+  
+  pointers_type idx1(data.size()), idx2(data.size());
+  
+  auto get_ptr = [](key_type& x){ return &x; };
+  transform(begin(data), end(data), begin(idx1), get_ptr);
+  transform(begin(data), end(data), begin(idx2), get_ptr);
+  
+  kd_sort(begin(idx1), end(idx1));
+  kd_sort(begin(idx2), end(idx2), greater_key());
+  
+  Rcout << "Original order\n\n"; print_range(data);
+  Rcout << "\nOrder by less\n\n"; print_range_ptr(idx1);
+  Rcout << "\nOrder by greater\n\n"; print_range_ptr(idx2);
+}
+```
+
+Here, ```greater_key``` has overloads for both string and double types.
+
+```{r}
+sort_pointers(signif(numbers, 4), strings)
+```
 
 ## Conclusions
 

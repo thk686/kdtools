@@ -132,8 +132,8 @@ struct pred_nth
   }
 };
 
-template <size_t I, typename Pred, typename T>
-T make_pred_nth(const Pred& pred)
+template <size_t I, typename Pred>
+pred_nth<Pred, I> make_pred_nth(const Pred& pred)
 {
   return pred_nth<Pred, I>(pred);
 }
@@ -232,8 +232,8 @@ struct kd_compare
   }
 };
 
-template <size_t I, typename Pred, typename T>
-T make_kd_compare(const Pred& pred)
+template <size_t I, typename Pred>
+kd_compare<Pred, I> make_kd_compare(const Pred& pred)
 {
   return kd_compare<Pred, I>(pred);
 }
@@ -574,25 +574,25 @@ template <size_t I,
           typename QType>
 void knn(Iter first, Iter last,
          const TupleType& value,
-         QType& q)
+         QType& Q)
 {
   switch(distance(first, last)) {
-  case 1 : q.add(l2dist(*first, value), first);
+  case 1 : Q.add(l2dist(*first, value), first);
   case 0 : return; } // switch end
   auto pivot = find_pivot<I>(first, last);
-  q.add(l2dist(*pivot, value), pivot);
+  Q.add(l2dist(*pivot, value), pivot);
   auto search_left = less_nth<I>()(value, *pivot);
   constexpr auto J = next_dim<I, TupleType>::value;
   if (search_left)
-    knn<J>(first, pivot, value, q);
+    knn<J>(first, pivot, value, Q);
   else
-    knn<J>(next(pivot), last, value, q);
-  if (dist_nth<I>(value, *pivot) <= q.max_key())
+    knn<J>(next(pivot), last, value, Q);
+  if (dist_nth<I>(value, *pivot) <= Q.max_key())
   {
     if (search_left)
-      knn<J>(next(pivot), last, value, q);
+      knn<J>(next(pivot), last, value, Q);
     else
-      knn<J>(first, pivot, value, q);
+      knn<J>(first, pivot, value, Q);
   }
 }
 
@@ -614,6 +614,8 @@ using detail::next_dim;
 
 using detail::kd_less;
 using detail::less_nth;
+using detail::equal_nth;
+using detail::pred_nth;
 using detail::dist_nth;
 using detail::kd_compare;
 using detail::make_kd_compare;
@@ -715,9 +717,9 @@ void kd_nearest_neighbors(Iter first, Iter last,
                           const TupleType& value,
                           size_t n, OutIter outp)
 {
-  detail::n_best<Iter> q(n);
-  detail::knn<0>(first, last, value, q);
-  q.copy_to(outp);
+  detail::n_best<Iter> Q(n);
+  detail::knn<0>(first, last, value, Q);
+  Q.copy_to(outp);
 }
 
 } // namespace kdtools

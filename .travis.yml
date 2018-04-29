@@ -6,7 +6,7 @@ r:
   - release
   - devel
 
-r_check_args: '--use-valgrind'
+r_check_args: '--as-cran --use-valgrind'
 r_build_args: '--no-build-vignettes'
 
 addons:
@@ -15,7 +15,8 @@ addons:
       - valgrind
 
 before_install:
-  - cat ./valgrindrc >> ~/.valgrindrc
+  - echo '--leak-check=full' > ~/.valgrindrc
+  - echo '--track-origins=yes' >> ~/.valgrindrc
 
 cache: packages
 

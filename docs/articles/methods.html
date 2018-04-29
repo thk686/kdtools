@@ -8,8 +8,11 @@
 <title>Compact multidimensional sorting and searching with kdtools • kdtools</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
-<!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script><script src="../pkgdown.js"></script><!-- mathjax --><script src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<script src="../jquery.sticky-kit.min.js"></script><script src="../pkgdown.js"></script><meta property="og:title" content="Compact multidimensional sorting and searching with kdtools">
+<meta property="og:description" content="">
+<meta name="twitter:card" content="summary">
+<!-- mathjax --><script src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
@@ -24,8 +27,12 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">kdtools</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">kdtools</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.4.0</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
@@ -35,7 +42,7 @@
   </a>
 </li>
 <li>
-  <a href="../articles/kdtools.html">Get Started</a>
+  <a href="../articles/kdtools.html">Get started</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -53,7 +60,7 @@
   </ul>
 </li>
 <li>
-  <a href="../news/index.html">News</a>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -78,8 +85,11 @@
       <h1>Compact multidimensional sorting and searching with kdtools</h1>
                         <h4 class="author">Timothy H. Keitt</h4>
             
-            <h4 class="date">2018-04-09</h4>
-          </div>
+            <h4 class="date">2018-04-29</h4>
+      
+      <small>Source: <a href="https://github.com/thk686/kdtools/blob/master/vignettes/methods.Rmd"><code>vignettes/methods.Rmd</code></a></small>
+
+    </div>
 
     
     
@@ -190,22 +200,23 @@
 <div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">template</span> &lt;<span class="dt">size_t</span> I, <span class="dt">size_t</span> K = <span class="dv">0</span>&gt;
 <span class="kw">struct</span> kd_less
 {
-  <span class="kw">template</span> &lt;<span class="kw">typename</span> TupleType&gt;
-  <span class="kw">typename</span> enable_if&lt;is_not_last&lt;K, TupleType&gt;::value, <span class="dt">bool</span>&gt;::type
-  <span class="kw">operator</span>()(<span class="at">const</span> TupleType&amp; lhs, <span class="at">const</span> TupleType&amp; rhs) <span class="at">const</span>
+  <span class="kw">template</span> &lt;<span class="kw">typename</span> T&gt;
+  <span class="kw">typename</span> enable_if&lt;is_not_last&lt;K, T&gt;::value, <span class="dt">bool</span>&gt;::type
+  <span class="kw">operator</span>()(<span class="at">const</span> T&amp; lhs, <span class="at">const</span> T&amp; rhs) <span class="at">const</span>
   {
-    <span class="kw">constexpr</span> <span class="kw">auto</span> J = next_dim&lt;I, TupleType&gt;::value;
-    <span class="cf">return</span> get&lt;I&gt;(lhs) == get&lt;I&gt;(rhs) ?
+    <span class="kw">constexpr</span> <span class="kw">auto</span> J = next_dim&lt;I, T&gt;::value;
+    <span class="cf">return</span> equal_nth&lt;I&gt;()(lhs, rhs) ?
       kd_less&lt;J, K + <span class="dv">1</span>&gt;()(lhs, rhs) :
-        get&lt;I&gt;(lhs) &lt; get&lt;I&gt;(rhs);
+        less_nth&lt;I&gt;()(lhs, rhs);
   }
-  <span class="kw">template</span> &lt;<span class="kw">typename</span> TupleType&gt;
-  <span class="kw">typename</span> enable_if&lt;is_last&lt;K, TupleType&gt;::value, <span class="dt">bool</span>&gt;::type
-  <span class="kw">operator</span>()(<span class="at">const</span> TupleType&amp; lhs, <span class="at">const</span> TupleType&amp; rhs) <span class="at">const</span>
+  <span class="kw">template</span> &lt;<span class="kw">typename</span> T&gt;
+  <span class="kw">typename</span> enable_if&lt;is_last&lt;K, T&gt;::value, <span class="dt">bool</span>&gt;::type
+  <span class="kw">operator</span>()(<span class="at">const</span> T&amp; lhs, <span class="at">const</span> T&amp; rhs) <span class="at">const</span>
   {
-    <span class="cf">return</span> get&lt;I&gt;(lhs) &lt; get&lt;I&gt;(rhs);
+    <span class="cf">return</span> less_nth&lt;I&gt;()(lhs, rhs);
   }
 };</code></pre></div>
+<p>The predicates <code>equal_nth</code> and <code>less_nth</code> compare the <span class="math inline">\(I^{th}\)</span> element of the tuple. They have specializations for handling pointers to tuple-like object, so all functions can operate on a range over pointers to tuples, allowing arbitrary indexing into the original data.</p>
 <p>A more general function object template <code>kd_compare</code> that takes an arbitrary binary predicate is also provided by <code>kdtools</code>. Some examples applying <code>kd_less</code>, including degenerate, all-ties cases, are shown here.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">j =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">9</span>))
 k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">9</span>))
@@ -225,25 +236,25 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
 <table class="table"><tbody>
 <tr class="odd">
 <td align="right">1</td>
-<td align="right">4</td>
 <td align="right">2</td>
+<td align="right">4</td>
 <td align="right">3</td>
 <td align="right">5</td>
 <td align="right">6</td>
-<td align="right">8</td>
-<td align="right">9</td>
 <td align="right">7</td>
+<td align="right">9</td>
+<td align="right">8</td>
 </tr>
 <tr class="even">
-<td align="right">2</td>
-<td align="right">4</td>
-<td align="right">6</td>
-<td align="right">9</td>
 <td align="right">1</td>
-<td align="right">3</td>
 <td align="right">5</td>
+<td align="right">6</td>
 <td align="right">7</td>
+<td align="right">2</td>
+<td align="right">3</td>
+<td align="right">4</td>
 <td align="right">8</td>
+<td align="right">9</td>
 </tr>
 </tbody></table>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">t</span>(<span class="kw"><a href="../reference/kdsort.html">kd_sort</a></span>(<span class="kw">cbind</span>(<span class="dv">0</span>, j, k)))</code></pre></div>
@@ -271,40 +282,40 @@ k =<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">sampl
 <td align="right">9</td>
 </tr>
 <tr class="odd">
-<td align="right">2</td>
-<td align="right">6</td>
-<td align="right">9</td>
-<td align="right">4</td>
 <td align="right">1</td>
-<td align="right">3</td>
-<td align="right">8</td>
 <td align="right">5</td>
 <td align="right">7</td>
+<td align="right">6</td>
+<td align="right">2</td>
+<td align="right">3</td>
+<td align="right">4</td>
+<td align="right">9</td>
+<td align="right">8</td>
 </tr>
 </tbody></table>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">t</span>(<span class="kw"><a href="../reference/kdsort.html">kd_sort</a></span>(<span class="kw">cbind</span>(j, k, <span class="dv">0</span>)))</code></pre></div>
 <table class="table"><tbody>
 <tr class="odd">
 <td align="right">1</td>
-<td align="right">4</td>
 <td align="right">2</td>
+<td align="right">4</td>
 <td align="right">3</td>
 <td align="right">5</td>
 <td align="right">6</td>
-<td align="right">8</td>
-<td align="right">9</td>
 <td align="right">7</td>
+<td align="right">9</td>
+<td align="right">8</td>
 </tr>
 <tr class="even">
-<td align="right">2</td>
-<td align="right">4</td>
-<td align="right">6</td>
-<td align="right">9</td>
 <td align="right">1</td>
-<td align="right">3</td>
 <td align="right">5</td>
+<td align="right">6</td>
 <td align="right">7</td>
+<td align="right">2</td>
+<td align="right">3</td>
+<td align="right">4</td>
 <td align="right">8</td>
+<td align="right">9</td>
 </tr>
 <tr class="odd">
 <td align="right">0</td>
@@ -573,53 +584,53 @@ numbers =<span class="st"> </span><span class="kw">runif</span>(<span class="kw"
 strings =<span class="st"> </span><span class="kw">sample</span>(<span class="kw">tolower</span>(parts_of_speech[[<span class="dv">1</span>]]))
 <span class="kw">mixed_query</span>(<span class="kw">signif</span>(numbers, <span class="dv">4</span>), strings)
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Sort time: 0.133224 seconds</span>
+<span class="co">#&gt; Sort time: 0.104461 seconds</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; First and last 5 elements of sorted data:</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.0007701 abo</span>
-<span class="co">#&gt; 1 0.002374 4-f</span>
-<span class="co">#&gt; 2 0.004706 abagail</span>
-<span class="co">#&gt; 3 0.004479 abox</span>
-<span class="co">#&gt; 4 0.0007718 acetifying</span>
+<span class="co">#&gt; 0 0.0002264 abbotship</span>
+<span class="co">#&gt; 1 0.001601 abranchiate</span>
+<span class="co">#&gt; 2 0.001638 accelerando</span>
+<span class="co">#&gt; 3 0.00248 accelerate</span>
+<span class="co">#&gt; 4 0.001353 acervately</span>
 <span class="co">#&gt; ...</span>
-<span class="co">#&gt; 208254 0.9975 yeo</span>
-<span class="co">#&gt; 208255 0.9977 wrastled</span>
-<span class="co">#&gt; 208256 0.9983 zapateados</span>
-<span class="co">#&gt; 208257 0.9983 zinoviev</span>
-<span class="co">#&gt; 208258 0.9987 zenana</span>
+<span class="co">#&gt; 208254 0.9968 yadim</span>
+<span class="co">#&gt; 208255 0.9987 y-blennies</span>
+<span class="co">#&gt; 208256 0.9956 yore</span>
+<span class="co">#&gt; 208257 0.998 zohara</span>
+<span class="co">#&gt; 208258 0.9993 zerlina</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Query time: 9.5532e-05 seconds</span>
+<span class="co">#&gt; Query time: 9.1339e-05 seconds</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; First and last 5 elements of query return:</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.4046 wainable</span>
-<span class="co">#&gt; 1 0.4023 walcott</span>
-<span class="co">#&gt; 2 0.4058 wadeable</span>
-<span class="co">#&gt; 3 0.4092 w</span>
-<span class="co">#&gt; 4 0.401 walk-through</span>
+<span class="co">#&gt; 0 0.4023 wailer</span>
+<span class="co">#&gt; 1 0.4042 wallow</span>
+<span class="co">#&gt; 2 0.4051 walterboro</span>
+<span class="co">#&gt; 3 0.4086 wachtel</span>
+<span class="co">#&gt; 4 0.4023 wang</span>
 <span class="co">#&gt; ...</span>
-<span class="co">#&gt; 1084 0.5997 xylographically</span>
-<span class="co">#&gt; 1085 0.5984 yahata</span>
-<span class="co">#&gt; 1086 0.5907 yarn</span>
-<span class="co">#&gt; 1087 0.5912 yogis</span>
-<span class="co">#&gt; 1088 0.5994 yttrotantalite</span>
+<span class="co">#&gt; 1038 0.5985 yahiya</span>
+<span class="co">#&gt; 1039 0.5927 yawn</span>
+<span class="co">#&gt; 1040 0.5944 yeisk</span>
+<span class="co">#&gt; 1041 0.5996 ysabel</span>
+<span class="co">#&gt; 1042 0.5997 yoghurt</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Neighbors query time: 0.00120876 seconds</span>
+<span class="co">#&gt; Neighbors query time: 0.000726943 seconds</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; First and last 5 elements of neighbors query return:</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.3806 keeshond</span>
-<span class="co">#&gt; 1 0.6173 karlotta</span>
-<span class="co">#&gt; 2 0.1719 looter</span>
-<span class="co">#&gt; 3 0.5994 kalathoi</span>
-<span class="co">#&gt; 4 0.1744 ketose</span>
+<span class="co">#&gt; 0 0.4384 kolbe</span>
+<span class="co">#&gt; 1 0.4465 kaolinite</span>
+<span class="co">#&gt; 2 0.4467 keratosis</span>
+<span class="co">#&gt; 3 0.4471 kalsomine</span>
+<span class="co">#&gt; 4 0.456 kroon</span>
 <span class="co">#&gt; ...</span>
-<span class="co">#&gt; 95 0.2702 jostled</span>
-<span class="co">#&gt; 96 0.4367 koodoos</span>
-<span class="co">#&gt; 97 0.4928 lost</span>
-<span class="co">#&gt; 98 0.1829 kolos</span>
-<span class="co">#&gt; 99 0.3162 kobold</span></code></pre></div>
+<span class="co">#&gt; 95 0.4818 lotis</span>
+<span class="co">#&gt; 96 0.4983 loose</span>
+<span class="co">#&gt; 97 0.7074 look</span>
+<span class="co">#&gt; 98 0.4288 jostled</span>
+<span class="co">#&gt; 99 0.5234 kilo-oersted</span></code></pre></div>
 <p>The timing results indicate that sorting <span class="math inline">\(2 \times 10 ^ 5\)</span> tuples is on the order of 1/10th second, whereas the range query returned in less than a millisecond.</p>
 <p>Nearest neighbor searching requires a suitable distance function be defined for all types. There are two specialization points: the templates <code>scalar_diff</code>, which returns a possibly signed difference between to objects, and <code>scalar_dist</code>, which returns the distance along a single dimension. Currently, nearest neighbor distances are hardwired as the L2 norm of the returned scalar differences computed for each dimension. The computation above uses the following definitions.</p>
 <div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">template</span>&lt;<span class="kw">class</span> InputIt1, <span class="kw">class</span> InputIt2&gt;
@@ -656,6 +667,82 @@ strings =<span class="st"> </span><span class="kw">sample</span>(<span class="kw
 }; <span class="co">// namespace kdtools</span></code></pre></div>
 <p>The <code>set_similarity</code> template is adapted from the STL <code>set_intersection</code> template and produces a number between 0 and 1. I have not attempted to prove this distance is metric, so the results may not be entirely correct. Also, there is no facility currently available to weight distances in different dimensions or override the default root-sum-of-squares algorithm for the multivariate distance.</p>
 </div>
+<div id="indexing-with-pointer-arrays" class="section level3">
+<h3 class="hasAnchor">
+<a href="#indexing-with-pointer-arrays" class="anchor"></a>Indexing with pointer arrays</h3>
+<p>Since version 0.4.0, <code>kd_tools</code> all predicates and distance functions have specializations or overloads to handle pointers to tuple-like objects. Hence, any of the routines can sort or search a vector of pointers to tuples, which act as indices into the original data.</p>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="co">// [[Rcpp::depends(kdtools)]]</span>
+<span class="co">// [[Rcpp::plugins(cpp11)]]</span>
+
+<span class="pp">#include </span><span class="im">"mixed_query.h"</span>
+
+<span class="co">// [[Rcpp::export]]</span>
+<span class="dt">void</span> sort_pointers(NumericVector c1, CharacterVector c2)
+{
+  <span class="kw">auto</span> n = c1.size();
+  
+  <span class="dt">range_type</span> data;
+  data.reserve(n);
+  
+  transform(begin(c1), end(c1), begin(c2), back_inserter(data), make_key());
+  
+  <span class="dt">pointers_type</span> idx1(data.size()), idx2(data.size());
+  
+  <span class="kw">auto</span> get_ptr = [](<span class="dt">key_type</span>&amp; x){ <span class="cf">return</span> &amp;x; };
+  transform(begin(data), end(data), begin(idx1), get_ptr);
+  transform(begin(data), end(data), begin(idx2), get_ptr);
+  
+  kd_sort(begin(idx1), end(idx1));
+  kd_sort(begin(idx2), end(idx2), greater_key());
+  
+  Rcout &lt;&lt; <span class="st">"Original order</span><span class="sc">\n\n</span><span class="st">"</span>; print_range(data);
+  Rcout &lt;&lt; <span class="st">"</span><span class="sc">\n</span><span class="st">Order by less</span><span class="sc">\n\n</span><span class="st">"</span>; print_range_ptr(idx1);
+  Rcout &lt;&lt; <span class="st">"</span><span class="sc">\n</span><span class="st">Order by greater</span><span class="sc">\n\n</span><span class="st">"</span>; print_range_ptr(idx2);
+}</code></pre></div>
+<p>Here, <code>greater_key</code> has overloads for both string and double types.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sort_pointers</span>(<span class="kw">signif</span>(numbers, <span class="dv">4</span>), strings)
+<span class="co">#&gt; Original order</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; 0 0.8475 ninefold</span>
+<span class="co">#&gt; 1 0.8419 amber</span>
+<span class="co">#&gt; 2 0.3956 pneumographic</span>
+<span class="co">#&gt; 3 0.5928 booze</span>
+<span class="co">#&gt; 4 0.324 ammiaceous</span>
+<span class="co">#&gt; ...</span>
+<span class="co">#&gt; 208254 0.4178 degradative</span>
+<span class="co">#&gt; 208255 0.6793 unkingly</span>
+<span class="co">#&gt; 208256 0.7422 insusceptibly</span>
+<span class="co">#&gt; 208257 0.372 unjumbled</span>
+<span class="co">#&gt; 208258 0.4419 preexaminer</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Order by less</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; 0 0.0002264 abbotship</span>
+<span class="co">#&gt; 1 0.001601 abranchiate</span>
+<span class="co">#&gt; 2 0.001638 accelerando</span>
+<span class="co">#&gt; 3 0.00248 accelerate</span>
+<span class="co">#&gt; 4 0.001353 acervately</span>
+<span class="co">#&gt; ...</span>
+<span class="co">#&gt; 208254 0.9968 yadim</span>
+<span class="co">#&gt; 208255 0.9987 y-blennies</span>
+<span class="co">#&gt; 208256 0.9956 yore</span>
+<span class="co">#&gt; 208257 0.998 zohara</span>
+<span class="co">#&gt; 208258 0.9993 zerlina</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Order by greater</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; 0 1 undertrader</span>
+<span class="co">#&gt; 1 1 overlive</span>
+<span class="co">#&gt; 2 0.998 zohara</span>
+<span class="co">#&gt; 3 0.9999 verbification</span>
+<span class="co">#&gt; 4 0.8468 zymosis</span>
+<span class="co">#&gt; ...</span>
+<span class="co">#&gt; 208254 0.0005855 alcus</span>
+<span class="co">#&gt; 208255 0.00118 adjacencies</span>
+<span class="co">#&gt; 208256 0.0004847 aldrin</span>
+<span class="co">#&gt; 208257 0.0002264 abbotship</span>
+<span class="co">#&gt; 208258 4.983e-05 alana</span></code></pre></div>
+</div>
 </div>
 <div id="conclusions" class="section level2">
 <h2 class="hasAnchor">
@@ -685,7 +772,7 @@ strings =<span class="st"> </span><span class="kw">sample</span>(<span class="kw
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>

@@ -18,13 +18,19 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+<meta property="og:title" content="Sort multidimensional data — kd_sort" />
+
+<meta property="og:description" content="Sort multidimensional data" />
+<meta name="twitter:card" content="summary" />
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -47,8 +53,12 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">kdtools</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">kdtools</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.4.0</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
@@ -58,7 +68,7 @@
   </a>
 </li>
 <li>
-  <a href="../articles/kdtools.html">Get Started</a>
+  <a href="../articles/kdtools.html">Get started</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -76,7 +86,7 @@
   </ul>
 </li>
 <li>
-  <a href="../news/index.html">News</a>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       
@@ -99,6 +109,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Sort multidimensional data</h1>
+    <small>Source: <a href='https://github.com/thk686/kdtools/blob/master/R/kdtools.R'><code>R/kdtools.R</code></a></small>
     </div>
 
     
@@ -107,9 +118,11 @@
 
     <pre class="usage"><span class='fu'>kd_sort</span>(<span class='no'>x</span>, <span class='no'>...</span>)
 
+<span class='fu'>kd_order</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+
 <span class='fu'>kd_is_sorted</span>(<span class='no'>x</span>)</pre>
     
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
@@ -129,6 +142,8 @@
   dimension. Ties are resolved by cycling over successive dimensions. The
   result is an ordering of tuples matching their order if they were inserted
   into a kd-tree.</p>
+<p><code>kd_order</code> returns permutation vector that will order
+  the rows of the original matrix, exactly as <code>order</code>.</p>
     
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
@@ -141,8 +156,14 @@
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>x</span> <span class='kw'>=</span> <span class='fu'>kd_sort</span>(<span class='fu'>matrix</span>(<span class='fu'>runif</span>(<span class='fl'>200</span>), <span class='fl'>100</span>))
-<span class='fu'>kd_is_sorted</span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'><span class='fu'>plot</span>(<span class='no'>x</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"o"</span>, <span class='kw'>pch</span> <span class='kw'>=</span> <span class='fl'>19</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"steelblue"</span>, <span class='kw'>asp</span> <span class='kw'>=</span> <span class='fl'>1</span>)</div><div class='img'><img src='kdsort-1.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
+    <pre class="examples"><div class='input'><span class='no'>x</span> <span class='kw'>=</span> <span class='fu'>matrix</span>(<span class='fu'>runif</span>(<span class='fl'>200</span>), <span class='fl'>100</span>)
+<span class='no'>y</span> <span class='kw'>=</span> <span class='fu'>kd_sort</span>(<span class='no'>x</span>)
+<span class='fu'>kd_is_sorted</span>(<span class='no'>y</span>)</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'><span class='fu'>kd_order</span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;   [1]  73  13  31  90  39   4  92  99   5  27  59  16  57  84  96  88  52  72
+#&gt;  [19]  17  75  64   8  19  87  36  32  76  18   1  53  70  62  83  12  45  66
+#&gt;  [37]  40  24  21  77  80  50   6  51  33  14  60  15  71  74 100  68  54  69
+#&gt;  [55]  82  41  44  93  55  35   7   3  78  30  46  29  86  48  38  26  58   9
+#&gt;  [73]  23  56  79  22  81  28  65  43  89  37  95  85  42  97  63  34  47  98
+#&gt;  [91]   2  11  20  67  10  94  61  49  25  91</div><div class='input'><span class='fu'>plot</span>(<span class='no'>y</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"o"</span>, <span class='kw'>pch</span> <span class='kw'>=</span> <span class='fl'>19</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"steelblue"</span>, <span class='kw'>asp</span> <span class='kw'>=</span> <span class='fl'>1</span>)</div><div class='img'><img src='kdsort-1.png' alt='' width='700' height='433' /></div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -168,7 +189,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
@@ -176,3 +197,4 @@
 
   </body>
 </html>
+

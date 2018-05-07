@@ -937,12 +937,12 @@ void sort_pointers(NumericVector c1, CharacterVector c2)
   
   transform(begin(c1), end(c1), begin(c2), back_inserter(data), make_key());
   
-  pointers_type idx1(data.size());
+  pointers_type idx1, idx2;
   
-  auto get_ptr = [](key_type& x){ return &x; };
-  transform(begin(data), end(data), begin(idx1), get_ptr);
-
-  pointers_type idx2 = idx1;
+  for (int i = 0; i != n; ++i) {
+    idx1.push_back(&data[i]);
+    idx2.push_back(&data[i]);
+  }
   
   kd_sort(begin(idx1), end(idx1));
   kd_sort(begin(idx2), end(idx2), greater_key());
@@ -956,7 +956,7 @@ void sort_pointers(NumericVector c1, CharacterVector c2)
 Here, ```greater_key``` has overloads for both string and double types.
 
 ```{r}
-#sort_pointers(numbers, strings)
+sort_pointers(numbers, strings)
 ```
 
 Note that the forward and reverse sorting do not give exactly the same result (in reverse) owing to ties.

@@ -8,14 +8,14 @@ r:
 
 #r_check_args: '--as-cran --use-valgrind'
 
-addons:
-  apt:
-    packages:
-      - valgrind
+#addons:
+#  apt:
+#    packages:
+#      - valgrind
 
-before_install:
-  - echo '--leak-check=full' > ~/.valgrindrc
-  - echo '--track-origins=yes' >> ~/.valgrindrc
+#before_install:
+#  - echo '--leak-check=full' > ~/.valgrindrc
+#  - echo '--track-origins=yes' >> ~/.valgrindrc
 
 cache: packages
 

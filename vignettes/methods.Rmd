@@ -321,9 +321,9 @@ using range_type = std::vector<key_type>;
 
 BOOST_GEOMETRY_REGISTER_POINT_2D(key_type, double,
                                  boost::geometry::cs::cartesian,
-                                 first, second);
+                                 first, second)
   
-BOOST_GEOMETRY_REGISTER_BOX(box_type, key_type, first, second);
+BOOST_GEOMETRY_REGISTER_BOX(box_type, key_type, first, second)
   
 template <typename T, typename U>
 double time_it(T x, U u, size_t n)
@@ -714,7 +714,7 @@ using pointers_type = vector<key_type*>;
 
 void print_range(const range_type& x)
 {
-  auto n = x.size();
+  int n = x.size();
   if (n < 2 * N) stop("Not enough rows");
   for (int i = 0; i != N; ++i)
     Rcout << i << " "
@@ -729,7 +729,7 @@ void print_range(const range_type& x)
 
 void print_range(const pointers_type& x)
 {
-  auto n = x.size();
+  int n = x.size();
   if (n < 2 * N) stop("Not enough rows");
   for (int i = 0; i != N; ++i)
     Rcout << i << " "
@@ -799,7 +799,7 @@ double scalar_diff(const std::string& lhs, const std::string& rhs)
                             begin(b), end(b));
 }
 
-}; // namespace kdtools
+} // namespace kdtools
 '
 
 header_file = "mixed_query.h"
@@ -871,9 +871,9 @@ First the data are sorted and then a range query is conducted. The range query s
 
 ```{r}
 data("parts_of_speech")
-numbers = runif(nrow(parts_of_speech))
+numbers = signif(runif(nrow(parts_of_speech)), 4)
 strings = sample(tolower(parts_of_speech[[1]]))
-mixed_query(signif(numbers, 4), strings)
+mixed_query(numbers, strings)
 ```
 
 The timing results indicate that sorting $2 \times 10 ^ 5$ tuples is on the order of 1/10th second, whereas the range query returned in less than a millisecond.
@@ -912,7 +912,7 @@ double scalar_diff(const std::string& lhs, const std::string& rhs)
                             begin(b), end(b));
 }
 
-}; // namespace kdtools
+} // namespace kdtools
 ```
 
 The ```set_similarity``` template is adapted from the STL ```set_intersection``` template and produces a number between 0 and 1. I have not attempted to prove this distance is metric, so the results may not be entirely correct. Also, there is no facility currently available to weight distances in different dimensions or override the default root-sum-of-squares algorithm for the multivariate distance.
@@ -956,7 +956,7 @@ void sort_pointers(NumericVector c1, CharacterVector c2)
 Here, ```greater_key``` has overloads for both string and double types.
 
 ```{r}
-sort_pointers(signif(numbers, 4), strings)
+sort_pointers(numbers, strings)
 ```
 
 Note that the forward and reverse sorting do not give exactly the same result (in reverse) owing to ties.

@@ -7,7 +7,6 @@ r:
   - devel
 
 r_check_args: '--as-cran --use-valgrind'
-r_build_args: '--no-build-vignettes'
 
 addons:
   apt:

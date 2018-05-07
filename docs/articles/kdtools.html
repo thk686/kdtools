@@ -18,7 +18,7 @@
 <![endif]-->
 </head>
 <body>
-    <div class="container template-vignette">
+    <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
@@ -80,20 +80,20 @@
 
       
       </header><div class="row">
-  <div class="col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1>Getting started with kdtools</h1>
                         <h4 class="author">Timothy H. Keitt</h4>
             
-            <h4 class="date">2018-04-29</h4>
+            <h4 class="date">2018-05-07</h4>
       
-      <small>Source: <a href="https://github.com/thk686/kdtools/blob/master/vignettes/kdtools.Rmd"><code>vignettes/kdtools.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/thk686/kdtools/blob/master/vignettes/kdtools.Rmd"><code>vignettes/kdtools.Rmd</code></a></small>
+      <div class="hidden name"><code>kdtools.Rmd</code></div>
 
     </div>
 
     
     
-<div class="contents">
 <p>The kdtools package can be used to search for multidimensional points in a boxed region and find nearest neighbors in 1 to 9 dimensions. The package uses binary search on a sorted sequence of values. The current package is limited to matrices of real values. If you are interested in using string or mixed types in different dimensions, see the methods vignette.</p>
 <p>Using kdtools is straightforward. There are four steps:</p>
 <div id="step-1--convert-your-matrix-of-values-into-a-arrayvec-object" class="section level5">
@@ -103,44 +103,44 @@
 x =<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">runif</span>(<span class="fl">3e3</span>), <span class="dt">nc =</span> <span class="dv">3</span>)
 y =<span class="st"> </span><span class="kw"><a href="../reference/convert.html">matrix_to_tuples</a></span>(x)
 y[<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">3</span>)]
-<span class="co">#&gt;           [,1]      [,2]</span>
-<span class="co">#&gt; [1,] 0.7445786 0.8275856</span>
-<span class="co">#&gt; [2,] 0.1728565 0.6120266</span>
-<span class="co">#&gt; [3,] 0.3576419 0.8746959</span></code></pre></div>
+<span class="co">#&gt;            [,1]      [,2]</span>
+<span class="co">#&gt; [1,] 0.96758833 0.2817810</span>
+<span class="co">#&gt; [2,] 0.05094016 0.4156706</span>
+<span class="co">#&gt; [3,] 0.50783651 0.5045447</span></code></pre></div>
 <p>The arrayvec object can be manipulated as if it were a matrix.</p>
 </div>
 <div id="step-2--sort-the-data" class="section level5">
 <h5 class="hasAnchor">
 <a href="#step-2--sort-the-data" class="anchor"></a>Step 2. Sort the data</h5>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/kdsort.html">kd_sort</a></span>(y, <span class="dt">inplace =</span> <span class="ot">TRUE</span>, <span class="dt">parallel =</span> <span class="ot">TRUE</span>)
-<span class="co">#&gt;             [,1]       [,2]       [,3]</span>
-<span class="co">#&gt; [1,] 0.091359898 0.02982043 0.09511394</span>
-<span class="co">#&gt; [2,] 0.075010889 0.05722310 0.13145769</span>
-<span class="co">#&gt; [3,] 0.103193025 0.12136988 0.26697194</span>
-<span class="co">#&gt; [4,] 0.034178177 0.15236108 0.13351991</span>
-<span class="co">#&gt; [5,] 0.001880592 0.25297959 0.07935721</span>
+<span class="co">#&gt;            [,1]       [,2]       [,3]</span>
+<span class="co">#&gt; [1,] 0.10554022 0.03498093 0.03950524</span>
+<span class="co">#&gt; [2,] 0.11372389 0.05091484 0.21303011</span>
+<span class="co">#&gt; [3,] 0.06109975 0.07569863 0.23060573</span>
+<span class="co">#&gt; [4,] 0.09731586 0.11914799 0.01593187</span>
+<span class="co">#&gt; [5,] 0.08292309 0.18312298 0.08514271</span>
 <span class="co">#&gt; (continues for 995 more rows)</span></code></pre></div>
 </div>
 <div id="step-3--search-the-data" class="section level5">
 <h5 class="hasAnchor">
 <a href="#step-3--search-the-data" class="anchor"></a>Step 3. Search the data</h5>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rq =<span class="st"> </span><span class="kw"><a href="../reference/search.html">kd_range_query</a></span>(y, <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>), <span class="kw">c</span>(<span class="dv">1</span><span class="op">/</span><span class="dv">4</span>, <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>, <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>)); rq
-<span class="co">#&gt;            [,1]       [,2]       [,3]</span>
-<span class="co">#&gt; [1,] 0.09135990 0.02982043 0.09511394</span>
-<span class="co">#&gt; [2,] 0.07501089 0.05722310 0.13145769</span>
-<span class="co">#&gt; [3,] 0.03417818 0.15236108 0.13351991</span>
-<span class="co">#&gt; [4,] 0.04104530 0.23476739 0.21164446</span>
-<span class="co">#&gt; [5,] 0.13232595 0.16424297 0.24687386</span>
-<span class="co">#&gt; (continues for 7 more rows)</span>
+<span class="co">#&gt;             [,1]       [,2]        [,3]</span>
+<span class="co">#&gt; [1,] 0.003625532 0.21988117 0.003699154</span>
+<span class="co">#&gt; [2,] 0.105540225 0.03498093 0.039505236</span>
+<span class="co">#&gt; [3,] 0.113723886 0.05091484 0.213030111</span>
+<span class="co">#&gt; [4,] 0.061099752 0.07569863 0.230605727</span>
+<span class="co">#&gt; [5,] 0.097315861 0.11914799 0.015931874</span>
+<span class="co">#&gt; (continues for 14 more rows)</span>
 i =<span class="st"> </span><span class="kw"><a href="../reference/nneighb.html">kd_nearest_neighbor</a></span>(y, <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>)); y[i, ]
-<span class="co">#&gt; [1] 0.09135990 0.02982043 0.09511394</span>
+<span class="co">#&gt; [1] 0.10554022 0.03498093 0.03950524</span>
 nns =<span class="st"> </span><span class="kw"><a href="../reference/nneighb.html">kd_nearest_neighbors</a></span>(y, <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>), <span class="dv">100</span>); nns
-<span class="co">#&gt;            [,1]       [,2]       [,3]</span>
-<span class="co">#&gt; [1,] 0.09348561 0.33437486 0.39628420</span>
-<span class="co">#&gt; [2,] 0.27769020 0.44338518 0.04993641</span>
-<span class="co">#&gt; [3,] 0.50817216 0.03537791 0.12516501</span>
-<span class="co">#&gt; [4,] 0.01216997 0.51050845 0.11739402</span>
-<span class="co">#&gt; [5,] 0.47504658 0.12577571 0.18095319</span>
+<span class="co">#&gt;            [,1]       [,2]      [,3]</span>
+<span class="co">#&gt; [1,] 0.07603328 0.32626356 0.4270409</span>
+<span class="co">#&gt; [2,] 0.48644366 0.05436382 0.2300318</span>
+<span class="co">#&gt; [3,] 0.02072588 0.52362800 0.1260066</span>
+<span class="co">#&gt; [4,] 0.17073080 0.09170078 0.5003852</span>
+<span class="co">#&gt; [5,] 0.31297164 0.19463667 0.3874339</span>
 <span class="co">#&gt; (continues for 95 more rows)</span></code></pre></div>
 <p>The <code>kd_nearest_neighbor</code> function returns the row-index of the nearest neighbor. The other functions return arrayvec objects.</p>
 </div>
@@ -148,23 +148,22 @@ nns =<span class="st"> </span><span class="kw"><a href="../reference/nneighb.htm
 <h5 class="hasAnchor">
 <a href="#step-4--convert-back-to-a-matrix-for-use-in-r" class="anchor"></a>Step 4. Convert back to a matrix for use in R</h5>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(<span class="kw"><a href="../reference/convert.html">tuples_to_matrix</a></span>(rq))
-<span class="co">#&gt;            [,1]       [,2]       [,3]</span>
-<span class="co">#&gt; [1,] 0.09135990 0.02982043 0.09511394</span>
-<span class="co">#&gt; [2,] 0.07501089 0.05722310 0.13145769</span>
-<span class="co">#&gt; [3,] 0.03417818 0.15236108 0.13351991</span>
-<span class="co">#&gt; [4,] 0.04104530 0.23476739 0.21164446</span>
-<span class="co">#&gt; [5,] 0.13232595 0.16424297 0.24687386</span>
-<span class="co">#&gt; [6,] 0.14016577 0.13015361 0.19753168</span>
+<span class="co">#&gt;             [,1]       [,2]        [,3]</span>
+<span class="co">#&gt; [1,] 0.003625532 0.21988117 0.003699154</span>
+<span class="co">#&gt; [2,] 0.105540225 0.03498093 0.039505236</span>
+<span class="co">#&gt; [3,] 0.113723886 0.05091484 0.213030111</span>
+<span class="co">#&gt; [4,] 0.061099752 0.07569863 0.230605727</span>
+<span class="co">#&gt; [5,] 0.097315861 0.11914799 0.015931874</span>
+<span class="co">#&gt; [6,] 0.082923090 0.18312298 0.085142707</span>
 <span class="kw">head</span>(<span class="kw"><a href="../reference/convert.html">tuples_to_matrix</a></span>(nns))
 <span class="co">#&gt;            [,1]       [,2]       [,3]</span>
-<span class="co">#&gt; [1,] 0.09348561 0.33437486 0.39628420</span>
-<span class="co">#&gt; [2,] 0.27769020 0.44338518 0.04993641</span>
-<span class="co">#&gt; [3,] 0.50817216 0.03537791 0.12516501</span>
-<span class="co">#&gt; [4,] 0.01216997 0.51050845 0.11739402</span>
-<span class="co">#&gt; [5,] 0.47504658 0.12577571 0.18095319</span>
-<span class="co">#&gt; [6,] 0.11875177 0.30949881 0.40432368</span></code></pre></div>
+<span class="co">#&gt; [1,] 0.07603328 0.32626356 0.42704093</span>
+<span class="co">#&gt; [2,] 0.48644366 0.05436382 0.23003178</span>
+<span class="co">#&gt; [3,] 0.02072588 0.52362800 0.12600658</span>
+<span class="co">#&gt; [4,] 0.17073080 0.09170078 0.50038523</span>
+<span class="co">#&gt; [5,] 0.31297164 0.19463667 0.38743394</span>
+<span class="co">#&gt; [6,] 0.49487847 0.19561205 0.04931575</span></code></pre></div>
 <p>If you pass a matrix instead of an arrayvec object to any of the functions, it will be converted to an arrayvec object internally and results will be returned as matrices. This is slower and provided for convenience.</p>
-</div>
 </div>
   </div>
 
@@ -184,6 +183,8 @@ nns =<span class="st"> </span><span class="kw"><a href="../reference/nneighb.htm
 
       </footer>
 </div>
+
+  
 
   </body>
 </html>

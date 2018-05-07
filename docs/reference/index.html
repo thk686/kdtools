@@ -25,6 +25,9 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
+
+
+
 <meta property="og:title" content="Function reference" />
 
 
@@ -95,6 +98,7 @@
   </a>
 </li>
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -102,67 +106,65 @@
       
       </header>
 
-      <div class="row">
-  <div class="col-md-9">
+<div class="row">
+  <div class="contents col-md-9">
     <div class="page-header">
       <h1>Reference</h1>
     </div>
 
-    <div class="contents">
-      <table class="ref-index">
+    <table class="ref-index">
 
-      <colgroup>
-        <col class="alias" />
-        <col class="title" />
-      </colgroup>
+    <colgroup>
+      <col class="alias" />
+      <col class="title" />
+    </colgroup>
 
-      <tbody>
-        <tr>
-          <th colspan="2">
-            <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-            <p class="section-desc"></p>
-          </th>
-        </tr>
-        <tr>
-          <!--  -->
-          <td>
-            <p><code><a href="arrayvec.html">print(<i>&lt;arrayvec&gt;</i>)</a></code> <code><a href="arrayvec.html">dim(<i>&lt;arrayvec&gt;</i>)</a></code> <code><a href="arrayvec.html">as.matrix(<i>&lt;arrayvec&gt;</i>)</a></code> <code><a href="arrayvec.html">as.data.frame(<i>&lt;arrayvec&gt;</i>)</a></code> <code><a href="arrayvec.html">`[`(<i>&lt;arrayvec&gt;</i>)</a></code> <code><a href="arrayvec.html">`[[`(<i>&lt;arrayvec&gt;</i>)</a></code> </p>
-          </td>
-          <td><p>Support for C++ vector of arrays</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="convert.html">matrix_to_tuples()</a></code> <code><a href="convert.html">tuples_to_matrix()</a></code> </p>
-          </td>
-          <td><p>Convert a matrix to a vector of arrays</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="kdsort.html">kd_sort()</a></code> <code><a href="kdsort.html">kd_order()</a></code> <code><a href="kdsort.html">kd_is_sorted()</a></code> </p>
-          </td>
-          <td><p>Sort multidimensional data</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="lexsort.html">lex_sort()</a></code> </p>
-          </td>
-          <td><p>Sort a matrix into lexicographical order</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="nneighb.html">kd_nearest_neighbors()</a></code> <code><a href="nneighb.html">kd_nearest_neighbor()</a></code> </p>
-          </td>
-          <td><p>Find nearest neighbors</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="search.html">kd_lower_bound()</a></code> <code><a href="search.html">kd_upper_bound()</a></code> <code><a href="search.html">kd_range_query()</a></code> <code><a href="search.html">kd_binary_search()</a></code> </p>
-          </td>
-          <td><p>Search sorted data</p></td>
-        </tr>
-      </tbody>
-      </table>
-    </div>
+    <tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        <!--  -->
+        <td>
+          <p><code><a href="arrayvec.html">print(<i>&lt;arrayvec&gt;</i>)</a></code> <code><a href="arrayvec.html">dim(<i>&lt;arrayvec&gt;</i>)</a></code> <code><a href="arrayvec.html">as.matrix(<i>&lt;arrayvec&gt;</i>)</a></code> <code><a href="arrayvec.html">as.data.frame(<i>&lt;arrayvec&gt;</i>)</a></code> <code><a href="arrayvec.html">`[`(<i>&lt;arrayvec&gt;</i>)</a></code> <code><a href="arrayvec.html">`[[`(<i>&lt;arrayvec&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Support for C++ vector of arrays</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="convert.html">matrix_to_tuples()</a></code> <code><a href="convert.html">tuples_to_matrix()</a></code> </p>
+        </td>
+        <td><p>Convert a matrix to a vector of arrays</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="kdsort.html">kd_sort()</a></code> <code><a href="kdsort.html">kd_order()</a></code> <code><a href="kdsort.html">kd_is_sorted()</a></code> </p>
+        </td>
+        <td><p>Sort multidimensional data</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="lexsort.html">lex_sort()</a></code> </p>
+        </td>
+        <td><p>Sort a matrix into lexicographical order</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="nneighb.html">kd_nearest_neighbors()</a></code> <code><a href="nneighb.html">kd_nearest_neighbor()</a></code> </p>
+        </td>
+        <td><p>Find nearest neighbors</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="search.html">kd_lower_bound()</a></code> <code><a href="search.html">kd_upper_bound()</a></code> <code><a href="search.html">kd_range_query()</a></code> <code><a href="search.html">kd_binary_search()</a></code> </p>
+        </td>
+        <td><p>Search sorted data</p></td>
+      </tr>
+    </tbody>
+    </table>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -184,6 +186,8 @@
 
       </footer>
    </div>
+
+  
 
   </body>
 </html>

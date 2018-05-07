@@ -6,7 +6,7 @@ r:
   - release
   - devel
 
-r_check_args: '--as-cran --use-valgrind'
+#r_check_args: '--as-cran --use-valgrind'
 
 addons:
   apt:

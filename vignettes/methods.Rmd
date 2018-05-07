@@ -939,9 +939,9 @@ void sort_pointers(NumericVector c1, CharacterVector c2)
   
   pointers_type idx1, idx2;
   
-  for (int i = 0; i != n; ++i) {
-    idx1.push_back(&data[i]);
-    idx2.push_back(&data[i]);
+  for (auto& x : data) {
+    idx1.push_back(&x);
+    idx2.push_back(&x);
   }
   
   kd_sort(begin(idx1), end(idx1));

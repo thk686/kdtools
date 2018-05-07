@@ -946,7 +946,7 @@ void sort_pointers(NumericVector c1, CharacterVector c2)
   }
   
   kd_sort(begin(idx1), end(idx1));
-  //kd_sort(begin(idx2), end(idx2), greater_key());
+  kd_sort(begin(idx2), end(idx2), greater_key());
   
   Rcout << "Original order\n\n"; print_range(data);
   Rcout << "\nOrder by less\n\n"; print_range(idx1);

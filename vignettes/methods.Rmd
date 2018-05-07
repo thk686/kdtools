@@ -938,6 +938,7 @@ void sort_pointers(NumericVector c1, CharacterVector c2)
   transform(begin(c1), end(c1), begin(c2), back_inserter(data), make_key());
   
   pointers_type idx1, idx2;
+  idx1.reserve(n); idx2.reserve(n);
   
   for (auto& x : data) {
     idx1.push_back(&x);
@@ -945,7 +946,7 @@ void sort_pointers(NumericVector c1, CharacterVector c2)
   }
   
   kd_sort(begin(idx1), end(idx1));
-  kd_sort(begin(idx2), end(idx2), greater_key());
+  //kd_sort(begin(idx2), end(idx2), greater_key());
   
   Rcout << "Original order\n\n"; print_range(data);
   Rcout << "\nOrder by less\n\n"; print_range(idx1);

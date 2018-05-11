@@ -48,7 +48,7 @@ as.data.frame.arrayvec <- function(x, ...) {
 #' @rdname arrayvec
 #' @export
 `[.arrayvec` <- function(x, i, j, drop = TRUE) {
-  if (missing(i)) i <- 1:nrow(x)
+  if (missing(i)) i <- seq_len(nrow(x))
   rng <- range(i - 1)
   tuples_to_matrix_rows(x, rng[1], rng[2])[i - rng[1], j, drop = drop]
 }

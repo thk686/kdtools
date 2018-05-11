@@ -2,7 +2,7 @@ library(kdtools)
 context("Searching")
 
 r_lower_bound <- function(x, y) {
-  for (i in 1:nrow(x))
+  for (i in seq_len(nrow(x)))
     if (all(x[i, ] >= y)) return(i)
   return(as.integer(NA))
 }
@@ -22,7 +22,7 @@ test_that("correct lower bound", {
 })
 
 r_upper_bound <- function(x, y) {
-  for (i in 1:nrow(x))
+  for (i in seq_len(nrow(x)))
     if (all(x[i, ] > y)) return(i)
   return(as.integer(NA))
 }
@@ -43,7 +43,7 @@ test_that("correct upper bound", {
 
 r_contains <- function(x, a, b) {
   res <- matrix(nrow = 0, ncol = ncol(x))
-  for (i in 1:nrow(x))
+  for (i in seq_len(nrow(x)))
     if (all(x[i, ] >= a) && all(x[i, ] < b)) {
       res <- rbind(res, x[i, ])
     }
@@ -69,7 +69,7 @@ test_that("range query works", {
 })
 
 r_search <- function(x, y) {
-  for (i in 1:nrow(x))
+  for (i in seq_len(nrow(x)))
     if (all(x[i, ] == y)) {
       return(TRUE)
     }
@@ -82,7 +82,7 @@ test_that("binary search works", {
     for (n in 1:9)
     {
       x <- kd_sort(matrix(runif(n * 100), ncol = n))
-      y <- x[sample(1:nrow(x), 1), , drop = FALSE]
+      y <- x[sample(seq_len(nrow(x)), 1), , drop = FALSE]
       expect_equal(r_search(x, y), kd_binary_search(x, y))
       expect_equal(r_search(x, rep(-1, n)), kd_binary_search(x, rep(-1, n)))
     }

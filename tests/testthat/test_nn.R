@@ -2,7 +2,9 @@ library(kdtools)
 context("Nearest neighbor")
 
 r_nn <- function(x, y) {
-  which.min(sapply(1:nrow(x), function(i) dist(rbind(x[i, ], y))))
+  which.min(vapply(seq_len(nrow(x)),
+                   function(i) { dist(rbind(x[i, ], y)) },
+                   FUN.VALUE = double(1)))
 }
 
 test_that("nearest neighbors works", {
@@ -21,7 +23,10 @@ test_that("nearest neighbors works", {
 })
 
 r_nns <- function(x, y, n) {
-  x[which(rank(sapply(1:nrow(x), function(i) dist(rbind(x[i, ], y)))) <= n), , drop = FALSE]
+  i = vapply(seq_len(nrow(x)),
+             function(i) { dist(rbind(x[i, ], y)) },
+             FUN.VALUE = double(1))
+  x[which(rank(i) <= n),, drop = FALSE]
 }
 
 test_that("nearest neighbors works", {

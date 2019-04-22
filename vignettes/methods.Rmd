@@ -49,7 +49,7 @@ kd_binary_search     | binary_search | returns true if key exists in range
 kd_equal_range        | equal_range | returns an iterator pair spanning all occurrences of a key
 kd_range_query       |  lower_bound, upper_bound     | finds all elements not less than lower and less than upper
 kd_nearest_neighbor   |           | finds nearest neighbor of key
-kd_nearest_neighbors  |            | finds k-nearest neighbors of key
+kd_nearest_neighbors, kd_nn_indices  |            | finds k-nearest neighbors of key
 lex_sort         |              | ordinary STL sort using kd_less for comparison
 
 
@@ -945,11 +945,6 @@ void sort_pointers(NumericVector c1, CharacterVector c2)
     idx2.push_back(&x);
   }
   
-  for (int i = 0; i != data.size(); ++i)
-    if (&(data[i]) != idx1[i] ||
-        &(data[i]) != idx2[i])
-      Rcout << i << std::endl;
-  
   kd_sort(begin(idx1), end(idx1));
   kd_sort(begin(idx2), end(idx2), greater_key());
 
@@ -962,7 +957,8 @@ void sort_pointers(NumericVector c1, CharacterVector c2)
 Here, ```greater_key``` has overloads for both string and double types.
 
 ```{r}
-sort_pointers(numbers, strings)
+# Triggers segfault but only on Travis CI
+#sort_pointers(numbers, strings)
 ```
 
 Note that the forward and reverse sorting do not give exactly the same result (in reverse) owing to ties.

@@ -566,6 +566,15 @@ struct n_best
       m_q.pop();
     }
   }
+  template <typename OutIter>
+  void copy_iters_to(OutIter outp)
+  {
+    while (!m_q.empty())
+    {
+      *outp++ = m_q.top().second;
+      m_q.pop();
+    }
+  }
 };
 
 template <size_t I,
@@ -720,6 +729,18 @@ void kd_nearest_neighbors(Iter first, Iter last,
   detail::n_best<Iter> Q(n);
   detail::knn<0>(first, last, value, Q);
   Q.copy_to(outp);
+}
+
+template <typename Iter,
+          typename TupleType,
+          typename OutIter>
+void kd_nn_iters(Iter first, Iter last,
+                 const TupleType& value,
+                 size_t n, OutIter outp)
+{
+  detail::n_best<Iter> Q(n);
+  detail::knn<0>(first, last, value, Q);
+  Q.copy_iters_to(outp);
 }
 
 } // namespace kdtools

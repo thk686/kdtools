@@ -39,6 +39,9 @@ using vec_type = array<double, I>;
 template <size_t I>
 using arrayvec = vector<vec_type<I>>;
 
+template <size_t I>
+using av_iter = typename arrayvec<I>::iterator;
+
 template <typename T>
 XPtr<T> make_xptr(T* x)
 {

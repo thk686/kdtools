@@ -179,6 +179,7 @@ kd_binary_search.arrayvec <- function(x, v) {
 #' kd_sort(y, inplace = TRUE)
 #' y[kd_nearest_neighbor(y, c(1/2, 1/2)),]
 #' kd_nearest_neighbors(y, c(1/2, 1/2), 3)
+#' y[kd_nn_indices(y, c(1/2, 1/2), 5),]
 #'
 #' @rdname nneighb
 #' @export
@@ -194,6 +195,22 @@ kd_nearest_neighbors.matrix <- function(x, v, n) {
 #' @export
 kd_nearest_neighbors.arrayvec <- function(x, v, n) {
   return(kd_nearest_neighbors_(x, v, n))
+}
+
+#' @rdname nneighb
+#' @export
+kd_nn_indices <- function(x, v, n) UseMethod("kd_nn_indices")
+
+#' @export
+kd_nn_indices.matrix <- function(x, v, n) {
+  y <- matrix_to_tuples(x)
+  z <- kd_nn_indices_(y, v, n)
+  return(z)
+}
+
+#' @export
+kd_nn_indices.arrayvec <- function(x, v, n) {
+  return(kd_nn_indices_(x, v, n))
 }
 
 #' @rdname nneighb

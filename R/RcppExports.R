@@ -57,6 +57,10 @@ kd_range_query_ <- function(x, lower, upper) {
     .Call(`_kdtools_kd_range_query_`, x, lower, upper)
 }
 
+kd_rq_indices_ <- function(x, lower, upper) {
+    .Call(`_kdtools_kd_rq_indices_`, x, lower, upper)
+}
+
 kd_nearest_neighbor_ <- function(x, value) {
     .Call(`_kdtools_kd_nearest_neighbor_`, x, value)
 }

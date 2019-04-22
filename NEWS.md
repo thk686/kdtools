@@ -1,3 +1,7 @@
+# kdtools 0.4.1
+
+* range query and nearest neighbor search have variants that return indices
+
 # kdtools 0.4.0
 
 * can now sort a vector of pointers to tuples

@@ -536,6 +536,33 @@ void kd_range_query(Iter first, Iter last,
   return;
 }
 
+template <size_t I,
+          typename Iter,
+          typename TupleType,
+          typename OutIter>
+void kd_rq_iters(Iter first, Iter last,
+                 const TupleType& lower,
+                 const TupleType& upper,
+                 OutIter outp)
+{
+  if (distance(first, last) > 32) {
+    auto pred = less_nth<I>();
+    auto pivot = find_pivot<I>(first, last);
+    constexpr auto J = next_dim<I, TupleType>::value;
+    if (within(*pivot, lower, upper)) *outp++ = pivot;
+    if (!pred(*pivot, lower)) // search left
+      kd_rq_iters<J>(first, pivot, lower, upper, outp);
+    if (pred(*pivot, upper)) // search right
+      kd_rq_iters<J>(next(pivot), last, lower, upper, outp);
+  } else {
+    while (first != last) {
+      if(within(*first, lower, upper)) *outp++ = first;
+      ++first;
+    }
+  }
+  return;
+}
+
 template <typename Iter, typename Key = double>
 struct n_best
 {
@@ -717,6 +744,17 @@ void kd_range_query(Iter first, Iter last,
                     OutIter outp)
 {
   detail::kd_range_query<0>(first, last, lower, upper, outp);
+}
+
+template <typename Iter,
+          typename TupleType,
+          typename OutIter>
+void kd_rq_iters(Iter first, Iter last,
+                 const TupleType& lower,
+                 const TupleType& upper,
+                 OutIter outp)
+{
+  detail::kd_rq_iters<0>(first, last, lower, upper, outp);
 }
 
 template <typename Iter,

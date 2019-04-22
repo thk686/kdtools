@@ -175,6 +175,40 @@ List kd_range_query_(List x, NumericVector lower, NumericVector upper)
 }
 
 template <size_t I>
+IntegerVector kd_rq_indices__(List x, NumericVector lower, NumericVector upper)
+{
+  auto p = get_ptr<I>(x);
+  auto q = vector<av_iter<I>>();
+  auto oi = back_inserter(q);
+  auto l = vec_to_array<I>(lower),
+    u = vec_to_array<I>(upper);
+  kd_rq_iters(begin(*p), end(*p), l, u, oi);
+  IntegerVector res(q.size());
+  std::transform(begin(q), end(q), begin(res),
+                 [&](av_iter<I> x){
+                   return distance(p->begin(), x) + 1;
+                 });
+  return res;
+}
+
+// [[Rcpp::export]]
+IntegerVector kd_rq_indices_(List x, NumericVector lower, NumericVector upper)
+{
+  switch(arrayvec_dim(x)) {
+  case 1: return kd_rq_indices__<1>(x, lower, upper);
+  case 2: return kd_rq_indices__<2>(x, lower, upper);
+  case 3: return kd_rq_indices__<3>(x, lower, upper);
+  case 4: return kd_rq_indices__<4>(x, lower, upper);
+  case 5: return kd_rq_indices__<5>(x, lower, upper);
+  case 6: return kd_rq_indices__<6>(x, lower, upper);
+  case 7: return kd_rq_indices__<7>(x, lower, upper);
+  case 8: return kd_rq_indices__<8>(x, lower, upper);
+  case 9: return kd_rq_indices__<9>(x, lower, upper);
+  default: stop("Invalid dimensions");
+  }
+}
+
+template <size_t I>
 int kd_nearest_neighbor__(List x, NumericVector v)
 {
   auto p = get_ptr<I>(x);

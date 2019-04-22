@@ -4,6 +4,7 @@
 \alias{kd_lower_bound}
 \alias{kd_upper_bound}
 \alias{kd_range_query}
+\alias{kd_rq_indices}
 \alias{kd_binary_search}
 \title{Search sorted data}
 \usage{
@@ -12,6 +13,8 @@ kd_lower_bound(x, v)
 kd_upper_bound(x, v)
 
 kd_range_query(x, l, u)
+
+kd_rq_indices(x, l, u)
 
 kd_binary_search(x, v)
 }
@@ -35,5 +38,6 @@ y[kd_lower_bound(y, c(1/2, 1/2)),]
 y[kd_upper_bound(y, c(1/2, 1/2)),]
 kd_binary_search(y, c(1/2, 1/2))
 kd_range_query(y, c(1/3, 1/3), c(2/3, 2/3))
+kd_rq_indices(y, c(1/3, 1/3), c(2/3, 2/3))
 
 }

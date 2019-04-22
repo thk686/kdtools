@@ -103,6 +103,7 @@ lex_sort.arrayvec <- function(x, inplace = FALSE, ...) {
 #' y[kd_upper_bound(y, c(1/2, 1/2)),]
 #' kd_binary_search(y, c(1/2, 1/2))
 #' kd_range_query(y, c(1/3, 1/3), c(2/3, 2/3))
+#' kd_rq_indices(y, c(1/3, 1/3), c(2/3, 2/3))
 #'
 #' @aliases kd_lower_bound
 #' @rdname search
@@ -151,6 +152,21 @@ kd_range_query.matrix <- function(x, l, u) {
 #' @export
 kd_range_query.arrayvec <- function(x, l, u) {
   return(kd_range_query_(x, l, u))
+}
+
+#' @rdname search
+#' @export
+kd_rq_indices <- function(x, l, u) UseMethod("kd_rq_indices")
+
+#' @export
+kd_rq_indices.matrix <- function(x, l, u) {
+  y <- matrix_to_tuples(x)
+  return(kd_rq_indices_(y, l, u))
+}
+
+#' @export
+kd_rq_indices.arrayvec <- function(x, l, u) {
+  return(kd_rq_indices_(x, l, u))
 }
 
 #' @rdname search
@@ -204,8 +220,7 @@ kd_nn_indices <- function(x, v, n) UseMethod("kd_nn_indices")
 #' @export
 kd_nn_indices.matrix <- function(x, v, n) {
   y <- matrix_to_tuples(x)
-  z <- kd_nn_indices_(y, v, n)
-  return(z)
+  return(kd_nn_indices_(y, v, n))
 }
 
 #' @export

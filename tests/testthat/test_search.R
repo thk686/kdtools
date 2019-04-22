@@ -68,6 +68,33 @@ test_that("range query works", {
   }
 })
 
+r_contains_indices <- function(x, a, b) {
+  res <- integer()
+  for (i in seq_len(nrow(x)))
+    if (all(x[i, ] >= a) && all(x[i, ] < b)) {
+      res <- c(res, i)
+    }
+  return(res)
+}
+
+test_that("range query works", {
+  for (ignore in 1:10)
+  {
+    for (n in 1:9)
+    {
+      x <- matrix(runif(n * 100), ncol = n)
+      y <- kd_sort(x)
+      l <- rep(0.25, n)
+      u <- rep(0.75, n)
+      z1 <- kd_rq_indices(y, l, u)
+      z2 <- r_contains_indices(y, l, u)
+      z1 <- sort(z1)
+      z2 <- sort(z2)
+      expect_equal(z1, z2)
+    }
+  }
+})
+
 r_search <- function(x, y) {
   for (i in seq_len(nrow(x)))
     if (all(x[i, ] == y)) {

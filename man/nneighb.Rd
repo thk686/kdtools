@@ -2,10 +2,13 @@
 % Please edit documentation in R/kdtools.R
 \name{kd_nearest_neighbors}
 \alias{kd_nearest_neighbors}
+\alias{kd_nn_indices}
 \alias{kd_nearest_neighbor}
 \title{Find nearest neighbors}
 \usage{
 kd_nearest_neighbors(x, v, n)
+
+kd_nn_indices(x, v, n)
 
 kd_nearest_neighbor(x, v)
 }
@@ -25,5 +28,6 @@ y = matrix_to_tuples(x)
 kd_sort(y, inplace = TRUE)
 y[kd_nearest_neighbor(y, c(1/2, 1/2)),]
 kd_nearest_neighbors(y, c(1/2, 1/2), 3)
+y[kd_nn_indices(y, c(1/2, 1/2), 5),]
 
 }

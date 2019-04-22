@@ -46,3 +46,30 @@ test_that("nearest neighbors works", {
     }
   }
 })
+
+r_nns_i <- function(x, y, n) {
+  i = vapply(seq_len(nrow(x)),
+             function(i) { dist(rbind(x[i, ], y)) },
+             FUN.VALUE = double(1))
+  which(rank(i) <= n)
+}
+
+test_that("nearest neighbors indices works", {
+  for (ignore in 1:10)
+  {
+    for (n in 1:9)
+    {
+      for (m in c(1, 10, 2 * n * 100))
+      {
+        x <- matrix(runif(n * 100), nc = n)
+        x <- kd_sort(x)
+        y <- runif(n)
+        z1 <- kd_nn_indices(x, y, m)
+        z2 <- r_nns_i(x, y, m)
+        expect_equal(sort(z1), sort(z2))
+      }
+    }
+  }
+})
+
+

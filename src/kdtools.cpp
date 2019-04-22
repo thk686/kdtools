@@ -255,6 +255,39 @@ List kd_nearest_neighbors_(List x, NumericVector value, int n)
 }
 
 template <size_t I>
+IntegerVector kd_nn_indices__(List x, NumericVector value, int n)
+{
+  auto p = get_ptr<I>(x);
+  auto q = vector<av_iter<I>>();
+  auto oi = back_inserter(q);
+  auto v = vec_to_array<I>(value);
+  kd_nn_iters(begin(*p), end(*p), v, n, oi);
+  IntegerVector res(q.size());
+  std::transform(begin(q), end(q), begin(res),
+                 [&](av_iter<I> x){
+                   return distance(p->begin(), x) + 1;
+                 });
+  return res;
+}
+
+// [[Rcpp::export]]
+IntegerVector kd_nn_indices_(List x, NumericVector value, int n)
+{
+  switch(arrayvec_dim(x)) {
+  case 1: return kd_nn_indices__<1>(x, value, n);
+  case 2: return kd_nn_indices__<2>(x, value, n);
+  case 3: return kd_nn_indices__<3>(x, value, n);
+  case 4: return kd_nn_indices__<4>(x, value, n);
+  case 5: return kd_nn_indices__<5>(x, value, n);
+  case 6: return kd_nn_indices__<6>(x, value, n);
+  case 7: return kd_nn_indices__<7>(x, value, n);
+  case 8: return kd_nn_indices__<8>(x, value, n);
+  case 9: return kd_nn_indices__<9>(x, value, n);
+  default: stop("Invalid dimensions");
+  }
+}
+
+template <size_t I>
 IntegerVector kd_order__(List x, bool parallel)
 {
   auto p = get_ptr<I>(x);

@@ -355,6 +355,34 @@ void kd_sort_threaded(Iter first, Iter last,
   }
 }
 
+template <size_t I, typename Iter, typename Compare>
+void kd_sort_threaded(Iter first, Iter last, const Compare& comp,
+                      int max_threads = std::thread::hardware_concurrency(),
+                      int thread_depth = 1)
+{
+  using TupleType = iter_value_t<Iter>;
+  constexpr auto J = next_dim<I, TupleType>::value;
+  if (distance(first, last) > 1)
+  {
+    auto pivot = middle_of(first, last);
+    auto pred = make_kd_compare<I>(comp);
+    nth_element(first, pivot, last, pred);
+    pivot = adjust_pivot(first, pivot, pred);
+    if ((1 << thread_depth) <= max_threads)
+    {
+      thread t(kd_sort_threaded<J, Iter>,
+               next(pivot), last, comp, max_threads, thread_depth + 1);
+      kd_sort_threaded<J>(first, pivot, comp, max_threads, thread_depth + 1);
+      t.join();
+    }
+    else
+    {
+      kd_sort<J>(next(pivot), last, comp);
+      kd_sort<J>(first, pivot, comp);
+    }
+  }
+}
+
 template <size_t I>
 struct all_less_
 {

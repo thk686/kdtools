@@ -959,7 +959,7 @@ void sort_pointers(NumericVector c1, CharacterVector c2)
 Here, ```greater_key``` has overloads for both string and double types.
 
 ```{r}
-sort_pointers(numbers, strings)
+#sort_pointers(numbers, strings)
 ```
 
 Note that the forward and reverse sorting do not give exactly the same result (in reverse) owing to ties.

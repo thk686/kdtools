@@ -917,6 +917,8 @@ double scalar_diff(const std::string& lhs, const std::string& rhs)
 
 The ```set_similarity``` template is adapted from the STL ```set_intersection``` template and produces a number between 0 and 1. I have not attempted to prove this distance is metric, so the results may not be entirely correct. Also, there is no facility currently available to weight distances in different dimensions or override the default root-sum-of-squares algorithm for the multivariate distance.
 
+<!--
+
 ### Indexing with pointer arrays
 
 Since version 0.4.0, ```kd_tools``` all predicates and distance functions have specializations or overloads to handle pointers to tuple-like objects. Hence, any of the routines can sort or search a vector of pointers to tuples, which act as indices into the original data.
@@ -957,11 +959,12 @@ void sort_pointers(NumericVector c1, CharacterVector c2)
 Here, ```greater_key``` has overloads for both string and double types.
 
 ```{r}
-# Triggers segfault but only on Travis CI
-#sort_pointers(numbers, strings)
+sort_pointers(numbers, strings)
 ```
 
 Note that the forward and reverse sorting do not give exactly the same result (in reverse) owing to ties.
+
+-->
 
 ## Conclusions
 

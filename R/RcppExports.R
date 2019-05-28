@@ -33,6 +33,11 @@ tuples_to_matrix_rows <- function(x, a, b) {
     .Call(`_kdtools_tuples_to_matrix_rows`, x, a, b)
 }
 
+#' @export
+kd_order_df <- function(df, idx) {
+    .Call(`_kdtools_kd_order_df`, df, idx)
+}
+
 kd_sort_ <- function(x, inplace = FALSE, parallel = FALSE) {
     .Call(`_kdtools_kd_sort_`, x, inplace, parallel)
 }

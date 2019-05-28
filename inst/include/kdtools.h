@@ -48,6 +48,7 @@ namespace detail {
 using std::abs;
 using std::get;
 using std::next;
+using std::prev;
 using std::pair;
 using std::size_t;
 using std::thread;
@@ -260,6 +261,14 @@ Iter adjust_pivot(Iter first, Iter pivot, Pred pred)
   });
 }
 
+template <typename Iter, typename Pred>
+Iter median_part(Iter first, Iter last, Pred pred)
+{
+  auto pivot = middle_of(first, last);
+  nth_element(first, pivot, last, pred);
+  return adjust_pivot(first, pivot, pred);
+}
+
 template <size_t I, typename Iter>
 void kd_sort(Iter first, Iter last)
 {
@@ -268,9 +277,7 @@ void kd_sort(Iter first, Iter last)
   if (distance(first, last) > 1)
   {
     auto pred = kd_less<I>();
-    auto pivot = middle_of(first, last);
-    nth_element(first, pivot, last, pred);
-    pivot = adjust_pivot(first, pivot, pred);
+    auto pivot = median_part(first, last, pred);
     kd_sort<J>(next(pivot), last);
     kd_sort<J>(first, pivot);
   }
@@ -305,10 +312,8 @@ void kd_sort(Iter first, Iter last, const Compare& comp)
   constexpr auto J = next_dim<I, TupleType>::value;
   if (distance(first, last) > 1)
   {
-    auto pivot = middle_of(first, last);
     auto pred = make_kd_compare<I>(comp);
-    nth_element(first,  pivot,  last,  pred);
-    pivot = adjust_pivot(first, pivot, pred);
+    auto pivot = median_part(first, last, pred);
     kd_sort<J>(next(pivot), last, comp);
     kd_sort<J>(first, pivot, comp);
   }
@@ -337,9 +342,7 @@ void kd_sort_threaded(Iter first, Iter last,
   if (distance(first, last) > 1)
   {
     auto pred = kd_less<I>();
-    auto pivot = middle_of(first, last);
-    nth_element(first, pivot, last, pred);
-    pivot = adjust_pivot(first, pivot, pred);
+    auto pivot = median_part(first, last, pred);
     if ((1 << thread_depth) <= max_threads)
     {
       thread t(kd_sort_threaded<J, Iter>,
@@ -364,10 +367,8 @@ void kd_sort_threaded(Iter first, Iter last, const Compare& comp,
   constexpr auto J = next_dim<I, TupleType>::value;
   if (distance(first, last) > 1)
   {
-    auto pivot = middle_of(first, last);
     auto pred = make_kd_compare<I>(comp);
-    nth_element(first, pivot, last, pred);
-    pivot = adjust_pivot(first, pivot, pred);
+    auto pivot = median_part(first, last, pred);
     if ((1 << thread_depth) <= max_threads)
     {
       thread t(kd_sort_threaded<J, Iter>,
@@ -670,6 +671,7 @@ using detail::within;
 
 using detail::middle_of;
 using detail::find_pivot;
+using detail::median_part;
 
 using detail::is_last;
 using detail::is_not_last;

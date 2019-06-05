@@ -733,6 +733,12 @@ void kd_sort_threaded(Iter first, Iter last)
   detail::kd_sort_threaded<0>(first, last);
 }
 
+template <typename Iter, typename Compare>
+void kd_sort_threaded(Iter first, Iter last, const Compare& comp)
+{
+  detail::kd_sort_threaded<0>(first, last, comp);
+}
+
 template <typename Iter, typename Value>
 Iter kd_lower_bound(Iter first, Iter last, const Value& value)
 {

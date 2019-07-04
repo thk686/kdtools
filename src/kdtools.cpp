@@ -322,7 +322,7 @@ IntegerVector kd_nn_indices_(List x, NumericVector value, int n)
 }
 
 template <size_t I>
-IntegerVector kd_order__(List x, bool parallel)
+IntegerVector kd_order__(List x, bool inplace, bool parallel)
 {
   auto p = get_ptr<I>(x);
   std::vector<vec_type<I>*> q(p->size());
@@ -335,22 +335,28 @@ IntegerVector kd_order__(List x, bool parallel)
                  [&](vec_type<I>* x){
                    return distance(&(*p)[0], x) + 1;
                  });
+  if (inplace) {
+    std::transform(begin(q), end(q), begin(*p),
+                   [](vec_type<I>* x){
+                     return *x;
+                   });
+  }
   return res;
 }
 
 // [[Rcpp::export]]
-IntegerVector kd_order_(List x, bool parallel = false)
+IntegerVector kd_order_(List x, bool inplace, bool parallel = false)
 {
   switch(arrayvec_dim(x)) {
-  case 1: return kd_order__<1>(x, parallel);
-  case 2: return kd_order__<2>(x, parallel);
-  case 3: return kd_order__<3>(x, parallel);
-  case 4: return kd_order__<4>(x, parallel);
-  case 5: return kd_order__<5>(x, parallel);
-  case 6: return kd_order__<6>(x, parallel);
-  case 7: return kd_order__<7>(x, parallel);
-  case 8: return kd_order__<8>(x, parallel);
-  case 9: return kd_order__<9>(x, parallel);
+  case 1: return kd_order__<1>(x, inplace, parallel);
+  case 2: return kd_order__<2>(x, inplace, parallel);
+  case 3: return kd_order__<3>(x, inplace, parallel);
+  case 4: return kd_order__<4>(x, inplace, parallel);
+  case 5: return kd_order__<5>(x, inplace, parallel);
+  case 6: return kd_order__<6>(x, inplace, parallel);
+  case 7: return kd_order__<7>(x, inplace, parallel);
+  case 8: return kd_order__<8>(x, inplace, parallel);
+  case 9: return kd_order__<9>(x, inplace, parallel);
   default: stop("Invalid dimensions");
   }
 }

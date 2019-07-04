@@ -82,7 +82,7 @@ kd_nn_indices_ <- function(x, value, n) {
     .Call(`_kdtools_kd_nn_indices_`, x, value, n)
 }
 
-kd_order_ <- function(x, parallel = FALSE) {
-    .Call(`_kdtools_kd_order_`, x, parallel)
+kd_order_ <- function(x, inplace, parallel = FALSE) {
+    .Call(`_kdtools_kd_order_`, x, inplace, parallel)
 }
 

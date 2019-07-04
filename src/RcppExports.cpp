@@ -190,14 +190,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // kd_order_
-IntegerVector kd_order_(List x, bool parallel);
-RcppExport SEXP _kdtools_kd_order_(SEXP xSEXP, SEXP parallelSEXP) {
+IntegerVector kd_order_(List x, bool inplace, bool parallel);
+RcppExport SEXP _kdtools_kd_order_(SEXP xSEXP, SEXP inplaceSEXP, SEXP parallelSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< List >::type x(xSEXP);
+    Rcpp::traits::input_parameter< bool >::type inplace(inplaceSEXP);
     Rcpp::traits::input_parameter< bool >::type parallel(parallelSEXP);
-    rcpp_result_gen = Rcpp::wrap(kd_order_(x, parallel));
+    rcpp_result_gen = Rcpp::wrap(kd_order_(x, inplace, parallel));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -218,7 +219,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_kd_binary_search_", (DL_FUNC) &_kdtools_kd_binary_search_, 2},
     {"_kdtools_kd_nearest_neighbors_", (DL_FUNC) &_kdtools_kd_nearest_neighbors_, 3},
     {"_kdtools_kd_nn_indices_", (DL_FUNC) &_kdtools_kd_nn_indices_, 3},
-    {"_kdtools_kd_order_", (DL_FUNC) &_kdtools_kd_order_, 2},
+    {"_kdtools_kd_order_", (DL_FUNC) &_kdtools_kd_order_, 3},
     {NULL, NULL, 0}
 };
 

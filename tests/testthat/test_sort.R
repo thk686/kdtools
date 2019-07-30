@@ -39,6 +39,15 @@ test_that("correct sort order", {
   }
 })
 
+test_that("correct sort order parallel", {
+  nr <- 1e2
+  for (nc in 1:9)
+  {
+    x <- matrix(runif(nr * nc), nr)
+    expect_equal(kd_sort(x), kd_sort(x, parallel = TRUE))
+  }
+})
+
 kd_order_sort <- function(x) x[kd_order(x),, drop = FALSE]
 
 test_that("correct kd_order works", {
@@ -53,3 +62,21 @@ test_that("correct kd_order works", {
     expect_true(check_median(y))
   }
 })
+
+test_that("kd_order inplace is correct", {
+  nr <- 1e2
+  for (nc in 1:9) {
+    x <- matrix(runif(nr * nc), nr)
+    x.av <- matrix_to_tuples(x)
+    i <- kd_order(x.av, inplace = TRUE)
+    y <- tuples_to_matrix(x.av)
+    expect_true(kd_is_sorted(x.av))
+    expect_true(kd_is_sorted(y))
+    expect_true(check_median(y))
+    expect_equal(x[i,, drop = FALSE], y)
+  }
+})
+
+
+
+

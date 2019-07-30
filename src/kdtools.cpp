@@ -19,7 +19,7 @@ List kd_sort__(List x, bool inplace, bool parallel)
 }
 
 // [[Rcpp::export]]
-List kd_sort_(List x, bool inplace = false, bool parallel = false)
+List kd_sort_(List x, bool inplace, bool parallel)
 {
   switch(arrayvec_dim(x)) {
   case 1: return kd_sort__<1>(x, inplace, parallel);
@@ -74,7 +74,7 @@ List lex_sort__(List x, bool inplace)
 }
 
 // [[Rcpp::export]]
-List lex_sort_(List x, bool inplace = false)
+List lex_sort_(List x, bool inplace)
 {
   switch(arrayvec_dim(x)) {
   case 1: return lex_sort__<1>(x, inplace);
@@ -325,27 +325,33 @@ template <size_t I>
 IntegerVector kd_order__(List x, bool inplace, bool parallel)
 {
   auto p = get_ptr<I>(x);
+  IntegerVector res(p->size());
+  const vec_type<I>* p0 = &((*p)[0]);
   std::vector<vec_type<I>*> q(p->size());
-  std::transform(begin(*p), end(*p), begin(q),
-                 [](vec_type<I>& x){ return &x; });
+  transform(begin(*p), end(*p), begin(q),
+                 [](vec_type<I>& v){ return &v; });
   if (parallel) kd_sort_threaded(begin(q), end(q));
   else kd_sort(begin(q), end(q));
-  IntegerVector res(q.size());
-  std::transform(begin(q), end(q), begin(res),
-                 [&](vec_type<I>* x){
-                   return distance(&(*p)[0], x) + 1;
-                 });
+  transform(begin(q), end(q), begin(res),
+            [p0](const vec_type<I>* v){
+              return distance(p0, v) + 1;
+            });
   if (inplace) {
-    std::transform(begin(q), end(q), begin(*p),
-                   [](vec_type<I>* x){
-                     return *x;
-                   });
+    auto o = make_xptr(new arrayvec<I>);
+    o->reserve(q.size());
+    auto oi = back_inserter(*o);
+    transform(begin(q), end(q), oi,
+              [](const vec_type<I>* v){
+                return *v;
+              });
+    x["xptr"] = wrap(o);
+    p.release();
   }
   return res;
 }
 
 // [[Rcpp::export]]
-IntegerVector kd_order_(List x, bool inplace, bool parallel = false)
+IntegerVector kd_order_(List x, bool inplace, bool parallel)
 {
   switch(arrayvec_dim(x)) {
   case 1: return kd_order__<1>(x, inplace, parallel);

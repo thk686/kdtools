@@ -66,15 +66,13 @@ void kd_sort(Iter first, Iter last)
   if (distance(first, last) > 1)
   {
     auto pred = kd_less<I>();
-    auto pivot = middle_of(first, last);
-    nth_element(first, pivot, last, pred);
-    pivot = adjust_pivot(first, pivot, pred);
+    auto pivot = median_part(first, last, pred);
     kd_sort<J>(next(pivot), last);
     kd_sort<J>(first, pivot);
   }
 }
 ```
-The code utilizes the [```nth_element```](http://en.cppreference.com/w/cpp/algorithm/nth_element) function from the STL. The ```nth_element``` algorithm partially sorts a range such that the element pointed to by the pivot iterator is the one that would be in that position if the range was fully sorted. Since the pivot is chosen as the middle element, after calling ```nth_element```, it points to the median key. The ```nth_element``` algorithm furthermore partitions the data such that all of the elements to the right of the pivot are not-less-than elements to the left. This is sufficient to recursively sort the range, however it will fail when there are enough ties that the first instance of the median key falls to the left of the pivot. A second partitioning pass, ```adjust_pivot``` is therefore required to ensure the pivot points to the first occurrence of the median key in the sequence. Adjust_pivot is thin wrapper around the [```partition```](http://en.cppreference.com/w/cpp/algorithm/partition) algorithm from the STL.
+The ```median_part``` function is a thin wrapper around the [```nth_element```](http://en.cppreference.com/w/cpp/algorithm/nth_element) function from the standard library, which is used to find the median value in the current dimension. Once the median is identified, it is passed to the standard library [```partition```](http://en.cppreference.com/w/cpp/algorithm/partition) function, which places all values less than the median to the left of the pivot element and all greater-than or equal-to to the right.
 
 Once the first dimension is partitioned, the ranges right and left of the pivot are partitioned, and so on until first and last span a single or no value. The dimension index ```I``` is incremented at compile-time using template metaprogramming. The ```value``` member of the templated struct ```next_dim``` holds the incremented value of ```I``` that has been wrapped to cycle through successive dimensions of ```TupleType```. The result of ```kd_sort``` is a sequence ordered as if it were inserted into a kd-tree data structure. The following figure illustrates the resulting order in 2-dimensions.
 

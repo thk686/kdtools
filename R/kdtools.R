@@ -11,8 +11,10 @@ NULL
 #'   result is an ordering of tuples matching their order if they were inserted
 #'   into a kd-tree.
 #'
-#'   \code{kd_order} returns permutation vector that will order
-#'   the rows of the original matrix, exactly as \code{\link{order}}.
+#'   \code{kd_order} returns permutation vector that will order the rows of the
+#'   original matrix, exactly as \code{\link{order}}. If \code{inplace} is true,
+#'   then \code{kd_order} will also sort the arrayvec object as a side effect.
+#'   This can be more efficient when many subsequent queries are required.
 #' @note The matrix version will be slower because of data structure
 #'   conversions.
 #' @examples
@@ -27,6 +29,8 @@ NULL
 #' @export
 kd_sort <- function(x, ...) UseMethod("kd_sort")
 
+#' @param parallel use multiple threads if true
+#' @rdname kdsort
 #' @export
 kd_sort.matrix <- function(x, parallel = FALSE, ...) {
   y <- matrix_to_tuples(x)
@@ -34,6 +38,8 @@ kd_sort.matrix <- function(x, parallel = FALSE, ...) {
   return(tuples_to_matrix(y))
 }
 
+#' @param inplace sort as a side-effect if true
+#' @rdname kdsort
 #' @export
 kd_sort.arrayvec <- function(x, inplace = FALSE, parallel = FALSE, ...) {
   return(kd_sort_(x, inplace = inplace, parallel = parallel))
@@ -43,12 +49,14 @@ kd_sort.arrayvec <- function(x, inplace = FALSE, parallel = FALSE, ...) {
 #' @export
 kd_order <- function(x, ...) UseMethod("kd_order")
 
+#' @rdname kdsort
 #' @export
 kd_order.matrix <- function(x, parallel = FALSE, ...) {
   y <- matrix_to_tuples(x)
   return(kd_order_(y, inplace = FALSE, parallel = parallel))
 }
 
+#' @rdname kdsort
 #' @export
 kd_order.arrayvec <- function(x, inplace = FALSE, parallel = FALSE, ...) {
   return(kd_order_(x, inplace = inplace, parallel = parallel))

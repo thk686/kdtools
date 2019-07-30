@@ -38,7 +38,7 @@ kd_order_df <- function(df, idx) {
     .Call(`_kdtools_kd_order_df`, df, idx)
 }
 
-kd_sort_ <- function(x, inplace = FALSE, parallel = FALSE) {
+kd_sort_ <- function(x, inplace, parallel) {
     .Call(`_kdtools_kd_sort_`, x, inplace, parallel)
 }
 
@@ -46,7 +46,7 @@ kd_is_sorted_ <- function(x) {
     .Call(`_kdtools_kd_is_sorted_`, x)
 }
 
-lex_sort_ <- function(x, inplace = FALSE) {
+lex_sort_ <- function(x, inplace) {
     .Call(`_kdtools_lex_sort_`, x, inplace)
 }
 
@@ -82,7 +82,7 @@ kd_nn_indices_ <- function(x, value, n) {
     .Call(`_kdtools_kd_nn_indices_`, x, value, n)
 }
 
-kd_order_ <- function(x, inplace, parallel = FALSE) {
+kd_order_ <- function(x, inplace, parallel) {
     .Call(`_kdtools_kd_order_`, x, inplace, parallel)
 }
 

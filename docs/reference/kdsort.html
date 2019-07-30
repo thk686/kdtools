@@ -130,7 +130,19 @@
 
     <pre class="usage"><span class='fu'>kd_sort</span>(<span class='no'>x</span>, <span class='no'>...</span>)
 
+<span class='co'># S3 method for matrix</span>
+<span class='fu'>kd_sort</span>(<span class='no'>x</span>, <span class='kw'>parallel</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for arrayvec</span>
+<span class='fu'>kd_sort</span>(<span class='no'>x</span>, <span class='kw'>inplace</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>parallel</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
+
 <span class='fu'>kd_order</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for matrix</span>
+<span class='fu'>kd_order</span>(<span class='no'>x</span>, <span class='kw'>parallel</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
+
+<span class='co'># S3 method for arrayvec</span>
+<span class='fu'>kd_order</span>(<span class='no'>x</span>, <span class='kw'>inplace</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>parallel</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
 
 <span class='fu'>kd_is_sorted</span>(<span class='no'>x</span>)</pre>
     
@@ -145,6 +157,14 @@
       <th>...</th>
       <td><p>other arguments</p></td>
     </tr>
+    <tr>
+      <th>parallel</th>
+      <td><p>use multiple threads if true</p></td>
+    </tr>
+    <tr>
+      <th>inplace</th>
+      <td><p>sort as a side-effect if true</p></td>
+    </tr>
     </table>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
@@ -154,8 +174,10 @@
   dimension. Ties are resolved by cycling over successive dimensions. The
   result is an ordering of tuples matching their order if they were inserted
   into a kd-tree.</p>
-<p><code>kd_order</code> returns permutation vector that will order
-  the rows of the original matrix, exactly as <code><a href='https://www.rdocumentation.org/packages/base/topics/order'>order</a></code>.</p>
+<p><code>kd_order</code> returns permutation vector that will order the rows of the
+  original matrix, exactly as <code><a href='https://www.rdocumentation.org/packages/base/topics/order'>order</a></code>. If <code>inplace</code> is true,
+  then <code>kd_order</code> will also sort the arrayvec object as a side effect.
+  This can be more efficient when many subsequent queries are required.</p>
     
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 

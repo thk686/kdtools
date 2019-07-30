@@ -2,13 +2,25 @@
 % Please edit documentation in R/kdtools.R
 \name{kd_sort}
 \alias{kd_sort}
+\alias{kd_sort.matrix}
+\alias{kd_sort.arrayvec}
 \alias{kd_order}
+\alias{kd_order.matrix}
+\alias{kd_order.arrayvec}
 \alias{kd_is_sorted}
 \title{Sort multidimensional data}
 \usage{
 kd_sort(x, ...)
 
+\method{kd_sort}{matrix}(x, parallel = FALSE, ...)
+
+\method{kd_sort}{arrayvec}(x, inplace = FALSE, parallel = FALSE, ...)
+
 kd_order(x, ...)
+
+\method{kd_order}{matrix}(x, parallel = FALSE, ...)
+
+\method{kd_order}{arrayvec}(x, inplace = FALSE, parallel = FALSE, ...)
 
 kd_is_sorted(x)
 }
@@ -16,6 +28,10 @@ kd_is_sorted(x)
 \item{x}{a matrix or arrayvec object}
 
 \item{...}{other arguments}
+
+\item{parallel}{use multiple threads if true}
+
+\item{inplace}{sort as a side-effect if true}
 }
 \description{
 Sort multidimensional data
@@ -27,8 +43,10 @@ The algorithm used is a divide-and-conquer quicksort variant that
   result is an ordering of tuples matching their order if they were inserted
   into a kd-tree.
 
-  \code{kd_order} returns permutation vector that will order
-  the rows of the original matrix, exactly as \code{\link{order}}.
+  \code{kd_order} returns permutation vector that will order the rows of the
+  original matrix, exactly as \code{\link{order}}. If \code{inplace} is true,
+  then \code{kd_order} will also sort the arrayvec object as a side effect.
+  This can be more efficient when many subsequent queries are required.
 }
 \note{
 The matrix version will be slower because of data structure

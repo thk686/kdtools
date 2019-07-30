@@ -86,7 +86,7 @@
       <h1>Getting started with kdtools</h1>
                         <h4 class="author">Timothy H. Keitt</h4>
             
-            <h4 class="date">2019-04-22</h4>
+            <h4 class="date">2019-07-29</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/thk686/kdtools/blob/master/vignettes/kdtools.Rmd"><code>vignettes/kdtools.Rmd</code></a></small>
       <div class="hidden name"><code>kdtools.Rmd</code></div>
@@ -100,72 +100,72 @@
 <div id="step-1--convert-your-matrix-of-values-into-a-arrayvec-object" class="section level5">
 <h5 class="hasAnchor">
 <a href="#step-1--convert-your-matrix-of-values-into-a-arrayvec-object" class="anchor"></a>Step 1. Convert your matrix of values into a arrayvec object</h5>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(kdtools)
-x =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/matrix">matrix</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/Uniform">runif</a></span>(<span class="fl">3e3</span>), <span class="dt">nc =</span> <span class="dv">3</span>)
-y =<span class="st"> </span><span class="kw"><a href="../reference/convert.html">matrix_to_tuples</a></span>(x)
-y[<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span>, <span class="dv">3</span>)]
-<span class="co">#&gt;            [,1]      [,2]</span>
-<span class="co">#&gt; [1,] 0.25834951 0.4861129</span>
-<span class="co">#&gt; [2,] 0.03034524 0.5649745</span>
-<span class="co">#&gt; [3,] 0.42606723 0.1469675</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(kdtools)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">x =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/matrix">matrix</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/Uniform">runif</a></span>(<span class="fl">3e3</span>), <span class="dt">nc =</span> <span class="dv">3</span>)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3">y =<span class="st"> </span><span class="kw"><a href="../reference/convert.html">matrix_to_tuples</a></span>(x)</a>
+<a class="sourceLine" id="cb1-4" data-line-number="4">y[<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span>, <span class="dv">3</span>)]</a>
+<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="co">#&gt;            [,1]      [,2]</span></a>
+<a class="sourceLine" id="cb1-6" data-line-number="6"><span class="co">#&gt; [1,] 0.51755436 0.9938755</span></a>
+<a class="sourceLine" id="cb1-7" data-line-number="7"><span class="co">#&gt; [2,] 0.03777498 0.4228746</span></a>
+<a class="sourceLine" id="cb1-8" data-line-number="8"><span class="co">#&gt; [3,] 0.54226658 0.8108603</span></a></code></pre></div>
 <p>The arrayvec object can be manipulated as if it were a matrix.</p>
 </div>
 <div id="step-2--sort-the-data" class="section level5">
 <h5 class="hasAnchor">
 <a href="#step-2--sort-the-data" class="anchor"></a>Step 2. Sort the data</h5>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/kdsort.html">kd_sort</a></span>(y, <span class="dt">inplace =</span> <span class="ot">TRUE</span>, <span class="dt">parallel =</span> <span class="ot">TRUE</span>)
-<span class="co">#&gt;            [,1]       [,2]       [,3]</span>
-<span class="co">#&gt; [1,] 0.07977239 0.11978295 0.10041752</span>
-<span class="co">#&gt; [2,] 0.05642256 0.09828960 0.19815089</span>
-<span class="co">#&gt; [3,] 0.09291032 0.07148259 0.20112564</span>
-<span class="co">#&gt; [4,] 0.07616577 0.12835161 0.07973155</span>
-<span class="co">#&gt; [5,] 0.10496537 0.16711053 0.07296113</span>
-<span class="co">#&gt; (continues for 995 more rows)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="../reference/kdsort.html">kd_sort</a></span>(y, <span class="dt">inplace =</span> <span class="ot">TRUE</span>, <span class="dt">parallel =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co">#&gt;            [,1]       [,2]       [,3]</span></a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="co">#&gt; [1,] 0.06278610 0.06628351 0.10955833</span></a>
+<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="co">#&gt; [2,] 0.05001618 0.17998224 0.13994271</span></a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co">#&gt; [3,] 0.01122421 0.13709335 0.25348017</span></a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co">#&gt; [4,] 0.01472484 0.20839681 0.09129253</span></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt; [5,] 0.02685998 0.25670039 0.22060790</span></a>
+<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt; (continues for 995 more rows)</span></a></code></pre></div>
 </div>
 <div id="step-3--search-the-data" class="section level5">
 <h5 class="hasAnchor">
 <a href="#step-3--search-the-data" class="anchor"></a>Step 3. Search the data</h5>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rq =<span class="st"> </span><span class="kw"><a href="../reference/search.html">kd_range_query</a></span>(y, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span><span class="op">/</span><span class="dv">4</span>, <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>, <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>)); rq
-<span class="co">#&gt;            [,1]       [,2]       [,3]</span>
-<span class="co">#&gt; [1,] 0.07977239 0.11978295 0.10041752</span>
-<span class="co">#&gt; [2,] 0.05642256 0.09828960 0.19815089</span>
-<span class="co">#&gt; [3,] 0.09291032 0.07148259 0.20112564</span>
-<span class="co">#&gt; [4,] 0.07616577 0.12835161 0.07973155</span>
-<span class="co">#&gt; [5,] 0.10496537 0.16711053 0.07296113</span>
-<span class="co">#&gt; (continues for 15 more rows)</span>
-i =<span class="st"> </span><span class="kw"><a href="../reference/nneighb.html">kd_nearest_neighbor</a></span>(y, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>)); y[i, ]
-<span class="co">#&gt; [1] 0.07616577 0.12835161 0.07973155</span>
-nns =<span class="st"> </span><span class="kw"><a href="../reference/nneighb.html">kd_nearest_neighbors</a></span>(y, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>), <span class="dv">100</span>); nns
-<span class="co">#&gt;            [,1]      [,2]      [,3]</span>
-<span class="co">#&gt; [1,] 0.01060028 0.4445945 0.3598633</span>
-<span class="co">#&gt; [2,] 0.35399148 0.3678210 0.2560636</span>
-<span class="co">#&gt; [3,] 0.43505101 0.2829680 0.2341742</span>
-<span class="co">#&gt; [4,] 0.24791701 0.3908070 0.3296455</span>
-<span class="co">#&gt; [5,] 0.35757756 0.3348116 0.2877254</span>
-<span class="co">#&gt; (continues for 95 more rows)</span>
-nni =<span class="st"> </span><span class="kw"><a href="../reference/nneighb.html">kd_nn_indices</a></span>(y, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>), <span class="dv">10</span>); nni
-<span class="co">#&gt;  [1] 64 17  3  9  2  6  5  7  1  4</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">rq =<span class="st"> </span><span class="kw"><a href="../reference/search.html">kd_range_query</a></span>(y, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span><span class="op">/</span><span class="dv">4</span>, <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>, <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>)); rq</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="co">#&gt;            [,1]        [,2]       [,3]</span></a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co">#&gt; [1,] 0.06278610 0.066283508 0.10955833</span></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">#&gt; [2,] 0.05001618 0.179982235 0.13994271</span></a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">#&gt; [3,] 0.01472484 0.208396815 0.09129253</span></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#&gt; [4,] 0.08144119 0.196978191 0.04042850</span></a>
+<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#&gt; [5,] 0.14010480 0.001835347 0.06192733</span></a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt; (continues for 5 more rows)</span></a>
+<a class="sourceLine" id="cb3-9" data-line-number="9">i =<span class="st"> </span><span class="kw"><a href="../reference/nneighb.html">kd_nearest_neighbor</a></span>(y, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>)); y[i, ]</a>
+<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt; [1] 0.06278610 0.06628351 0.10955833</span></a>
+<a class="sourceLine" id="cb3-11" data-line-number="11">nns =<span class="st"> </span><span class="kw"><a href="../reference/nneighb.html">kd_nearest_neighbors</a></span>(y, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>), <span class="dv">100</span>); nns</a>
+<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt;           [,1]       [,2]       [,3]</span></a>
+<a class="sourceLine" id="cb3-13" data-line-number="13"><span class="co">#&gt; [1,] 0.4286782 0.32044885 0.21316485</span></a>
+<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co">#&gt; [2,] 0.4194263 0.38607815 0.06638974</span></a>
+<a class="sourceLine" id="cb3-15" data-line-number="15"><span class="co">#&gt; [3,] 0.2860067 0.24810007 0.43076659</span></a>
+<a class="sourceLine" id="cb3-16" data-line-number="16"><span class="co">#&gt; [4,] 0.4414132 0.07924985 0.35741589</span></a>
+<a class="sourceLine" id="cb3-17" data-line-number="17"><span class="co">#&gt; [5,] 0.5343496 0.02133576 0.20435933</span></a>
+<a class="sourceLine" id="cb3-18" data-line-number="18"><span class="co">#&gt; (continues for 95 more rows)</span></a>
+<a class="sourceLine" id="cb3-19" data-line-number="19">nni =<span class="st"> </span><span class="kw"><a href="../reference/nneighb.html">kd_nn_indices</a></span>(y, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>), <span class="dv">10</span>); nni</a>
+<a class="sourceLine" id="cb3-20" data-line-number="20"><span class="co">#&gt;  [1] 64 13  3 65  2  4  8 10  9  1</span></a></code></pre></div>
 <p>The <code>kd_nearest_neighbor</code> and <code>kd_nn_indices</code> functions return row-indices. The other functions return arrayvec objects.</p>
 </div>
 <div id="step-4--convert-back-to-a-matrix-for-use-in-r" class="section level5">
 <h5 class="hasAnchor">
 <a href="#step-4--convert-back-to-a-matrix-for-use-in-r" class="anchor"></a>Step 4. Convert back to a matrix for use in R</h5>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(<span class="kw"><a href="../reference/convert.html">tuples_to_matrix</a></span>(rq))
-<span class="co">#&gt;            [,1]       [,2]       [,3]</span>
-<span class="co">#&gt; [1,] 0.07977239 0.11978295 0.10041752</span>
-<span class="co">#&gt; [2,] 0.05642256 0.09828960 0.19815089</span>
-<span class="co">#&gt; [3,] 0.09291032 0.07148259 0.20112564</span>
-<span class="co">#&gt; [4,] 0.07616577 0.12835161 0.07973155</span>
-<span class="co">#&gt; [5,] 0.10496537 0.16711053 0.07296113</span>
-<span class="co">#&gt; [6,] 0.08924499 0.17761309 0.08829078</span>
-<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(<span class="kw"><a href="../reference/convert.html">tuples_to_matrix</a></span>(nns))
-<span class="co">#&gt;            [,1]       [,2]      [,3]</span>
-<span class="co">#&gt; [1,] 0.01060028 0.44459446 0.3598633</span>
-<span class="co">#&gt; [2,] 0.35399148 0.36782096 0.2560636</span>
-<span class="co">#&gt; [3,] 0.43505101 0.28296796 0.2341742</span>
-<span class="co">#&gt; [4,] 0.24791701 0.39080698 0.3296455</span>
-<span class="co">#&gt; [5,] 0.35757756 0.33481162 0.2877254</span>
-<span class="co">#&gt; [6,] 0.42247297 0.08266129 0.3699597</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(<span class="kw"><a href="../reference/convert.html">tuples_to_matrix</a></span>(rq))</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co">#&gt;            [,1]        [,2]       [,3]</span></a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="co">#&gt; [1,] 0.06278610 0.066283508 0.10955833</span></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="co">#&gt; [2,] 0.05001618 0.179982235 0.13994271</span></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="co">#&gt; [3,] 0.01472484 0.208396815 0.09129253</span></a>
+<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co">#&gt; [4,] 0.08144119 0.196978191 0.04042850</span></a>
+<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="co">#&gt; [5,] 0.14010480 0.001835347 0.06192733</span></a>
+<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="co">#&gt; [6,] 0.09489338 0.011047936 0.14402181</span></a>
+<a class="sourceLine" id="cb4-9" data-line-number="9"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(<span class="kw"><a href="../reference/convert.html">tuples_to_matrix</a></span>(nns))</a>
+<a class="sourceLine" id="cb4-10" data-line-number="10"><span class="co">#&gt;           [,1]       [,2]       [,3]</span></a>
+<a class="sourceLine" id="cb4-11" data-line-number="11"><span class="co">#&gt; [1,] 0.4286782 0.32044885 0.21316485</span></a>
+<a class="sourceLine" id="cb4-12" data-line-number="12"><span class="co">#&gt; [2,] 0.4194263 0.38607815 0.06638974</span></a>
+<a class="sourceLine" id="cb4-13" data-line-number="13"><span class="co">#&gt; [3,] 0.2860067 0.24810007 0.43076659</span></a>
+<a class="sourceLine" id="cb4-14" data-line-number="14"><span class="co">#&gt; [4,] 0.4414132 0.07924985 0.35741589</span></a>
+<a class="sourceLine" id="cb4-15" data-line-number="15"><span class="co">#&gt; [5,] 0.5343496 0.02133576 0.20435933</span></a>
+<a class="sourceLine" id="cb4-16" data-line-number="16"><span class="co">#&gt; [6,] 0.1282309 0.16300195 0.53354889</span></a></code></pre></div>
 <p>If you pass a matrix instead of an arrayvec object to any of the functions, it will be converted to an arrayvec object internally and results will be returned as matrices. This is slower and provided for convenience.</p>
 </div>
   </div>

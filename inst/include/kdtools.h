@@ -222,7 +222,7 @@ struct kd_compare
   {
     auto pred = make_pred_nth<I>(m_pred);
     constexpr auto J = next_dim<I, T>::value;
-    return !pred(lhs, rhs) && !pred(lhs, rhs) ?
+    return !pred(lhs, rhs) && !pred(rhs, lhs) ?
       kd_compare<Pred, J, K + 1>(m_pred)(lhs, rhs) : pred(lhs, rhs);
   }
   template <typename T>

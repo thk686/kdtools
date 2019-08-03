@@ -5,6 +5,7 @@ jobs:
   build:
     docker:
       - image: rocker/verse:latest
+    parallelism: 4
     environment:
       R_LIBS: ~/R/Library
     steps:

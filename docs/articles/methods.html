@@ -86,7 +86,7 @@
       <h1>Compact multidimensional sorting and searching with kdtools</h1>
                         <h4 class="author">Timothy H. Keitt</h4>
             
-            <h4 class="date">2019-07-29</h4>
+            <h4 class="date">2019-08-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/thk686/kdtools/blob/master/vignettes/methods.Rmd"><code>vignettes/methods.Rmd</code></a></small>
       <div class="hidden name"><code>methods.Rmd</code></div>
@@ -234,26 +234,26 @@
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/t">t</a></span>(<span class="kw"><a href="../reference/kdsort.html">kd_sort</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cbind">cbind</a></span>(j, k)))</a></code></pre></div>
 <table class="table"><tbody>
 <tr class="odd">
-<td align="right">1</td>
-<td align="right">4</td>
-<td align="right">3</td>
 <td align="right">2</td>
+<td align="right">4</td>
+<td align="right">1</td>
+<td align="right">3</td>
 <td align="right">5</td>
 <td align="right">6</td>
-<td align="right">7</td>
 <td align="right">9</td>
 <td align="right">8</td>
+<td align="right">7</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
+<td align="right">1</td>
 <td align="right">3</td>
+<td align="right">6</td>
+<td align="right">5</td>
+<td align="right">4</td>
+<td align="right">7</td>
 <td align="right">8</td>
 <td align="right">9</td>
-<td align="right">7</td>
-<td align="right">4</td>
-<td align="right">1</td>
-<td align="right">5</td>
-<td align="right">6</td>
 </tr>
 </tbody></table>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/t">t</a></span>(<span class="kw"><a href="../reference/kdsort.html">kd_sort</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cbind">cbind</a></span>(<span class="dv">0</span>, j, k)))</a></code></pre></div>
@@ -270,51 +270,51 @@
 <td align="right">0</td>
 </tr>
 <tr class="even">
-<td align="right">1</td>
 <td align="right">2</td>
+<td align="right">1</td>
 <td align="right">3</td>
 <td align="right">4</td>
 <td align="right">5</td>
-<td align="right">7</td>
 <td align="right">6</td>
+<td align="right">7</td>
 <td align="right">8</td>
 <td align="right">9</td>
 </tr>
 <tr class="odd">
 <td align="right">2</td>
+<td align="right">3</td>
+<td align="right">6</td>
+<td align="right">1</td>
+<td align="right">5</td>
+<td align="right">4</td>
 <td align="right">9</td>
 <td align="right">8</td>
-<td align="right">3</td>
 <td align="right">7</td>
-<td align="right">1</td>
-<td align="right">4</td>
-<td align="right">6</td>
-<td align="right">5</td>
 </tr>
 </tbody></table>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/t">t</a></span>(<span class="kw"><a href="../reference/kdsort.html">kd_sort</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cbind">cbind</a></span>(j, k, <span class="dv">0</span>)))</a></code></pre></div>
 <table class="table"><tbody>
 <tr class="odd">
-<td align="right">1</td>
-<td align="right">4</td>
-<td align="right">3</td>
 <td align="right">2</td>
+<td align="right">4</td>
+<td align="right">1</td>
+<td align="right">3</td>
 <td align="right">5</td>
 <td align="right">6</td>
-<td align="right">7</td>
 <td align="right">9</td>
 <td align="right">8</td>
+<td align="right">7</td>
 </tr>
 <tr class="even">
 <td align="right">2</td>
+<td align="right">1</td>
 <td align="right">3</td>
+<td align="right">6</td>
+<td align="right">5</td>
+<td align="right">4</td>
+<td align="right">7</td>
 <td align="right">8</td>
 <td align="right">9</td>
-<td align="right">7</td>
-<td align="right">4</td>
-<td align="right">1</td>
-<td align="right">5</td>
-<td align="right">6</td>
 </tr>
 <tr class="odd">
 <td align="right">0</td>
@@ -583,41 +583,41 @@
 <a class="sourceLine" id="cb10-3" data-line-number="3">strings =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sample">sample</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/chartr">tolower</a></span>(parts_of_speech[[<span class="dv">1</span>]]))</a>
 <a class="sourceLine" id="cb10-4" data-line-number="4"><span class="kw">mixed_query</span>(numbers, strings)</a>
 <a class="sourceLine" id="cb10-5" data-line-number="5"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb10-6" data-line-number="6"><span class="co">#&gt; Sort time: 0.117099 seconds</span></a>
+<a class="sourceLine" id="cb10-6" data-line-number="6"><span class="co">#&gt; Sort time: 0.139143 seconds</span></a>
 <a class="sourceLine" id="cb10-7" data-line-number="7"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb10-8" data-line-number="8"><span class="co">#&gt; First and last 3 elements of sorted data:</span></a>
 <a class="sourceLine" id="cb10-9" data-line-number="9"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb10-10" data-line-number="10"><span class="co">#&gt; 0 0.0001032 abigail</span></a>
-<a class="sourceLine" id="cb10-11" data-line-number="11"><span class="co">#&gt; 1 0.000367 abjuratory</span></a>
-<a class="sourceLine" id="cb10-12" data-line-number="12"><span class="co">#&gt; 2 0.001344 accost</span></a>
+<a class="sourceLine" id="cb10-10" data-line-number="10"><span class="co">#&gt; 0 0.001185 aaronitic</span></a>
+<a class="sourceLine" id="cb10-11" data-line-number="11"><span class="co">#&gt; 1 0.001339 abraded</span></a>
+<a class="sourceLine" id="cb10-12" data-line-number="12"><span class="co">#&gt; 2 0.003488 abhorrer</span></a>
 <a class="sourceLine" id="cb10-13" data-line-number="13"><span class="co">#&gt; ...</span></a>
-<a class="sourceLine" id="cb10-14" data-line-number="14"><span class="co">#&gt; 208256 0.9997 zingare</span></a>
-<a class="sourceLine" id="cb10-15" data-line-number="15"><span class="co">#&gt; 208257 0.9983 zloty</span></a>
-<a class="sourceLine" id="cb10-16" data-line-number="16"><span class="co">#&gt; 208258 0.9988 zooplankton</span></a>
+<a class="sourceLine" id="cb10-14" data-line-number="14"><span class="co">#&gt; 208256 0.9989 yeti</span></a>
+<a class="sourceLine" id="cb10-15" data-line-number="15"><span class="co">#&gt; 208257 0.9989 zipangu</span></a>
+<a class="sourceLine" id="cb10-16" data-line-number="16"><span class="co">#&gt; 208258 0.999 zapata</span></a>
 <a class="sourceLine" id="cb10-17" data-line-number="17"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb10-18" data-line-number="18"><span class="co">#&gt; Query time: 9.3561e-05 seconds</span></a>
+<a class="sourceLine" id="cb10-18" data-line-number="18"><span class="co">#&gt; Query time: 0.000109588 seconds</span></a>
 <a class="sourceLine" id="cb10-19" data-line-number="19"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb10-20" data-line-number="20"><span class="co">#&gt; First and last 3 elements of query return:</span></a>
 <a class="sourceLine" id="cb10-21" data-line-number="21"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb10-22" data-line-number="22"><span class="co">#&gt; 0 0.41 waco</span></a>
-<a class="sourceLine" id="cb10-23" data-line-number="23"><span class="co">#&gt; 1 0.4068 wailful</span></a>
-<a class="sourceLine" id="cb10-24" data-line-number="24"><span class="co">#&gt; 2 0.4139 waggishly</span></a>
+<a class="sourceLine" id="cb10-22" data-line-number="22"><span class="co">#&gt; 0 0.4014 wabbled</span></a>
+<a class="sourceLine" id="cb10-23" data-line-number="23"><span class="co">#&gt; 1 0.4001 wage</span></a>
+<a class="sourceLine" id="cb10-24" data-line-number="24"><span class="co">#&gt; 2 0.4036 wale</span></a>
 <a class="sourceLine" id="cb10-25" data-line-number="25"><span class="co">#&gt; ...</span></a>
-<a class="sourceLine" id="cb10-26" data-line-number="26"><span class="co">#&gt; 1079 0.5884 yowl</span></a>
-<a class="sourceLine" id="cb10-27" data-line-number="27"><span class="co">#&gt; 1080 0.5957 yiddish</span></a>
-<a class="sourceLine" id="cb10-28" data-line-number="28"><span class="co">#&gt; 1081 0.5989 ynes</span></a>
+<a class="sourceLine" id="cb10-26" data-line-number="26"><span class="co">#&gt; 1136 0.5905 yellowbelly</span></a>
+<a class="sourceLine" id="cb10-27" data-line-number="27"><span class="co">#&gt; 1137 0.5907 yeaton</span></a>
+<a class="sourceLine" id="cb10-28" data-line-number="28"><span class="co">#&gt; 1138 0.5976 you'll</span></a>
 <a class="sourceLine" id="cb10-29" data-line-number="29"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb10-30" data-line-number="30"><span class="co">#&gt; Neighbors query time: 0.00113973 seconds</span></a>
+<a class="sourceLine" id="cb10-30" data-line-number="30"><span class="co">#&gt; Neighbors query time: 0.00101591 seconds</span></a>
 <a class="sourceLine" id="cb10-31" data-line-number="31"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb10-32" data-line-number="32"><span class="co">#&gt; First and last 3 elements of neighbors query return:</span></a>
 <a class="sourceLine" id="cb10-33" data-line-number="33"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb10-34" data-line-number="34"><span class="co">#&gt; 0 0.5335 lotteries</span></a>
-<a class="sourceLine" id="cb10-35" data-line-number="35"><span class="co">#&gt; 1 0.5335 kingliest</span></a>
-<a class="sourceLine" id="cb10-36" data-line-number="36"><span class="co">#&gt; 2 0.5335 kinetosis</span></a>
+<a class="sourceLine" id="cb10-34" data-line-number="34"><span class="co">#&gt; 0 0.5298 kalis</span></a>
+<a class="sourceLine" id="cb10-35" data-line-number="35"><span class="co">#&gt; 1 0.2992 isotopic</span></a>
+<a class="sourceLine" id="cb10-36" data-line-number="36"><span class="co">#&gt; 2 0.5283 landsturm</span></a>
 <a class="sourceLine" id="cb10-37" data-line-number="37"><span class="co">#&gt; ...</span></a>
-<a class="sourceLine" id="cb10-38" data-line-number="38"><span class="co">#&gt; 97 0.5035 kilo-oersted</span></a>
-<a class="sourceLine" id="cb10-39" data-line-number="39"><span class="co">#&gt; 98 0.511 loadstone</span></a>
-<a class="sourceLine" id="cb10-40" data-line-number="40"><span class="co">#&gt; 99 0.5097 klopstock</span></a></code></pre></div>
+<a class="sourceLine" id="cb10-38" data-line-number="38"><span class="co">#&gt; 97 0.5092 knowlton</span></a>
+<a class="sourceLine" id="cb10-39" data-line-number="39"><span class="co">#&gt; 98 0.5253 katholikos</span></a>
+<a class="sourceLine" id="cb10-40" data-line-number="40"><span class="co">#&gt; 99 0.4533 jostled</span></a></code></pre></div>
 <p>The timing results indicate that sorting <span class="math inline">\(2 \times 10 ^ 5\)</span> tuples is on the order of 1/10th second, whereas the range query returned in less than a millisecond.</p>
 <p>Nearest neighbor searching requires a suitable distance function be defined for all types. There are two specialization points: the templates <code>scalar_diff</code>, which returns a possibly signed difference between to objects, and <code>scalar_dist</code>, which returns the distance along a single dimension. Currently, nearest neighbor distances are hardwired as the L2 norm of the returned scalar differences computed for each dimension. The computation above uses the following definitions.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">template</span>&lt;<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/class">class</a></span> InputIt1, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/class">class</a></span> InputIt2&gt;</a>

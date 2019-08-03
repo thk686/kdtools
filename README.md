@@ -30,7 +30,3 @@ status](https://ci.appveyor.com/api/projects/status/github/thk686/kdtools?branch
 [![Coverage
 status](https://codecov.io/gh/thk686/kdtools/branch/master/graph/badge.svg)](https://codecov.io/github/thk686/kdtools?branch=master)
 [![DOI](https://zenodo.org/badge/125262786.svg)](https://zenodo.org/badge/latestdoi/125262786)
-
-<!---
-[![Travis build status](https://travis-ci.org/thk686/kdtools.svg?branch=master)](https://travis-ci.org/thk686/kdtools)
---->

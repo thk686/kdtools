@@ -10,3 +10,4 @@
 ^cran-comments\.md$
 ^LICENSE\.md$
 
+^\.circleci/config\.yml$

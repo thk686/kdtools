@@ -3,6 +3,7 @@ using Rcpp::as;
 using Rcpp::stop;
 using Rcpp::List;
 using Rcpp::Rcout;
+using Rcpp::Function;
 using Rcpp::NumericVector;
 using Rcpp::IntegerVector;
 
@@ -17,6 +18,7 @@ using std::iota;
 using std::begin;
 using std::size_t;
 using std::vector;
+using std::thread;
 using std::distance;
 using std::minmax_element;
 
@@ -34,6 +36,10 @@ template<typename T, typename U>
 bool not_in_range(const T& x, U n) {
   auto r = minmax_element(begin(x), end(x));
   return (*r.first < 1 || *r.second > n) ? true : false;
+}
+
+std::string get_string(SEXP x, int i) {
+  return std::string(CHAR(STRING_ELT(x, i)));
 }
 
 struct kd_less_df
@@ -71,6 +77,23 @@ struct kd_less_df
         return INTEGER(col)[lhs] < INTEGER(col)[rhs];
       break;
     }
+    case STRSXP: {
+      if (get_string(col, lhs) == get_string(col, rhs))
+        return next_dim(true)(lhs, rhs);
+      else
+        return get_string(col, lhs) < get_string(col, rhs);
+      break;
+    }
+    case VECSXP: {
+      Function Requal("`==`"), Rless("`<`");
+      SEXP lhs_ = VECTOR_ELT(col, lhs),
+        rhs_ = VECTOR_ELT(col, rhs);
+      if (Requal(lhs_, rhs_))
+        return next_dim(true)(lhs, rhs);
+      else
+        return Rless(lhs_, rhs_);
+      break;
+    }
     default: stop("Invalid column type");
     }
     return false;
@@ -91,9 +114,31 @@ void kd_order_df_(Iter first, Iter last, Pred pred)
   }
 }
 
-//' @export
+template <typename Iter, typename Pred>
+void kd_order_df_threaded(Iter first, Iter last, Pred pred,
+                          int max_threads = std::thread::hardware_concurrency(),
+                          int thread_depth = 1)
+{
+  if (distance(first, last) > 1)
+  {
+    auto pivot = median_part(first, last, pred);
+    if ((1 << thread_depth) <= max_threads)
+    {
+      thread t(kd_order_df_threaded<Iter, Pred>,
+               next(pivot), last, pred.next_dim(), max_threads, thread_depth + 1);
+      kd_order_df_threaded<Iter, Pred>(first, pivot, pred.next_dim(), max_threads, thread_depth + 1);
+      t.join();
+    }
+    else
+    {
+      kd_order_df_(next(pivot), last, pred.next_dim());
+      kd_order_df_(first, pivot, pred.next_dim());
+    }
+  }
+}
+
 // [[Rcpp::export]]
-IntegerVector kd_order_df(List df, IntegerVector idx)
+IntegerVector kd_order_df(List df, IntegerVector idx, bool parallel = true)
 {
   if (ncol(df) < 1 || nrow(df) < 1)
     return IntegerVector();
@@ -102,6 +147,9 @@ IntegerVector kd_order_df(List df, IntegerVector idx)
   IntegerVector x(nrow(df));
   iota(begin(x), end(x), 0);
   auto pred = kd_less_df(df, idx);
-  kd_order_df_(begin(x), end(x), pred);
+  if (parallel)
+    kd_order_df_threaded(begin(x), end(x), pred);
+  else
+    kd_order_df_(begin(x), end(x), pred);
   return x + 1;
 }

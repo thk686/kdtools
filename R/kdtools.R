@@ -32,7 +32,7 @@ kd_sort <- function(x, ...) UseMethod("kd_sort")
 #' @param parallel use multiple threads if true
 #' @rdname kdsort
 #' @export
-kd_sort.matrix <- function(x, parallel = FALSE, ...) {
+kd_sort.matrix <- function(x, parallel = TRUE, ...) {
   y <- matrix_to_tuples(x)
   kd_sort_(y, inplace = TRUE, parallel = parallel)
   return(tuples_to_matrix(y))
@@ -41,7 +41,7 @@ kd_sort.matrix <- function(x, parallel = FALSE, ...) {
 #' @param inplace sort as a side-effect if true
 #' @rdname kdsort
 #' @export
-kd_sort.arrayvec <- function(x, inplace = FALSE, parallel = FALSE, ...) {
+kd_sort.arrayvec <- function(x, inplace = FALSE, parallel = TRUE, ...) {
   return(kd_sort_(x, inplace = inplace, parallel = parallel))
 }
 
@@ -51,15 +51,21 @@ kd_order <- function(x, ...) UseMethod("kd_order")
 
 #' @rdname kdsort
 #' @export
-kd_order.matrix <- function(x, parallel = FALSE, ...) {
+kd_order.matrix <- function(x, parallel = TRUE, ...) {
   y <- matrix_to_tuples(x)
   return(kd_order_(y, inplace = FALSE, parallel = parallel))
 }
 
 #' @rdname kdsort
 #' @export
-kd_order.arrayvec <- function(x, inplace = FALSE, parallel = FALSE, ...) {
+kd_order.arrayvec <- function(x, inplace = FALSE, parallel = TRUE, ...) {
   return(kd_order_(x, inplace = inplace, parallel = parallel))
+}
+
+#' @rdname kdsort
+#' @export
+kd_order.data.frame <- function(x, cols = 1:ncol(x), parallel = TRUE, ...) {
+  return(kd_order_df(x, cols, parallel = parallel))
 }
 
 #' @rdname kdsort

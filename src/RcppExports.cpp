@@ -42,14 +42,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // kd_order_df
-IntegerVector kd_order_df(List df, IntegerVector idx);
-RcppExport SEXP _kdtools_kd_order_df(SEXP dfSEXP, SEXP idxSEXP) {
+IntegerVector kd_order_df(List df, IntegerVector idx, bool parallel);
+RcppExport SEXP _kdtools_kd_order_df(SEXP dfSEXP, SEXP idxSEXP, SEXP parallelSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< List >::type df(dfSEXP);
     Rcpp::traits::input_parameter< IntegerVector >::type idx(idxSEXP);
-    rcpp_result_gen = Rcpp::wrap(kd_order_df(df, idx));
+    Rcpp::traits::input_parameter< bool >::type parallel(parallelSEXP);
+    rcpp_result_gen = Rcpp::wrap(kd_order_df(df, idx, parallel));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -207,7 +208,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_matrix_to_tuples", (DL_FUNC) &_kdtools_matrix_to_tuples, 1},
     {"_kdtools_tuples_to_matrix", (DL_FUNC) &_kdtools_tuples_to_matrix, 1},
     {"_kdtools_tuples_to_matrix_rows", (DL_FUNC) &_kdtools_tuples_to_matrix_rows, 3},
-    {"_kdtools_kd_order_df", (DL_FUNC) &_kdtools_kd_order_df, 2},
+    {"_kdtools_kd_order_df", (DL_FUNC) &_kdtools_kd_order_df, 3},
     {"_kdtools_kd_sort_", (DL_FUNC) &_kdtools_kd_sort_, 3},
     {"_kdtools_kd_is_sorted_", (DL_FUNC) &_kdtools_kd_is_sorted_, 1},
     {"_kdtools_lex_sort_", (DL_FUNC) &_kdtools_lex_sort_, 2},

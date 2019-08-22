@@ -39,15 +39,15 @@ bool not_in_range(const T& x, U n) {
 struct kd_less_df
 {
   kd_less_df(List& df, IntegerVector& idx, size_t dim = 0, size_t count = 0)
-    : m_df(df), m_idx(idx), m_dim(dim), m_count(count) {}
+    : m_df(df), m_idx(idx), m_dim(dim), m_ndim(m_idx.size()), m_count(count) {}
   kd_less_df next_dim(bool inc_count = false) {
     return kd_less_df(m_df, m_idx,
-                      (m_dim + 1) % m_idx.size(),
+                      (m_dim + 1) % m_ndim,
                       inc_count ? m_count + 1 : 0);
   }
   bool operator()(const int lhs, const int rhs)
   {
-    if (m_count == m_idx.size()) return false;
+    if (m_count == m_ndim) return false;
     auto col = m_df[m_idx[m_dim] - 1].get();
     switch(TYPEOF(col)) {
     case LGLSXP: {
@@ -77,7 +77,7 @@ struct kd_less_df
   }
   List& m_df;
   IntegerVector& m_idx;
-  size_t m_dim, m_count;
+  size_t m_dim, m_ndim, m_count;
 };
 
 template <typename Iter, typename Pred>

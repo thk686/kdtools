@@ -7,20 +7,24 @@
 \alias{kd_order}
 \alias{kd_order.matrix}
 \alias{kd_order.arrayvec}
+\alias{kd_order.data.frame}
 \alias{kd_is_sorted}
 \title{Sort multidimensional data}
 \usage{
 kd_sort(x, ...)
 
-\method{kd_sort}{matrix}(x, parallel = FALSE, ...)
+\method{kd_sort}{matrix}(x, parallel = TRUE, ...)
 
-\method{kd_sort}{arrayvec}(x, inplace = FALSE, parallel = FALSE, ...)
+\method{kd_sort}{arrayvec}(x, inplace = FALSE, parallel = TRUE, ...)
 
 kd_order(x, ...)
 
-\method{kd_order}{matrix}(x, parallel = FALSE, ...)
+\method{kd_order}{matrix}(x, parallel = TRUE, ...)
 
-\method{kd_order}{arrayvec}(x, inplace = FALSE, parallel = FALSE, ...)
+\method{kd_order}{arrayvec}(x, inplace = FALSE, parallel = TRUE, ...)
+
+\method{kd_order}{data.frame}(x, cols = 1:ncol(x), parallel = TRUE,
+  ...)
 
 kd_is_sorted(x)
 }

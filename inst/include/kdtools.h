@@ -371,7 +371,7 @@ void kd_sort_threaded(Iter first, Iter last, const Compare& comp,
     auto pivot = median_part(first, last, pred);
     if ((1 << thread_depth) <= max_threads)
     {
-      thread t(kd_sort_threaded<J, Iter>,
+      thread t(kd_sort_threaded<J, Iter, Compare>,
                next(pivot), last, comp, max_threads, thread_depth + 1);
       kd_sort_threaded<J>(first, pivot, comp, max_threads, thread_depth + 1);
       t.join();

@@ -40,20 +40,35 @@ struct kd_less_df
 {
   kd_less_df(List& df, IntegerVector& idx, size_t dim = 0, size_t count = 0)
     : m_df(df), m_idx(idx), m_dim(dim), m_count(count) {}
-  kd_less_df next() {
-    return kd_less_df(m_df, m_idx, ++m_dim % m_idx.size(), ++m_count);
+  kd_less_df next_dim(bool inc_count = false) {
+    return kd_less_df(m_df, m_idx,
+                      (m_dim + 1) % m_idx.size(),
+                      inc_count ? m_count + 1 : 0);
   }
   bool operator()(const int lhs, const int rhs)
   {
     if (m_count == m_idx.size()) return false;
     auto col = m_df[m_idx[m_dim] - 1].get();
-    Rcout << m_dim << " " << TYPEOF(col) << std::endl;
     switch(TYPEOF(col)) {
+    case LGLSXP: {
+      if (LOGICAL(col)[lhs] == LOGICAL(col)[rhs])
+        return next_dim(true)(lhs, rhs);
+      else
+        return LOGICAL(col)[lhs] < LOGICAL(col)[rhs];
+      break;
+    }
     case REALSXP: {
       if (REAL(col)[lhs] == REAL(col)[rhs])
-        return next()(lhs, rhs);
+        return next_dim(true)(lhs, rhs);
       else
         return REAL(col)[lhs] < REAL(col)[rhs];
+      break;
+    }
+    case INTSXP: {
+      if (INTEGER(col)[lhs] == INTEGER(col)[rhs])
+        return next_dim(true)(lhs, rhs);
+      else
+        return INTEGER(col)[lhs] < INTEGER(col)[rhs];
       break;
     }
     default: stop("Invalid column type");
@@ -71,8 +86,8 @@ void kd_order_df_(Iter first, Iter last, Pred pred)
   if (distance(first, last) > 1)
   {
     auto pivot = median_part(first, last, pred);
-    kd_order_df_(next(pivot), last, pred.next());
-    kd_order_df_(first, pivot, pred.next());
+    kd_order_df_(next(pivot), last, pred.next_dim());
+    kd_order_df_(first, pivot, pred.next_dim());
   }
 }
 

@@ -8,7 +8,7 @@ using Rcpp::NumericVector;
 using Rcpp::IntegerVector;
 
 #include "kdtools.h"
-using kdtools::detail::median_part;
+using kdtools::utils::median_part;
 
 #include <algorithm>
 using std::end;

@@ -42,15 +42,19 @@ std::string get_string(SEXP x, int i) {
   return std::string(CHAR(STRING_ELT(x, i)));
 }
 
+Function Requal("=="), Rless("<");
+
 struct kd_less_df
 {
   kd_less_df(List& df, IntegerVector& idx, size_t dim = 0, size_t count = 0)
     : m_df(df), m_idx(idx), m_dim(dim), m_ndim(m_idx.size()), m_count(count) {}
+
   kd_less_df next_dim(bool inc_count = false) {
     return kd_less_df(m_df, m_idx,
                       (m_dim + 1) % m_ndim,
                       inc_count ? m_count + 1 : 0);
   }
+
   bool operator()(const int lhs, const int rhs)
   {
     if (m_count == m_ndim) return false;
@@ -85,7 +89,6 @@ struct kd_less_df
       break;
     }
     case VECSXP: {
-      Function Requal("`==`"), Rless("`<`");
       SEXP lhs_ = VECTOR_ELT(col, lhs),
         rhs_ = VECTOR_ELT(col, rhs);
       if (Requal(lhs_, rhs_))

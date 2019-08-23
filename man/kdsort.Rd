@@ -4,6 +4,7 @@
 \alias{kd_sort}
 \alias{kd_sort.matrix}
 \alias{kd_sort.arrayvec}
+\alias{kd_sort.data.frame}
 \alias{kd_order}
 \alias{kd_order.matrix}
 \alias{kd_order.arrayvec}
@@ -16,6 +17,8 @@ kd_sort(x, ...)
 \method{kd_sort}{matrix}(x, parallel = TRUE, ...)
 
 \method{kd_sort}{arrayvec}(x, inplace = FALSE, parallel = TRUE, ...)
+
+\method{kd_sort}{data.frame}(x, cols = 1:ncol(x), parallel = TRUE, ...)
 
 kd_order(x, ...)
 
@@ -31,11 +34,13 @@ kd_is_sorted(x)
 \arguments{
 \item{x}{a matrix or arrayvec object}
 
-\item{...}{other arguments}
+\item{...}{ignored}
 
 \item{parallel}{use multiple threads if true}
 
 \item{inplace}{sort as a side-effect if true}
+
+\item{cols}{integer vector of column indices}
 }
 \description{
 Sort multidimensional data
@@ -51,18 +56,27 @@ The algorithm used is a divide-and-conquer quicksort variant that
   original matrix, exactly as \code{\link{order}}. If \code{inplace} is true,
   then \code{kd_order} will also sort the arrayvec object as a side effect.
   This can be more efficient when many subsequent queries are required.
+
+  \code{kd_sort} and \code{kd_order} have been extended to work directly on a
+  data frame. All vector column types are supported (even lists of objects as
+  long as equality and comparison operators are defined). Additionaly, the
+  user can specify a sequence of column indices that will be used for
+  sorting. These can be a subset of columns and given in any order.
 }
 \note{
 The matrix version will be slower because of data structure
   conversions.
 }
 \examples{
-x = matrix(runif(200), 100)
-y = kd_sort(x)
+z <- data.frame(real = runif(10), lgl = runif(10) > 0.5,
+                int = as.integer(rpois(10, 2)), char = sample(month.name, 10),
+                stringsAsFactors = FALSE)
+kd_sort(z)
+x <- matrix(runif(200), 100)
+y <- kd_sort(x)
 kd_is_sorted(y)
 kd_order(x)
 plot(y, type = "o", pch = 19, col = "steelblue", asp = 1)
-
 }
 \seealso{
 \code{\link{arrayvec}}

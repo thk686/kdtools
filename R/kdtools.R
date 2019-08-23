@@ -4,7 +4,7 @@ NULL
 
 #' Sort multidimensional data
 #' @param x a matrix or arrayvec object
-#' @param ... other arguments
+#' @param ... ignored
 #' @details The algorithm used is a divide-and-conquer quicksort variant that
 #'   recursively partions an range of tuples using the median of each successive
 #'   dimension. Ties are resolved by cycling over successive dimensions. The
@@ -15,15 +15,24 @@ NULL
 #'   original matrix, exactly as \code{\link{order}}. If \code{inplace} is true,
 #'   then \code{kd_order} will also sort the arrayvec object as a side effect.
 #'   This can be more efficient when many subsequent queries are required.
+#'
+#'   \code{kd_sort} and \code{kd_order} have been extended to work directly on a
+#'   data frame. All vector column types are supported (even lists of objects as
+#'   long as equality and comparison operators are defined). Additionaly, the
+#'   user can specify a sequence of column indices that will be used for
+#'   sorting. These can be a subset of columns and given in any order.
 #' @note The matrix version will be slower because of data structure
 #'   conversions.
 #' @examples
-#' x = matrix(runif(200), 100)
-#' y = kd_sort(x)
+#' z <- data.frame(real = runif(10), lgl = runif(10) > 0.5,
+#'                 int = as.integer(rpois(10, 2)), char = sample(month.name, 10),
+#'                 stringsAsFactors = FALSE)
+#' kd_sort(z)
+#' x <- matrix(runif(200), 100)
+#' y <- kd_sort(x)
 #' kd_is_sorted(y)
 #' kd_order(x)
 #' plot(y, type = "o", pch = 19, col = "steelblue", asp = 1)
-#'
 #' @seealso \code{\link{arrayvec}}
 #' @rdname kdsort
 #' @export
@@ -47,6 +56,12 @@ kd_sort.arrayvec <- function(x, inplace = FALSE, parallel = TRUE, ...) {
 
 #' @rdname kdsort
 #' @export
+kd_sort.data.frame <- function(x, cols = 1:ncol(x), parallel = TRUE, ...) {
+  return(x[kd_order(x, cols = cols, parallel = parallel),, drop = FALSE])
+}
+
+#' @rdname kdsort
+#' @export
 kd_order <- function(x, ...) UseMethod("kd_order")
 
 #' @rdname kdsort
@@ -62,6 +77,7 @@ kd_order.arrayvec <- function(x, inplace = FALSE, parallel = TRUE, ...) {
   return(kd_order_(x, inplace = inplace, parallel = parallel))
 }
 
+#' @param cols integer vector of column indices
 #' @rdname kdsort
 #' @export
 kd_order.data.frame <- function(x, cols = 1:ncol(x), parallel = TRUE, ...) {

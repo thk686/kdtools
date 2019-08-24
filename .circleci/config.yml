@@ -29,9 +29,13 @@ jobs:
       - run:
           name: Build package
           command: R CMD build .
+          environment:
+            CXX_STD: CXX17
       - run:
           name: Check package
           command: R CMD check --as-cran --no-manual *tar.gz
+          environment:
+            CXX_STD: CXX17
       - store_artifacts:
           path: kdtools.Rcheck/
       - save_cache:

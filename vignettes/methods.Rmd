@@ -62,7 +62,7 @@ template <size_t I, typename Iter>
 void kd_sort(Iter first, Iter last)
 {
   using TupleType = iter_value_t<Iter>;
-  constexpr auto J = next_dim<I, TupleType>::value;
+  constexpr auto J = next_dim<I, TupleType>;
   if (distance(first, last) > 1)
   {
     auto pred = kd_less<I>();
@@ -95,7 +95,7 @@ ggplot(z, aes(x, y)) +
 Here the sequence order is shown with a continuous color gradient. The resulting patchiness indicates a hierarchical tree-like partitioning of the space providing the desired locality. Placing nearby points in proximity is what allows for efficient searches once the data are sorted. Sort times for vectors of tuple-like objects are relatively efficient, taking roughly twice the time of an ordinary lexicographical sort.
 
 ```{Rcpp include=FALSE}
-// [[Rcpp::plugins(cpp11)]]
+// [[Rcpp::plugins(cpp17)]]
 
 #include <chrono>
 
@@ -184,26 +184,23 @@ In the above results, ```lex_sort``` is the STL built-in [```std::sort```](http:
 
 ### Multidimensional comparisons
 
-To ensure the correct behavior in the presence of multiple ties, or even when all keys in one dimension are equal, the ```kd_less``` predicate implements circular lexicographic comparison. If elements in one dimension are tied, the next dimension is interrogated to break the tie. The comparisons cycle from trailing dimensions to leading dimensions using modulo arithmetic. It is implemented as a recursive, templated function object with the dimension index incremented at compile-time. SFINAE is used to stop the compile-time iteration after [```tuple_size<TupleType>::value```](http://en.cppreference.com/w/cpp/utility/tuple/tuple_size) steps. The could be simplified using [```std::apply```](http://en.cppreference.com/w/cpp/utility/apply) or [constexpr-if](http://en.cppreference.com/w/cpp/language/if) from C++17.
+To ensure the correct behavior in the presence of multiple ties, or even when all keys in one dimension are equal, the ```kd_less``` predicate implements circular lexicographic comparison. If elements in one dimension are tied, the next dimension is interrogated to break the tie. The comparisons cycle from trailing dimensions to leading dimensions using modulo arithmetic. It is implemented as a recursive, templated function object with the dimension index incremented at compile-time. SFINAE is used to stop the compile-time iteration after [```tuple_size<TupleType>::value```](http://en.cppreference.com/w/cpp/utility/tuple/tuple_size) steps.
 
 ```{Rcpp eval=FALSE}
 template <size_t I, size_t K = 0>
 struct kd_less
 {
   template <typename T>
-  typename enable_if<is_not_last<K, T>::value, bool>::type
-  operator()(const T& lhs, const T& rhs) const
+  bool operator()(const T& lhs, const T& rhs) const
   {
-    constexpr auto J = next_dim<I, T>::value;
-    return equal_nth<I>()(lhs, rhs) ?
-      kd_less<J, K + 1>()(lhs, rhs) :
-        less_nth<I>()(lhs, rhs);
-  }
-  template <typename T>
-  typename enable_if<is_last<K, T>::value, bool>::type
-  operator()(const T& lhs, const T& rhs) const
-  {
-    return less_nth<I>()(lhs, rhs);
+    if constexpr (is_last<K, T>) {
+      return less_nth<I>()(lhs, rhs);
+    } else {
+      constexpr auto J = next_dim<I, T>;
+      return equal_nth<I>()(lhs, rhs) ?
+        kd_less<J, K + 1>()(lhs, rhs) :
+          less_nth<I>()(lhs, rhs);
+    }
   }
 };
 ```
@@ -245,7 +242,7 @@ void kd_range_query(Iter first, Iter last,
   if (distance(first, last) > 32) {
     auto pred = less_nth<I>();
     auto pivot = find_pivot<I>(first, last);
-    constexpr auto J = next_dim<I, TupleType>::value;
+    constexpr auto J = next_dim<I, TupleType>;
     if (within(*pivot, lower, upper)) *outp++ = *pivot;
     if (!pred(*pivot, lower)) // search left
       kd_range_query<J>(first, pivot, lower, upper, outp);
@@ -302,7 +299,7 @@ The [Boost Geometry library](http://www.boost.org/doc/libs/release/libs/geometry
 ```{Rcpp include=FALSE}
 // [[Rcpp::depends(BH)]]
 // [[Rcpp::depends(kdtools)]]
-// [[Rcpp::plugins(cpp11)]]
+// [[Rcpp::plugins(cpp17)]]
 
 #include <Rcpp.h>
 #include <vector>
@@ -508,7 +505,7 @@ The kdtools package also provides routines for nearest- and k-nearest- neighbor 
 ```{Rcpp include=FALSE}
 // [[Rcpp::depends(BH)]]
 // [[Rcpp::depends(kdtools)]]
-// [[Rcpp::plugins(cpp11)]]
+// [[Rcpp::plugins(cpp17)]]
 
 #include <Rcpp.h>
 #include <vector>
@@ -809,7 +806,7 @@ Sys.setenv(PKG_CPPFLAGS = pkg_cppflags)
 
 ```{Rcpp}
 // [[Rcpp::depends(kdtools)]]
-// [[Rcpp::plugins(cpp11)]]
+// [[Rcpp::plugins(cpp17)]]
 
 #include "mixed_query.h"
 
@@ -915,15 +912,13 @@ double scalar_diff(const std::string& lhs, const std::string& rhs)
 
 The ```set_similarity``` template is adapted from the STL ```set_intersection``` template and produces a number between 0 and 1. I have not attempted to prove this distance is metric, so the results may not be entirely correct. Also, there is no facility currently available to weight distances in different dimensions or override the default root-sum-of-squares algorithm for the multivariate distance.
 
-<!--
-
 ### Indexing with pointer arrays
 
 Since version 0.4.0, ```kd_tools``` all predicates and distance functions have specializations or overloads to handle pointers to tuple-like objects. Hence, any of the routines can sort or search a vector of pointers to tuples, which act as indices into the original data.
 
 ```{Rcpp}
 // [[Rcpp::depends(kdtools)]]
-// [[Rcpp::plugins(cpp11)]]
+// [[Rcpp::plugins(cpp17)]]
 
 #include "mixed_query.h"
 
@@ -957,12 +952,10 @@ void sort_pointers(NumericVector c1, CharacterVector c2)
 Here, ```greater_key``` has overloads for both string and double types.
 
 ```{r}
-#sort_pointers(numbers, strings)
+sort_pointers(numbers, strings)
 ```
 
 Note that the forward and reverse sorting do not give exactly the same result (in reverse) owing to ties.
-
--->
 
 ## Conclusions
 

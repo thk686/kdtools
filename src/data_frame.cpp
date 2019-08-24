@@ -38,8 +38,8 @@ bool not_in_range(const T& x, U n) {
   return (*r.first < 1 || *r.second > n) ? true : false;
 }
 
-std::string get_string(SEXP x, int i) {
-  return std::string(CHAR(STRING_ELT(x, i)));
+std::string_view get_string(SEXP x, int i) {
+  return std::string_view(CHAR(STRING_ELT(x, i)));
 }
 
 Function Requal("=="), Rless("<");

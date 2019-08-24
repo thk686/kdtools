@@ -2,6 +2,8 @@
 #include "kdtools.h"
 using namespace kdtools;
 
+// [[Rcpp::plugins(cpp17)]]
+
 template <size_t I>
 List kd_sort__(List x, bool inplace, bool parallel)
 {

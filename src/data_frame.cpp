@@ -22,6 +22,8 @@ using std::thread;
 using std::distance;
 using std::minmax_element;
 
+// [[Rcpp::plugins(cpp17)]]
+
 template<typename T>
 int ncol(const T& x) {
   return x.length();

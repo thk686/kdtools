@@ -156,3 +156,41 @@ IntegerVector kd_order_df(List df, IntegerVector idx, bool parallel = true)
     kd_order_df_(begin(x), end(x), pred);
   return x + 1;
 }
+
+/*
+template <typename Iter,  typename Pred>
+Iter find_pivot(Iter first, Iter last, Pred pred)
+{
+  using T = iter_value_t<Iter>;
+  auto pivot = middle_of(first, last);
+  return partition_point(first, pivot, [&](const T& x){
+    return pred(x, *pivot);
+  });
+}
+
+template <typename Iter,
+          typename TupleType,
+          typename OutIter,
+          typename Pred>
+void kd_range_query(Iter first, Iter last,
+                    const TupleType& lower,
+                    const TupleType& upper,
+                    OutIter outp, Pred pred)
+{
+  if (distance(first, last) > 32) {
+    auto pivot = find_pivot(first, last, pred);
+    if (within(*pivot, lower, upper)) *outp++ = *pivot;
+    if (!pred(*pivot, lower)) // search left
+      kd_range_query(first, pivot, lower, upper, outp, pred);
+    if (pred(*pivot, upper)) // search right
+      kd_range_query(next(pivot), last, lower, upper, outp, pred);
+  } else {
+    copy_if(first, last, outp, [&](const TupleType& x){
+      return within(x, lower, upper);
+    });
+  }
+  return;
+}
+*/
+
+

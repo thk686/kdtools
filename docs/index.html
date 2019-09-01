@@ -92,7 +92,7 @@
 <div id="kdtools" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#kdtools" class="anchor"></a>kdtools</h1></div>
-<p>The kdtools package exports a C++ header implementing sorting and searching on ranges of tuple-like objects without using trees. It is based on a kd-tree-like recursive sorting algorithm. Once sorted, one can perform a range- or nearest-neighbor- query. More details are <a href="https://thk686.github.io/kdtools/">here</a>. Methods and benchmarks are <a href="https://thk686.github.io/kdtools/articles/methods.html">here</a>.</p>
+<p>The kdtools package exports a C++ header implementing sorting and searching on ranges of tuple-like objects without using trees. <strong>Note that searching and sorting are supported on mixed-types.</strong> It is based on a kd-tree-like recursive sorting algorithm. Once sorted, one can perform a range- or nearest-neighbor- query. More details are <a href="https://thk686.github.io/kdtools/">here</a>. Methods and benchmarks are <a href="https://thk686.github.io/kdtools/articles/methods.html">here</a>.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(kdtools)</a>
 <a class="sourceLine" id="cb1-2" data-line-number="2">x =<span class="st"> </span><span class="kw"><a href="reference/kdsort.html">kd_sort</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/matrix">matrix</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/Uniform">runif</a></span>(<span class="dv">400</span>), <span class="dv">200</span>))</a>
 <a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(x, <span class="dt">type  =</span> <span class="st">'l'</span>, <span class="dt">asp =</span> <span class="dv">1</span>, <span class="dt">axes =</span> <span class="ot">FALSE</span>, <span class="dt">xlab =</span> <span class="ot">NA</span>, <span class="dt">ylab =</span> <span class="ot">NA</span>)</a>
@@ -100,7 +100,40 @@
 <a class="sourceLine" id="cb1-5" data-line-number="5">y =<span class="st"> </span><span class="kw"><a href="reference/search.html">kd_range_query</a></span>(x, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span><span class="op">/</span><span class="dv">4</span>, <span class="dv">1</span><span class="op">/</span><span class="dv">4</span>), <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">3</span><span class="op">/</span><span class="dv">4</span>, <span class="dv">3</span><span class="op">/</span><span class="dv">4</span>))</a>
 <a class="sourceLine" id="cb1-6" data-line-number="6"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/points">points</a></span>(y, <span class="dt">pch =</span> <span class="dv">19</span>, <span class="dt">cex =</span> <span class="fl">0.5</span>, <span class="dt">col =</span> <span class="st">"red"</span>)</a></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-1-1.png" width="100%"></p>
+<div id="native-data-frame-support" class="section level2">
+<h2 class="hasAnchor">
+<a href="#native-data-frame-support" class="anchor"></a>Native Data Frame Support</h2>
+<p>The core C++ header implements sorting and searching on vectors of tuples with the number of dimensions determined at compile time. I have generalized the package code to work on an arbitrary data frame (or any list of equal-length vectors). This sorting and search works on any times that are equality-comparable and less-than-comparable in the C++ STL sense.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">df &lt;-<span class="st"> </span><span class="kw"><a href="reference/kdsort.html">kd_sort</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/data.frame">data.frame</a></span>(<span class="dt">a =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/Uniform">runif</a></span>(<span class="dv">12</span>),</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">                         <span class="dt">b =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">as.integer</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/Poisson">rpois</a></span>(<span class="dv">12</span>, <span class="dv">1</span>)),</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">                         <span class="dt">c =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sample">sample</a></span>(month.name),</a>
+<a class="sourceLine" id="cb2-4" data-line-number="4">                         <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>))</a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(df)</a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co">#&gt;              a b         c</span></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt; 6  0.295534131 1   January</span></a>
+<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt; 4  0.247062871 0      July</span></a>
+<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">#&gt; 8  0.146853068 0 September</span></a>
+<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co">#&gt; 2  0.005600024 3     March</span></a>
+<a class="sourceLine" id="cb2-11" data-line-number="11"><span class="co">#&gt; 12 0.495949824 3       May</span></a>
+<a class="sourceLine" id="cb2-12" data-line-number="12"><span class="co">#&gt; 7  0.382700007 4  November</span></a>
+<a class="sourceLine" id="cb2-13" data-line-number="13"><span class="co">#&gt; 1  0.690597926 0  February</span></a>
+<a class="sourceLine" id="cb2-14" data-line-number="14"><span class="co">#&gt; 10 0.696241270 0     April</span></a>
+<a class="sourceLine" id="cb2-15" data-line-number="15"><span class="co">#&gt; 9  0.823568941 0  December</span></a>
+<a class="sourceLine" id="cb2-16" data-line-number="16"><span class="co">#&gt; 11 0.903235058 0      June</span></a>
+<a class="sourceLine" id="cb2-17" data-line-number="17"><span class="co">#&gt; 3  0.908215773 1    August</span></a>
+<a class="sourceLine" id="cb2-18" data-line-number="18"><span class="co">#&gt; 5  0.979085897 2   October</span></a>
+<a class="sourceLine" id="cb2-19" data-line-number="19">lower &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="fl">0.1</span>, 1L, <span class="st">"August"</span>)</a>
+<a class="sourceLine" id="cb2-20" data-line-number="20">upper &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="fl">0.9</span>, 4L, <span class="st">"September"</span>)</a>
+<a class="sourceLine" id="cb2-21" data-line-number="21">i &lt;-<span class="st"> </span><span class="kw"><a href="reference/search.html">kd_rq_indices</a></span>(df, lower, upper)</a>
+<a class="sourceLine" id="cb2-22" data-line-number="22"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(i)</a>
+<a class="sourceLine" id="cb2-23" data-line-number="23"><span class="co">#&gt; [1] 1 5</span></a>
+<a class="sourceLine" id="cb2-24" data-line-number="24">df[i, ]</a>
+<a class="sourceLine" id="cb2-25" data-line-number="25"><span class="co">#&gt;            a b       c</span></a>
+<a class="sourceLine" id="cb2-26" data-line-number="26"><span class="co">#&gt; 6  0.2955341 1 January</span></a>
+<a class="sourceLine" id="cb2-27" data-line-number="27"><span class="co">#&gt; 12 0.4959498 3     May</span></a></code></pre></div>
+<p><strong>Note: Switching to C++17 broke CI (I’d be grateful for a pull-request fixing this as I cannot make heads-nor-tails of the required configuration). The code builds and checks fine on my systems.</strong></p>
 <p><a href="https://cran.r-project.org/package=kdtools"><img src="https://www.r-pkg.org/badges/version/kdtools" alt="CRAN status"></a> <a href="https://circleci.com/gh/thk686/kdtools"><img src="https://circleci.com/gh/thk686/kdtools.svg?style=svg" alt="CircleCI build status"></a> <a href="https://ci.appveyor.com/project/thk686/kdtools"><img src="https://ci.appveyor.com/api/projects/status/github/thk686/kdtools?branch=master&amp;svg=true" alt="AppVeyor build status"></a> <a href="https://codecov.io/github/thk686/kdtools?branch=master"><img src="https://codecov.io/gh/thk686/kdtools/branch/master/graph/badge.svg" alt="Coverage status"></a> <a href="https://zenodo.org/badge/latestdoi/125262786"><img src="https://zenodo.org/badge/125262786.svg" alt="DOI"></a></p>
+</div>
 </div>
   </div>
 

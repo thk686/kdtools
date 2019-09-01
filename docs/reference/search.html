@@ -132,9 +132,9 @@
 
 <span class='fu'>kd_upper_bound</span>(<span class='no'>x</span>, <span class='no'>v</span>)
 
-<span class='fu'>kd_range_query</span>(<span class='no'>x</span>, <span class='no'>l</span>, <span class='no'>u</span>)
+<span class='fu'>kd_range_query</span>(<span class='no'>x</span>, <span class='no'>l</span>, <span class='no'>u</span>, <span class='no'>...</span>)
 
-<span class='fu'>kd_rq_indices</span>(<span class='no'>x</span>, <span class='no'>l</span>, <span class='no'>u</span>)
+<span class='fu'>kd_rq_indices</span>(<span class='no'>x</span>, <span class='no'>l</span>, <span class='no'>u</span>, <span class='no'>...</span>)
 
 <span class='fu'>kd_binary_search</span>(<span class='no'>x</span>, <span class='no'>v</span>)</pre>
     
@@ -157,6 +157,10 @@
       <th>u</th>
       <td><p>upper right corner of search region</p></td>
     </tr>
+    <tr>
+      <th>...</th>
+      <td><p>addtional arguments</p></td>
+    </tr>
     </table>
     
 
@@ -164,18 +168,18 @@
     <pre class="examples"><div class='input'><span class='no'>x</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Uniform'>runif</a></span>(<span class='fl'>200</span>), <span class='fl'>100</span>)
 <span class='no'>y</span> <span class='kw'>=</span> <span class='fu'><a href='convert.html'>matrix_to_tuples</a></span>(<span class='no'>x</span>)
 <span class='fu'><a href='kdsort.html'>kd_sort</a></span>(<span class='no'>y</span>, <span class='kw'>inplace</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt;            [,1]       [,2]
-#&gt; [1,] 0.22002471 0.08603899
-#&gt; [2,] 0.05607304 0.19331267
+#&gt; [1,] 0.19331267 0.05106245
+#&gt; [2,] 0.06840642 0.22648133
 #&gt; [3,] 0.08183302 0.24046123
-#&gt; [4,] 0.22511539 0.11827678
-#&gt; [5,] 0.25920274 0.12186463
+#&gt; [4,] 0.20269896 0.03994066
+#&gt; [5,] 0.22002471 0.08603899
 #&gt; (continues for 95 more rows)</div><div class='input'><span class='no'>y</span>[<span class='fu'>kd_lower_bound</span>(<span class='no'>y</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>/<span class='fl'>2</span>, <span class='fl'>1</span>/<span class='fl'>2</span>)),]</div><div class='output co'>#&gt; [1] 0.5147446 0.6273660</div><div class='input'><span class='no'>y</span>[<span class='fu'>kd_upper_bound</span>(<span class='no'>y</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>/<span class='fl'>2</span>, <span class='fl'>1</span>/<span class='fl'>2</span>)),]</div><div class='output co'>#&gt; [1] 0.5147446 0.6273660</div><div class='input'><span class='fu'>kd_binary_search</span>(<span class='no'>y</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>/<span class='fl'>2</span>, <span class='fl'>1</span>/<span class='fl'>2</span>))</div><div class='output co'>#&gt; [1] FALSE</div><div class='input'><span class='fu'>kd_range_query</span>(<span class='no'>y</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>/<span class='fl'>3</span>, <span class='fl'>1</span>/<span class='fl'>3</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>2</span>/<span class='fl'>3</span>, <span class='fl'>2</span>/<span class='fl'>3</span>))</div><div class='output co'>#&gt;           [,1]      [,2]
-#&gt; [1,] 0.4073613 0.3401192
-#&gt; [2,] 0.4525525 0.4194859
-#&gt; [3,] 0.5787815 0.4310034
-#&gt; [4,] 0.4327882 0.5138669
-#&gt; [5,] 0.3692361 0.6388837
-#&gt; (continues for 9 more rows)</div><div class='input'><span class='fu'>kd_rq_indices</span>(<span class='no'>y</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>/<span class='fl'>3</span>, <span class='fl'>1</span>/<span class='fl'>3</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>2</span>/<span class='fl'>3</span>, <span class='fl'>2</span>/<span class='fl'>3</span>))</div><div class='output co'>#&gt;  [1] 21 22 25 40 41 42 43 44 59 60 61 63 77 79</div><div class='input'>
+#&gt; [1,] 0.5147446 0.6273660
+#&gt; [2,] 0.3654865 0.4958347
+#&gt; [3,] 0.4073613 0.3401192
+#&gt; [4,] 0.4525525 0.4194859
+#&gt; [5,] 0.3559015 0.6284502
+#&gt; (continues for 8 more rows)</div><div class='input'><span class='fu'>kd_rq_indices</span>(<span class='no'>y</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>/<span class='fl'>3</span>, <span class='fl'>1</span>/<span class='fl'>3</span>), <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>2</span>/<span class='fl'>3</span>, <span class='fl'>2</span>/<span class='fl'>3</span>))</div><div class='output co'>#&gt;  [1] 51 26 23 25 40 41 42 43 44 60 77 78 79</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

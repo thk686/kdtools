@@ -125,6 +125,7 @@ lex_sort.arrayvec <- function(x, inplace = FALSE, ...) {
 #' Search sorted data
 #' @param x an object sorted by \code{\link{kd_sort}}
 #' @param v a vector specifying where to look
+#' @param ... addtional arguments
 #' @examples
 #' x = matrix(runif(200), 100)
 #' y = matrix_to_tuples(x)
@@ -170,33 +171,43 @@ kd_upper_bound.arrayvec <- function(x, v) {
 #' @param u upper right corner of search region
 #' @rdname search
 #' @export
-kd_range_query <- function(x, l, u) UseMethod("kd_range_query")
+kd_range_query <- function(x, l, u, ...) UseMethod("kd_range_query")
 
 #' @export
-kd_range_query.matrix <- function(x, l, u) {
+kd_range_query.matrix <- function(x, l, u, ...) {
   y <- matrix_to_tuples(x)
   z <- kd_range_query_(y, l, u)
   return(tuples_to_matrix(z))
 }
 
 #' @export
-kd_range_query.arrayvec <- function(x, l, u) {
+kd_range_query.arrayvec <- function(x, l, u, ...) {
   return(kd_range_query_(x, l, u))
+}
+
+#' @export
+kd_range_query.data.frame <- function(x, l, u, cols = 1:ncol(x), ...) {
+  return(x[kd_rq_indices(x, l, u, cols),, drop = FALSE])
 }
 
 #' @rdname search
 #' @export
-kd_rq_indices <- function(x, l, u) UseMethod("kd_rq_indices")
+kd_rq_indices <- function(x, l, u, ...) UseMethod("kd_rq_indices")
 
 #' @export
-kd_rq_indices.matrix <- function(x, l, u) {
+kd_rq_indices.matrix <- function(x, l, u, ...) {
   y <- matrix_to_tuples(x)
   return(kd_rq_indices_(y, l, u))
 }
 
 #' @export
-kd_rq_indices.arrayvec <- function(x, l, u) {
+kd_rq_indices.arrayvec <- function(x, l, u, ...) {
   return(kd_rq_indices_(x, l, u))
+}
+
+#' @export
+kd_rq_indices.data.frame <- function(x, l, u, cols = 1:ncol(x), ...) {
+  return(kd_rq_df(x, cols, l, u))
 }
 
 #' @rdname search

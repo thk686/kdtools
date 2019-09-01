@@ -14,7 +14,35 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+library(kdtools)
 ```
+
+There are now two options for using kdtools, either on a C++ vector of arrays (arrayvec object) or natively on a data frame. Sorting on arrayvec objects is fast. Passing a data frame is slower, but automatically supports mixed types.
+
+### Data Frame Interface
+
+##### Step 1. Sort data frame
+
+When working with a data frame, you can specify which columns to use and the order of inclusion using the ```cols``` argument. Ommitting the ```cols``` arguemnt uses all columns in order.
+
+```{r}
+# sort by weight, miles-per-gallon and displacement
+mtcars_sorted <- kd_sort(mtcars, cols = c(6, 1, 3));
+head(mtcars_sorted, 3)
+tail(mtcars_sorted, 3)
+```
+
+##### Step 2. Search sorted data frame
+
+Currently, only a range query is supported.
+
+```{r}
+lower <- c(2.5, 17, 120)
+upper <- c(3.6, 22, 330)
+kd_range_query(mtcars_sorted, lower, upper, cols = c(6, 1, 3))
+```
+
+### Arrayvec Interface
 
 The kdtools package can be used to search for multidimensional points in a boxed region and find nearest neighbors in 1 to 9 dimensions. The package uses binary search on a sorted sequence of values. The current package is limited to matrices of real values. If you are interested in using string or mixed types in different dimensions, see the methods vignette.
 

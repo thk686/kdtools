@@ -12,9 +12,9 @@ kd_lower_bound(x, v)
 
 kd_upper_bound(x, v)
 
-kd_range_query(x, l, u)
+kd_range_query(x, l, u, ...)
 
-kd_rq_indices(x, l, u)
+kd_rq_indices(x, l, u, ...)
 
 kd_binary_search(x, v)
 }
@@ -26,6 +26,8 @@ kd_binary_search(x, v)
 \item{l}{lower left corner of search region}
 
 \item{u}{upper right corner of search region}
+
+\item{...}{addtional arguments}
 }
 \description{
 Search sorted data

@@ -10,6 +10,7 @@ using Rcpp::IntegerVector;
 #include "kdtools.h"
 using kdtools::utils::median_part;
 using kdtools::utils::iter_value_t;
+using kdtools::utils::middle_of;
 
 #include <algorithm>
 using std::end;
@@ -22,6 +23,7 @@ using std::vector;
 using std::thread;
 using std::distance;
 using std::minmax_element;
+using std::partition_point;
 
 // [[Rcpp::plugins(cpp17)]]
 
@@ -32,7 +34,7 @@ int ncol(const T& x) {
 
 template<typename T>
 int nrow(T& x) {
-  return Rf_xlength(x[0].get());
+  return Rf_xlength(SEXP(x[0]));
 }
 
 template<typename T, typename U>
@@ -49,7 +51,7 @@ Function Requal("=="), Rless("<");
 
 struct kd_less_df
 {
-  kd_less_df(List& df, IntegerVector& idx, size_t dim = 0, size_t count = 0)
+  kd_less_df(List df, IntegerVector idx, size_t dim = 0, size_t count = 0)
     : m_df(df), m_idx(idx), m_dim(dim), m_ndim(m_idx.size()), m_count(count) {}
 
   kd_less_df next_dim(bool inc_count = false) {
@@ -61,7 +63,7 @@ struct kd_less_df
   bool operator()(const int lhs, const int rhs)
   {
     if (m_count == m_ndim) return false;
-    auto col = m_df[m_idx[m_dim] - 1].get();
+    auto col = SEXP(m_df[m_idx[m_dim] - 1]);
     switch(TYPEOF(col)) {
     case LGLSXP: {
       if (LOGICAL(col)[lhs] == LOGICAL(col)[rhs])
@@ -104,8 +106,8 @@ struct kd_less_df
     }
     return false;
   }
-  List& m_df;
-  IntegerVector& m_idx;
+  List m_df;
+  IntegerVector m_idx;
   size_t m_dim, m_ndim, m_count;
 };
 
@@ -160,7 +162,6 @@ IntegerVector kd_order_df(List df, IntegerVector idx, bool parallel = true)
   return x + 1;
 }
 
-/*
 template <typename Iter,  typename Pred>
 Iter find_pivot(Iter first, Iter last, Pred pred)
 {
@@ -171,35 +172,91 @@ Iter find_pivot(Iter first, Iter last, Pred pred)
   });
 }
 
-template <typename Iter,
-          typename TupleType,
-          typename OutIter,
-          typename Pred>
-void kd_rq_df_(Iter first, Iter last,
-               const TupleType& lower,
-               const TupleType& upper,
-               OutIter outp, Pred pred)
+struct less_nth_df
 {
-  if (distance(first, last) > 32) {
-    auto pivot = find_pivot(first, last, pred);
-    if (within(*pivot, lower, upper)) *outp++ = *pivot;
-    if (!pred(*pivot, lower)) // search left
-      kd_range_query(first, pivot, lower, upper, outp, pred.next_dim());
-    if (pred(*pivot, upper)) // search right
-      kd_range_query(next(pivot), last, lower, upper, outp, pred.next_dim());
-  } else {
-    copy_if(first, last, outp, [&](const TupleType& x){
-      return within(x, lower, upper);
-    });
+  less_nth_df(List df, IntegerVector idx, List lower, List upper, size_t dim = 0)
+    : m_df(df), m_lower(lower), m_upper(upper), m_idx(idx), m_dim(dim) {}
+
+  less_nth_df next_dim() {
+    return less_nth_df(m_df, m_idx, m_lower, m_upper, (m_dim + 1) % m_idx.size());
   }
-  return;
-}
+
+  bool search_left(const int i) const {
+    auto col = SEXP(m_df[m_idx[m_dim] - 1]),
+      lwr = SEXP(m_lower[m_dim]);
+    switch(TYPEOF(col)) {
+    case LGLSXP: {
+      if (LOGICAL(col)[i] < LOGICAL(lwr)[0]) return false;
+      break;
+    }
+    case REALSXP: {
+      if (REAL(col)[i] < REAL(lwr)[0]) return false;
+      break;
+    }
+    case INTSXP: {
+      if (INTEGER(col)[i] < INTEGER(lwr)[0]) return false;
+      break;
+    }
+    case STRSXP: {
+      if (get_string(col, i) < get_string(lwr, 0)) return false;
+      break;
+    }
+    case VECSXP: {
+      SEXP lhs_ = VECTOR_ELT(col, i),
+        rhs_ = VECTOR_ELT(lwr, 0);
+      if (Rless(lhs_, rhs_)) return false;
+      break;
+    }
+    default: stop("Invalid column type");
+    }
+    return true;
+  }
+
+  bool search_right(const int i) const {
+    auto col = SEXP(m_df[m_idx[m_dim] - 1]),
+      upr = SEXP(m_upper[m_dim]);
+    switch(TYPEOF(col)) {
+    case LGLSXP: {
+      if (LOGICAL(col)[i] < LOGICAL(upr)[0]) return true;
+      break;
+    }
+    case REALSXP: {
+      if (REAL(col)[i] < REAL(upr)[0]) return true;
+      break;
+    }
+    case INTSXP: {
+      if (INTEGER(col)[i] < INTEGER(upr)[0]) return true;
+      break;
+    }
+    case STRSXP: {
+      if (get_string(col, i) < get_string(upr, 0)) return true;
+      break;
+    }
+    case VECSXP: {
+      SEXP lhs_ = VECTOR_ELT(col, i),
+        rhs_ = VECTOR_ELT(upr, 0);
+      if (Rless(lhs_, rhs_)) return true;
+      break;
+    }
+    default: stop("Invalid column type");
+    }
+    return false;
+  }
+
+  List m_df, m_lower, m_upper;
+  IntegerVector m_idx;
+  size_t m_dim;
+};
 
 struct within_df {
-  bool operator(int i) {
+  within_df(List df, IntegerVector idx, List lower, List upper)
+    : m_df(df), m_lower(lower), m_upper(upper),
+      m_idx(idx), m_ndim(m_idx.size()) {}
+
+  bool operator()(const int i) const {
     for (int j = 0; j != m_ndim; ++j) {
-      auto col = m_df[m_idx[j] - 1].get(),
-        l = m_lower[j].get(), u = m_upper[j].get();
+      auto col = SEXP(m_df[m_idx[j] - 1]),
+        l = SEXP(m_lower[j]), u = SEXP(m_upper[j]);
       switch(TYPEOF(col)) {
       case LGLSXP: {
         if (LOGICAL(col)[i] < LOGICAL(l)[0] ||
@@ -225,51 +282,90 @@ struct within_df {
           return false;
         break;
       }
-      case VECSXP: {
-        SEXP lhs_ = VECTOR_ELT(col, lhs),
-          rhs_ = VECTOR_ELT(col, rhs);
-        if (Requal(lhs_, rhs_))
-          return next_dim(true)(lhs, rhs);
-        else
-          return Rless(lhs_, rhs_);
-        break;
-      }
       default: stop("Invalid column type");
       }
     }
     return true;
   }
-  List& m_df, m_lower, m_upper;
-  IntegerVector& m_idx;
+  List m_df, m_lower, m_upper;
+  IntegerVector m_idx;
   size_t m_ndim;
 };
 
+bool type_mismatch(const List df,
+                   const IntegerVector idx,
+                   const List lower,
+                   const List upper) {
+  for (int i = 0; i != idx.size(); ++i) {
+    int j = idx[i] - 1;
+    auto c1 = SEXP(df[j]),
+      c2 = SEXP(lower[i]),
+      c3 = SEXP(upper[i]);
+    if (TYPEOF(c1) != TYPEOF(c2) ||
+        TYPEOF(c1) != TYPEOF(c3))
+      return true;
+  }
+  return false;
+}
+
+template <typename Iter,
+          typename OutIter,
+          typename LessNth,
+          typename Within,
+          typename Pred>
+void kd_rq_df_(Iter first, Iter last,
+               OutIter outp, Pred pred,
+               LessNth less_nth, Within within)
+{
+  if (distance(first, last) > 32) {
+    auto pivot = find_pivot(first, last, pred);
+    if (within(*pivot)) *outp++ = *pivot;
+    if (less_nth.search_left(*pivot))
+      kd_rq_df_(first, pivot, outp, pred.next_dim(), less_nth.next_dim(), within);
+    if (less_nth.search_right(*pivot))
+      kd_rq_df_(next(pivot), last, outp, pred.next_dim(), less_nth.next_dim(), within);
+  } else {
+    copy_if(first, last, outp, [&](const int x){
+      return within(x);
+    });
+  }
+  return;
+}
+
 // [[Rcpp::export]]
-IntegerVector kd_rq_df(List df,
-                       IntegerVector idx,
-                       List lower,
-                       List upper)
+std::vector<int> kd_rq_df_no_validation(const List df,
+                                        const IntegerVector idx,
+                                        const List lower,
+                                        const List upper)
+{
+  IntegerVector x(nrow(df));
+  iota(begin(x), end(x), 0);
+  auto pred = kd_less_df(df, idx);
+  auto wi = within_df(df, idx, lower, upper);
+  auto ln = less_nth_df(df, idx, lower, upper);
+  std::vector<int> res;
+  auto oi = std::back_inserter(res);
+  kd_rq_df_(begin(x), end(x), oi, pred, ln, wi);
+  std::transform(begin(res), end(res), begin(res), [](int x){ return x + 1; });
+  return res;
+}
+
+// [[Rcpp::export]]
+std::vector<int> kd_rq_df(const List df,
+                          const IntegerVector idx,
+                          const List lower,
+                          const List upper)
 {
   if (ncol(df) < 1 || nrow(df) < 1)
-    return IntegerVector();
+    stop("Empty data frame");
   if (not_in_range(idx, ncol(df)))
     stop("Index out of range");
   if (idx.size() != lower.size() ||
       idx.size() != upper.size())
     stop("Incorrect dimension of lower or upper bound");
-  for (int i = 0; i != idx.size(); ++i) {
-    int j = idx[i] - 1;
-    auto c1 = df[j].get(),
-      c2 = lower[i].get(),
-      c3 = upper[i].get();
-    if (TYPEOF(c1) != TYPEOF(c2) ||
-        TYPEOF(c1) != TYPEOF(c3))
-      stop("Mismatched types in lower or upper bound");
-  }
-  IntegerVector x(nrow(df));
-  iota(begin(x), end(x), 0);
-  auto pred = kd_less_df(df, idx);
-  kd_rq_df_(begin(x), end(x), pred);
-  return x + 1;
+  if (type_mismatch(df, idx, lower, upper))
+    stop("Mismatched types in lower or upper bound");
+  return kd_rq_df_no_validation(df, idx, lower, upper);
 }
-*/
+
+

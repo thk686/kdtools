@@ -37,6 +37,14 @@ kd_order_df <- function(df, idx, parallel = TRUE) {
     .Call(`_kdtools_kd_order_df`, df, idx, parallel)
 }
 
+kd_rq_df_no_validation <- function(df, idx, lower, upper) {
+    .Call(`_kdtools_kd_rq_df_no_validation`, df, idx, lower, upper)
+}
+
+kd_rq_df <- function(df, idx, lower, upper) {
+    .Call(`_kdtools_kd_rq_df`, df, idx, lower, upper)
+}
+
 kd_sort_ <- function(x, inplace, parallel) {
     .Call(`_kdtools_kd_sort_`, x, inplace, parallel)
 }

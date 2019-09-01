@@ -9,6 +9,7 @@ using Rcpp::IntegerVector;
 
 #include "kdtools.h"
 using kdtools::utils::median_part;
+using kdtools::utils::iter_value_t;
 
 #include <algorithm>
 using std::end;
@@ -174,18 +175,18 @@ template <typename Iter,
           typename TupleType,
           typename OutIter,
           typename Pred>
-void kd_range_query(Iter first, Iter last,
-                    const TupleType& lower,
-                    const TupleType& upper,
-                    OutIter outp, Pred pred)
+void kd_rq_df_(Iter first, Iter last,
+               const TupleType& lower,
+               const TupleType& upper,
+               OutIter outp, Pred pred)
 {
   if (distance(first, last) > 32) {
     auto pivot = find_pivot(first, last, pred);
     if (within(*pivot, lower, upper)) *outp++ = *pivot;
     if (!pred(*pivot, lower)) // search left
-      kd_range_query(first, pivot, lower, upper, outp, pred);
+      kd_range_query(first, pivot, lower, upper, outp, pred.next_dim());
     if (pred(*pivot, upper)) // search right
-      kd_range_query(next(pivot), last, lower, upper, outp, pred);
+      kd_range_query(next(pivot), last, lower, upper, outp, pred.next_dim());
   } else {
     copy_if(first, last, outp, [&](const TupleType& x){
       return within(x, lower, upper);
@@ -193,6 +194,82 @@ void kd_range_query(Iter first, Iter last,
   }
   return;
 }
+
+struct within_df {
+  bool operator(int i) {
+    for (int j = 0; j != m_ndim; ++j) {
+      auto col = m_df[m_idx[j] - 1].get(),
+        l = m_lower[j].get(), u = m_upper[j].get();
+      switch(TYPEOF(col)) {
+      case LGLSXP: {
+        if (LOGICAL(col)[i] < LOGICAL(l)[0] ||
+            LOGICAL(col)[i] >= LOGICAL(u)[0])
+          return false;
+        break;
+      }
+      case REALSXP: {
+        if (REAL(col)[i] < REAL(l)[0] ||
+            REAL(col)[i] >= REAL(u)[0])
+          return false;
+        break;
+      }
+      case INTSXP: {
+        if (INTEGER(col)[i] < INTEGER(l)[0] ||
+            INTEGER(col)[i] >= INTEGER(u)[0])
+          return false;
+        break;
+      }
+      case STRSXP: {
+        if (get_string(col, i) < get_string(l, 0) ||
+            get_string(col, i) >= get_string(u, 0))
+          return false;
+        break;
+      }
+      case VECSXP: {
+        SEXP lhs_ = VECTOR_ELT(col, lhs),
+          rhs_ = VECTOR_ELT(col, rhs);
+        if (Requal(lhs_, rhs_))
+          return next_dim(true)(lhs, rhs);
+        else
+          return Rless(lhs_, rhs_);
+        break;
+      }
+      default: stop("Invalid column type");
+      }
+    }
+    return true;
+  }
+  List& m_df, m_lower, m_upper;
+  IntegerVector& m_idx;
+  size_t m_ndim;
+};
+
+// [[Rcpp::export]]
+IntegerVector kd_rq_df(List df,
+                       IntegerVector idx,
+                       List lower,
+                       List upper)
+{
+  if (ncol(df) < 1 || nrow(df) < 1)
+    return IntegerVector();
+  if (not_in_range(idx, ncol(df)))
+    stop("Index out of range");
+  if (idx.size() != lower.size() ||
+      idx.size() != upper.size())
+    stop("Incorrect dimension of lower or upper bound");
+  for (int i = 0; i != idx.size(); ++i) {
+    int j = idx[i] - 1;
+    auto c1 = df[j].get(),
+      c2 = lower[i].get(),
+      c3 = upper[i].get();
+    if (TYPEOF(c1) != TYPEOF(c2) ||
+        TYPEOF(c1) != TYPEOF(c3))
+      stop("Mismatched types in lower or upper bound");
+  }
+  IntegerVector x(nrow(df));
+  iota(begin(x), end(x), 0);
+  auto pred = kd_less_df(df, idx);
+  kd_rq_df_(begin(x), end(x), pred);
+  return x + 1;
+}
 */
-
-

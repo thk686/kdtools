@@ -612,6 +612,7 @@ using detail::median_part;
 
 using detail::is_last;
 using detail::next_dim;
+using detail::iter_value_t;
 
 using detail::kd_less;
 using detail::less_nth;

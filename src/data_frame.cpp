@@ -33,7 +33,7 @@ int ncol(const T& x) {
 }
 
 template<typename T>
-int nrow(T& x) {
+int nrow(const T& x) {
   return Rf_xlength(SEXP(x[0]));
 }
 
@@ -51,17 +51,16 @@ Function Requal("=="), Rless("<");
 
 struct kd_less_df
 {
-  kd_less_df(List df, IntegerVector idx, size_t dim = 0, size_t count = 0)
+  kd_less_df(const List& df, const IntegerVector& idx, size_t dim = 0, size_t count = 0)
     : m_df(df), m_idx(idx), m_dim(dim), m_ndim(m_idx.size()), m_count(count) {}
 
-  kd_less_df next_dim(bool inc_count = false) {
+  kd_less_df next_dim(bool inc_count = false) const {
     return kd_less_df(m_df, m_idx,
                       (m_dim + 1) % m_ndim,
                       inc_count ? m_count + 1 : 0);
   }
 
-  bool operator()(const int lhs, const int rhs)
-  {
+  bool operator()(const int lhs, const int rhs) const {
     if (m_count == m_ndim) return false;
     auto col = SEXP(m_df[m_idx[m_dim] - 1]);
     switch(TYPEOF(col)) {
@@ -106,13 +105,13 @@ struct kd_less_df
     }
     return false;
   }
-  List m_df;
-  IntegerVector m_idx;
+  const List& m_df;
+  const IntegerVector& m_idx;
   size_t m_dim, m_ndim, m_count;
 };
 
 template <typename Iter, typename Pred>
-void kd_order_df_(Iter first, Iter last, Pred pred)
+void kd_order_df_(Iter first, Iter last, const Pred& pred)
 {
   if (distance(first, last) > 1)
   {
@@ -123,7 +122,7 @@ void kd_order_df_(Iter first, Iter last, Pred pred)
 }
 
 template <typename Iter, typename Pred>
-void kd_order_df_threaded(Iter first, Iter last, Pred pred,
+void kd_order_df_threaded(Iter first, Iter last, const Pred& pred,
                           int max_threads = std::thread::hardware_concurrency(),
                           int thread_depth = 1)
 {
@@ -146,8 +145,9 @@ void kd_order_df_threaded(Iter first, Iter last, Pred pred,
 }
 
 // [[Rcpp::export]]
-IntegerVector kd_order_df(List df, IntegerVector idx, bool parallel = true)
-{
+IntegerVector kd_order_df(const List& df,
+                          const IntegerVector& idx,
+                          bool parallel = true) {
   if (ncol(df) < 1 || nrow(df) < 1)
     return IntegerVector();
   if (not_in_range(idx, ncol(df)))
@@ -163,8 +163,7 @@ IntegerVector kd_order_df(List df, IntegerVector idx, bool parallel = true)
 }
 
 template <typename Iter,  typename Pred>
-Iter find_pivot(Iter first, Iter last, Pred pred)
-{
+Iter find_pivot(Iter first, Iter last, const Pred& pred) {
   using T = iter_value_t<Iter>;
   auto pivot = middle_of(first, last);
   return partition_point(first, pivot, [&](const T& x){
@@ -174,10 +173,12 @@ Iter find_pivot(Iter first, Iter last, Pred pred)
 
 struct less_nth_df
 {
-  less_nth_df(List df, IntegerVector idx, List lower, List upper, size_t dim = 0)
-    : m_df(df), m_lower(lower), m_upper(upper), m_idx(idx), m_dim(dim) {}
+  less_nth_df(const List& df, const IntegerVector& idx,
+              List lower, List upper, size_t dim = 0)
+    : m_df(df), m_lower(lower), m_upper(upper),
+      m_idx(idx), m_dim(dim) {}
 
-  less_nth_df next_dim() {
+  less_nth_df next_dim() const {
     return less_nth_df(m_df, m_idx, m_lower, m_upper, (m_dim + 1) % m_idx.size());
   }
 
@@ -243,13 +244,14 @@ struct less_nth_df
     return false;
   }
 
-  List m_df, m_lower, m_upper;
-  IntegerVector m_idx;
+  const List& m_df, m_lower, m_upper;
+  const IntegerVector& m_idx;
   size_t m_dim;
 };
 
 struct within_df {
-  within_df(List df, IntegerVector idx, List lower, List upper)
+  within_df(const List& df, const IntegerVector& idx,
+            const List& lower, const List& upper)
     : m_df(df), m_lower(lower), m_upper(upper),
       m_idx(idx), m_ndim(m_idx.size()) {}
 
@@ -287,15 +289,15 @@ struct within_df {
     }
     return true;
   }
-  List m_df, m_lower, m_upper;
-  IntegerVector m_idx;
+  const List& m_df, m_lower, m_upper;
+  const IntegerVector& m_idx;
   size_t m_ndim;
 };
 
-bool type_mismatch(const List df,
-                   const IntegerVector idx,
-                   const List lower,
-                   const List upper) {
+bool type_mismatch(const List& df,
+                   const IntegerVector& idx,
+                   const List& lower,
+                   const List& upper) {
   for (int i = 0; i != idx.size(); ++i) {
     int j = idx[i] - 1;
     auto c1 = SEXP(df[j]),
@@ -313,9 +315,10 @@ template <typename Iter,
           typename LessNth,
           typename Within,
           typename Pred>
-void kd_rq_df_(Iter first, Iter last,
-               OutIter outp, Pred pred,
-               LessNth less_nth, Within within)
+void kd_rq_df_(Iter first, Iter last, OutIter outp,
+               const Pred& pred,
+               const LessNth& less_nth,
+               const Within& within)
 {
   if (distance(first, last) > 32) {
     auto pivot = find_pivot(first, last, pred);
@@ -333,10 +336,10 @@ void kd_rq_df_(Iter first, Iter last,
 }
 
 // [[Rcpp::export]]
-std::vector<int> kd_rq_df_no_validation(const List df,
-                                        const IntegerVector idx,
-                                        const List lower,
-                                        const List upper)
+std::vector<int> kd_rq_df_no_validation(const List& df,
+                                        const IntegerVector& idx,
+                                        const List& lower,
+                                        const List& upper)
 {
   IntegerVector x(nrow(df));
   iota(begin(x), end(x), 0);
@@ -351,10 +354,10 @@ std::vector<int> kd_rq_df_no_validation(const List df,
 }
 
 // [[Rcpp::export]]
-std::vector<int> kd_rq_df(const List df,
-                          const IntegerVector idx,
-                          const List lower,
-                          const List upper)
+std::vector<int> kd_rq_df(const List& df,
+                          const IntegerVector& idx,
+                          const List& lower,
+                          const List& upper)
 {
   if (ncol(df) < 1 || nrow(df) < 1)
     stop("Empty data frame");

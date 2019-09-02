@@ -42,42 +42,42 @@ BEGIN_RCPP
 END_RCPP
 }
 // kd_order_df
-IntegerVector kd_order_df(List df, IntegerVector idx, bool parallel);
+IntegerVector kd_order_df(const List& df, const IntegerVector& idx, bool parallel);
 RcppExport SEXP _kdtools_kd_order_df(SEXP dfSEXP, SEXP idxSEXP, SEXP parallelSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type df(dfSEXP);
-    Rcpp::traits::input_parameter< IntegerVector >::type idx(idxSEXP);
+    Rcpp::traits::input_parameter< const List& >::type df(dfSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type idx(idxSEXP);
     Rcpp::traits::input_parameter< bool >::type parallel(parallelSEXP);
     rcpp_result_gen = Rcpp::wrap(kd_order_df(df, idx, parallel));
     return rcpp_result_gen;
 END_RCPP
 }
 // kd_rq_df_no_validation
-std::vector<int> kd_rq_df_no_validation(const List df, const IntegerVector idx, const List lower, const List upper);
+std::vector<int> kd_rq_df_no_validation(const List& df, const IntegerVector& idx, const List& lower, const List& upper);
 RcppExport SEXP _kdtools_kd_rq_df_no_validation(SEXP dfSEXP, SEXP idxSEXP, SEXP lowerSEXP, SEXP upperSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const List >::type df(dfSEXP);
-    Rcpp::traits::input_parameter< const IntegerVector >::type idx(idxSEXP);
-    Rcpp::traits::input_parameter< const List >::type lower(lowerSEXP);
-    Rcpp::traits::input_parameter< const List >::type upper(upperSEXP);
+    Rcpp::traits::input_parameter< const List& >::type df(dfSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type idx(idxSEXP);
+    Rcpp::traits::input_parameter< const List& >::type lower(lowerSEXP);
+    Rcpp::traits::input_parameter< const List& >::type upper(upperSEXP);
     rcpp_result_gen = Rcpp::wrap(kd_rq_df_no_validation(df, idx, lower, upper));
     return rcpp_result_gen;
 END_RCPP
 }
 // kd_rq_df
-std::vector<int> kd_rq_df(const List df, const IntegerVector idx, const List lower, const List upper);
+std::vector<int> kd_rq_df(const List& df, const IntegerVector& idx, const List& lower, const List& upper);
 RcppExport SEXP _kdtools_kd_rq_df(SEXP dfSEXP, SEXP idxSEXP, SEXP lowerSEXP, SEXP upperSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const List >::type df(dfSEXP);
-    Rcpp::traits::input_parameter< const IntegerVector >::type idx(idxSEXP);
-    Rcpp::traits::input_parameter< const List >::type lower(lowerSEXP);
-    Rcpp::traits::input_parameter< const List >::type upper(upperSEXP);
+    Rcpp::traits::input_parameter< const List& >::type df(dfSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type idx(idxSEXP);
+    Rcpp::traits::input_parameter< const List& >::type lower(lowerSEXP);
+    Rcpp::traits::input_parameter< const List& >::type upper(upperSEXP);
     rcpp_result_gen = Rcpp::wrap(kd_rq_df(df, idx, lower, upper));
     return rcpp_result_gen;
 END_RCPP

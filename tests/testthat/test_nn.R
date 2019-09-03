@@ -7,6 +7,14 @@ r_nn <- function(x, y) {
                    FUN.VALUE = double(1)))
 }
 
+mk_ties <- function(nc) {
+  x <- double()
+  for (i in 1:nc)
+    x <- cbind(x, sample(1:5))
+  i <- sample(1:5, 100, replace = TRUE)
+  return(as.matrix(x[i,]))
+}
+
 test_that("nearest neighbors works", {
   for (ignore in 1:10)
   {
@@ -18,6 +26,15 @@ test_that("nearest neighbors works", {
       i <- kd_nearest_neighbor(x, y)
       j <- r_nn(x, y)
       expect_equal(i, j)
+    }
+    for (n in 1:9)
+    {
+      x <- mk_ties(n)
+      x <- kd_sort(x)
+      y <- apply(x, 2, mean)
+      i <- kd_nearest_neighbor(x, y)
+      j <- r_nn(x, y)
+      expect_equal(x[i,], x[j,])
     }
   }
 })

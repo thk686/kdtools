@@ -1,6 +1,14 @@
 library(kdtools)
 context("Searching")
 
+mk_ties <- function(nc) {
+  x <- double()
+  for (i in 1:nc)
+    x <- cbind(x, sample(1:5))
+  i <- sample(1:5, 100, replace = TRUE)
+  return(as.matrix(x[i,]))
+}
+
 r_lower_bound <- function(x, y) {
   for (i in seq_len(nrow(x)))
     if (all(x[i, ] >= y)) return(i)
@@ -14,6 +22,14 @@ test_that("correct lower bound", {
     {
       x <- kd_sort(matrix(runif(n * 100), ncol = n))
       y <- rep(0.5, n)
+      i <- kd_lower_bound(x, y)
+      j <- r_lower_bound(x, y)
+      expect_equal(i, j)
+    }
+    for (n in 1:9)
+    {
+      x <- kd_sort(mk_ties(n))
+      y <- apply(x, 2, mean)
       i <- kd_lower_bound(x, y)
       j <- r_lower_bound(x, y)
       expect_equal(i, j)
@@ -38,6 +54,14 @@ test_that("correct upper bound", {
       j <- r_upper_bound(x, y)
       expect_equal(i, j)
     }
+  }
+  for (n in 1:9)
+  {
+    x <- kd_sort(mk_ties(n))
+    y <- apply(x, 2, mean)
+    i <- kd_upper_bound(x, y)
+    j <- r_upper_bound(x, y)
+    expect_equal(i, j)
   }
 })
 
@@ -65,6 +89,18 @@ test_that("range query works", {
       z2 <- kd_sort(z2)
       expect_equal(z1, z2)
     }
+    for (n in 1:9)
+    {
+      x <- mk_ties(n)
+      y <- kd_sort(x)
+      l <- rep(0.25, n)
+      u <- rep(0.75, n)
+      z1 <- kd_range_query(y, l, u)
+      z2 <- r_contains(x, l, u)
+      z1 <- kd_sort(z1)
+      z2 <- kd_sort(z2)
+      expect_equal(z1, z2)
+    }
   }
 })
 
@@ -83,6 +119,18 @@ test_that("range query works", {
     for (n in 1:9)
     {
       x <- matrix(runif(n * 100), ncol = n)
+      y <- kd_sort(x)
+      l <- rep(0.25, n)
+      u <- rep(0.75, n)
+      z1 <- kd_rq_indices(y, l, u)
+      z2 <- r_contains_indices(y, l, u)
+      z1 <- sort(z1)
+      z2 <- sort(z2)
+      expect_equal(z1, z2)
+    }
+    for (n in 1:9)
+    {
+      x <- mk_ties(n)
       y <- kd_sort(x)
       l <- rep(0.25, n)
       u <- rep(0.75, n)

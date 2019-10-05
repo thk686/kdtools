@@ -371,4 +371,3 @@ std::vector<int> kd_rq_df(const List& df,
   return kd_rq_df_no_validation(df, idx, lower, upper);
 }
 
-

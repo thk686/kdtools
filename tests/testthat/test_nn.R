@@ -34,7 +34,7 @@ test_that("nearest neighbors works", {
       y <- apply(x, 2, mean)
       i <- kd_nearest_neighbor(x, y)
       j <- r_nn(x, y)
-      expect_equal(x[i,], x[j,])
+      expect_equal(x[i,, drop = FALSE], x[j,, drop = FALSE])
     }
   }
 })

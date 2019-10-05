@@ -83,6 +83,14 @@ struct less_nth
     else
       return get<I>(lhs) < get<I>(rhs);
   }
+  template <typename T, typename U>
+  bool operator()(const pair<T, U>& lhs, const pair<T, U>& rhs)
+  {
+    if constexpr (is_pointer_v<T>)
+      return get<I>(*lhs.first) < get<I>(*rhs.first);
+    else
+      return get<I>(lhs.first) < get<I>(rhs.first);
+  }
 };
 
 template <size_t I>
@@ -95,6 +103,14 @@ struct equal_nth
       return get<I>(*lhs) == get<I>(*rhs);
     else
       return get<I>(lhs) == get<I>(rhs);
+  }
+  template <typename T, typename U>
+  bool operator()(const pair<T, U>& lhs, const pair<T, U>& rhs)
+  {
+    if constexpr (is_pointer_v<T>)
+      return get<I>(*lhs.first) == get<I>(*rhs.first);
+    else
+      return get<I>(lhs.first) == get<I>(rhs.first);
   }
 };
 
@@ -110,6 +126,14 @@ struct pred_nth
       return m_pred(get<I>(*lhs), get<I>(*rhs));
     else
       return m_pred(get<I>(lhs), get<I>(rhs));
+  }
+  template <typename T, typename U>
+  bool operator()(const pair<T, U>& lhs, const pair<T, U>& rhs)
+  {
+    if constexpr (is_pointer_v<T>)
+      return m_pred(get<I>(*lhs.first), get<I>(*rhs.first));
+    else
+      return m_pred(get<I>(lhs.first), get<I>(rhs.first));
   }
 };
 
@@ -128,6 +152,15 @@ double dist_nth(const T& lhs, const T& rhs)
     return scalar_dist(get<I>(lhs), get<I>(rhs));
 }
 
+template <size_t I, typename T, typename U>
+double dist_nth(const pair<T, U>& lhs, const pair<T, U>& rhs)
+{
+  if constexpr (is_pointer_v<T>)
+    return scalar_dist(get<I>(*lhs.first), get<I>(*rhs.first));
+  else
+    return scalar_dist(get<I>(lhs.first), get<I>(rhs.first));
+}
+
 template <size_t I, typename T>
 double diff_nth(const T& lhs, const T& rhs)
 {
@@ -135,6 +168,15 @@ double diff_nth(const T& lhs, const T& rhs)
     return scalar_diff(get<I>(*lhs), get<I>(*rhs));
   else
     return scalar_diff(get<I>(lhs), get<I>(rhs));
+}
+
+template <size_t I, typename T, typename U>
+double diff_nth(const pair<T, U>& lhs, const pair<T, U>& rhs)
+{
+  if constexpr (is_pointer_v<T>)
+    return scalar_diff(get<I>(*lhs.first), get<I>(*rhs.first));
+  else
+    return scalar_diff(get<I>(lhs.first), get<I>(rhs.first));
 }
 
 template <size_t I, typename T>
@@ -529,12 +571,19 @@ void kd_rq_iters(Iter first, Iter last,
   return;
 }
 
+template <typename Key, typename Iter>
+struct less_key {
+  bool operator()(const pair<Key, Iter>& lhs, const pair<Key, Iter>& rhs) {
+    return lhs.first < rhs.first;
+  }
+};
+
 template <typename Iter, typename Key = double>
 struct n_best
 {
   using qmem_t = pair<Key, Iter>;
   using qcont_t = vector<qmem_t>;
-  using qcomp_t = less_nth<0>;
+  using qcomp_t = less_key<Key, Iter>;
   using queue_t = priority_queue<qmem_t, qcont_t, qcomp_t>;
   size_t m_n;
   queue_t m_q;

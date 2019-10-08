@@ -21,10 +21,8 @@
 
 namespace kdtools {
 
-template <typename T>
-static constexpr auto ndim = std::tuple_size<
-  typename std::remove_pointer<T>::type
->::value;
+template <typename T> static constexpr auto
+  ndim = std::tuple_size_v<typename std::remove_pointer_t<T>>;
 
 // Specialize for non-numeric types
 // TODO: User defined distance functions
@@ -57,7 +55,7 @@ using std::enable_if;
 using std::partition;
 using std::nth_element;
 using std::is_pointer_v;
-using std::tuple_element;
+using std::tuple_size_v;
 using std::numeric_limits;
 using std::priority_queue;
 using std::is_partitioned;
@@ -90,6 +88,27 @@ struct less_nth
       return get<I>(*lhs.first) < get<I>(*rhs.first);
     else
       return get<I>(lhs.first) < get<I>(rhs.first);
+  }
+};
+
+template <size_t I>
+struct less_radius_nth
+{
+  template <typename T, typename U>
+  bool operator()(const T& lhs, const T& rhs, const U radius)
+  {
+    if constexpr (is_pointer_v<T>)
+      return scalar_diff(get<I>(*lhs), get<I>(*rhs)) < radius;
+    else
+      return scalar_diff(get<I>(lhs), get<I>(rhs)) < radius;
+  }
+  template <typename T, typename U, typename V>
+  bool operator()(const pair<T, U>& lhs, const pair<T, U>& rhs, const V radius)
+  {
+    if constexpr (is_pointer_v<T>)
+      return scalar_diff(get<I>(*lhs.first), get<I>(*rhs.first)) < radius;
+    else
+      return scalar_diff(get<I>(lhs.first), get<I>(rhs.first)) < radius;
   }
 };
 
@@ -571,6 +590,59 @@ void kd_rq_iters(Iter first, Iter last,
   return;
 }
 
+template <size_t I,
+          typename Iter,
+          typename TupleType,
+          typename OutIter>
+void kd_range_query(Iter first, Iter last,
+                    const TupleType& center,
+                    const double radius,
+                    OutIter outp)
+{
+  if (distance(first, last) > 32) {
+    auto pred = less_radius_nth<I>();
+    auto pivot = find_pivot<I>(first, last);
+    constexpr auto J = next_dim<I, TupleType>;
+    if (l2dist(*pivot, center) <= radius) *outp++ = *pivot;
+    if (!pred(*pivot, center, -radius)) // search left
+      kd_range_query<J>(first, pivot, center, radius, outp);
+    if (pred(*pivot, center, radius)) // search right
+      kd_range_query<J>(next(pivot), last, center, radius, outp);
+  } else {
+    copy_if(first, last, outp, [&](const TupleType& x){
+      return l2dist(x, center) <= radius;
+    });
+  }
+  return;
+}
+
+template <size_t I,
+          typename Iter,
+          typename TupleType,
+          typename OutIter>
+void kd_rq_iters(Iter first, Iter last,
+                 const TupleType& center,
+                 const double radius,
+                 OutIter outp)
+{
+  if (distance(first, last) > 32) {
+    auto pred = less_radius_nth<I>();
+    auto pivot = find_pivot<I>(first, last);
+    constexpr auto J = next_dim<I, TupleType>;
+    if (l2dist(*pivot, center) <= radius) *outp++ = pivot;
+    if (!pred(*pivot, center, -radius)) // search left
+      kd_rq_iters<J>(first, pivot, center, radius, outp);
+    if (pred(*pivot, center, radius)) // search right
+      kd_rq_iters<J>(next(pivot), last, center, radius, outp);
+  } else {
+    while (first != last) {
+      if (l2dist(*first, center) <= radius) *outp++ = first;
+      ++first;
+    }
+  }
+  return;
+}
+
 template <typename Key, typename Iter>
 struct less_key {
   bool operator()(const pair<Key, Iter>& lhs, const pair<Key, Iter>& rhs) {
@@ -776,6 +848,28 @@ void kd_rq_iters(Iter first, Iter last,
                  OutIter outp)
 {
   detail::kd_rq_iters<0>(first, last, lower, upper, outp);
+}
+
+template <typename Iter,
+          typename TupleType,
+          typename OutIter>
+void kd_range_query(Iter first, Iter last,
+                    const TupleType& center,
+                    const double radius,
+                    OutIter outp)
+{
+  detail::kd_range_query<0>(first, last, center, radius, outp);
+}
+
+template <typename Iter,
+          typename TupleType,
+          typename OutIter>
+void kd_rq_iters(Iter first, Iter last,
+                 const TupleType& center,
+                 const double radius,
+                 OutIter outp)
+{
+  detail::kd_rq_iters<0>(first, last, center, radius, outp);
 }
 
 template <typename Iter,

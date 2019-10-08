@@ -211,6 +211,67 @@ IntegerVector kd_rq_indices_(List x, NumericVector lower, NumericVector upper)
 }
 
 template <size_t I>
+List kd_rq_circular__(List x, NumericVector center, double radius)
+{
+  auto p = get_ptr<I>(x);
+  auto q = make_xptr(new arrayvec<I>);
+  auto oi = back_inserter(*q);
+  auto cntr = vec_to_array<I>(center);
+  kd_range_query(begin(*p), end(*p), cntr, radius, oi);
+  return wrap_ptr(q);
+}
+
+// [[Rcpp::export]]
+List kd_rq_circular_(List x, NumericVector center, double radius)
+{
+  switch(arrayvec_dim(x)) {
+  case 1: return kd_rq_circular__<1>(x, center, radius);
+  case 2: return kd_rq_circular__<2>(x, center, radius);
+  case 3: return kd_rq_circular__<3>(x, center, radius);
+  case 4: return kd_rq_circular__<4>(x, center, radius);
+  case 5: return kd_rq_circular__<5>(x, center, radius);
+  case 6: return kd_rq_circular__<6>(x, center, radius);
+  case 7: return kd_rq_circular__<7>(x, center, radius);
+  case 8: return kd_rq_circular__<8>(x, center, radius);
+  case 9: return kd_rq_circular__<9>(x, center, radius);
+  default: stop("Invalid dimensions");
+  }
+}
+
+template <size_t I>
+IntegerVector kd_rqi_circular__(List x, NumericVector center, double radius)
+{
+  auto p = get_ptr<I>(x);
+  auto q = vector<av_iter<I>>();
+  auto oi = back_inserter(q);
+  auto cntr = vec_to_array<I>(center);
+  kd_rq_iters(begin(*p), end(*p), cntr, radius, oi);
+  IntegerVector res(q.size());
+  std::transform(begin(q), end(q), begin(res),
+                 [&](av_iter<I> x){
+                   return distance(p->begin(), x) + 1;
+                 });
+  return res;
+}
+
+// [[Rcpp::export]]
+IntegerVector kd_rqi_circular_(List x, NumericVector center, double radius)
+{
+  switch(arrayvec_dim(x)) {
+  case 1: return kd_rqi_circular__<1>(x, center, radius);
+  case 2: return kd_rqi_circular__<2>(x, center, radius);
+  case 3: return kd_rqi_circular__<3>(x, center, radius);
+  case 4: return kd_rqi_circular__<4>(x, center, radius);
+  case 5: return kd_rqi_circular__<5>(x, center, radius);
+  case 6: return kd_rqi_circular__<6>(x, center, radius);
+  case 7: return kd_rqi_circular__<7>(x, center, radius);
+  case 8: return kd_rqi_circular__<8>(x, center, radius);
+  case 9: return kd_rqi_circular__<9>(x, center, radius);
+  default: stop("Invalid dimensions");
+  }
+}
+
+template <size_t I>
 int kd_nearest_neighbor__(List x, NumericVector v)
 {
   auto p = get_ptr<I>(x);
@@ -368,4 +429,5 @@ IntegerVector kd_order_(List x, bool inplace, bool parallel)
   default: stop("Invalid dimensions");
   }
 }
+
 

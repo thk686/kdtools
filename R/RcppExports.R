@@ -73,6 +73,14 @@ kd_rq_indices_ <- function(x, lower, upper) {
     .Call(`_kdtools_kd_rq_indices_`, x, lower, upper)
 }
 
+kd_rq_circular_ <- function(x, center, radius) {
+    .Call(`_kdtools_kd_rq_circular_`, x, center, radius)
+}
+
+kd_rqi_circular_ <- function(x, center, radius) {
+    .Call(`_kdtools_kd_rqi_circular_`, x, center, radius)
+}
+
 kd_nearest_neighbor_ <- function(x, value) {
     .Call(`_kdtools_kd_nearest_neighbor_`, x, value)
 }

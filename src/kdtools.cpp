@@ -430,4 +430,8 @@ IntegerVector kd_order_(List x, bool inplace, bool parallel)
   }
 }
 
+double test() {
+  std::array<double, 3> x = {{1, 2, 3}};
+  return std::apply([](auto... vals){ return ((vals * vals) + ...); }, x);
+}
 

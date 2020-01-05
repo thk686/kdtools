@@ -1,13 +1,2 @@
-^CRAN-RELEASE$
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^README\.Rmd$
-^_pkgdown\.yml$
-^docs$
-^\.travis\.yml$
-^appveyor\.yml$
-^codecov\.yml$
-^cran-comments\.md$
-^LICENSE\.md$
-
-^\.circleci/config\.yml$

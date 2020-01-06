@@ -101,7 +101,3 @@ kd_order_ <- function(x, inplace, parallel) {
     .Call(`_kdtools_kd_order_`, x, inplace, parallel)
 }
 
-test <- function() {
-    .Call(`_kdtools_test`)
-}
-

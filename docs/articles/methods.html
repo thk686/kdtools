@@ -86,7 +86,7 @@
       <h1>Compact multidimensional sorting and searching with kdtools</h1>
                         <h4 class="author">Timothy H. Keitt</h4>
             
-            <h4 class="date">2019-09-01</h4>
+            <h4 class="date">2020-01-06</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/thk686/kdtools/blob/master/vignettes/methods.Rmd"><code>vignettes/methods.Rmd</code></a></small>
       <div class="hidden name"><code>methods.Rmd</code></div>
@@ -98,12 +98,12 @@
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h2>
-<p>Sorting and searching are fundamental operations in computer and data science. The objective of the <code>kdtools</code> is to expose a C++ header file implementing efficient sorting and searching methods for multidimensional tuple-like data. The interface mirrors that of the <a href="http://en.cppreference.com/w/">C++ Standard Template Library (STL)</a> sorting and searching functions. It is a single header-only library with no external dependencies other than <code>std</code>.</p>
-<p>A common approach to improving search performance is to place data into an ordered tree structure, the most common being a binary tree and its variants. Computer textbooks and introductory courses are littered with examples of tree structures, however it <a href="http://scottmeyers.blogspot.com/2015/09/should-you-be-using-something-instead.html">has been pointed out by practitioners</a> that many tree-type data structures have considerable storage overhead and poor memory locality. This results from using linked-list-like pointers to connect nodes. In many cases, a fully or partially sorted sequence combined with binary search will outperform pointer-based trees. Indeed, <a href="http://en.cppreference.com/w/cpp/algorithm">the STL contains a set of algorithms</a> for sorting or partitioning a data sequence and searching within partitioned sequences.</p>
-<p>A limitation of the STL algorithms and data structures is that they can only be ordered in a single dimension. Sort keys can possess higher cardinality however comparison operators and ordering are unidimensional. This is suboptimal for data that are intrinsically multidimensional, such as geographical coordinates or other multivariate data. In multiple dimensions, it is preferred to order a sequence of keys such the average distance between neighboring pairs in the sequence is small. There exist a vast array of techniques to accomplish sequence localization; however I will only discuss one known as the <a href="https://en.wikipedia.org/wiki/K-d_tree">kd-tree</a>.</p>
+<p>Sorting and searching are fundamental operations in computer and data science. The objective of the <code>kdtools</code> is to expose a C++ header file implementing efficient sorting and searching methods for multidimensional tuple-like data. The interface mirrors that of the <a href="http://en.cppreference.com/w/">C++ Standard Library</a> sorting and searching functions. It is a single header-only library with no external dependencies other than <code>std</code>.</p>
+<p>A common approach to improving search performance is to place data into an ordered tree structure, the most common being a binary tree and its variants. Computer textbooks and introductory courses are littered with examples of tree structures, however it <a href="http://scottmeyers.blogspot.com/2015/09/should-you-be-using-something-instead.html">has been pointed out by practitioners</a> that many tree-type data structures have considerable storage overhead and poor memory locality. This results from using linked-list-like pointers to connect nodes. In many cases, a fully or partially sorted sequence combined with binary search will outperform pointer-based trees. Indeed, <a href="http://en.cppreference.com/w/cpp/algorithm">the Standard Library contains a set of algorithms</a> for sorting or partitioning a data sequence and searching within partitioned sequences.</p>
+<p>A limitation of the Standard Library algorithms and data structures is that they can only be ordered in a single dimension. Sort keys can possess higher cardinality however comparison operators and ordering are unidimensional. This is suboptimal for data that are intrinsically multidimensional, such as geographical coordinates or other multivariate data. In multiple dimensions, it is preferred to order a sequence of keys such the average distance between neighboring pairs in the sequence is small. There exist a vast array of techniques to accomplish sequence localization; however I will only discuss one known as the <a href="https://en.wikipedia.org/wiki/K-d_tree">kd-tree</a>.</p>
 <p>A kd-tree is a type of binary tree that cycles among the dimensions of its stored objects at each level of the tree hierarchy. In the case of spatial data, the root node will contain the median key in the x-direction and each of its daughter nodes will contain the median in the y-direction of their respective partitions. Subsequent daughter nodes will again contain medians in the x-direction, and so on until there are no additional keys to the left or right. Searching a kd-tree involves recursive comparisons, cycling among the dimensions, until a leaf-node is encountered. Most searching operations can be accomplished in logarithmic time complexity yielding an efficient method.</p>
 <p>Precisely as an ordinary binary tree can be replaced by a sorted range, a sequence of multidimensional elements can be sorted, in-place if desired, via recursive partitioning following the kd-tree scheme. Divide-and-conquer recursive partitioning is a well-known sorting algorithm and is the basis of the <a href="https://en.wikipedia.org/wiki/Quicksort">quicksort algorithm</a>. Partitioning a sequence places all elements less than (or more generally meeting some predicate) to the left of a selected key, while all elements greater-than-or-equal-to follow to the right. The kd-sort algorithm presented here simply modifies quicksort to cycle among the dimensions of the stored elements. Searching follows exactly as the kd-tree except that nodes correspond to pivot-elements in the linear array.</p>
-<p>Implementation of <code>kd_sort</code> enables a set of additional algorithms for searching and nearest neighbor queries. The following table gives the exposed functions and corresponding STL routines.</p>
+<p>Implementation of <code>kd_sort</code> enables a set of additional algorithms for searching and nearest neighbor queries. The following table gives the exposed functions and corresponding Standard Library routines.</p>
 <table class="table">
 <colgroup>
 <col width="25%">
@@ -112,7 +112,7 @@
 </colgroup>
 <thead><tr class="header">
 <th>Function templates</th>
-<th>STL analog</th>
+<th>SL analog</th>
 <th>Outcome</th>
 </tr></thead>
 <tbody>
@@ -164,7 +164,7 @@
 <tr class="even">
 <td>lex_sort</td>
 <td></td>
-<td>ordinary STL sort using kd_less for comparison</td>
+<td>ordinary SL sort using kd_less for comparison</td>
 </tr>
 </tbody>
 </table>
@@ -186,16 +186,16 @@
 <a class="sourceLine" id="cb1-11" data-line-number="11">    kd_sort&lt;J&gt;(first, pivot);</a>
 <a class="sourceLine" id="cb1-12" data-line-number="12">  }</a>
 <a class="sourceLine" id="cb1-13" data-line-number="13">}</a></code></pre></div>
-<p>The <code>median_part</code> function is a thin wrapper around the <a href="http://en.cppreference.com/w/cpp/algorithm/nth_element"><code>nth_element</code></a> function from the standard library, which is used to find the median value in the current dimension. Once the median is identified, it is passed to the standard library <a href="http://en.cppreference.com/w/cpp/algorithm/partition"><code>partition</code></a> function, which places all values less than the median to the left of the pivot element and all greater-than or equal-to to the right.</p>
+<p>The <code>median_part</code> function is a thin wrapper around the <a href="http://en.cppreference.com/w/cpp/algorithm/nth_element"><code>nth_element</code></a> function from the standard library, which is used to find the median value in the current dimension. Elements to the left of the nth element are not greater than the nth element and elements to the right are not less than the nth element. This allows searching left or right depending on whether the sought value is not greater than the median or not less than the median (ties must search both directions).</p>
 <p>Once the first dimension is partitioned, the ranges right and left of the pivot are partitioned, and so on until first and last span a single or no value. The dimension index <code>I</code> is incremented at compile-time using template metaprogramming. The <code>value</code> member of the templated struct <code>next_dim</code> holds the incremented value of <code>I</code> that has been wrapped to cycle through successive dimensions of <code>TupleType</code>. The result of <code>kd_sort</code> is a sequence ordered as if it were inserted into a kd-tree data structure. The following figure illustrates the resulting order in 2-dimensions.</p>
 <p><img src="methods_files/figure-html/unnamed-chunk-2-1.png" width="576"></p>
 <p>Here the sequence order is shown with a continuous color gradient. The resulting patchiness indicates a hierarchical tree-like partitioning of the space providing the desired locality. Placing nearby points in proximity is what allows for efficient searches once the data are sorted. Sort times for vectors of tuple-like objects are relatively efficient, taking roughly twice the time of an ordinary lexicographical sort.</p>
 <p><img src="methods_files/figure-html/unnamed-chunk-5-1.png" width="672"></p>
-<p>In the above results, <code>lex_sort</code> is the STL built-in <a href="http://en.cppreference.com/w/cpp/algorithm/sort"><code>std::sort</code></a> algorithm using <code>kd_less</code> as the predicate. The results indicate that <code>kd_sort</code> is reasonably fast, requiring roughly twice the time as the STL built-in sorting algorithm. Because of the divide-and-conquer nature of <code>kd_sort</code>, it is trivially parallelizable. The threaded version is equal to or faster than the regular sort. Performance comparable to the build-in STL <code>sort</code> function indicates that this reference implementation is reasonable. The computational complexity appears to scale linearly in the number of tuples in all cases.</p>
+<p>In the above results, <code>lex_sort</code> is the Standard Library built-in <a href="http://en.cppreference.com/w/cpp/algorithm/sort"><code>std::sort</code></a> algorithm using <code>kd_less</code> as the predicate. The results indicate that <code>kd_sort</code> is reasonably fast, requiring roughly twice the time as the Standard Library built-in sorting algorithm. Because of the divide-and-conquer nature of <code>kd_sort</code>, it is trivially parallelizable. The threaded version is equal to or faster than the regular sort. Performance comparable to the build-in Standard Library <code>sort</code> function indicates that this reference implementation is reasonable. The computational complexity appears to scale linearly in the number of tuples in all cases.</p>
 <div id="multidimensional-comparisons" class="section level3">
 <h3 class="hasAnchor">
 <a href="#multidimensional-comparisons" class="anchor"></a>Multidimensional comparisons</h3>
-<p>To ensure the correct behavior in the presence of multiple ties, or even when all keys in one dimension are equal, the <code>kd_less</code> predicate implements circular lexicographic comparison. If elements in one dimension are tied, the next dimension is interrogated to break the tie. The comparisons cycle from trailing dimensions to leading dimensions using modulo arithmetic. It is implemented as a recursive, templated function object with the dimension index incremented at compile-time. SFINAE is used to stop the compile-time iteration after <a href="http://en.cppreference.com/w/cpp/utility/tuple/tuple_size"><code>tuple_size&lt;TupleType&gt;::value</code></a> steps.</p>
+<p>To ensure the correct behavior in the presence of multiple ties, or even when all keys in one dimension are equal, the <code>kd_less</code> predicate implements circular lexicographic comparison. If elements in one dimension are tied, the next dimension is interrogated to break the tie. The comparisons cycle from trailing dimensions to leading dimensions using modulo arithmetic. It is implemented as a recursive, templated function object with the dimension index incremented at compile-time. The recursion is terminated using <a href="https://en.cppreference.com/w/cpp/language/if">constexpr if</a>.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">template</span> &lt;<span class="dt">size_t</span> I, <span class="dt">size_t</span> K = <span class="dv">0</span>&gt;</a>
 <a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw">struct</span> kd_less</a>
 <a class="sourceLine" id="cb2-3" data-line-number="3">{</a>
@@ -238,19 +238,19 @@
 <td align="right">5</td>
 <td align="right">7</td>
 <td align="right">9</td>
-<td align="right">8</td>
 <td align="right">6</td>
+<td align="right">8</td>
 </tr>
 <tr class="even">
-<td align="right">2</td>
-<td align="right">4</td>
-<td align="right">5</td>
 <td align="right">6</td>
-<td align="right">1</td>
-<td align="right">3</td>
 <td align="right">7</td>
 <td align="right">8</td>
 <td align="right">9</td>
+<td align="right">2</td>
+<td align="right">3</td>
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">5</td>
 </tr>
 </tbody></table>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/t">t</a></span>(<span class="kw"><a href="../reference/kdsort.html">kd_sort</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cbind">cbind</a></span>(<span class="dv">0</span>, j, k)))</a></code></pre></div>
@@ -278,15 +278,15 @@
 <td align="right">9</td>
 </tr>
 <tr class="odd">
+<td align="right">6</td>
+<td align="right">7</td>
+<td align="right">8</td>
+<td align="right">9</td>
 <td align="right">2</td>
+<td align="right">3</td>
 <td align="right">4</td>
 <td align="right">5</td>
-<td align="right">6</td>
 <td align="right">1</td>
-<td align="right">3</td>
-<td align="right">9</td>
-<td align="right">8</td>
-<td align="right">7</td>
 </tr>
 </tbody></table>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/t">t</a></span>(<span class="kw"><a href="../reference/kdsort.html">kd_sort</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cbind">cbind</a></span>(j, k, <span class="dv">0</span>)))</a></code></pre></div>
@@ -299,19 +299,19 @@
 <td align="right">5</td>
 <td align="right">7</td>
 <td align="right">9</td>
-<td align="right">8</td>
 <td align="right">6</td>
+<td align="right">8</td>
 </tr>
 <tr class="even">
-<td align="right">2</td>
-<td align="right">4</td>
-<td align="right">5</td>
 <td align="right">6</td>
-<td align="right">1</td>
-<td align="right">3</td>
 <td align="right">7</td>
 <td align="right">8</td>
 <td align="right">9</td>
+<td align="right">2</td>
+<td align="right">3</td>
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">5</td>
 </tr>
 <tr class="odd">
 <td align="right">0</td>
@@ -366,7 +366,7 @@
 <div id="searching" class="section level3">
 <h3 class="hasAnchor">
 <a href="#searching" class="anchor"></a>Searching</h3>
-<p>Once data are ordered appropriately, searching can be achieved efficiently. The <code>kdtools</code> package provides analogs of the STL <a href="http://en.cppreference.com/w/cpp/algorithm/lower_bound"><code>lower_bound</code></a>, <a href="http://en.cppreference.com/w/cpp/algorithm/upper_bound"><code>upper_bound</code></a>, <a href="http://en.cppreference.com/w/cpp/algorithm/equal_range"><code>equal_range</code></a> and <a href="http://en.cppreference.com/w/cpp/algorithm/binary_search"><code>binary_search</code></a> functions for querying sorted ranges. An additional function, <code>kd_range_query</code>, does efficient searching within a boxed region.</p>
+<p>Once data are ordered appropriately, searching can be achieved efficiently. The <code>kdtools</code> package provides analogs of the Standard Library <a href="http://en.cppreference.com/w/cpp/algorithm/lower_bound"><code>lower_bound</code></a>, <a href="http://en.cppreference.com/w/cpp/algorithm/upper_bound"><code>upper_bound</code></a>, <a href="http://en.cppreference.com/w/cpp/algorithm/equal_range"><code>equal_range</code></a> and <a href="http://en.cppreference.com/w/cpp/algorithm/binary_search"><code>binary_search</code></a> functions for querying sorted ranges. An additional function, <code>kd_range_query</code>, does efficient searching within a boxed region.</p>
 <p>The <code>kd_lower_bound</code>, <code>kd_upper_bound</code> and <code>kd_equal_range</code> algorithms behave differently than their unidimensional analogs. This is because the only reasonable definition of multidimensional less is to require less in all dimensions simultaneously. As illustrated below, this leads to cases where some, but not all, elements are less to be included in the interval spanned by <code>kd_lower_bound</code>, <code>kd_upper_bound</code> and <code>kd_equal_range</code>. In other words, in a single dimension, these routines are both necessary and sufficient, whereas in multiple-dimensions, they are necessary, but not sufficient to uniquely identify elements in a boxed region.</p>
 <p>In other schemes, such as <a href="https://en.wikipedia.org/wiki/Z-order_curve">Morton codes</a>, elaborate subroutines are required to prune the extra elements falling outside the region of interest (see lower-left panel below). This is a result of using a fundamentally unidimensional search on multidimensional data. Instead <code>kd_sort</code> implements direct binary search for points falling within a boxed region.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw">template</span> &lt;<span class="dt">size_t</span> I,</a>
@@ -410,27 +410,27 @@
 <tbody>
 <tr class="odd">
 <td align="left">kd_sort inplace</td>
-<td align="right">3.140</td>
+<td align="right">3.07</td>
 <td align="right">1.00</td>
 </tr>
 <tr class="even">
 <td align="left">kd_sort w/ copy</td>
-<td align="right">3.260</td>
+<td align="right">3.20</td>
 <td align="right">1.00</td>
 </tr>
 <tr class="odd">
 <td align="left">kd_sort_threaded</td>
-<td align="right">0.511</td>
-<td align="right">0.16</td>
+<td align="right">0.51</td>
+<td align="right">0.17</td>
 </tr>
 <tr class="even">
 <td align="left">rtree pack linear</td>
-<td align="right">3.810</td>
+<td align="right">3.70</td>
 <td align="right">1.20</td>
 </tr>
 <tr class="odd">
 <td align="left">rtree pack quadratic</td>
-<td align="right">3.820</td>
+<td align="right">3.71</td>
 <td align="right">1.20</td>
 </tr>
 </tbody>
@@ -444,18 +444,18 @@
 <tbody>
 <tr class="odd">
 <td align="left">kd_range_query</td>
-<td align="right">0.00106</td>
+<td align="right">0.000994</td>
 <td align="right">1.0</td>
 </tr>
 <tr class="even">
 <td align="left">rtree query linear</td>
-<td align="right">0.00339</td>
-<td align="right">3.2</td>
+<td align="right">0.003330</td>
+<td align="right">3.4</td>
 </tr>
 <tr class="odd">
 <td align="left">rtree query quadratic</td>
-<td align="right">0.00319</td>
-<td align="right">3.0</td>
+<td align="right">0.003130</td>
+<td align="right">3.1</td>
 </tr>
 </tbody>
 </table>
@@ -478,13 +478,13 @@
 </tr>
 <tr class="even">
 <td align="left">rtree nearest neighbor linear</td>
-<td align="right">5.49e-05</td>
-<td align="right">5.2</td>
+<td align="right">5.97e-05</td>
+<td align="right">5.6</td>
 </tr>
 <tr class="odd">
 <td align="left">rtree nearest neighbor quadratic</td>
-<td align="right">1.74e-05</td>
-<td align="right">1.6</td>
+<td align="right">1.48e-05</td>
+<td align="right">1.4</td>
 </tr>
 </tbody>
 </table>
@@ -497,18 +497,18 @@
 <tbody>
 <tr class="odd">
 <td align="left">kd_nearest_neighbors 100</td>
-<td align="right">4.22e-05</td>
+<td align="right">4.09e-05</td>
 <td align="right">1.0</td>
 </tr>
 <tr class="even">
 <td align="left">rtree nearest 100 linear</td>
-<td align="right">1.57e-04</td>
-<td align="right">3.7</td>
+<td align="right">1.80e-04</td>
+<td align="right">4.4</td>
 </tr>
 <tr class="odd">
 <td align="left">rtree nearest 100 quadratic</td>
-<td align="right">6.68e-05</td>
-<td align="right">1.6</td>
+<td align="right">9.84e-05</td>
+<td align="right">2.4</td>
 </tr>
 </tbody>
 </table>
@@ -580,41 +580,41 @@
 <a class="sourceLine" id="cb10-3" data-line-number="3">strings =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sample">sample</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/chartr">tolower</a></span>(parts_of_speech[[<span class="dv">1</span>]]))</a>
 <a class="sourceLine" id="cb10-4" data-line-number="4"><span class="kw">mixed_query</span>(numbers, strings)</a>
 <a class="sourceLine" id="cb10-5" data-line-number="5"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb10-6" data-line-number="6"><span class="co">#&gt; Sort time: 0.132358 seconds</span></a>
+<a class="sourceLine" id="cb10-6" data-line-number="6"><span class="co">#&gt; Sort time: 0.127037 seconds</span></a>
 <a class="sourceLine" id="cb10-7" data-line-number="7"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb10-8" data-line-number="8"><span class="co">#&gt; First and last 3 elements of sorted data:</span></a>
 <a class="sourceLine" id="cb10-9" data-line-number="9"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb10-10" data-line-number="10"><span class="co">#&gt; 0 0.0001486 aaee</span></a>
-<a class="sourceLine" id="cb10-11" data-line-number="11"><span class="co">#&gt; 1 0.002685 aaronical</span></a>
-<a class="sourceLine" id="cb10-12" data-line-number="12"><span class="co">#&gt; 2 0.005629 acardiac</span></a>
+<a class="sourceLine" id="cb10-10" data-line-number="10"><span class="co">#&gt; 0 0.0001425 abomasus</span></a>
+<a class="sourceLine" id="cb10-11" data-line-number="11"><span class="co">#&gt; 1 0.00221 abboud</span></a>
+<a class="sourceLine" id="cb10-12" data-line-number="12"><span class="co">#&gt; 2 0.002776 abide</span></a>
 <a class="sourceLine" id="cb10-13" data-line-number="13"><span class="co">#&gt; ...</span></a>
-<a class="sourceLine" id="cb10-14" data-line-number="14"><span class="co">#&gt; 208256 0.9987 yokel</span></a>
-<a class="sourceLine" id="cb10-15" data-line-number="15"><span class="co">#&gt; 208257 0.9983 zerlina</span></a>
-<a class="sourceLine" id="cb10-16" data-line-number="16"><span class="co">#&gt; 208258 0.9988 zenith</span></a>
+<a class="sourceLine" id="cb10-14" data-line-number="14"><span class="co">#&gt; 208256 0.9966 zinkenite</span></a>
+<a class="sourceLine" id="cb10-15" data-line-number="15"><span class="co">#&gt; 208257 0.9951 zymosis</span></a>
+<a class="sourceLine" id="cb10-16" data-line-number="16"><span class="co">#&gt; 208258 0.9958 zuidholland</span></a>
 <a class="sourceLine" id="cb10-17" data-line-number="17"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb10-18" data-line-number="18"><span class="co">#&gt; Query time: 7.844e-05 seconds</span></a>
+<a class="sourceLine" id="cb10-18" data-line-number="18"><span class="co">#&gt; Query time: 9.372e-05 seconds</span></a>
 <a class="sourceLine" id="cb10-19" data-line-number="19"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb10-20" data-line-number="20"><span class="co">#&gt; First and last 3 elements of query return:</span></a>
 <a class="sourceLine" id="cb10-21" data-line-number="21"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb10-22" data-line-number="22"><span class="co">#&gt; 0 0.4021 wait</span></a>
-<a class="sourceLine" id="cb10-23" data-line-number="23"><span class="co">#&gt; 1 0.406 wale</span></a>
-<a class="sourceLine" id="cb10-24" data-line-number="24"><span class="co">#&gt; 2 0.4109 wallensis</span></a>
+<a class="sourceLine" id="cb10-22" data-line-number="22"><span class="co">#&gt; 0 0.402 wafdist</span></a>
+<a class="sourceLine" id="cb10-23" data-line-number="23"><span class="co">#&gt; 1 0.4042 waialua</span></a>
+<a class="sourceLine" id="cb10-24" data-line-number="24"><span class="co">#&gt; 2 0.4072 wakas</span></a>
 <a class="sourceLine" id="cb10-25" data-line-number="25"><span class="co">#&gt; ...</span></a>
-<a class="sourceLine" id="cb10-26" data-line-number="26"><span class="co">#&gt; 1041 0.5907 ymir</span></a>
-<a class="sourceLine" id="cb10-27" data-line-number="27"><span class="co">#&gt; 1042 0.595 yesima</span></a>
-<a class="sourceLine" id="cb10-28" data-line-number="28"><span class="co">#&gt; 1043 0.595 yo-yos</span></a>
+<a class="sourceLine" id="cb10-26" data-line-number="26"><span class="co">#&gt; 1101 0.5917 yid</span></a>
+<a class="sourceLine" id="cb10-27" data-line-number="27"><span class="co">#&gt; 1102 0.5951 yawweed</span></a>
+<a class="sourceLine" id="cb10-28" data-line-number="28"><span class="co">#&gt; 1103 0.598 yellowthroat</span></a>
 <a class="sourceLine" id="cb10-29" data-line-number="29"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb10-30" data-line-number="30"><span class="co">#&gt; Neighbors query time: 0.000669279 seconds</span></a>
+<a class="sourceLine" id="cb10-30" data-line-number="30"><span class="co">#&gt; Neighbors query time: 0.000908639 seconds</span></a>
 <a class="sourceLine" id="cb10-31" data-line-number="31"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb10-32" data-line-number="32"><span class="co">#&gt; First and last 3 elements of neighbors query return:</span></a>
 <a class="sourceLine" id="cb10-33" data-line-number="33"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb10-34" data-line-number="34"><span class="co">#&gt; 0 0.3113 khos</span></a>
-<a class="sourceLine" id="cb10-35" data-line-number="35"><span class="co">#&gt; 1 0.7565 kolomna</span></a>
-<a class="sourceLine" id="cb10-36" data-line-number="36"><span class="co">#&gt; 2 0.6432 karlotta</span></a>
+<a class="sourceLine" id="cb10-34" data-line-number="34"><span class="co">#&gt; 0 0.4032 holstein</span></a>
+<a class="sourceLine" id="cb10-35" data-line-number="35"><span class="co">#&gt; 1 0.4036 hoselike</span></a>
+<a class="sourceLine" id="cb10-36" data-line-number="36"><span class="co">#&gt; 2 0.5198 keratoplasty</span></a>
 <a class="sourceLine" id="cb10-37" data-line-number="37"><span class="co">#&gt; ...</span></a>
-<a class="sourceLine" id="cb10-38" data-line-number="38"><span class="co">#&gt; 97 0.4997 kloster</span></a>
-<a class="sourceLine" id="cb10-39" data-line-number="39"><span class="co">#&gt; 98 0.5583 look</span></a>
-<a class="sourceLine" id="cb10-40" data-line-number="40"><span class="co">#&gt; 99 0.5561 loot</span></a></code></pre></div>
+<a class="sourceLine" id="cb10-38" data-line-number="38"><span class="co">#&gt; 97 0.3214 keyslot</span></a>
+<a class="sourceLine" id="cb10-39" data-line-number="39"><span class="co">#&gt; 98 0.3124 kilo-oersted</span></a>
+<a class="sourceLine" id="cb10-40" data-line-number="40"><span class="co">#&gt; 99 0.172 koslo</span></a></code></pre></div>
 <p>The timing results indicate that sorting <span class="math inline">\(2 \times 10 ^ 5\)</span> tuples is on the order of 1/10th second, whereas the range query returned in less than a millisecond.</p>
 <p>Nearest neighbor searching requires a suitable distance function be defined for all types. There are two specialization points: the templates <code>scalar_diff</code>, which returns a possibly signed difference between to objects, and <code>scalar_dist</code>, which returns the distance along a single dimension. Currently, nearest neighbor distances are hardwired as the L2 norm of the returned scalar differences computed for each dimension. The computation above uses the following definitions.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">template</span>&lt;<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/class">class</a></span> InputIt1, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/class">class</a></span> InputIt2&gt;</a>
@@ -649,7 +649,7 @@
 <a class="sourceLine" id="cb11-30" data-line-number="30">}</a>
 <a class="sourceLine" id="cb11-31" data-line-number="31"></a>
 <a class="sourceLine" id="cb11-32" data-line-number="32">} <span class="co">// namespace kdtools</span></a></code></pre></div>
-<p>The <code>set_similarity</code> template is adapted from the STL <code>set_intersection</code> template and produces a number between 0 and 1. I have not attempted to prove this distance is metric, so the results may not be entirely correct. Also, there is no facility currently available to weight distances in different dimensions or override the default root-sum-of-squares algorithm for the multivariate distance.</p>
+<p>The <code>set_similarity</code> template is adapted from the Standard Library <code>set_intersection</code> template and produces a number between 0 and 1. I have not attempted to prove this distance is metric, so the results may not be entirely correct. Also, there is no facility currently available to weight distances in different dimensions or override the default root-sum-of-squares algorithm for the multivariate distance.</p>
 </div>
 <div id="indexing-with-pointer-arrays" class="section level3">
 <h3 class="hasAnchor">
@@ -689,40 +689,40 @@
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="kw">sort_pointers</span>(numbers, strings)</a>
 <a class="sourceLine" id="cb13-2" data-line-number="2"><span class="co">#&gt; Original order</span></a>
 <a class="sourceLine" id="cb13-3" data-line-number="3"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb13-4" data-line-number="4"><span class="co">#&gt; 0 0.1212 rebaked</span></a>
-<a class="sourceLine" id="cb13-5" data-line-number="5"><span class="co">#&gt; 1 0.9275 moulder</span></a>
-<a class="sourceLine" id="cb13-6" data-line-number="6"><span class="co">#&gt; 2 0.1821 semipeace</span></a>
+<a class="sourceLine" id="cb13-4" data-line-number="4"><span class="co">#&gt; 0 0.6864 nonnitrous</span></a>
+<a class="sourceLine" id="cb13-5" data-line-number="5"><span class="co">#&gt; 1 0.5562 transcendentalizing</span></a>
+<a class="sourceLine" id="cb13-6" data-line-number="6"><span class="co">#&gt; 2 0.358 platinate</span></a>
 <a class="sourceLine" id="cb13-7" data-line-number="7"><span class="co">#&gt; ...</span></a>
-<a class="sourceLine" id="cb13-8" data-line-number="8"><span class="co">#&gt; 208256 0.7345 zamora</span></a>
-<a class="sourceLine" id="cb13-9" data-line-number="9"><span class="co">#&gt; 208257 0.09865 unpiteously</span></a>
-<a class="sourceLine" id="cb13-10" data-line-number="10"><span class="co">#&gt; 208258 0.3436 reductive</span></a>
+<a class="sourceLine" id="cb13-8" data-line-number="8"><span class="co">#&gt; 208256 0.7355 erupt</span></a>
+<a class="sourceLine" id="cb13-9" data-line-number="9"><span class="co">#&gt; 208257 0.3222 unfretful</span></a>
+<a class="sourceLine" id="cb13-10" data-line-number="10"><span class="co">#&gt; 208258 0.7957 jow</span></a>
 <a class="sourceLine" id="cb13-11" data-line-number="11"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb13-12" data-line-number="12"><span class="co">#&gt; Order by less</span></a>
 <a class="sourceLine" id="cb13-13" data-line-number="13"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb13-14" data-line-number="14"><span class="co">#&gt; 0 0.0001486 aaee</span></a>
-<a class="sourceLine" id="cb13-15" data-line-number="15"><span class="co">#&gt; 1 0.002685 aaronical</span></a>
-<a class="sourceLine" id="cb13-16" data-line-number="16"><span class="co">#&gt; 2 0.005629 acardiac</span></a>
+<a class="sourceLine" id="cb13-14" data-line-number="14"><span class="co">#&gt; 0 0.0001425 abomasus</span></a>
+<a class="sourceLine" id="cb13-15" data-line-number="15"><span class="co">#&gt; 1 0.00221 abboud</span></a>
+<a class="sourceLine" id="cb13-16" data-line-number="16"><span class="co">#&gt; 2 0.002776 abide</span></a>
 <a class="sourceLine" id="cb13-17" data-line-number="17"><span class="co">#&gt; ...</span></a>
-<a class="sourceLine" id="cb13-18" data-line-number="18"><span class="co">#&gt; 208256 0.9987 yokel</span></a>
-<a class="sourceLine" id="cb13-19" data-line-number="19"><span class="co">#&gt; 208257 0.9983 zerlina</span></a>
-<a class="sourceLine" id="cb13-20" data-line-number="20"><span class="co">#&gt; 208258 0.9988 zenith</span></a>
+<a class="sourceLine" id="cb13-18" data-line-number="18"><span class="co">#&gt; 208256 0.9966 zinkenite</span></a>
+<a class="sourceLine" id="cb13-19" data-line-number="19"><span class="co">#&gt; 208257 0.9951 zymosis</span></a>
+<a class="sourceLine" id="cb13-20" data-line-number="20"><span class="co">#&gt; 208258 0.9958 zuidholland</span></a>
 <a class="sourceLine" id="cb13-21" data-line-number="21"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb13-22" data-line-number="22"><span class="co">#&gt; Order by greater</span></a>
 <a class="sourceLine" id="cb13-23" data-line-number="23"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb13-24" data-line-number="24"><span class="co">#&gt; 0 0.9988 zenith</span></a>
-<a class="sourceLine" id="cb13-25" data-line-number="25"><span class="co">#&gt; 1 0.9987 yokel</span></a>
-<a class="sourceLine" id="cb13-26" data-line-number="26"><span class="co">#&gt; 2 0.9983 zerlina</span></a>
+<a class="sourceLine" id="cb13-24" data-line-number="24"><span class="co">#&gt; 0 0.9966 zinkenite</span></a>
+<a class="sourceLine" id="cb13-25" data-line-number="25"><span class="co">#&gt; 1 0.9958 zuidholland</span></a>
+<a class="sourceLine" id="cb13-26" data-line-number="26"><span class="co">#&gt; 2 0.9951 zymosis</span></a>
 <a class="sourceLine" id="cb13-27" data-line-number="27"><span class="co">#&gt; ...</span></a>
-<a class="sourceLine" id="cb13-28" data-line-number="28"><span class="co">#&gt; 208256 0.005629 acardiac</span></a>
-<a class="sourceLine" id="cb13-29" data-line-number="29"><span class="co">#&gt; 208257 0.002685 aaronical</span></a>
-<a class="sourceLine" id="cb13-30" data-line-number="30"><span class="co">#&gt; 208258 0.0001486 aaee</span></a></code></pre></div>
+<a class="sourceLine" id="cb13-28" data-line-number="28"><span class="co">#&gt; 208256 0.0008373 abstriction</span></a>
+<a class="sourceLine" id="cb13-29" data-line-number="29"><span class="co">#&gt; 208257 0.00221 abboud</span></a>
+<a class="sourceLine" id="cb13-30" data-line-number="30"><span class="co">#&gt; 208258 0.0001425 abomasus</span></a></code></pre></div>
 <p>Note that the forward and reverse sorting do not give exactly the same result (in reverse) owing to ties.</p>
 </div>
 </div>
 <div id="conclusions" class="section level2">
 <h2 class="hasAnchor">
 <a href="#conclusions" class="anchor"></a>Conclusions</h2>
-<p>The kdtools package implements efficient sorting and searching of arbitary tuple-like object in C++. One of the major design decisions was to make the number of dimensions fixed at compile time. This is a reasonable tradeoff as these methods break down in high dimensions where search times will be no better than that of brute-force random searching. Nonetheless, a runtime-dimensioned extension would be easy to add and could allow working with runtime-determined types as is common in R. The current implementation is a demonstration, however it does illustrate the value of the STL as the algorithms are constructed from STL components. The generic nature of the kdtools implementation is an attractive feature as it permits flexibility and can be adapted to arbitrary tuple-like data as needed. Modern development of C++ has emphasized tuple-style data and algorithms and kdtools extends these developments.</p>
+<p>The kdtools package implements efficient sorting and searching of arbitary tuple-like object in C++. One of the major design decisions was to make the number of dimensions fixed at compile time. This is a reasonable tradeoff as these methods break down in high dimensions where search times will be no better than that of brute-force random searching. Nonetheless, a runtime-dimensioned extension would be easy to add and could allow working with runtime-determined types as is common in R. The current implementation is a demonstration, however it does illustrate the value of the Standard Library as the algorithms are constructed from Standard Library components. The generic nature of the kdtools implementation is an attractive feature as it permits flexibility and can be adapted to arbitrary tuple-like data as needed. Modern development of C++ has emphasized tuple-style data and algorithms and kdtools extends these developments.</p>
 </div>
   </div>
 

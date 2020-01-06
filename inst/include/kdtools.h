@@ -689,6 +689,15 @@ struct n_best
       m_q.pop();
     }
   }
+  template <typename OutIter>
+  void copy_with_distances(OutIter outp)
+  {
+    while (!m_q.empty())
+    {
+      *outp++ = m_q.top();
+      m_q.pop();
+    }
+  }
 };
 
 template <size_t I,

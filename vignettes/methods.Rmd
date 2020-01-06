@@ -10,7 +10,7 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-use_cached_data = FALSE
+use_cached_data = TRUE
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -27,19 +27,19 @@ bench_ntrials = 21
 
 ## Introduction
 
-Sorting and searching are fundamental operations in computer and data science. The objective of the ```kdtools``` is to expose a C++ header file implementing efficient sorting and searching methods for multidimensional tuple-like data. The interface mirrors that of the  [C++ Standard Template Library (STL)](http://en.cppreference.com/w/) sorting and searching functions. It is a single header-only library with no external dependencies other than ```std```.
+Sorting and searching are fundamental operations in computer and data science. The objective of the ```kdtools``` is to expose a C++ header file implementing efficient sorting and searching methods for multidimensional tuple-like data. The interface mirrors that of the  [C++ Standard Library](http://en.cppreference.com/w/) sorting and searching functions. It is a single header-only library with no external dependencies other than ```std```.
 
-A common approach to improving search performance is to place data into an ordered tree structure, the most common being a binary tree and its variants. Computer textbooks and introductory courses are littered with examples of tree structures, however it [has been pointed out by practitioners](http://scottmeyers.blogspot.com/2015/09/should-you-be-using-something-instead.html) that many tree-type data structures have considerable storage overhead and poor memory locality. This results from using linked-list-like pointers to connect nodes. In many cases, a fully or partially sorted sequence combined with binary search will outperform pointer-based trees. Indeed, [the STL contains a set of algorithms](http://en.cppreference.com/w/cpp/algorithm) for sorting or partitioning a data sequence and searching within partitioned sequences.
+A common approach to improving search performance is to place data into an ordered tree structure, the most common being a binary tree and its variants. Computer textbooks and introductory courses are littered with examples of tree structures, however it [has been pointed out by practitioners](http://scottmeyers.blogspot.com/2015/09/should-you-be-using-something-instead.html) that many tree-type data structures have considerable storage overhead and poor memory locality. This results from using linked-list-like pointers to connect nodes. In many cases, a fully or partially sorted sequence combined with binary search will outperform pointer-based trees. Indeed, [the Standard Library contains a set of algorithms](http://en.cppreference.com/w/cpp/algorithm) for sorting or partitioning a data sequence and searching within partitioned sequences.
 
-A limitation of the STL algorithms and data structures is that they can only be ordered in a single dimension. Sort keys can possess higher cardinality however comparison operators and ordering are unidimensional. This is suboptimal for data that are intrinsically multidimensional, such as geographical coordinates or other multivariate data. In multiple dimensions, it is preferred to order a sequence of keys such the average distance between neighboring pairs in the sequence is small. There exist a vast array of techniques to accomplish sequence localization; however I will only discuss one known as the [kd-tree](https://en.wikipedia.org/wiki/K-d_tree).
+A limitation of the Standard Library algorithms and data structures is that they can only be ordered in a single dimension. Sort keys can possess higher cardinality however comparison operators and ordering are unidimensional. This is suboptimal for data that are intrinsically multidimensional, such as geographical coordinates or other multivariate data. In multiple dimensions, it is preferred to order a sequence of keys such the average distance between neighboring pairs in the sequence is small. There exist a vast array of techniques to accomplish sequence localization; however I will only discuss one known as the [kd-tree](https://en.wikipedia.org/wiki/K-d_tree).
 
 A kd-tree is a type of binary tree that cycles among the dimensions of its stored objects at each level of the tree hierarchy. In the case of spatial data, the root node will contain the median key in the x-direction and each of its daughter nodes will contain the median in the y-direction of their respective partitions. Subsequent daughter nodes will again contain medians in the x-direction, and so on until there are no additional keys to the left or right. Searching a kd-tree involves recursive comparisons, cycling among the dimensions, until a leaf-node is encountered. Most searching operations can be accomplished in logarithmic time complexity yielding an efficient method.
 
 Precisely as an ordinary binary tree can be replaced by a sorted range, a sequence of multidimensional elements can be sorted, in-place if desired, via recursive partitioning following the kd-tree scheme. Divide-and-conquer recursive partitioning is a well-known sorting algorithm and is the basis of the [quicksort algorithm](https://en.wikipedia.org/wiki/Quicksort). Partitioning a sequence places all elements less than (or more generally meeting some predicate) to the left of a selected key, while all elements greater-than-or-equal-to follow to the right. The kd-sort algorithm presented here simply modifies quicksort to cycle among the dimensions of the stored elements. Searching follows exactly as the kd-tree except that nodes correspond to pivot-elements in the linear array.
 
-Implementation of ```kd_sort``` enables a set of additional algorithms for searching and nearest neighbor queries. The following table gives the exposed functions and corresponding STL routines.
+Implementation of ```kd_sort``` enables a set of additional algorithms for searching and nearest neighbor queries. The following table gives the exposed functions and corresponding Standard Library routines.
 
-Function templates | STL analog | Outcome
+Function templates | SL analog | Outcome
 -----------------|--------------|------------------------------------
 kd_sort             |  sort   | sorts range
 kd_is_sorted        | is_sorted | returns ```true``` if sorted
@@ -50,7 +50,7 @@ kd_equal_range        | equal_range | returns an iterator pair spanning all occu
 kd_range_query       |  lower_bound, upper_bound     | finds all elements not less than lower and less than upper
 kd_nearest_neighbor   |           | finds nearest neighbor of key
 kd_nearest_neighbors, kd_nn_indices  |            | finds k-nearest neighbors of key
-lex_sort         |              | ordinary STL sort using kd_less for comparison
+lex_sort         |              | ordinary SL sort using kd_less for comparison
 
 
 ## Sorting
@@ -72,7 +72,7 @@ void kd_sort(Iter first, Iter last)
   }
 }
 ```
-The ```median_part``` function is a thin wrapper around the [```nth_element```](http://en.cppreference.com/w/cpp/algorithm/nth_element) function from the standard library, which is used to find the median value in the current dimension. Once the median is identified, it is passed to the standard library [```partition```](http://en.cppreference.com/w/cpp/algorithm/partition) function, which places all values less than the median to the left of the pivot element and all greater-than or equal-to to the right.
+The ```median_part``` function is a thin wrapper around the [```nth_element```](http://en.cppreference.com/w/cpp/algorithm/nth_element) function from the standard library, which is used to find the median value in the current dimension. Elements to the left of the nth element are not greater than the nth element and elements to the right are not less than the nth element. This allows searching left or right depending on whether the sought value is not greater than the median or not less than the median (ties must search both directions).
 
 Once the first dimension is partitioned, the ranges right and left of the pivot are partitioned, and so on until first and last span a single or no value. The dimension index ```I``` is incremented at compile-time using template metaprogramming. The ```value``` member of the templated struct ```next_dim``` holds the incremented value of ```I``` that has been wrapped to cycle through successive dimensions of ```TupleType```. The result of ```kd_sort``` is a sequence ordered as if it were inserted into a kd-tree data structure. The following figure illustrates the resulting order in 2-dimensions.
 
@@ -180,11 +180,11 @@ ggplot(res) +
        y = "Time (seconds)")
 ```
 
-In the above results, ```lex_sort``` is the STL built-in [```std::sort```](http://en.cppreference.com/w/cpp/algorithm/sort) algorithm using ```kd_less``` as the predicate. The results indicate that ```kd_sort``` is reasonably fast, requiring roughly twice the time as the STL built-in sorting algorithm. Because of the divide-and-conquer nature of ```kd_sort```, it is trivially parallelizable. The threaded version is equal to or faster than the regular sort. Performance comparable to the build-in STL ```sort``` function indicates that this reference implementation is reasonable. The computational complexity appears to scale linearly in the number of tuples in all cases.
+In the above results, ```lex_sort``` is the Standard Library built-in [```std::sort```](http://en.cppreference.com/w/cpp/algorithm/sort) algorithm using ```kd_less``` as the predicate. The results indicate that ```kd_sort``` is reasonably fast, requiring roughly twice the time as the Standard Library built-in sorting algorithm. Because of the divide-and-conquer nature of ```kd_sort```, it is trivially parallelizable. The threaded version is equal to or faster than the regular sort. Performance comparable to the build-in Standard Library ```sort``` function indicates that this reference implementation is reasonable. The computational complexity appears to scale linearly in the number of tuples in all cases.
 
 ### Multidimensional comparisons
 
-To ensure the correct behavior in the presence of multiple ties, or even when all keys in one dimension are equal, the ```kd_less``` predicate implements circular lexicographic comparison. If elements in one dimension are tied, the next dimension is interrogated to break the tie. The comparisons cycle from trailing dimensions to leading dimensions using modulo arithmetic. It is implemented as a recursive, templated function object with the dimension index incremented at compile-time. SFINAE is used to stop the compile-time iteration after [```tuple_size<TupleType>::value```](http://en.cppreference.com/w/cpp/utility/tuple/tuple_size) steps.
+To ensure the correct behavior in the presence of multiple ties, or even when all keys in one dimension are equal, the ```kd_less``` predicate implements circular lexicographic comparison. If elements in one dimension are tied, the next dimension is interrogated to break the tie. The comparisons cycle from trailing dimensions to leading dimensions using modulo arithmetic. It is implemented as a recursive, templated function object with the dimension index incremented at compile-time. The recursion is terminated using [constexpr if](https://en.cppreference.com/w/cpp/language/if).
 
 ```{Rcpp eval=FALSE}
 template <size_t I, size_t K = 0>
@@ -223,7 +223,7 @@ Notice that ```kd_sort``` is a variant of the quicksort algorithm in one dimensi
 
 ### Searching
 
-Once data are ordered appropriately, searching can be achieved efficiently. The ```kdtools``` package provides analogs of the STL [```lower_bound```](http://en.cppreference.com/w/cpp/algorithm/lower_bound), [```upper_bound```](http://en.cppreference.com/w/cpp/algorithm/upper_bound), [```equal_range```](http://en.cppreference.com/w/cpp/algorithm/equal_range) and [```binary_search```](http://en.cppreference.com/w/cpp/algorithm/binary_search) functions for querying sorted ranges. An additional function, ```kd_range_query```, does efficient searching within a boxed region.
+Once data are ordered appropriately, searching can be achieved efficiently. The ```kdtools``` package provides analogs of the Standard Library [```lower_bound```](http://en.cppreference.com/w/cpp/algorithm/lower_bound), [```upper_bound```](http://en.cppreference.com/w/cpp/algorithm/upper_bound), [```equal_range```](http://en.cppreference.com/w/cpp/algorithm/equal_range) and [```binary_search```](http://en.cppreference.com/w/cpp/algorithm/binary_search) functions for querying sorted ranges. An additional function, ```kd_range_query```, does efficient searching within a boxed region.
 
 The ```kd_lower_bound```, ```kd_upper_bound``` and ```kd_equal_range``` algorithms behave differently than their unidimensional analogs. This is because the only reasonable definition of multidimensional less is to require less in all dimensions simultaneously. As illustrated below, this leads to cases where some, but not all, elements are less to be included in the interval spanned by ```kd_lower_bound```, ```kd_upper_bound``` and ```kd_equal_range```. In other words, in a single dimension, these routines are both necessary and sufficient, whereas in multiple-dimensions, they are necessary, but not sufficient to uniquely identify elements in a boxed region. 
 
@@ -308,16 +308,13 @@ The [Boost Geometry library](http://www.boost.org/doc/libs/release/libs/geometry
 #include <boost/geometry/index/rtree.hpp>
 #include <boost/geometry/geometries/box.hpp>
 #include <boost/geometry/geometries/register/box.hpp>
-#include <boost/geometry/geometries/register/point.hpp>
+#include <boost/geometry/geometries/adapted/std_array.hpp>
 
-using key_type = std::pair<double, double>;
+using key_type = std::array<double, 2>;
 using box_type = std::pair<key_type, key_type>;
 using range_type = std::vector<key_type>;
 
-BOOST_GEOMETRY_REGISTER_POINT_2D(key_type, double,
-                                 boost::geometry::cs::cartesian,
-                                 first, second)
-  
+BOOST_GEOMETRY_REGISTER_STD_ARRAY_CS(cs::cartesian)
 BOOST_GEOMETRY_REGISTER_BOX(box_type, key_type, first, second)
   
 template <typename T, typename U>
@@ -347,7 +344,7 @@ Rcpp::List time_build(int n, int m)
 
   auto prep_data = [&]{
     std::generate(begin(data), end(data), []{
-      return std::make_pair(R::runif(0, 1), R::runif(0, 1));
+      return key_type{{R::runif(0, 1), R::runif(0, 1)}};
     });
   };
   
@@ -403,12 +400,11 @@ Rcpp::List time_query(int n, int m)
   Rcpp::NumericVector time(3);
     
   range_type data(n), res;
-  key_type p1 = std::make_pair(0.1, 0.1),
-    p2 = std::make_pair(0.2, 0.2);
+  key_type p1{{0.1, 0.1}}, p2{{0.2, 0.2}};
 
   auto prep_data = [&]{
     std::generate(begin(data), end(data), []{
-      return std::make_pair(R::runif(0, 1), R::runif(0, 1));
+      return key_type{{R::runif(0, 1), R::runif(0, 1)}};
     });
     kdtools::kd_sort_threaded(begin(data), end(data));
     res.clear();
@@ -429,7 +425,7 @@ Rcpp::List time_query(int n, int m)
   
   auto prep_rt_1 = [&]{
     std::generate(begin(data), end(data), []{
-      return std::make_pair(R::runif(0, 1), R::runif(0, 1));
+      return key_type{{R::runif(0, 1), R::runif(0, 1)}};
     });
     rt1.clear();
     rt1.insert(begin(data), end(data));
@@ -454,7 +450,7 @@ Rcpp::List time_query(int n, int m)
   
   auto prep_rt_2 = [&]{
     std::generate(begin(data), end(data), []{
-      return std::make_pair(R::runif(0, 1), R::runif(0, 1));
+      return key_type{{R::runif(0, 1), R::runif(0, 1)}};
     });
     rt2.clear();
     rt2.insert(begin(data), end(data));
@@ -514,17 +510,14 @@ The kdtools package also provides routines for nearest- and k-nearest- neighbor 
 #include <boost/geometry/index/rtree.hpp>
 #include <boost/geometry/geometries/box.hpp>
 #include <boost/geometry/geometries/register/box.hpp>
-#include <boost/geometry/geometries/register/point.hpp>
+#include <boost/geometry/geometries/adapted/std_array.hpp>
 
-using key_type = std::pair<double, double>;
+using key_type = std::array<double, 2>;
 using box_type = std::pair<key_type, key_type>;
 using range_type = std::vector<key_type>;
 
-BOOST_GEOMETRY_REGISTER_POINT_2D(key_type, double,
-                                 boost::geometry::cs::cartesian,
-                                 first, second);
-  
-BOOST_GEOMETRY_REGISTER_BOX(box_type, key_type, first, second);
+BOOST_GEOMETRY_REGISTER_STD_ARRAY_CS(cs::cartesian)
+BOOST_GEOMETRY_REGISTER_BOX(box_type, key_type, first, second)
   
 template <typename T, typename U>
 double time_it(T x, U u, size_t n)
@@ -550,11 +543,11 @@ Rcpp::List time_nn(int n, int m)
   Rcpp::NumericVector time(6);
     
   range_type data(n), res;
-  key_type p = std::make_pair(0.1, 0.1);
+  key_type p{{0.1, 0.1}};
   
   auto prep_data = [&]{
     std::generate(begin(data), end(data), []{
-      return std::make_pair(R::runif(0, 1), R::runif(0, 1));
+      return key_type{{R::runif(0, 1), R::runif(0, 1)}};
     });
     kdtools::kd_sort_threaded(begin(data), end(data));
     res.clear();
@@ -575,7 +568,7 @@ Rcpp::List time_nn(int n, int m)
   
   auto prep_rt_1 = [&]{
     std::generate(begin(data), end(data), []{
-      return std::make_pair(R::runif(0, 1), R::runif(0, 1));
+      return key_type{{R::runif(0, 1), R::runif(0, 1)}};
     });
     rt1.clear();
     rt1.insert(begin(data), end(data));
@@ -598,7 +591,7 @@ Rcpp::List time_nn(int n, int m)
   
   auto prep_rt_2 = [&]{
     std::generate(begin(data), end(data), []{
-      return std::make_pair(R::runif(0, 1), R::runif(0, 1));
+      return key_type{{R::runif(0, 1), R::runif(0, 1)}};
     });
     rt2.clear();
     rt2.insert(begin(data), end(data));
@@ -910,7 +903,7 @@ double scalar_diff(const std::string& lhs, const std::string& rhs)
 } // namespace kdtools
 ```
 
-The ```set_similarity``` template is adapted from the STL ```set_intersection``` template and produces a number between 0 and 1. I have not attempted to prove this distance is metric, so the results may not be entirely correct. Also, there is no facility currently available to weight distances in different dimensions or override the default root-sum-of-squares algorithm for the multivariate distance.
+The ```set_similarity``` template is adapted from the Standard Library ```set_intersection``` template and produces a number between 0 and 1. I have not attempted to prove this distance is metric, so the results may not be entirely correct. Also, there is no facility currently available to weight distances in different dimensions or override the default root-sum-of-squares algorithm for the multivariate distance.
 
 ### Indexing with pointer arrays
 
@@ -959,5 +952,5 @@ Note that the forward and reverse sorting do not give exactly the same result (i
 
 ## Conclusions
 
-The kdtools package implements efficient sorting and searching of arbitary tuple-like object in C++. One of the major design decisions was to make the number of dimensions fixed at compile time. This is a reasonable tradeoff as these methods break down in high dimensions where search times will be no better than that of brute-force random searching. Nonetheless, a runtime-dimensioned extension would be easy to add and could allow working with runtime-determined types as is common in R. The current implementation is a demonstration, however it does illustrate the value of the STL as the algorithms are constructed from STL components. The generic nature of the kdtools implementation is an attractive feature as it permits flexibility and can be adapted to arbitrary tuple-like data as needed. Modern development of C++ has emphasized tuple-style data and algorithms and kdtools extends these developments.
+The kdtools package implements efficient sorting and searching of arbitary tuple-like object in C++. One of the major design decisions was to make the number of dimensions fixed at compile time. This is a reasonable tradeoff as these methods break down in high dimensions where search times will be no better than that of brute-force random searching. Nonetheless, a runtime-dimensioned extension would be easy to add and could allow working with runtime-determined types as is common in R. The current implementation is a demonstration, however it does illustrate the value of the Standard Library as the algorithms are constructed from Standard Library components. The generic nature of the kdtools implementation is an attractive feature as it permits flexibility and can be adapted to arbitrary tuple-like data as needed. Modern development of C++ has emphasized tuple-style data and algorithms and kdtools extends these developments.
 

@@ -1,0 +1,15 @@
+# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+
+language: R
+cache: packages
+
+before_install:
+  - mkdir -p ~/.R
+  - echo "CXX_STD = CXX17" > ~/.R/Makevars
+
+addons:
+  apt:
+    sources:
+      - sourceline: 'ppa:ubuntu-toolchain-r/test'
+    packages:
+      - gcc-7

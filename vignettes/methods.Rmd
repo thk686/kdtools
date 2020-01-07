@@ -22,7 +22,7 @@ library(printr)
 library(scales)
 theme_set(theme_classic())
 bench_ntuples = 1e7
-bench_ntrials = 21
+bench_ntrials = 7
 ```
 
 ## Introduction
@@ -180,7 +180,7 @@ ggplot(res) +
        y = "Time (seconds)")
 ```
 
-In the above results, ```lex_sort``` is the Standard Library built-in [```std::sort```](http://en.cppreference.com/w/cpp/algorithm/sort) algorithm using ```kd_less``` as the predicate. The results indicate that ```kd_sort``` is reasonably fast, requiring roughly twice the time as the Standard Library built-in sorting algorithm. Because of the divide-and-conquer nature of ```kd_sort```, it is trivially parallelizable. The threaded version is equal to or faster than the regular sort. Performance comparable to the build-in Standard Library ```sort``` function indicates that this reference implementation is reasonable. The computational complexity appears to scale linearly in the number of tuples in all cases.
+In the above results, ```lex_sort``` is the Standard Library built-in [```std::sort```](http://en.cppreference.com/w/cpp/algorithm/sort) algorithm using ```kd_less``` as the predicate. The results indicate that ```kd_sort``` is reasonably fast, requiring roughly twice the time as the Standard Library built-in sorting algorithm. Because of the divide-and-conquer nature of ```kd_sort```, it is trivially parallelizable. The threaded version is equal to or faster than the regular sort. Performance comparable to the build-in Standard Library ```sort``` function indicates that this reference implementation is reasonable.
 
 ### Multidimensional comparisons
 
@@ -294,7 +294,7 @@ ggplot(df, aes(x, y)) +
 
 ### Performance comparison to Boost Geometry
 
-The [Boost Geometry library](http://www.boost.org/doc/libs/release/libs/geometry/) is a highly sophisticated and performant framework for working with geometric features. It includes an [R-Tree index](https://en.wikipedia.org/wiki/R-tree) that allows access to objects within a bounding region in logarithmic time. Here I compare the speed of building and querying a collection of points. The only purpose of this comparison is to look for large (i.e., 5 to 10 fold) differences, which would indicate a problem in the implementation. Small differences in measured times are probably not meaningful and will likely change on different systems. Reported results are the median of 21 trials using 1e7 tuples.
+The [Boost Geometry library](http://www.boost.org/doc/libs/release/libs/geometry/) is a highly sophisticated and performant framework for working with geometric features. It includes an [R-Tree index](https://en.wikipedia.org/wiki/R-tree) that allows access to objects within a bounding region in logarithmic time. Here I compare the speed of building and querying a collection of points. The only purpose of this comparison is to look for large (i.e., 5 to 10 fold) differences, which would indicate a problem in the implementation. Small differences in measured times are probably not meaningful and will likely change on different systems. Reported results are the median of `r bench_ntrials` trials using `r bench_ntuples` tuples.
 
 ```{Rcpp include=FALSE}
 // [[Rcpp::depends(BH)]]
@@ -351,22 +351,22 @@ Rcpp::List time_build(int n, int m)
   auto do_kd_sort = [&]{ kdtools::kd_sort(begin(data), end(data)); };  
 
   auto t = time_it(do_kd_sort, prep_data, m);
-  test[0] = "kd_sort inplace";
-  time[0] = t;
+  test[1] = "kd_sort inplace";
+  time[1] = t;
 
   auto do_kd_sort_copy =
     [&]{ range_type x(data); kdtools::kd_sort(begin(x), end(x)); };  
 
   t = time_it(do_kd_sort_copy, prep_data, m);
-  test[1] = "kd_sort w/ copy";
-  time[1] = t;
+  test[2] = "kd_sort w/ copy";
+  time[2] = t;
 
   auto do_kd_sort_threaded =
     [&]{ kdtools::kd_sort_threaded(begin(data), end(data)); };  
 
   t = time_it(do_kd_sort_threaded, prep_data, m);
-  test[2] = "kd_sort_threaded";
-  time[2] = t;
+  test[0] = "kd_sort_threaded";
+  time[0] = t;
   
   using rtree_type_1 = boost::geometry::index::rtree<key_type,
                         boost::geometry::index::linear<16>>;

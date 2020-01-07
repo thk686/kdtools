@@ -5,8 +5,7 @@ cache: packages
 
 before_install:
   - mkdir -p ~/.R
-  - echo 'CXX17 = g++-7 -std=gnu++17' >> ~/.R/Makevars
-  - cat ~/.R/Makevars
+  - echo 'CXX17 = g++-7 -std=gnu++17 -fPIC' >> ~/.R/Makevars
 
 addons:
   apt:

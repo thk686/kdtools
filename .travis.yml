@@ -17,8 +17,5 @@ addons:
     packages:
       - g++-7
 
-env:
-  - USE_CXX17=YES
-
 after_success:
   - Rscript -e 'covr::codecov()'

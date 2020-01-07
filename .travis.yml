@@ -3,11 +3,12 @@
 language: R
 cache: packages
 
+#  - echo 'CXX = gcc-7 -std=gnu++17' >> ~/.R/Makevars
+
 before_install:
   - mkdir -p ~/.R
   - echo 'PKG_CPPFLAGS = -I"../inst/include" -I"../include"' > ~/.R/Makevars
   - echo 'CXX_STD = CXX17' >> ~/.R/Makevars
-#  - echo 'CXX = gcc-7 -std=gnu++17' >> ~/.R/Makevars
   - cat ~/.R/Makevars
 
 addons:

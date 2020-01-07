@@ -3,3 +3,4 @@
 language: R
 cache: packages
 dist: bionic
+compiler: clang

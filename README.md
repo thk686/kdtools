@@ -37,31 +37,32 @@ df <- kd_sort(data.frame(a = runif(12),
                          c = sample(month.name),
                          stringsAsFactors = FALSE))
 print(df)
-#>             a b         c
-#> 5  0.07985814 1    August
-#> 12 0.23057540 1  February
-#> 11 0.02447241 0  November
-#> 7  0.15839982 1      July
-#> 2  0.33232334 1       May
-#> 1  0.06414051 1   October
-#> 3  0.36617135 2     March
-#> 6  0.70503899 0     April
-#> 8  0.55539120 0  December
-#> 9  0.73120968 1   January
-#> 4  0.99288002 3      June
-#> 10 0.88029940 1 September
+#>            a b         c
+#> 12 0.2602803 1      July
+#> 2  0.2614031 0      June
+#> 10 0.3507947 0     March
+#> 6  0.3645971 1  November
+#> 11 0.0828512 2   October
+#> 5  0.4375274 3 September
+#> 3  0.4402135 0     April
+#> 1  0.8794032 1    August
+#> 4  0.9408559 0   January
+#> 8  0.4427723 1  December
+#> 9  0.8321377 1  February
+#> 7  0.5745768 1       May
 lower <- list(0.1, 1L, "August")
 upper <- list(0.9, 4L, "September")
 i <- kd_rq_indices(df, lower, upper)
 print(i)
-#> [1]  2  4  5  7 10
+#> [1]  1  4  8 10 11 12
 df[i, ]
 #>            a b        c
-#> 12 0.2305754 1 February
-#> 7  0.1583998 1     July
-#> 2  0.3323233 1      May
-#> 3  0.3661713 2    March
-#> 9  0.7312097 1  January
+#> 12 0.2602803 1     July
+#> 6  0.3645971 1 November
+#> 1  0.8794032 1   August
+#> 8  0.4427723 1 December
+#> 9  0.8321377 1 February
+#> 7  0.5745768 1      May
 ```
 
 **Note: Switching to C++17 broke CI (I’d be grateful for a pull-request
@@ -70,6 +71,8 @@ configuration). The code builds and checks fine on my systems.**
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/kdtools)](https://cran.r-project.org/package=kdtools)
+[![Travis build
+status](https://travis-ci.org/thk686/kdtools.svg?branch=master)](https://travis-ci.org/thk686/kdtools)
 [![CircleCI build
 status](https://circleci.com/gh/thk686/kdtools.svg?style=svg)](https://circleci.com/gh/thk686/kdtools)
 [![AppVeyor build

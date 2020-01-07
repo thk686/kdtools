@@ -5,7 +5,8 @@ cache: packages
 
 before_install:
   - mkdir -p ~/.R
-  - echo "CXX_STD = CXX17" > ~/.R/Makevars
+  - echo 'PKG_CPPFLAGS = -I"../inst/include" -I"../include"' > ~/.R/Makevars
+  - echo 'CXX_STD = CXX17' >> ~/.R/Makevars
 
 addons:
   apt:

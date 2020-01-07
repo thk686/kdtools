@@ -1,3 +1,10 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^\.travis\.yml$
+^\.circleci$
+^appveyor\.yml$
+^codecov\.yml$
+^LICENSE\.md$
+^README\.Rmd$
+^cran-comments\.md$
+^docs$

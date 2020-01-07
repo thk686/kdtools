@@ -3,12 +3,11 @@
 language: R
 cache: packages
 
-
 before_install:
   - mkdir -p ~/.R
   - echo 'PKG_CPPFLAGS = -I"../inst/include" -I"../include"' > ~/.R/Makevars
   - echo 'CXX_STD = CXX17' >> ~/.R/Makevars
-  - echo 'CXX = g++-7 -std=gnu++17' >> ~/.R/Makevars
+  - echo 'CXX17 = g++-7' >> ~/.R/Makevars
   - cat ~/.R/Makevars
 
 addons:
@@ -20,3 +19,6 @@ addons:
 
 env:
   - USE_CXX17=YES
+
+after_success:
+  - Rscript -e 'covr::codecov()'

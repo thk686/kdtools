@@ -5,8 +5,6 @@ cache: packages
 
 before_install:
   - mkdir -p ~/.R
-  - echo 'PKG_CPPFLAGS = -I"../inst/include" -I"../include"' > ~/.R/Makevars
-  - echo 'CXX_STD = CXX17' >> ~/.R/Makevars
   - echo 'CXX17 = g++-7' >> ~/.R/Makevars
   - cat ~/.R/Makevars
 

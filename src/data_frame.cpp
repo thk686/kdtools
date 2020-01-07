@@ -162,15 +162,6 @@ IntegerVector kd_order_df(const List& df,
   return x + 1;
 }
 
-template <typename Iter,  typename Pred>
-Iter find_pivot(Iter first, Iter last, const Pred& pred) {
-  using T = iter_value_t<Iter>;
-  auto pivot = middle_of(first, last);
-  return partition_point(first, pivot, [&](const T& x){
-    return pred(x, *pivot);
-  });
-}
-
 struct less_nth_df
 {
   less_nth_df(const List& df, const IntegerVector& idx,
@@ -321,7 +312,7 @@ void kd_rq_df_(Iter first, Iter last, OutIter outp,
                const Within& within)
 {
   if (distance(first, last) > 32) {
-    auto pivot = find_pivot(first, last, pred);
+    auto pivot = middle_of(first, last);
     if (within(*pivot)) *outp++ = *pivot;
     if (less_nth.search_left(*pivot))
       kd_rq_df_(first, pivot, outp, pred.next_dim(), less_nth.next_dim(), within);
@@ -349,7 +340,8 @@ std::vector<int> kd_rq_df_no_validation(const List& df,
   std::vector<int> res;
   auto oi = std::back_inserter(res);
   kd_rq_df_(begin(x), end(x), oi, pred, ln, wi);
-  std::transform(begin(res), end(res), begin(res), [](int x){ return x + 1; });
+  std::transform(begin(res), end(res),
+                 begin(res), [](int x){ return x + 1; });
   return res;
 }
 

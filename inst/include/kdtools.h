@@ -249,31 +249,12 @@ kd_compare<Pred, I> make_kd_compare(const Pred& pred)
 template <typename T>
 using iter_value_t = typename iterator_traits<T>::value_type;
 
-template <size_t I, typename Iter>
-Iter find_pivot(Iter first, Iter last)
-{
-  using T = iter_value_t<Iter>;
-  auto pivot = middle_of(first, last);
-  return partition_point(first, pivot, [&](const T& x){
-    return less_nth<I>()(x, *pivot);
-  });
-}
-
-template <typename Iter, typename Pred>
-Iter adjust_pivot(Iter first, Iter pivot, Pred pred)
-{
-  using T = iter_value_t<Iter>;
-  return partition(first, pivot, [&](const T& x){
-    return pred(x, *pivot);
-  });
-}
-
 template <typename Iter, typename Pred>
 Iter median_part(Iter first, Iter last, Pred pred)
 {
   auto pivot = middle_of(first, last);
   nth_element(first, pivot, last, pred);
-  return adjust_pivot(first, pivot, pred);
+  return pivot;
 }
 
 template <size_t I, typename Iter>
@@ -293,10 +274,9 @@ void kd_sort(Iter first, Iter last)
 template <typename Iter, typename Pred>
 bool check_partition(Iter first, Iter pivot, Iter last, Pred pred)
 {
-  using T = iter_value_t<Iter>;
-  return is_partitioned(first, last, [&](const T& x){
-    return pred(x, *pivot);
-  });
+  while (first != pivot) if (pred(*pivot, *first++)) return false;
+  while (first != last) if (pred(*first++, *pivot)) return false;
+  return true;
 }
 
 template <size_t I, typename Iter>
@@ -306,7 +286,7 @@ bool kd_is_sorted(Iter first, Iter last)
   constexpr auto J = next_dim<I, TupleType>;
   if (distance(first, last) < 2) return true;
   auto pred = kd_less<I>();
-  auto pivot = find_pivot<I>(first, last);
+  auto pivot = middle_of(first, last);
   return check_partition(first, pivot, last, pred) &&
     kd_is_sorted<J>(first, pivot) &&
     kd_is_sorted<J>(next(pivot), last);
@@ -333,7 +313,7 @@ bool kd_is_sorted(Iter first, Iter last, const Compare& comp)
   constexpr auto J = next_dim<I, TupleType>;
   if (distance(first, last) < 2) return true;
   auto pred = make_kd_compare<I>(comp);
-  auto pivot = find_pivot<I>(first, last);
+  auto pivot = middle_of(first, last);
   return check_partition(first, pivot, last, pred) &&
     kd_is_sorted<J>(first, pivot, comp) &&
     kd_is_sorted<J>(next(pivot), last, comp);
@@ -437,7 +417,7 @@ Iter kd_lower_bound(Iter first, Iter last, const TupleType& value)
   constexpr auto J = next_dim<I, TupleType>;
   if (distance(first, last) > 1)
   {
-    auto pivot = find_pivot<I>(first, last);
+    auto pivot = middle_of(first, last);
     if (none_less(*pivot, value))
       return kd_lower_bound<J>(first, pivot, value);
     if (all_less(*pivot, value))
@@ -457,7 +437,7 @@ Iter kd_upper_bound(Iter first, Iter last, const TupleType& value)
   constexpr auto J = next_dim<I, TupleType>;
   if (distance(first, last) > 1)
   {
-    auto pivot = find_pivot<I>(first, last);
+    auto pivot = middle_of(first, last);
     if (all_less(value, *pivot))
       return kd_upper_bound<J>(first, pivot, value);
     if (none_less(value, *pivot))
@@ -504,27 +484,36 @@ Iter kd_nearest_neighbor(Iter first, Iter last, const TupleType& value)
   constexpr auto J = next_dim<I, TupleType>;
   if (distance(first, last) > 1)
   {
-    auto pivot = find_pivot<I>(first, last);
-    auto search_left = less_nth<I>()(value, *pivot);
-    auto search = search_left ?
-      kd_nearest_neighbor<J>(first, pivot, value) :
-        kd_nearest_neighbor<J>(next(pivot), last, value);
-    auto min_dist = l2dist(*pivot, value);
-    if (search == last) search = pivot;
-    else
-    {
-      auto sdist = l2dist(*search, value);
-      if (sdist < min_dist) min_dist = sdist;
-      else search = pivot;
-    }
-    if (dist_nth<I>(value, *pivot) < min_dist)
-    {
+    auto pivot = middle_of(first, last);
+    if (equal_nth<I>()(*pivot, value)) {
+      auto left_res = kd_nearest_neighbor<J>(first, pivot, value);
+      auto right_res = kd_nearest_neighbor<J>(next(pivot), last, value);
+      if (l2dist(*right_res, value) < l2dist(*left_res, value)) {
+        return right_res;
+      } else {
+        return left_res;
+      }
+    } else {
+      auto search_left = less_nth<I>()(value, *pivot);
+      auto search = search_left ?
+        kd_nearest_neighbor<J>(first, pivot, value) :
+          kd_nearest_neighbor<J>(next(pivot), last, value);
+      auto min_dist = l2dist(*pivot, value);
+      if (search == last) {
+        search = pivot;
+      } else {
+        auto sdist = l2dist(*search, value);
+        if (sdist < min_dist) min_dist = sdist;
+        else search = pivot;
+      }
+      if (dist_nth<I>(value, *pivot) < min_dist) {
       auto s2 = search_left ?
         kd_nearest_neighbor<J>(next(pivot), last, value) :
           kd_nearest_neighbor<J>(first, pivot, value);
       if (s2 != last && l2dist(*s2, value) < min_dist) search = s2;
+      }
+     return search;
     }
-    return search;
   }
   return first;
 }
@@ -548,7 +537,7 @@ void kd_range_query(Iter first, Iter last,
 {
   if (distance(first, last) > 32) {
     auto pred = less_nth<I>();
-    auto pivot = find_pivot<I>(first, last);
+    auto pivot = middle_of(first, last);
     constexpr auto J = next_dim<I, TupleType>;
     if (within(*pivot, lower, upper)) *outp++ = *pivot;
     if (!pred(*pivot, lower)) // search left
@@ -574,7 +563,7 @@ void kd_rq_iters(Iter first, Iter last,
 {
   if (distance(first, last) > 32) {
     auto pred = less_nth<I>();
-    auto pivot = find_pivot<I>(first, last);
+    auto pivot = middle_of(first, last);
     constexpr auto J = next_dim<I, TupleType>;
     if (within(*pivot, lower, upper)) *outp++ = pivot;
     if (!pred(*pivot, lower)) // search left
@@ -601,12 +590,12 @@ void kd_range_query(Iter first, Iter last,
 {
   if (distance(first, last) > 32) {
     auto pred = less_radius_nth<I>();
-    auto pivot = find_pivot<I>(first, last);
+    auto pivot = middle_of(first, last);
     constexpr auto J = next_dim<I, TupleType>;
     if (l2dist(*pivot, center) <= radius) *outp++ = *pivot;
     if (!pred(*pivot, center, -radius)) // search left
       kd_range_query<J>(first, pivot, center, radius, outp);
-    if (pred(*pivot, center, radius)) // search right
+    if (!pred(center, *pivot, -radius)) // search right
       kd_range_query<J>(next(pivot), last, center, radius, outp);
   } else {
     copy_if(first, last, outp, [&](const TupleType& x){
@@ -627,7 +616,7 @@ void kd_rq_iters(Iter first, Iter last,
 {
   if (distance(first, last) > 32) {
     auto pred = less_radius_nth<I>();
-    auto pivot = find_pivot<I>(first, last);
+    auto pivot = middle_of(first, last);
     constexpr auto J = next_dim<I, TupleType>;
     if (l2dist(*pivot, center) <= radius) *outp++ = pivot;
     if (!pred(*pivot, center, -radius)) // search left
@@ -689,15 +678,6 @@ struct n_best
       m_q.pop();
     }
   }
-  template <typename OutIter>
-  void copy_with_distances(OutIter outp)
-  {
-    while (!m_q.empty())
-    {
-      *outp++ = m_q.top();
-      m_q.pop();
-    }
-  }
 };
 
 template <size_t I,
@@ -711,20 +691,25 @@ void knn(Iter first, Iter last,
   switch(distance(first, last)) {
   case 1 : Q.add(l2dist(*first, value), first);
   case 0 : return; } // switch end
-  auto pivot = find_pivot<I>(first, last);
+  auto pivot = middle_of(first, last);
   Q.add(l2dist(*pivot, value), pivot);
-  auto search_left = less_nth<I>()(value, *pivot);
   constexpr auto J = next_dim<I, TupleType>;
-  if (search_left)
+  if (equal_nth<I>()(*pivot, value)) {
     knn<J>(first, pivot, value, Q);
-  else
     knn<J>(next(pivot), last, value, Q);
-  if (dist_nth<I>(value, *pivot) <= Q.max_key())
-  {
+  } else {
+    auto search_left = less_nth<I>()(value, *pivot);
     if (search_left)
-      knn<J>(next(pivot), last, value, Q);
-    else
       knn<J>(first, pivot, value, Q);
+    else
+      knn<J>(next(pivot), last, value, Q);
+    if (dist_nth<I>(value, *pivot) <= Q.max_key())
+    {
+      if (search_left)
+        knn<J>(next(pivot), last, value, Q);
+      else
+        knn<J>(first, pivot, value, Q);
+    }
   }
 }
 
@@ -737,7 +722,6 @@ using detail::none_less;
 using detail::within;
 
 using detail::middle_of;
-using detail::find_pivot;
 using detail::median_part;
 
 using detail::is_last;

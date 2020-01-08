@@ -19,11 +19,9 @@ environment:
   # see https://github.com/krlmlr/r-appveyor#readme for details
   # USE_RTOOLS: true
   # R_REMOTES_STANDALONE: true
+  additional_flags: "/permissive- /std:c++latest"
 
 # Adapt as necessary starting from here
-
-additional_flags:
-  - '/permissive- /std:c++latest'
 
 build_script:
   - travis-tool.sh install_deps

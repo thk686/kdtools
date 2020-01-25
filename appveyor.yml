@@ -19,7 +19,8 @@ environment:
   # see https://github.com/krlmlr/r-appveyor#readme for details
   # USE_RTOOLS: true
   # R_REMOTES_STANDALONE: true
-  additional_flags: "/permissive- /std:c++latest"
+  R_VERSION: devel
+  RTOOLS_VERSION: 40
 
 # Adapt as necessary starting from here
 

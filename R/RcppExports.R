@@ -101,3 +101,7 @@ kd_order_ <- function(x, inplace, parallel) {
     .Call(`_kdtools_kd_order_`, x, inplace, parallel)
 }
 
+using_circular_lexicographical_compare <- function() {
+    .Call(`_kdtools_using_circular_lexicographical_compare`)
+}
+

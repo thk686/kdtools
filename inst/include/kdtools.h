@@ -1,8 +1,4 @@
-// Copyright Timothy H. Keitt 2018
-// Please see the LICENSE file in the R package
-// By using this header, you agree to cite this
-// work in your product using the DOI found at
-// https://doi.org/10.5281/zenodo.1213797
+// Copyright Timothy H. Keitt 2020
 
 #ifndef __KDTOOLS_H__
 #define __KDTOOLS_H__
@@ -19,6 +15,14 @@
 #include <tuple>
 #include <cmath>
 
+// #define USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
+// #define NO_TUPLEMAPR
+
+#ifndef NO_TUPLEMAPR
+#include "tuplemapr.h"
+#endif // NO_TUPLEMAPR
+
+namespace keittlab {
 namespace kdtools {
 
 template <typename T> static constexpr auto
@@ -204,6 +208,8 @@ static constexpr auto next_dim = (I + 1) % ndim<T>;
 template<size_t I, typename T>
 static constexpr auto is_last = (I == (ndim<T> - 1));
 
+#ifdef USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
+
 template <size_t I, size_t K = 0>
 struct kd_less
 {
@@ -239,6 +245,31 @@ struct kd_compare
     }
   }
 };
+
+#else // USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
+
+template <size_t I>
+struct kd_less
+{
+  template <typename T>
+  bool operator()(const T& lhs, const T& rhs) const {
+    return less_nth<I>()(lhs, rhs);
+  }
+};
+
+template <typename Pred, size_t I, size_t K = 0>
+struct kd_compare
+{
+  Pred m_pred;
+  kd_compare(const Pred& pred) : m_pred(pred) {}
+  template <typename T>
+  bool operator()(const T& lhs, const T& rhs) const
+  {
+      return make_pred_nth<I>(m_pred)(lhs, rhs);
+  }
+};
+
+#endif // USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
 
 template <size_t I, typename Pred>
 kd_compare<Pred, I> make_kd_compare(const Pred& pred)
@@ -371,6 +402,8 @@ void kd_sort_threaded(Iter first, Iter last, const Compare& comp,
   }
 }
 
+#ifdef NO_TUPLEMAPR
+
 template <size_t I>
 struct all_less_
 {
@@ -411,6 +444,52 @@ bool none_less(const TupleType& lhs, const TupleType& rhs)
   return none_less_<0>()(lhs, rhs);
 }
 
+template <size_t I>
+struct sum_of_squares_
+{
+  template <typename TupleType>
+  double operator()(const TupleType& lhs, const TupleType& rhs) const
+  {
+    if constexpr (is_last<I, TupleType>) {
+      return std::pow(diff_nth<I>(rhs, lhs), 2);
+    } else {
+      using next_ = sum_of_squares_<I + 1>;
+      return std::pow(diff_nth<I>(rhs, lhs), 2) + next_()(lhs, rhs);
+    }
+  }
+};
+
+template <typename TupleType>
+double sum_of_squares(const TupleType& lhs, const TupleType& rhs)
+{
+  return sum_of_squares_<0>()(lhs, rhs);
+}
+
+template <typename TupleType>
+double l2dist(const TupleType& lhs, const TupleType& rhs)
+{
+  return std::sqrt(sum_of_squares(lhs, rhs));
+}
+
+#else // NO_TUPLEMAPR
+
+using tuple::all_less;
+using tuple::none_less;
+
+template <typename TupleType>
+double sum_of_squares(const TupleType& lhs, const TupleType& rhs)
+{
+  return tuple::sum_sq_diff(lhs, rhs);
+}
+
+template <typename TupleType>
+double l2dist(const TupleType& lhs, const TupleType& rhs)
+{
+  return tuple::euclidean_distance(lhs, rhs);
+}
+
+#endif // NO_TUPLEMAPR
+
 template <size_t I, typename Iter, typename TupleType>
 Iter kd_lower_bound(Iter first, Iter last, const TupleType& value)
 {
@@ -449,33 +528,6 @@ Iter kd_upper_bound(Iter first, Iter last, const TupleType& value)
     return last;
   }
   return first != last && all_less(value, *first) ? first : last;
-}
-
-template <size_t I>
-struct sum_of_squares_
-{
-  template <typename TupleType>
-  double operator()(const TupleType& lhs, const TupleType& rhs) const
-  {
-    if constexpr (is_last<I, TupleType>) {
-      return std::pow(diff_nth<I>(rhs, lhs), 2);
-    } else {
-      using next_ = sum_of_squares_<I + 1>;
-      return std::pow(diff_nth<I>(rhs, lhs), 2) + next_()(lhs, rhs);
-    }
-  }
-};
-
-template <typename TupleType>
-double sum_of_squares(const TupleType& lhs, const TupleType& rhs)
-{
-  return sum_of_squares_<0>()(lhs, rhs);
-}
-
-template <typename TupleType>
-double l2dist(const TupleType& lhs, const TupleType& rhs)
-{
-  return std::sqrt(sum_of_squares(lhs, rhs));
 }
 
 template <size_t I, typename Iter, typename TupleType>
@@ -657,8 +709,12 @@ struct n_best
   }
   void add(Key dist, Iter it)
   {
-    m_q.emplace(dist, it);
-    if (m_q.size() > m_n) m_q.pop();
+    if (m_q.size() < m_n) {
+      m_q.emplace(dist, it);
+    } else if (dist < m_q.top().first) {
+      m_q.emplace(dist, it);
+      m_q.pop();
+    }
   }
   template <typename OutIter>
   void copy_to(OutIter outp)
@@ -890,5 +946,6 @@ void kd_nn_iters(Iter first, Iter last,
 }
 
 } // namespace kdtools
+} // namespace keittlab
 
 #endif // __KDTOOLS_H__

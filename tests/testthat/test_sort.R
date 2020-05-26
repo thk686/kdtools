@@ -26,13 +26,15 @@ test_that("sort works on single point", {
 })
 
 
-test_that("handles ties", {
-  x <- rnorm(10)
-  expect_equal(kd_sort(cbind(0, x)), cbind(0, sort(x)))
-  expect_equal(kd_sort(cbind(0, 1, x)), cbind(0, 1, sort(x)))
-  expect_equal(kd_sort(cbind(0, 1, 2, x)), cbind(0, 1, 2, sort(x)))
-  expect_equal(kd_sort(cbind(0, x, 1)), cbind(0, sort(x), 1))
-})
+if (using_circular_lexicographical_compare()) {
+  test_that("handles circular tie breaking", {
+    x <- rnorm(10)
+    expect_equal(kd_sort(cbind(0, x)), cbind(0, sort(x)))
+    expect_equal(kd_sort(cbind(0, 1, x)), cbind(0, 1, sort(x)))
+    expect_equal(kd_sort(cbind(0, 1, 2, x)), cbind(0, 1, 2, sort(x)))
+    expect_equal(kd_sort(cbind(0, x, 1)), cbind(0, sort(x), 1))
+  })
+}
 
 test_that("correct sort order", {
   nr <- 1e2

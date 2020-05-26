@@ -8,6 +8,7 @@ using Rcpp::NumericVector;
 using Rcpp::IntegerVector;
 
 #include "kdtools.h"
+using namespace keittlab;
 using kdtools::utils::median_part;
 using kdtools::utils::iter_value_t;
 using kdtools::utils::middle_of;

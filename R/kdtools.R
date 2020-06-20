@@ -205,6 +205,7 @@ kd_rq_indices.arrayvec <- function(x, l, u, ...) {
   return(kd_rq_indices_(x, l, u))
 }
 
+#' @param cols integer vector of column indices
 #' @export
 kd_rq_indices.data.frame <- function(x, l, u, cols = 1:ncol(x), ...) {
   return(kd_rq_df(x, cols, l, u))
@@ -240,33 +241,43 @@ kd_binary_search.arrayvec <- function(x, v) {
 #'
 #' @rdname nneighb
 #' @export
-kd_nearest_neighbors <- function(x, v, n) UseMethod("kd_nearest_neighbors")
+kd_nearest_neighbors <- function(x, v, n, ...) UseMethod("kd_nearest_neighbors")
 
 #' @export
-kd_nearest_neighbors.matrix <- function(x, v, n) {
+kd_nearest_neighbors.matrix <- function(x, v, n, ...) {
   y <- matrix_to_tuples(x)
   z <- kd_nearest_neighbors_(y, v, n)
   return(tuples_to_matrix(z))
 }
 
 #' @export
-kd_nearest_neighbors.arrayvec <- function(x, v, n) {
+kd_nearest_neighbors.arrayvec <- function(x, v, n, ...) {
   return(kd_nearest_neighbors_(x, v, n))
+}
+
+#' @export
+kd_nearest_neighbors.data.frame <- function(x, v, n, cols = 1:ncol(x), ...) {
+  return(x[kd_nn_indices(x, v, n, cols),, drop = FALSE])
 }
 
 #' @rdname nneighb
 #' @export
-kd_nn_indices <- function(x, v, n) UseMethod("kd_nn_indices")
+kd_nn_indices <- function(x, v, n, ...) UseMethod("kd_nn_indices")
 
 #' @export
-kd_nn_indices.matrix <- function(x, v, n) {
+kd_nn_indices.matrix <- function(x, v, n, ...) {
   y <- matrix_to_tuples(x)
   return(kd_nn_indices_(y, v, n))
 }
 
 #' @export
-kd_nn_indices.arrayvec <- function(x, v, n) {
+kd_nn_indices.arrayvec <- function(x, v, n, ...) {
   return(kd_nn_indices_(x, v, n))
+}
+
+#' @export
+kd_nn_indices.data.frame <- function(x, v, n, cols = 1:ncol(x), ...) {
+  return(kd_nn_df(x, cols, v, n))
 }
 
 #' @rdname nneighb

@@ -795,6 +795,8 @@ using detail::make_kd_compare;
 using detail::l2dist;
 using detail::sum_of_squares;
 
+using detail::n_best;
+
 } // namespace utils
 
 template <typename Iter>

@@ -9,6 +9,8 @@
 #include <ostream>
 #include <type_traits>
 
+#define RUN_TUPLEMAPR_TESTS
+
 namespace keittlab {
 namespace tuple {
 namespace details {
@@ -30,6 +32,12 @@ using indices_spanning = std::make_index_sequence<
     std::remove_reference_t<T>
   >
 >;
+
+/*
+ * Index sequence spanning first tuple type
+ */
+template<typename... Ts>
+using indx_seq_1st_of = indices_spanning<first_of<Ts...>>;
 
 /*
  * Detect void type
@@ -127,7 +135,7 @@ constexpr decltype(auto) pick(Ts&&... ts) {
 * tuple in the set.
 */
 template<typename F, std::size_t... Is, typename... Ts>
-constexpr decltype(auto) map_tuple_impl(F&& f, std::index_sequence<Is...>, Ts&&... ts) {
+constexpr decltype(auto) map2tuple_impl(F&& f, std::index_sequence<Is...>, Ts&&... ts) {
  return std::make_tuple(std::apply(_<F>(f), pick<Is>(_<Ts>(ts)...))...);
 }
 
@@ -135,7 +143,7 @@ constexpr decltype(auto) map_tuple_impl(F&& f, std::index_sequence<Is...>, Ts&&.
 * Applies an invokable and returns an array of results
 */
 template<typename F, std::size_t... Is, typename... Ts>
-constexpr decltype(auto) map_array_impl(F&& f, std::index_sequence<Is...>, Ts&&... ts) {
+constexpr decltype(auto) map2array_impl(F&& f, std::index_sequence<Is...>, Ts&&... ts) {
  return std::array{std::apply(_<F>(f), pick<Is>(_<Ts>(ts)...))...};
 }
 
@@ -143,7 +151,7 @@ constexpr decltype(auto) map_array_impl(F&& f, std::index_sequence<Is...>, Ts&&.
 * Applies an invokable and returns a pair of results
 */
 template<typename F, std::size_t... Is, typename... Ts>
-constexpr decltype(auto) map_pair_impl(F&& f, std::index_sequence<Is...>, Ts&&... ts) {
+constexpr decltype(auto) map2pair_impl(F&& f, std::index_sequence<Is...>, Ts&&... ts) {
  return std::make_pair(std::apply(_<F>(f), pick<Is>(_<Ts>(ts)...))...);
 }
 
@@ -152,7 +160,7 @@ constexpr decltype(auto) map_pair_impl(F&& f, std::index_sequence<Is...>, Ts&&..
 * are valid targets for pack expansions)
 */
 template<typename F, std::size_t... Is, typename... Ts>
-constexpr void map_void_impl(F&& f, std::index_sequence<Is...>, Ts&&... ts) {
+constexpr void map2void_impl(F&& f, std::index_sequence<Is...>, Ts&&... ts) {
  (std::apply(_<F>(f), pick<Is>(_<Ts>(ts)...)), ...);
 }
 
@@ -172,40 +180,36 @@ constexpr decltype(auto) map0(F&& f, Ts&&... ts) {
  * Map returning a tuple
  */
 template<typename F, typename... Ts>
-constexpr decltype(auto) map_tuple(F&& f, Ts&&... ts) {
+constexpr decltype(auto) map2tuple(F&& f, Ts&&... ts) {
   using namespace details;
-  using T = first_of<Ts...>;
-  return map_tuple_impl(_<F>(f), indices_spanning<T>{}, _<Ts>(ts)...);
+  return map2tuple_impl(_<F>(f), indx_seq_1st_of<Ts...>{}, _<Ts>(ts)...);
 }
 
 /*
  * Map returning array
  */
 template<typename F, typename... Ts>
-constexpr decltype(auto) map_array(F&& f, Ts&&... ts) {
+constexpr decltype(auto) map2array(F&& f, Ts&&... ts) {
   using namespace details;
-  using T = first_of<Ts...>;
-  return map_array_impl(_<F>(f), indices_spanning<T>{}, _<Ts>(ts)...);
+  return map2array_impl(_<F>(f), indx_seq_1st_of<Ts...>{}, _<Ts>(ts)...);
 }
 
 /*
  * Map returning pair
  */
 template<typename F, typename... Ts>
-constexpr decltype(auto) map_pair(F&& f, Ts&&... ts) {
+constexpr decltype(auto) map2pair(F&& f, Ts&&... ts) {
   using namespace details;
-  using T = first_of<Ts...>;
-  return map_pair_impl(_<F>(f), indices_spanning<T>{}, _<Ts>(ts)...);
+  return map2pair_impl(_<F>(f), indx_seq_1st_of<Ts...>{}, _<Ts>(ts)...);
 }
 
 /*
  * Map with void return
  */
 template<typename F, typename... Ts>
-constexpr void map_void(F&& f, Ts&&... ts) {
+constexpr void map2void(F&& f, Ts&&... ts) {
   using namespace details;
-  using T = first_of<Ts...>;
-  map_void_impl(_<F>(f), indices_spanning<T>{}, _<Ts>(ts)...);
+  map2void_impl(_<F>(f), indx_seq_1st_of<Ts...>{}, _<Ts>(ts)...);
 }
 
 /*
@@ -220,13 +224,13 @@ constexpr decltype(auto) map(F&& f, Ts&&... ts) {
   using T = first_of<Ts...>;
   using ret = decltype(map0(_<F>(f), _<Ts>(ts)...));
   if constexpr (is_void<ret>) {
-    map_void(_<F>(f), _<Ts>(ts)...);
+    map2void(_<F>(f), _<Ts>(ts)...);
   } else if constexpr (is_std_pair_v<T>) {
-    return map_pair(_<F>(f), _<Ts>(ts)...);
+    return map2pair(_<F>(f), _<Ts>(ts)...);
   } else if constexpr (is_std_array_v<T>) {
-    return map_array(_<F>(f), _<Ts>(ts)...);
+    return map2array(_<F>(f), _<Ts>(ts)...);
   } else {
-    return map_tuple(_<F>(f), _<Ts>(ts)...);
+    return map2tuple(_<F>(f), _<Ts>(ts)...);
   }
 }
 
@@ -251,7 +255,10 @@ _map(F&& f, Ts&&... ts) {
   }
 };
 
-inline double divide(double a, double b) {
+/*
+ * Helper avoids static_cast
+ */
+constexpr double divide(double a, double b) {
   return a / b;
 }
 
@@ -546,9 +553,7 @@ manhattan_distance(T&& t, U&& u) {
 
 } // namespace tuple
 
-#define OMIT_TESTS
-
-#ifndef OMIT_TESTS
+#ifdef RUN_TUPLEMAPR_TESTS
 
 namespace details {
 namespace tests {
@@ -623,7 +628,7 @@ static_assert(tuple::wmean(a1, a2) - 2.133333 < 1e-5);
 } // namespace tests
 } // namespace details
 
-#endif // OMIT_TESTS
+#endif // RUN_TUPLEMAPR_TESTS
 
 } // namespace keittlab
 

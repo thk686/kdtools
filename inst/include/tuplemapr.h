@@ -9,7 +9,7 @@
 #include <ostream>
 #include <type_traits>
 
-#define RUN_TUPLEMAPR_TESTS
+// #define RUN_TUPLEMAPR_TESTS
 
 namespace keittlab {
 namespace tuple {

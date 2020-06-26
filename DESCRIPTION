@@ -1,7 +1,7 @@
 Package: kdtools
 Type: Package
 Title: Tools for Working with Multidimensional Data
-Version: 0.4.1
+Version: 0.5.0
 Authors@R: person("Timothy", "Keitt", email = "tkeitt@gmail.com", role = c("aut", "cre"))
 Description: Provides various tools for working with multidimensional
   data in R and C++, including extremely fast nearest-neighbor- and range-
@@ -20,7 +20,8 @@ Suggests:
     ggplot2,
     tidytext,
     printr,
-    scales
+    scales,
+    BH
 VignetteBuilder: knitr
 RoxygenNote: 6.1.1
 URL: https://github.com/thk686/kdtools

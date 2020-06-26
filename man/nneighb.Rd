@@ -6,9 +6,9 @@
 \alias{kd_nearest_neighbor}
 \title{Find nearest neighbors}
 \usage{
-kd_nearest_neighbors(x, v, n)
+kd_nearest_neighbors(x, v, n, ...)
 
-kd_nn_indices(x, v, n)
+kd_nn_indices(x, v, n, ...)
 
 kd_nearest_neighbor(x, v)
 }

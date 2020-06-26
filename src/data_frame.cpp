@@ -316,7 +316,7 @@ struct dist_nth_df
     return dist_nth_df(m_df, m_idx, m_key, (m_dim + 1) % m_idx.size());
   }
 
-  bool operator()(const int i) const {
+  double operator()(const int i) const {
     auto col = SEXP(m_df[m_idx[m_dim] - 1]),
       key = SEXP(m_key[m_dim]);
     switch(TYPEOF(col)) {
@@ -537,14 +537,14 @@ std::vector<int> kd_rq_df(const List& df,
 template <typename Iter,
           typename EqualNth,
           typename LessNth,
-          typename L2Dist,
           typename DistNth,
+          typename L2Dist,
           typename QType>
 void knn_(Iter first, Iter last,
           const EqualNth& equal_nth,
           const LessNth& less_nth,
-          const L2Dist& l2dist,
           const DistNth& dist_nth,
+          const L2Dist& l2dist,
           QType& Q)
 {
   switch(distance(first, last)) {
@@ -553,20 +553,20 @@ void knn_(Iter first, Iter last,
   auto pivot = middle_of(first, last);
   Q.add(l2dist(*pivot), pivot);
   if (equal_nth(*pivot)) {
-    knn_(first, pivot, ++equal_nth, ++less_nth, l2dist, ++dist_nth, Q);
-    knn_(next(pivot), last, ++equal_nth, ++less_nth, l2dist, ++dist_nth, Q);
+    knn_(first, pivot, ++equal_nth, ++less_nth, ++dist_nth, l2dist, Q);
+    knn_(next(pivot), last, ++equal_nth, ++less_nth, ++dist_nth, l2dist, Q);
   } else {
     auto search_left = !less_nth.search_right(*pivot);
     if (search_left)
-      knn_(first, pivot, ++equal_nth, ++less_nth, l2dist, ++dist_nth, Q);
+      knn_(first, pivot, ++equal_nth, ++less_nth, ++dist_nth, l2dist, Q);
     else
-      knn_(next(pivot), last, ++equal_nth, ++less_nth, l2dist, ++dist_nth, Q);
+      knn_(next(pivot), last, ++equal_nth, ++less_nth, ++dist_nth, l2dist, Q);
     if (dist_nth(*pivot) <= Q.max_key())
     {
       if (search_left)
-        knn_(next(pivot), last, ++equal_nth, ++less_nth, l2dist, ++dist_nth, Q);
+        knn_(next(pivot), last, ++equal_nth, ++less_nth, ++dist_nth, l2dist, Q);
       else
-        knn_(first, pivot, ++equal_nth, ++less_nth, l2dist, ++dist_nth, Q);
+        knn_(first, pivot, ++equal_nth, ++less_nth, ++dist_nth, l2dist, Q);
     }
   }
 }
@@ -584,7 +584,7 @@ std::vector<int> kd_nn_df_no_validation(const List& df,
   auto l2dist = l2dist_df(df, idx, key);
   auto dist_nth = dist_nth_df(df, idx, key);
   n_best<decltype(begin(x))> Q(n);
-  knn_(begin(x), end(x), equal_nth, less_nth, l2dist, dist_nth, Q);
+  knn_(begin(x), end(x), equal_nth, less_nth, dist_nth, l2dist, Q);
   std::vector<int> res;
   auto oi = std::back_inserter(res);
   Q.copy_to(oi);

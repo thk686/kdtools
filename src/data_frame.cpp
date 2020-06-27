@@ -431,12 +431,13 @@ struct l2dist_df {
           return false;
         break;
       }
+      */
       case VECSXP: {
-        SEXP v = VECTOR_ELT(col, i);
-        if (Rless(v, l) || (!Rless(u, v))) return false;
+        SEXP lhs_ = VECTOR_ELT(col, i),
+          rhs_ = VECTOR_ELT(k, 0);
+        ssq += std::pow(as<double>(Rdiff(lhs_, rhs_)), 2);
         break;
       }
-      */
       default: stop("Invalid column type");
       }
     }

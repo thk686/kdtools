@@ -301,6 +301,8 @@ The [Boost Geometry library](http://www.boost.org/doc/libs/release/libs/geometry
 // [[Rcpp::depends(kdtools)]]
 // [[Rcpp::plugins(cpp17)]]
 
+#define NO_TUPLEMAPR
+
 #include <Rcpp.h>
 #include <vector>
 #include <kdtools.h>
@@ -505,6 +507,8 @@ The kdtools package also provides routines for nearest- and k-nearest- neighbor 
 // [[Rcpp::depends(kdtools)]]
 // [[Rcpp::plugins(cpp17)]]
 
+#define NO_TUPLEMAPR
+
 #include <Rcpp.h>
 #include <vector>
 #include <kdtools.h>
@@ -685,7 +689,6 @@ using std::begin;
 using std::end;
 
 #include <tuple>
-using std::tuple;
 
 #include <vector>
 using std::vector;
@@ -693,13 +696,15 @@ using std::vector;
 #include <string>
 using std::string;
 
+#define NO_TUPLEMAPR
+
 #include <kdtools.h>
 using namespace keittlab;
 using kdtools::kd_sort;
 using kdtools::kd_range_query;
 using kdtools::kd_nearest_neighbors;
 
-using key_type = tuple<double, string>;
+using key_type = std::tuple<double, string>;
 using range_type = vector<key_type>;
 using pointers_type = vector<key_type*>;
 

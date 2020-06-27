@@ -305,15 +305,15 @@ struct equal_nth_df
 struct dist_nth_df
 {
   dist_nth_df(const List& df, const IntegerVector& idx,
-               const List& key, size_t dim = 0)
-    : m_df(df), m_key(key), m_idx(idx), m_dim(dim) {}
+              const NumericVector& w, const List& key, size_t dim = 0)
+    : m_df(df), m_key(key), m_idx(idx), m_w(w), m_dim(dim) {}
 
   dist_nth_df next_dim() const {
-    return dist_nth_df(m_df, m_idx, m_key, (m_dim + 1) % m_idx.size());
+    return dist_nth_df(m_df, m_idx, m_w, m_key, (m_dim + 1) % m_idx.size());
   }
 
   dist_nth_df operator++() const {
-    return dist_nth_df(m_df, m_idx, m_key, (m_dim + 1) % m_idx.size());
+    return dist_nth_df(m_df, m_idx, m_w, m_key, (m_dim + 1) % m_idx.size());
   }
 
   double operator()(const int i) const {
@@ -321,15 +321,15 @@ struct dist_nth_df
       key = SEXP(m_key[m_dim]);
     switch(TYPEOF(col)) {
     case LGLSXP: {
-      return std::abs(LOGICAL(col)[i] - LOGICAL(key)[0]);
+      return m_w[m_dim] * std::abs(LOGICAL(col)[i] - LOGICAL(key)[0]);
       break;
     }
     case REALSXP: {
-      return std::abs(REAL(col)[i] - REAL(key)[0]);
+      return m_w[m_dim] * std::abs(REAL(col)[i] - REAL(key)[0]);
       break;
     }
     case INTSXP: {
-      return std::abs(INTEGER(col)[i] - INTEGER(key)[0]);
+      return m_w[m_dim] * std::abs(INTEGER(col)[i] - INTEGER(key)[0]);
       break;
     }
     /*
@@ -341,7 +341,7 @@ struct dist_nth_df
     case VECSXP: {
       SEXP lhs_ = VECTOR_ELT(col, i),
         rhs_ = VECTOR_ELT(key, 0);
-      return std::abs(as<double>(Rdiff(lhs_, rhs_)));
+      return m_w[m_dim] * std::abs(as<double>(Rdiff(lhs_, rhs_)));
       break;
     }
     default: stop("Invalid column type");
@@ -350,6 +350,7 @@ struct dist_nth_df
 
   const List& m_df, m_key;
   const IntegerVector& m_idx;
+  const NumericVector& m_w;
   size_t m_dim;
 };
 
@@ -404,8 +405,8 @@ struct within_df {
 };
 
 struct l2dist_df {
-  l2dist_df(const List& df, const IntegerVector& idx, const List& key)
-    : m_df(df), m_key(key), m_idx(idx), m_ndim(m_idx.size()) {}
+  l2dist_df(const List& df, const IntegerVector& idx, const NumericVector& w, const List& key)
+    : m_df(df), m_key(key), m_idx(idx), m_w(w), m_ndim(m_idx.size()) {}
 
   double operator()(const int i) const {
     double ssq = 0;
@@ -413,15 +414,15 @@ struct l2dist_df {
       auto col = SEXP(m_df[m_idx[j] - 1]), k = SEXP(m_key[j]);
       switch(TYPEOF(col)) {
       case LGLSXP: {
-        ssq += std::pow(LOGICAL(col)[i] - LOGICAL(k)[0], 2);
+        ssq += m_w[j] * (std::pow(LOGICAL(col)[i] - LOGICAL(k)[0], 2));
         break;
       }
       case REALSXP: {
-        ssq += std::pow(REAL(col)[i] - REAL(k)[0], 2);
+        ssq += m_w[j] * (std::pow(REAL(col)[i] - REAL(k)[0], 2));
         break;
       }
       case INTSXP: {
-        ssq += std::pow(INTEGER(col)[i] - INTEGER(k)[0], 2);
+        ssq += m_w[j] * (std::pow(INTEGER(col)[i] - INTEGER(k)[0], 2));
         break;
       }
       /*
@@ -435,7 +436,7 @@ struct l2dist_df {
       case VECSXP: {
         SEXP lhs_ = VECTOR_ELT(col, i),
           rhs_ = VECTOR_ELT(k, 0);
-        ssq += std::pow(as<double>(Rdiff(lhs_, rhs_)), 2);
+        ssq += m_w[j] * std::pow(as<double>(Rdiff(lhs_, rhs_)), 2);
         break;
       }
       default: stop("Invalid column type");
@@ -445,6 +446,7 @@ struct l2dist_df {
   }
   const List& m_df, m_key;
   const IntegerVector& m_idx;
+  const NumericVector& m_w;
   size_t m_ndim;
 };
 
@@ -575,6 +577,7 @@ void knn_(Iter first, Iter last,
 // [[Rcpp::export]]
 std::vector<int> kd_nn_df_no_validation(const List& df,
                                         const IntegerVector& idx,
+                                        const NumericVector& w,
                                         const List& key,
                                         const int n)
 {
@@ -582,8 +585,8 @@ std::vector<int> kd_nn_df_no_validation(const List& df,
   iota(begin(x), end(x), 0);
   auto equal_nth = equal_nth_df(df, idx, key);
   auto less_nth = less_nth_df(df, idx, key, key);
-  auto l2dist = l2dist_df(df, idx, key);
-  auto dist_nth = dist_nth_df(df, idx, key);
+  auto l2dist = l2dist_df(df, idx, w, key);
+  auto dist_nth = dist_nth_df(df, idx, w, key);
   n_best<decltype(begin(x))> Q(n);
   knn_(begin(x), end(x), equal_nth, less_nth, dist_nth, l2dist, Q);
   std::vector<int> res;
@@ -596,6 +599,7 @@ std::vector<int> kd_nn_df_no_validation(const List& df,
 // [[Rcpp::export]]
 std::vector<int> kd_nn_df(const List& df,
                           const IntegerVector& idx,
+                          const NumericVector& w,
                           const List& key,
                           const int n)
 {
@@ -603,10 +607,12 @@ std::vector<int> kd_nn_df(const List& df,
     stop("Empty data frame");
   if (not_in_range(idx, ncol(df)))
     stop("Index out of range");
+  if (idx.size() != w.size())
+    stop("Incorrect weights dimensions");
   if (idx.size() != key.size())
     stop("Incorrect dimension of key");
   if (type_mismatch(df, idx, key))
     stop("Mismatched types in key");
-  return kd_nn_df_no_validation(df, idx, key, n);
+  return kd_nn_df_no_validation(df, idx, w, key, n);
 }
 

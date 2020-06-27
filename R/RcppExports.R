@@ -45,12 +45,12 @@ kd_rq_df <- function(df, idx, lower, upper) {
     .Call(`_kdtools_kd_rq_df`, df, idx, lower, upper)
 }
 
-kd_nn_df_no_validation <- function(df, idx, key, n) {
-    .Call(`_kdtools_kd_nn_df_no_validation`, df, idx, key, n)
+kd_nn_df_no_validation <- function(df, idx, w, key, n) {
+    .Call(`_kdtools_kd_nn_df_no_validation`, df, idx, w, key, n)
 }
 
-kd_nn_df <- function(df, idx, key, n) {
-    .Call(`_kdtools_kd_nn_df`, df, idx, key, n)
+kd_nn_df <- function(df, idx, w, key, n) {
+    .Call(`_kdtools_kd_nn_df`, df, idx, w, key, n)
 }
 
 kd_sort_ <- function(x, inplace, parallel) {

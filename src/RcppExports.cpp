@@ -83,30 +83,32 @@ BEGIN_RCPP
 END_RCPP
 }
 // kd_nn_df_no_validation
-std::vector<int> kd_nn_df_no_validation(const List& df, const IntegerVector& idx, const List& key, const int n);
-RcppExport SEXP _kdtools_kd_nn_df_no_validation(SEXP dfSEXP, SEXP idxSEXP, SEXP keySEXP, SEXP nSEXP) {
+std::vector<int> kd_nn_df_no_validation(const List& df, const IntegerVector& idx, const NumericVector& w, const List& key, const int n);
+RcppExport SEXP _kdtools_kd_nn_df_no_validation(SEXP dfSEXP, SEXP idxSEXP, SEXP wSEXP, SEXP keySEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const List& >::type df(dfSEXP);
     Rcpp::traits::input_parameter< const IntegerVector& >::type idx(idxSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type w(wSEXP);
     Rcpp::traits::input_parameter< const List& >::type key(keySEXP);
     Rcpp::traits::input_parameter< const int >::type n(nSEXP);
-    rcpp_result_gen = Rcpp::wrap(kd_nn_df_no_validation(df, idx, key, n));
+    rcpp_result_gen = Rcpp::wrap(kd_nn_df_no_validation(df, idx, w, key, n));
     return rcpp_result_gen;
 END_RCPP
 }
 // kd_nn_df
-std::vector<int> kd_nn_df(const List& df, const IntegerVector& idx, const List& key, const int n);
-RcppExport SEXP _kdtools_kd_nn_df(SEXP dfSEXP, SEXP idxSEXP, SEXP keySEXP, SEXP nSEXP) {
+std::vector<int> kd_nn_df(const List& df, const IntegerVector& idx, const NumericVector& w, const List& key, const int n);
+RcppExport SEXP _kdtools_kd_nn_df(SEXP dfSEXP, SEXP idxSEXP, SEXP wSEXP, SEXP keySEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const List& >::type df(dfSEXP);
     Rcpp::traits::input_parameter< const IntegerVector& >::type idx(idxSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type w(wSEXP);
     Rcpp::traits::input_parameter< const List& >::type key(keySEXP);
     Rcpp::traits::input_parameter< const int >::type n(nSEXP);
-    rcpp_result_gen = Rcpp::wrap(kd_nn_df(df, idx, key, n));
+    rcpp_result_gen = Rcpp::wrap(kd_nn_df(df, idx, w, key, n));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -303,8 +305,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_kd_order_df", (DL_FUNC) &_kdtools_kd_order_df, 3},
     {"_kdtools_kd_rq_df_no_validation", (DL_FUNC) &_kdtools_kd_rq_df_no_validation, 4},
     {"_kdtools_kd_rq_df", (DL_FUNC) &_kdtools_kd_rq_df, 4},
-    {"_kdtools_kd_nn_df_no_validation", (DL_FUNC) &_kdtools_kd_nn_df_no_validation, 4},
-    {"_kdtools_kd_nn_df", (DL_FUNC) &_kdtools_kd_nn_df, 4},
+    {"_kdtools_kd_nn_df_no_validation", (DL_FUNC) &_kdtools_kd_nn_df_no_validation, 5},
+    {"_kdtools_kd_nn_df", (DL_FUNC) &_kdtools_kd_nn_df, 5},
     {"_kdtools_kd_sort_", (DL_FUNC) &_kdtools_kd_sort_, 3},
     {"_kdtools_kd_is_sorted_", (DL_FUNC) &_kdtools_kd_is_sorted_, 1},
     {"_kdtools_lex_sort_", (DL_FUNC) &_kdtools_lex_sort_, 2},

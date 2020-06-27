@@ -2,15 +2,41 @@
 % Please edit documentation in R/kdtools.R
 \name{kd_nearest_neighbors}
 \alias{kd_nearest_neighbors}
+\alias{kd_nearest_neighbors.matrix}
+\alias{kd_nearest_neighbors.arrayvec}
+\alias{kd_nearest_neighbors.data.frame}
 \alias{kd_nn_indices}
+\alias{kd_nn_indices.matrix}
+\alias{kd_nn_indices.arrayvec}
+\alias{kd_nn_indices.data.frame}
 \alias{kd_nearest_neighbor}
+\alias{kd_nearest_neighbor.matrix}
+\alias{kd_nearest_neighbor.arrayvec}
 \title{Find nearest neighbors}
 \usage{
 kd_nearest_neighbors(x, v, n, ...)
 
+\method{kd_nearest_neighbors}{matrix}(x, v, n, ...)
+
+\method{kd_nearest_neighbors}{arrayvec}(x, v, n, ...)
+
+\method{kd_nearest_neighbors}{data.frame}(x, v, n, cols = 1:ncol(x),
+  w = rep(1, length(cols)), ...)
+
 kd_nn_indices(x, v, n, ...)
 
+\method{kd_nn_indices}{matrix}(x, v, n, ...)
+
+\method{kd_nn_indices}{arrayvec}(x, v, n, ...)
+
+\method{kd_nn_indices}{data.frame}(x, v, n, cols = 1:ncol(x),
+  w = rep(1, length(cols)), ...)
+
 kd_nearest_neighbor(x, v)
+
+\method{kd_nearest_neighbor}{matrix}(x, v)
+
+\method{kd_nearest_neighbor}{arrayvec}(x, v)
 }
 \arguments{
 \item{x}{an object sorted by \code{\link{kd_sort}}}
@@ -18,6 +44,12 @@ kd_nearest_neighbor(x, v)
 \item{v}{a vector specifying where to look}
 
 \item{n}{the number of neighbors to return}
+
+\item{...}{addtional arguments}
+
+\item{cols}{integer indices of columns to use}
+
+\item{w}{distance weights}
 }
 \description{
 Find nearest neighbors

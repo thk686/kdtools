@@ -173,6 +173,7 @@ kd_upper_bound.arrayvec <- function(x, v) {
 #' @export
 kd_range_query <- function(x, l, u, ...) UseMethod("kd_range_query")
 
+#' @rdname search
 #' @export
 kd_range_query.matrix <- function(x, l, u, ...) {
   y <- matrix_to_tuples(x)
@@ -180,11 +181,13 @@ kd_range_query.matrix <- function(x, l, u, ...) {
   return(tuples_to_matrix(z))
 }
 
+#' @rdname search
 #' @export
 kd_range_query.arrayvec <- function(x, l, u, ...) {
   return(kd_range_query_(x, l, u))
 }
 
+#' @rdname search
 #' @export
 kd_range_query.data.frame <- function(x, l, u, cols = 1:ncol(x), ...) {
   return(x[kd_rq_indices(x, l, u, cols),, drop = FALSE])
@@ -194,17 +197,20 @@ kd_range_query.data.frame <- function(x, l, u, cols = 1:ncol(x), ...) {
 #' @export
 kd_rq_indices <- function(x, l, u, ...) UseMethod("kd_rq_indices")
 
+#' @rdname search
 #' @export
 kd_rq_indices.matrix <- function(x, l, u, ...) {
   y <- matrix_to_tuples(x)
   return(kd_rq_indices_(y, l, u))
 }
 
+#' @rdname search
 #' @export
 kd_rq_indices.arrayvec <- function(x, l, u, ...) {
   return(kd_rq_indices_(x, l, u))
 }
 
+#' @rdname search
 #' @param cols integer vector of column indices
 #' @export
 kd_rq_indices.data.frame <- function(x, l, u, cols = 1:ncol(x), ...) {
@@ -215,12 +221,14 @@ kd_rq_indices.data.frame <- function(x, l, u, cols = 1:ncol(x), ...) {
 #' @export
 kd_binary_search <- function(x, v) UseMethod("kd_binary_search")
 
+#' @rdname search
 #' @export
 kd_binary_search.matrix <- function(x, v) {
   y <- matrix_to_tuples(x)
   return(kd_binary_search_(y, v))
 }
 
+#' @rdname search
 #' @export
 kd_binary_search.arrayvec <- function(x, v) {
   return(kd_binary_search_(x, v))
@@ -230,6 +238,7 @@ kd_binary_search.arrayvec <- function(x, v) {
 #' @param x an object sorted by \code{\link{kd_sort}}
 #' @param v a vector specifying where to look
 #' @param n the number of neighbors to return
+#' @param ... addtional arguments
 #'
 #' @examples
 #' x = matrix(runif(200), 100)
@@ -243,6 +252,7 @@ kd_binary_search.arrayvec <- function(x, v) {
 #' @export
 kd_nearest_neighbors <- function(x, v, n, ...) UseMethod("kd_nearest_neighbors")
 
+#' @rdname nneighb
 #' @export
 kd_nearest_neighbors.matrix <- function(x, v, n, ...) {
   y <- matrix_to_tuples(x)
@@ -250,46 +260,57 @@ kd_nearest_neighbors.matrix <- function(x, v, n, ...) {
   return(tuples_to_matrix(z))
 }
 
+#' @rdname nneighb
 #' @export
 kd_nearest_neighbors.arrayvec <- function(x, v, n, ...) {
   return(kd_nearest_neighbors_(x, v, n))
 }
 
+#' @param cols integer indices of columns to use
+#' @param w distance weights
+#' @rdname nneighb
 #' @export
-kd_nearest_neighbors.data.frame <- function(x, v, n, cols = 1:ncol(x), ...) {
-  return(x[kd_nn_indices(x, v, n, cols),, drop = FALSE])
+kd_nearest_neighbors.data.frame <- function(x, v, n, cols = 1:ncol(x),
+                                            w = rep(1, length(cols)), ...) {
+  return(x[kd_nn_indices(x, v, n, cols, w),, drop = FALSE])
 }
 
 #' @rdname nneighb
 #' @export
 kd_nn_indices <- function(x, v, n, ...) UseMethod("kd_nn_indices")
 
+#' @rdname nneighb
 #' @export
 kd_nn_indices.matrix <- function(x, v, n, ...) {
   y <- matrix_to_tuples(x)
   return(kd_nn_indices_(y, v, n))
 }
 
+#' @rdname nneighb
 #' @export
 kd_nn_indices.arrayvec <- function(x, v, n, ...) {
   return(kd_nn_indices_(x, v, n))
 }
 
+#' @rdname nneighb
 #' @export
-kd_nn_indices.data.frame <- function(x, v, n, cols = 1:ncol(x), ...) {
-  return(kd_nn_df(x, cols, v, n))
+kd_nn_indices.data.frame <- function(x, v, n, cols = 1:ncol(x),
+                                     w = rep(1, length(cols)), ...) {
+  return(kd_nn_df(x, cols, w, v, n))
 }
 
 #' @rdname nneighb
 #' @export
 kd_nearest_neighbor <- function(x, v) UseMethod("kd_nearest_neighbor")
 
+#' @rdname nneighb
 #' @export
 kd_nearest_neighbor.matrix <- function(x, v) {
   y <- matrix_to_tuples(x)
   return(kd_nearest_neighbor_(y, v))
 }
 
+#' @rdname nneighb
 #' @export
 kd_nearest_neighbor.arrayvec <- function(x, v) {
   return(kd_nearest_neighbor_(x, v))

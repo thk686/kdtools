@@ -310,6 +310,8 @@ The [Boost Geometry library](http://www.boost.org/doc/libs/release/libs/geometry
 #include <boost/geometry/geometries/register/box.hpp>
 #include <boost/geometry/geometries/adapted/std_array.hpp>
 
+using namespace keittlab;
+
 using key_type = std::array<double, 2>;
 using box_type = std::pair<key_type, key_type>;
 using range_type = std::vector<key_type>;
@@ -512,6 +514,8 @@ The kdtools package also provides routines for nearest- and k-nearest- neighbor 
 #include <boost/geometry/geometries/register/box.hpp>
 #include <boost/geometry/geometries/adapted/std_array.hpp>
 
+using namespace keittlab;
+
 using key_type = std::array<double, 2>;
 using box_type = std::pair<key_type, key_type>;
 using range_type = std::vector<key_type>;
@@ -690,6 +694,7 @@ using std::vector;
 using std::string;
 
 #include <kdtools.h>
+using namespace keittlab;
 using kdtools::kd_sort;
 using kdtools::kd_range_query;
 using kdtools::kd_nearest_neighbors;
@@ -775,6 +780,7 @@ double set_similarity(InputIt1 first1, InputIt1 last1,
   return num / denom;
 }
 
+namespace keittlab {
 namespace kdtools {
 
 template <>
@@ -788,6 +794,7 @@ double scalar_diff(const std::string& lhs, const std::string& rhs)
 }
 
 } // namespace kdtools
+} // namespace keittlab
 '
 
 header_file = "mixed_query.h"

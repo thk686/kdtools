@@ -113,3 +113,7 @@ using_circular_lexicographical_compare <- function() {
     .Call(`_kdtools_using_circular_lexicographical_compare`)
 }
 
+levenshtein <- function(s1, s2) {
+    .Call(`_kdtools_levenshtein`, s1, s2)
+}
+

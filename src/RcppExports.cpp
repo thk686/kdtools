@@ -297,6 +297,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// levenshtein
+int levenshtein(const char* s1, const char* s2);
+RcppExport SEXP _kdtools_levenshtein(SEXP s1SEXP, SEXP s2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const char* >::type s1(s1SEXP);
+    Rcpp::traits::input_parameter< const char* >::type s2(s2SEXP);
+    rcpp_result_gen = Rcpp::wrap(levenshtein(s1, s2));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_matrix_to_tuples", (DL_FUNC) &_kdtools_matrix_to_tuples, 1},
@@ -322,6 +334,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_kd_nn_indices_", (DL_FUNC) &_kdtools_kd_nn_indices_, 3},
     {"_kdtools_kd_order_", (DL_FUNC) &_kdtools_kd_order_, 3},
     {"_kdtools_using_circular_lexicographical_compare", (DL_FUNC) &_kdtools_using_circular_lexicographical_compare, 0},
+    {"_kdtools_levenshtein", (DL_FUNC) &_kdtools_levenshtein, 2},
     {NULL, NULL, 0}
 };
 

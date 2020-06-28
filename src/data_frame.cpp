@@ -14,6 +14,9 @@ using kdtools::utils::iter_value_t;
 using kdtools::utils::middle_of;
 using kdtools::utils::n_best;
 
+#include "strdist.h"
+using namespace keittlab;
+
 #include <algorithm>
 using std::end;
 using std::next;
@@ -47,7 +50,7 @@ bool not_in_range(const T& x, U n) {
   return (*r.first < 1 || *r.second > n) ? true : false;
 }
 
-std::string_view get_string(SEXP x, int i) {
+std::string_view get_string(SEXP x, int i = 0) {
   return std::string_view(CHAR(STRING_ELT(x, i)));
 }
 
@@ -202,7 +205,7 @@ struct less_nth_df
       break;
     }
     case STRSXP: {
-      if (get_string(col, i) < get_string(lwr, 0)) return false;
+      if (get_string(col, i) < get_string(lwr)) return false;
       break;
     }
     case VECSXP: {
@@ -233,7 +236,7 @@ struct less_nth_df
       break;
     }
     case STRSXP: {
-      if (get_string(col, i) < get_string(upr, 0)) return true;
+      if (get_string(col, i) < get_string(upr)) return true;
       break;
     }
     case VECSXP: {
@@ -283,7 +286,7 @@ struct equal_nth_df
       break;
     }
     case STRSXP: {
-      if (get_string(col, i) == get_string(key, 0)) return true;
+      if (get_string(col, i) == get_string(key)) return true;
       break;
     }
     case VECSXP: {
@@ -332,12 +335,10 @@ struct dist_nth_df
       return m_w[m_dim] * std::abs(INTEGER(col)[i] - INTEGER(key)[0]);
       break;
     }
-    /*
     case STRSXP: {
-      if (get_string(col, i) == get_string(key, 0)) return true;
+      return m_w[m_dim] * strdist::levenshtein(get_string(col, i), get_string(key));
       break;
     }
-     */
     case VECSXP: {
       SEXP lhs_ = VECTOR_ELT(col, i),
         rhs_ = VECTOR_ELT(key, 0);
@@ -384,8 +385,8 @@ struct within_df {
         break;
       }
       case STRSXP: {
-        if (get_string(col, i) < get_string(l, 0) ||
-            get_string(col, i) >= get_string(u, 0))
+        if (get_string(col, i) < get_string(l) ||
+            get_string(col, i) >= get_string(u))
           return false;
         break;
       }
@@ -414,25 +415,22 @@ struct l2dist_df {
       auto col = SEXP(m_df[m_idx[j] - 1]), k = SEXP(m_key[j]);
       switch(TYPEOF(col)) {
       case LGLSXP: {
-        ssq += m_w[j] * (std::pow(LOGICAL(col)[i] - LOGICAL(k)[0], 2));
+        ssq += m_w[j] * std::pow(LOGICAL(col)[i] - LOGICAL(k)[0], 2);
         break;
       }
       case REALSXP: {
-        ssq += m_w[j] * (std::pow(REAL(col)[i] - REAL(k)[0], 2));
+        ssq += m_w[j] * std::pow(REAL(col)[i] - REAL(k)[0], 2);
         break;
       }
       case INTSXP: {
-        ssq += m_w[j] * (std::pow(INTEGER(col)[i] - INTEGER(k)[0], 2));
+        ssq += m_w[j] * std::pow(INTEGER(col)[i] - INTEGER(k)[0], 2);
         break;
       }
-      /*
       case STRSXP: {
-        if (get_string(col, i) < get_string(l, 0) ||
-            get_string(col, i) >= get_string(u, 0))
-          return false;
+        double d = strdist::levenshtein(get_string(col, i), get_string(k));
+        ssq += m_w[j] * std::pow(d, 2);
         break;
       }
-      */
       case VECSXP: {
         SEXP lhs_ = VECTOR_ELT(col, i),
           rhs_ = VECTOR_ELT(k, 0);

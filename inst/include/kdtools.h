@@ -8,7 +8,6 @@
 #include <iterator>
 #include <iostream>
 #include <utility>
-#include <future>
 #include <thread>
 #include <vector>
 #include <limits>

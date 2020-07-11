@@ -126,13 +126,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // kd_is_sorted_
-bool kd_is_sorted_(List x);
-RcppExport SEXP _kdtools_kd_is_sorted_(SEXP xSEXP) {
+bool kd_is_sorted_(List x, bool parallel);
+RcppExport SEXP _kdtools_kd_is_sorted_(SEXP xSEXP, SEXP parallelSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< List >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(kd_is_sorted_(x));
+    Rcpp::traits::input_parameter< bool >::type parallel(parallelSEXP);
+    rcpp_result_gen = Rcpp::wrap(kd_is_sorted_(x, parallel));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -320,7 +321,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_kd_nn_df_no_validation", (DL_FUNC) &_kdtools_kd_nn_df_no_validation, 5},
     {"_kdtools_kd_nn_df", (DL_FUNC) &_kdtools_kd_nn_df, 5},
     {"_kdtools_kd_sort_", (DL_FUNC) &_kdtools_kd_sort_, 3},
-    {"_kdtools_kd_is_sorted_", (DL_FUNC) &_kdtools_kd_is_sorted_, 1},
+    {"_kdtools_kd_is_sorted_", (DL_FUNC) &_kdtools_kd_is_sorted_, 2},
     {"_kdtools_lex_sort_", (DL_FUNC) &_kdtools_lex_sort_, 2},
     {"_kdtools_kd_lower_bound_", (DL_FUNC) &_kdtools_kd_lower_bound_, 2},
     {"_kdtools_kd_upper_bound_", (DL_FUNC) &_kdtools_kd_upper_bound_, 2},

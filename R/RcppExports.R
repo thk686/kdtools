@@ -57,8 +57,8 @@ kd_sort_ <- function(x, inplace, parallel) {
     .Call(`_kdtools_kd_sort_`, x, inplace, parallel)
 }
 
-kd_is_sorted_ <- function(x) {
-    .Call(`_kdtools_kd_is_sorted_`, x)
+kd_is_sorted_ <- function(x, parallel) {
+    .Call(`_kdtools_kd_is_sorted_`, x, parallel)
 }
 
 lex_sort_ <- function(x, inplace) {

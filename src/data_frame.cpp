@@ -34,6 +34,8 @@ using std::partition_point;
 
 // [[Rcpp::plugins(cpp17)]]
 
+// #define USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
+
 template<typename T>
 int ncol(const T& x) {
   return x.length();
@@ -55,6 +57,8 @@ std::string_view get_string(SEXP x, int i = 0) {
 }
 
 Function Requal("=="), Rless("<"), Rdiff("-");
+
+#ifdef USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
 
 struct kd_less_df
 {
@@ -121,6 +125,57 @@ struct kd_less_df
   size_t m_dim, m_ndim, m_count;
 };
 
+#else // USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
+
+struct kd_less_df
+{
+  kd_less_df(const List& df, const IntegerVector& idx, size_t dim = 0)
+    : m_df(df), m_idx(idx), m_dim(dim), m_ndim(m_idx.size()) {}
+
+  kd_less_df next_dim() const {
+    return kd_less_df(m_df, m_idx, (m_dim + 1) % m_ndim);
+  }
+
+  kd_less_df operator++() const {
+    return kd_less_df(m_df, m_idx, (m_dim + 1) % m_ndim);
+  }
+
+  bool operator()(const int lhs, const int rhs) const {
+    auto col = SEXP(m_df[m_idx[m_dim] - 1]);
+    switch(TYPEOF(col)) {
+    case LGLSXP: {
+      return LOGICAL(col)[lhs] < LOGICAL(col)[rhs];
+      break;
+    }
+    case REALSXP: {
+      return REAL(col)[lhs] < REAL(col)[rhs];
+      break;
+    }
+    case INTSXP: {
+      return INTEGER(col)[lhs] < INTEGER(col)[rhs];
+      break;
+    }
+    case STRSXP: {
+      return get_string(col, lhs) < get_string(col, rhs);
+      break;
+    }
+    case VECSXP: {
+      SEXP lhs_ = VECTOR_ELT(col, lhs),
+        rhs_ = VECTOR_ELT(col, rhs);
+      return Rless(lhs_, rhs_);
+      break;
+    }
+    default: stop("Invalid column type");
+    }
+    return false;
+  }
+  const List& m_df;
+  const IntegerVector& m_idx;
+  size_t m_dim, m_ndim;
+};
+
+#endif // USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
+
 template <typename Iter, typename Pred>
 void kd_order_df_(Iter first, Iter last, const Pred& pred)
 {
@@ -173,19 +228,19 @@ IntegerVector kd_order_df(const List& df,
   return x + 1;
 }
 
-struct less_nth_df
+struct chck_nth_df
 {
-  less_nth_df(const List& df, const IntegerVector& idx,
+  chck_nth_df(const List& df, const IntegerVector& idx,
               const List& lower, const List& upper, size_t dim = 0)
     : m_df(df), m_lower(lower), m_upper(upper),
       m_idx(idx), m_dim(dim) {}
 
-  less_nth_df next_dim() const {
-    return less_nth_df(m_df, m_idx, m_lower, m_upper, (m_dim + 1) % m_idx.size());
+  chck_nth_df next_dim() const {
+    return chck_nth_df(m_df, m_idx, m_lower, m_upper, (m_dim + 1) % m_idx.size());
   }
 
-  less_nth_df operator++() const {
-    return less_nth_df(m_df, m_idx, m_lower, m_upper, (m_dim + 1) % m_idx.size());
+  chck_nth_df operator++() const {
+    return chck_nth_df(m_df, m_idx, m_lower, m_upper, (m_dim + 1) % m_idx.size());
   }
 
   bool search_left(const int i) const {
@@ -324,7 +379,7 @@ struct dist_nth_df
       key = SEXP(m_key[m_dim]);
     switch(TYPEOF(col)) {
     case LGLSXP: {
-      return m_w[m_dim] * std::abs(LOGICAL(col)[i] - LOGICAL(key)[0]);
+      return LOGICAL(col)[i] == LOGICAL(key)[0] ? 0 : m_w[m_dim];
       break;
     }
     case REALSXP: {
@@ -340,8 +395,7 @@ struct dist_nth_df
       break;
     }
     case VECSXP: {
-      SEXP lhs_ = VECTOR_ELT(col, i),
-        rhs_ = VECTOR_ELT(key, 0);
+      SEXP lhs_ = VECTOR_ELT(col, i), rhs_ = VECTOR_ELT(key, 0);
       return m_w[m_dim] * std::abs(as<double>(Rdiff(lhs_, rhs_)));
       break;
     }
@@ -415,7 +469,7 @@ struct l2dist_df {
       auto col = SEXP(m_df[m_idx[j] - 1]), k = SEXP(m_key[j]);
       switch(TYPEOF(col)) {
       case LGLSXP: {
-        ssq += m_w[j] * std::pow(LOGICAL(col)[i] - LOGICAL(k)[0], 2);
+        ssq += LOGICAL(col)[i] == LOGICAL(k)[0] ? 0 : m_w[j];
         break;
       }
       case REALSXP: {
@@ -432,8 +486,7 @@ struct l2dist_df {
         break;
       }
       case VECSXP: {
-        SEXP lhs_ = VECTOR_ELT(col, i),
-          rhs_ = VECTOR_ELT(k, 0);
+        SEXP lhs_ = VECTOR_ELT(col, i), rhs_ = VECTOR_ELT(k, 0);
         ssq += m_w[j] * std::pow(as<double>(Rdiff(lhs_, rhs_)), 2);
         break;
       }
@@ -479,19 +532,19 @@ bool type_mismatch(const List& df,
 
 template <typename Iter,
           typename OutIter,
-          typename LessNth,
+          typename ChckNth,
           typename Within>
 void kd_rq_df_(Iter first, Iter last, OutIter outp,
-               const LessNth& less_nth,
+               const ChckNth& chck_nth,
                const Within& within)
 {
   if (distance(first, last) > 32) {
     auto pivot = middle_of(first, last);
     if (within(*pivot)) *outp++ = *pivot;
-    if (less_nth.search_left(*pivot))
-      kd_rq_df_(first, pivot, outp, ++less_nth, within);
-    if (less_nth.search_right(*pivot))
-      kd_rq_df_(next(pivot), last, outp, ++less_nth, within);
+    if (chck_nth.search_left(*pivot))
+      kd_rq_df_(first, pivot, outp, ++chck_nth, within);
+    if (chck_nth.search_right(*pivot))
+      kd_rq_df_(next(pivot), last, outp, ++chck_nth, within);
   } else {
     copy_if(first, last, outp, [&](const int x){
       return within(x);
@@ -509,10 +562,10 @@ std::vector<int> kd_rq_df_no_validation(const List& df,
   std::vector<int> x(nrow(df));
   iota(begin(x), end(x), 0);
   auto wi = within_df(df, idx, lower, upper);
-  auto ln = less_nth_df(df, idx, lower, upper);
+  auto cn = chck_nth_df(df, idx, lower, upper);
   std::vector<int> res;
   auto oi = std::back_inserter(res);
-  kd_rq_df_(begin(x), end(x), oi, ln, wi);
+  kd_rq_df_(begin(x), end(x), oi, cn, wi);
   for (auto& e : res) ++e;
   return res;
 }
@@ -537,13 +590,13 @@ std::vector<int> kd_rq_df(const List& df,
 
 template <typename Iter,
           typename EqualNth,
-          typename LessNth,
+          typename ChckNth,
           typename DistNth,
           typename L2Dist,
           typename QType>
 void knn_(Iter first, Iter last,
           const EqualNth& equal_nth,
-          const LessNth& less_nth,
+          const ChckNth& chck_nth,
           const DistNth& dist_nth,
           const L2Dist& l2dist,
           QType& Q)
@@ -554,20 +607,20 @@ void knn_(Iter first, Iter last,
   auto pivot = middle_of(first, last);
   Q.add(l2dist(*pivot), pivot);
   if (equal_nth(*pivot)) {
-    knn_(first, pivot, ++equal_nth, ++less_nth, ++dist_nth, l2dist, Q);
-    knn_(next(pivot), last, ++equal_nth, ++less_nth, ++dist_nth, l2dist, Q);
+    knn_(first, pivot, ++equal_nth, ++chck_nth, ++dist_nth, l2dist, Q);
+    knn_(next(pivot), last, ++equal_nth, ++chck_nth, ++dist_nth, l2dist, Q);
   } else {
-    auto search_left = !less_nth.search_right(*pivot);
+    auto search_left = !chck_nth.search_right(*pivot);
     if (search_left)
-      knn_(first, pivot, ++equal_nth, ++less_nth, ++dist_nth, l2dist, Q);
+      knn_(first, pivot, ++equal_nth, ++chck_nth, ++dist_nth, l2dist, Q);
     else
-      knn_(next(pivot), last, ++equal_nth, ++less_nth, ++dist_nth, l2dist, Q);
+      knn_(next(pivot), last, ++equal_nth, ++chck_nth, ++dist_nth, l2dist, Q);
     if (dist_nth(*pivot) <= Q.max_key())
     {
       if (search_left)
-        knn_(next(pivot), last, ++equal_nth, ++less_nth, ++dist_nth, l2dist, Q);
+        knn_(next(pivot), last, ++equal_nth, ++chck_nth, ++dist_nth, l2dist, Q);
       else
-        knn_(first, pivot, ++equal_nth, ++less_nth, ++dist_nth, l2dist, Q);
+        knn_(first, pivot, ++equal_nth, ++chck_nth, ++dist_nth, l2dist, Q);
     }
   }
 }
@@ -582,11 +635,11 @@ std::vector<int> kd_nn_df_no_validation(const List& df,
   std::vector<int> x(nrow(df));
   iota(begin(x), end(x), 0);
   auto equal_nth = equal_nth_df(df, idx, key);
-  auto less_nth = less_nth_df(df, idx, key, key);
+  auto chck_nth = chck_nth_df(df, idx, key, key);
   auto l2dist = l2dist_df(df, idx, w, key);
   auto dist_nth = dist_nth_df(df, idx, w, key);
   n_best<decltype(begin(x))> Q(n);
-  knn_(begin(x), end(x), equal_nth, less_nth, dist_nth, l2dist, Q);
+  knn_(begin(x), end(x), equal_nth, chck_nth, dist_nth, l2dist, Q);
   std::vector<int> res;
   auto oi = std::back_inserter(res);
   Q.copy_to(oi);

@@ -9,21 +9,21 @@ namespace strdist {
 int levenshtein(std::string_view s1, std::string_view s2) {
   int n = s1.size() + 1, m = s2.size() + 1;
   static std::vector<int> tab;
-  static int lim = 0;
-  if (lim < std::max(n, m)) {
-    lim = 2 * std::max(n, m); tab.resize(lim * lim);
-    for (int i = 0; i != lim; ++i) tab[i * lim] = i;
-    for (int j = 1; j != lim; ++j) tab[j] = j;
+  static int dim = 0;
+  if (dim < std::max(n, m)) {
+    dim = 2 * std::max(n, m); tab.resize(dim * dim);
+    for (int i = 0; i != dim; ++i) tab[i * dim] = i;
+    for (int j = 1; j != dim; ++j) tab[j] = j;
   }
   for (int i = 1; i != n; ++i) {
     for (int j = 1; j != m; ++j) {
       int sc = s1[i - 1] == s2[j - 1] ? 0 : 1;
-      tab[i * lim + j] = std::min(tab[i * lim + j - 1] + 1,
-                                  std::min(tab[(i - 1) * lim + j] + 1,
-                                           tab[(i - 1) * lim + j - 1] + sc));
+      tab[i * dim + j] = std::min(tab[i * dim + j - 1] + 1,
+                                  std::min(tab[(i - 1) * dim + j] + 1,
+                                           tab[(i - 1) * dim + j - 1] + sc));
     }
   }
-  return tab[(n - 1) * lim + (m - 1)];
+  return tab[(n - 1) * dim + (m - 1)];
 }
 
 }; // namespace strdist

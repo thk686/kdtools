@@ -322,9 +322,7 @@ template<typename... Ts>
 constexpr decltype(auto)
 all_false(Ts&&... ts) {
   using namespace details;
-  return _map([](auto&&... xs) {
-    return (!xs && ...);
-  }, _<Ts>(ts)...);
+  return all_true(_not(_<Ts>(ts)...));
 }
 
 template<typename... Ts>
@@ -340,9 +338,7 @@ template<typename... Ts>
 constexpr decltype(auto)
 any_false(Ts&&... ts) {
   using namespace details;
-  return _map([](auto&&... xs) {
-    return (!xs || ...);
-  }, _<Ts>(ts)...);
+  return any_true(_not(_<Ts>(ts)...));
 }
 
 // binary operations

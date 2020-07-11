@@ -8,6 +8,7 @@
 #include <iterator>
 #include <iostream>
 #include <utility>
+#include <future>
 #include <thread>
 #include <vector>
 #include <limits>
@@ -302,27 +303,6 @@ void kd_sort(Iter first, Iter last)
   }
 }
 
-template <typename Iter, typename Pred>
-bool check_partition(Iter first, Iter pivot, Iter last, Pred pred)
-{
-  while (first != pivot) if (pred(*pivot, *first++)) return false;
-  while (first != last) if (pred(*first++, *pivot)) return false;
-  return true;
-}
-
-template <size_t I, typename Iter>
-bool kd_is_sorted(Iter first, Iter last)
-{
-  using TupleType = iter_value_t<Iter>;
-  constexpr auto J = next_dim<I, TupleType>;
-  if (distance(first, last) < 2) return true;
-  auto pred = kd_less<I>();
-  auto pivot = middle_of(first, last);
-  return check_partition(first, pivot, last, pred) &&
-    kd_is_sorted<J>(first, pivot) &&
-    kd_is_sorted<J>(next(pivot), last);
-}
-
 template <size_t I, typename Iter, typename Compare>
 void kd_sort(Iter first, Iter last, const Compare& comp)
 {
@@ -335,19 +315,6 @@ void kd_sort(Iter first, Iter last, const Compare& comp)
     kd_sort<J>(next(pivot), last, comp);
     kd_sort<J>(first, pivot, comp);
   }
-}
-
-template <size_t I, typename Iter, typename Compare>
-bool kd_is_sorted(Iter first, Iter last, const Compare& comp)
-{
-  using TupleType = iter_value_t<Iter>;
-  constexpr auto J = next_dim<I, TupleType>;
-  if (distance(first, last) < 2) return true;
-  auto pred = make_kd_compare<I>(comp);
-  auto pivot = middle_of(first, last);
-  return check_partition(first, pivot, last, pred) &&
-    kd_is_sorted<J>(first, pivot, comp) &&
-    kd_is_sorted<J>(next(pivot), last, comp);
 }
 
 template <size_t I, typename Iter>
@@ -399,6 +366,100 @@ void kd_sort_threaded(Iter first, Iter last, const Compare& comp,
       kd_sort<J>(next(pivot), last, comp);
       kd_sort<J>(first, pivot, comp);
     }
+  }
+}
+
+template <typename Iter, typename Pred>
+bool check_partition(Iter first, Iter pivot, Iter last, Pred pred)
+{
+  while (first != pivot) if (pred(*pivot, *first++)) return false;
+  while (first != last) if (pred(*first++, *pivot)) return false;
+  return true;
+}
+
+template <size_t I, typename Iter>
+bool kd_is_sorted(Iter first, Iter last)
+{
+  using TupleType = iter_value_t<Iter>;
+  constexpr auto J = next_dim<I, TupleType>;
+  if (distance(first, last) < 2) return true;
+  auto pred = kd_less<I>();
+  auto pivot = middle_of(first, last);
+  return check_partition(first, pivot, last, pred) &&
+    kd_is_sorted<J>(first, pivot) &&
+    kd_is_sorted<J>(next(pivot), last);
+}
+
+template <size_t I, typename Iter, typename Compare>
+bool kd_is_sorted(Iter first, Iter last, const Compare& comp)
+{
+  using TupleType = iter_value_t<Iter>;
+  constexpr auto J = next_dim<I, TupleType>;
+  if (distance(first, last) < 2) return true;
+  auto pred = make_kd_compare<I>(comp);
+  auto pivot = middle_of(first, last);
+  return check_partition(first, pivot, last, pred) &&
+    kd_is_sorted<J>(first, pivot, comp) &&
+    kd_is_sorted<J>(next(pivot), last, comp);
+}
+
+template <size_t I, typename Iter>
+bool kd_is_sorted_threaded(Iter first, Iter last,
+                           int max_threads = std::thread::hardware_concurrency(),
+                           int thread_depth = 1)
+{
+  using TupleType = iter_value_t<Iter>;
+  constexpr auto J = next_dim<I, TupleType>;
+  if (distance(first, last) < 2) return true;
+  auto pred = kd_less<I>();
+  auto pivot = middle_of(first, last);
+  if (check_partition(first, pivot, last, pred)) {
+    if ((1 << thread_depth) <= max_threads)
+    {
+      bool res_left, res_right;
+      thread t([=, &res_left](){
+        res_left = kd_is_sorted_threaded<J>(first, pivot, max_threads, thread_depth + 1);
+      });
+      res_right = kd_is_sorted_threaded<J>(next(pivot), last, max_threads, thread_depth + 1);
+      t.join();
+      return res_left && res_right;
+    }
+    else
+    {
+      return kd_is_sorted<J>(first, pivot) && kd_is_sorted<J>(next(pivot), last);
+    }
+  } else {
+    return false;
+  }
+}
+
+template <size_t I, typename Iter, typename Compare>
+bool kd_is_sorted_threaded(Iter first, Iter last, const Compare& comp,
+                           int max_threads = std::thread::hardware_concurrency(),
+                           int thread_depth = 1)
+{
+  using TupleType = iter_value_t<Iter>;
+  constexpr auto J = next_dim<I, TupleType>;
+  if (distance(first, last) < 2) return true;
+  auto pred = make_kd_compare<I>(comp);
+  auto pivot = middle_of(first, last);
+  if (check_partition(first, pivot, last, pred)) {
+    if ((1 << thread_depth) <= max_threads)
+    {
+      bool res_left, res_right;
+      thread t([=, &res_left](){
+        res_left = kd_is_sorted_threaded<J>(first, pivot, comp, max_threads, thread_depth + 1);
+      });
+      res_right = kd_is_sorted_threaded<J>(next(pivot), last, comp, max_threads, thread_depth + 1);
+      t.join();
+      return res_left && res_right;
+    }
+    else
+    {
+      return kd_is_sorted<J>(first, pivot, comp) && kd_is_sorted<J>(next(pivot), last, comp);
+    }
+  } else {
+    return false;
   }
 }
 
@@ -826,22 +887,10 @@ void kd_sort(Iter first, Iter last)
   detail::kd_sort<0>(first, last);
 }
 
-template <typename Iter>
-bool kd_is_sorted(Iter first, Iter last)
-{
-  return detail::kd_is_sorted<0>(first, last);
-}
-
 template <typename Iter, typename Compare>
 void kd_sort(Iter first, Iter last, const Compare& comp)
 {
   detail::kd_sort<0>(first, last, comp);
-}
-
-template <typename Iter, typename Compare>
-bool kd_is_sorted(Iter first, Iter last, const Compare& comp)
-{
-  return detail::kd_is_sorted<0>(first, last, comp);
 }
 
 template <typename Iter>
@@ -854,6 +903,30 @@ template <typename Iter, typename Compare>
 void kd_sort_threaded(Iter first, Iter last, const Compare& comp)
 {
   detail::kd_sort_threaded<0>(first, last, comp);
+}
+
+template <typename Iter>
+bool kd_is_sorted(Iter first, Iter last)
+{
+  return detail::kd_is_sorted<0>(first, last);
+}
+
+template <typename Iter, typename Compare>
+bool kd_is_sorted(Iter first, Iter last, const Compare& comp)
+{
+  return detail::kd_is_sorted<0>(first, last, comp);
+}
+
+template <typename Iter>
+bool kd_is_sorted_threaded(Iter first, Iter last)
+{
+  return detail::kd_is_sorted_threaded<0>(first, last);
+}
+
+template <typename Iter, typename Compare>
+bool kd_is_sorted_threaded(Iter first, Iter last, const Compare& comp)
+{
+  return detail::kd_is_sorted_threaded<0>(first, last, comp);
 }
 
 template <typename Iter, typename Value>

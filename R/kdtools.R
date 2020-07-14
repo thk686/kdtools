@@ -2,6 +2,24 @@
 #' @useDynLib kdtools, .registration = TRUE
 NULL
 
+colspec <- function(x, cols) {
+  switch(mode(cols),
+         "character" = {
+           if (!all(cols %in% names(x)))
+             warning("Non-existent column name ignored")
+           which(names(x) %in% cols)
+          },
+         "numeric" = {
+           if (any(cols < 0) && any(cols > 0))
+             stop("Column spec cannot have both negative and positive numbers")
+           (1:ncol(x))[cols]
+         },
+         "logical" = {
+           (1:ncol(x))[cols]
+          },
+         stop("Invalid column spec"))
+}
+
 #' Sort multidimensional data
 #' @param x a matrix or arrayvec object
 #' @param ... ignored
@@ -57,7 +75,7 @@ kd_sort.arrayvec <- function(x, inplace = FALSE, parallel = TRUE, ...) {
 #' @rdname kdsort
 #' @export
 kd_sort.data.frame <- function(x, cols = 1:ncol(x), parallel = TRUE, ...) {
-  return(x[kd_order(x, cols = cols, parallel = parallel),, drop = FALSE])
+  return(x[kd_order(x, cols = colspec(x, cols), parallel = parallel),, drop = FALSE])
 }
 
 #' @rdname kdsort
@@ -81,7 +99,7 @@ kd_order.arrayvec <- function(x, inplace = FALSE, parallel = TRUE, ...) {
 #' @rdname kdsort
 #' @export
 kd_order.data.frame <- function(x, cols = 1:ncol(x), parallel = TRUE, ...) {
-  return(kd_order_df(x, cols, parallel = parallel))
+  return(kd_order_df(x, colspec(x, cols), parallel = parallel))
 }
 
 #' @rdname kdsort
@@ -190,7 +208,7 @@ kd_range_query.arrayvec <- function(x, l, u, ...) {
 #' @rdname search
 #' @export
 kd_range_query.data.frame <- function(x, l, u, cols = 1:ncol(x), ...) {
-  return(x[kd_rq_indices(x, l, u, cols),, drop = FALSE])
+  return(x[kd_rq_indices(x, l, u, colspec(x, cols)),, drop = FALSE])
 }
 
 #' @rdname search
@@ -214,7 +232,7 @@ kd_rq_indices.arrayvec <- function(x, l, u, ...) {
 #' @param cols integer vector of column indices
 #' @export
 kd_rq_indices.data.frame <- function(x, l, u, cols = 1:ncol(x), ...) {
-  return(kd_rq_df(x, cols, l, u))
+  return(kd_rq_df(x, colspec(x, cols), l, u))
 }
 
 #' @rdname search
@@ -272,7 +290,7 @@ kd_nearest_neighbors.arrayvec <- function(x, v, n, ...) {
 #' @export
 kd_nearest_neighbors.data.frame <- function(x, v, n, cols = 1:ncol(x),
                                             w = rep(1, length(cols)), ...) {
-  return(x[kd_nn_indices(x, v, n, cols, w),, drop = FALSE])
+  return(x[kd_nn_indices(x, v, n, colspec(x, cols), w),, drop = FALSE])
 }
 
 #' @rdname nneighb
@@ -296,7 +314,7 @@ kd_nn_indices.arrayvec <- function(x, v, n, ...) {
 #' @export
 kd_nn_indices.data.frame <- function(x, v, n, cols = 1:ncol(x),
                                      w = rep(1, length(cols)), ...) {
-  return(kd_nn_df(x, cols, w, v, n))
+  return(kd_nn_df(x, colspec(x, cols), w, v, n))
 }
 
 #' @rdname nneighb

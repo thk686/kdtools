@@ -89,12 +89,12 @@ kd_order.data.frame <- function(x, cols = 1:ncol(x), parallel = TRUE, ...) {
 kd_is_sorted <- function(x, ...) UseMethod("kd_is_sorted")
 
 #' @export
-kd_is_sorted.matrix <- function(x, parallel = FALSE) {
+kd_is_sorted.matrix <- function(x, parallel = FALSE, ...) {
   return(kd_is_sorted_(matrix_to_tuples(x), parallel))
 }
 
 #' @export
-kd_is_sorted.arrayvec <- function(x, parallel = FALSE) {
+kd_is_sorted.arrayvec <- function(x, parallel = FALSE, ...) {
   return(kd_is_sorted_(x, parallel))
 }
 

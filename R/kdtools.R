@@ -10,8 +10,6 @@ colspec <- function(x, cols) {
            which(names(x) %in% cols)
           },
          "numeric" = {
-           if (any(cols < 0) && any(cols > 0))
-             stop("Column spec cannot have both negative and positive numbers")
            (1:ncol(x))[cols]
          },
          "logical" = {

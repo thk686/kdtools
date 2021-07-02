@@ -15,7 +15,7 @@ SystemRequirements: C++17
 Suggests: 
     testthat,
     knitr,
-    rmarkdown,
+    markdown,
     covr,
     ggplot2,
     tidytext,

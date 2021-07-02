@@ -16,6 +16,7 @@ Suggests:
     testthat,
     knitr,
     markdown,
+    rmarkdown,
     covr,
     ggplot2,
     tidytext,

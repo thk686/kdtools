@@ -43,7 +43,7 @@ kd_nearest_neighbor(x, v)
 
 \item{n}{the number of neighbors to return}
 
-\item{...}{addtional arguments}
+\item{...}{additional arguments}
 
 \item{cols}{integer indices of columns to use}
 

@@ -80,7 +80,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -109,7 +109,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/thk686/kdtools/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -135,30 +135,29 @@
     <p>Sort multidimensional data</p>
     </div>
 
-    <pre class="usage"><span class='fu'>kd_sort</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'>kd_sort</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for matrix</span>
-<span class='fu'>kd_sort</span>(<span class='no'>x</span>, <span class='kw'>parallel</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
+<span class='fu'>kd_sort</span><span class='op'>(</span><span class='va'>x</span>, parallel <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for arrayvec</span>
-<span class='fu'>kd_sort</span>(<span class='no'>x</span>, <span class='kw'>inplace</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>parallel</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
+<span class='fu'>kd_sort</span><span class='op'>(</span><span class='va'>x</span>, inplace <span class='op'>=</span> <span class='cn'>FALSE</span>, parallel <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for data.frame</span>
-<span class='fu'>kd_sort</span>(<span class='no'>x</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span>(<span class='no'>x</span>), <span class='kw'>parallel</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
+<span class='fu'>kd_sort</span><span class='op'>(</span><span class='va'>x</span>, cols <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>, parallel <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>kd_order</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+<span class='fu'>kd_order</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for matrix</span>
-<span class='fu'>kd_order</span>(<span class='no'>x</span>, <span class='kw'>parallel</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
+<span class='fu'>kd_order</span><span class='op'>(</span><span class='va'>x</span>, parallel <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for arrayvec</span>
-<span class='fu'>kd_order</span>(<span class='no'>x</span>, <span class='kw'>inplace</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>parallel</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
+<span class='fu'>kd_order</span><span class='op'>(</span><span class='va'>x</span>, inplace <span class='op'>=</span> <span class='cn'>FALSE</span>, parallel <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for data.frame</span>
-<span class='fu'>kd_order</span>(<span class='no'>x</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span>(<span class='no'>x</span>), <span class='kw'>parallel</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='no'>...</span>)
+<span class='fu'>kd_order</span><span class='op'>(</span><span class='va'>x</span>, cols <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>, parallel <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>kd_is_sorted</span>(<span class='no'>x</span>)</pre>
+<span class='fu'>kd_is_sorted</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -198,7 +197,7 @@
   This can be more efficient when many subsequent queries are required.</p>
 <p><code>kd_sort</code> and <code>kd_order</code> have been extended to work directly on a
   data frame. All vector column types are supported (even lists of objects as
-  long as equality and comparison operators are defined). Additionaly, the
+  long as equality and comparison operators are defined). Additional, the
   user can specify a sequence of column indices that will be used for
   sorting. These can be a subset of columns and given in any order.</p>
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
@@ -207,30 +206,34 @@
   conversions.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='arrayvec.html'>arrayvec</a></code></p></div>
+    <div class='dont-index'><p><code><a href='print.arrayvec.html'>arrayvec</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>z</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>real</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='fl'>10</span>), <span class='kw'>lgl</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='fl'>10</span>) <span class='kw'>&gt;</span> <span class='fl'>0.5</span>,
-                <span class='kw'>int</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Poisson.html'>rpois</a></span>(<span class='fl'>10</span>, <span class='fl'>2</span>)), <span class='kw'>char</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='no'>month.name</span>, <span class='fl'>10</span>),
-                <span class='kw'>stringsAsFactors</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
-<span class='fu'>kd_sort</span>(<span class='no'>z</span>)</div><div class='output co'>#&gt;           real   lgl int      char
-#&gt; 4  0.157208442 FALSE   1 September
+    <pre class="examples"><div class='input'><span class='va'>z</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>real <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='fl'>10</span><span class='op'>)</span>, lgl <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='fl'>10</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>0.5</span>,
+                int <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Poisson.html'>rpois</a></span><span class='op'>(</span><span class='fl'>10</span>, <span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>, char <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='va'>month.name</span>, <span class='fl'>10</span><span class='op'>)</span>,
+                stringsAsFactors <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+<span class='fu'>kd_sort</span><span class='op'>(</span><span class='va'>z</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;           real   lgl int      char
 #&gt; 8  0.289767245 FALSE   2   January
-#&gt; 6  0.466393497 FALSE   3   October
-#&gt; 1  0.080750138  TRUE   1     April
 #&gt; 5  0.007399441 FALSE   5      June
+#&gt; 4  0.157208442 FALSE   1 September
+#&gt; 1  0.080750138  TRUE   1     April
+#&gt; 6  0.466393497 FALSE   3   October
 #&gt; 7  0.497777389 FALSE   0       May
-#&gt; 2  0.834333037 FALSE   3  February
 #&gt; 3  0.600760886 FALSE   3     March
 #&gt; 9  0.732881987 FALSE   3  November
-#&gt; 10 0.772521511  TRUE   3      July</div><div class='input'><span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span>(<span class='fl'>200</span>), <span class='fl'>100</span>)
-<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>kd_sort</span>(<span class='no'>x</span>)
-<span class='fu'>kd_is_sorted</span>(<span class='no'>y</span>)</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'><span class='fu'>kd_order</span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;   [1]  27  44  67  42  58  50  46  53  13  98  92  11  77  38  57   6  59  63
+#&gt; 2  0.834333037 FALSE   3  February
+#&gt; 10 0.772521511  TRUE   3      July</div><div class='input'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='fl'>200</span><span class='op'>)</span>, <span class='fl'>100</span><span class='op'>)</span>
+<span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fu'>kd_sort</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
+<span class='fu'>kd_is_sorted</span><span class='op'>(</span><span class='va'>y</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'><span class='fu'>kd_order</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;   [1]  27  44  67  42  58  50  46  53  13  98  92  11  77  38  57   6  59  63
 #&gt;  [19]  61  26  29  41  81  47   9  18 100  83  30   7  80  16  37  93  95  85
 #&gt;  [37]  84  20  24  71  31  34   5   4  39  25  14  28  70  54  35  89  22   8
 #&gt;  [55]  76  36  62  86  23  32  91  65  12   1  40  10   2  96  69  55  33  75
 #&gt;  [73]  79  88  94  90  97  74  19  43  72  49  73  17  51  60  56  82  15  87
-#&gt;  [91]  52  66  78  21  68  48  64  99   3  45</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='no'>y</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"o"</span>, <span class='kw'>pch</span> <span class='kw'>=</span> <span class='fl'>19</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"steelblue"</span>, <span class='kw'>asp</span> <span class='kw'>=</span> <span class='fl'>1</span>)</div><div class='img'><img src='kdsort-1.png' alt='' width='700' height='433' /></div></pre>
+#&gt;  [91]  52  66  78  21  68  48  64  99   3  45</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>y</span>, type <span class='op'>=</span> <span class='st'>"o"</span>, pch <span class='op'>=</span> <span class='fl'>19</span>, col <span class='op'>=</span> <span class='st'>"steelblue"</span>, asp <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
+</div><div class='img'><img src='kdsort-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -246,7 +249,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

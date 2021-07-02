@@ -58,7 +58,7 @@ The algorithm used is a divide-and-conquer quicksort variant that
 
   \code{kd_sort} and \code{kd_order} have been extended to work directly on a
   data frame. All vector column types are supported (even lists of objects as
-  long as equality and comparison operators are defined). Additionaly, the
+  long as equality and comparison operators are defined). Additional, the
   user can specify a sequence of column indices that will be used for
   sorting. These can be a subset of columns and given in any order.
 }

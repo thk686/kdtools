@@ -34,7 +34,7 @@ colspec <- function(x, cols) {
 #'
 #'   \code{kd_sort} and \code{kd_order} have been extended to work directly on a
 #'   data frame. All vector column types are supported (even lists of objects as
-#'   long as equality and comparison operators are defined). Additionaly, the
+#'   long as equality and comparison operators are defined). Additional, the
 #'   user can specify a sequence of column indices that will be used for
 #'   sorting. These can be a subset of columns and given in any order.
 #' @note The matrix version will be slower because of data structure
@@ -141,7 +141,7 @@ lex_sort.arrayvec <- function(x, inplace = FALSE, ...) {
 #' Search sorted data
 #' @param x an object sorted by \code{\link{kd_sort}}
 #' @param v a vector specifying where to look
-#' @param ... addtional arguments
+#' @param ... additional arguments
 #' @examples
 #' x = matrix(runif(200), 100)
 #' y = matrix_to_tuples(x)
@@ -254,7 +254,7 @@ kd_binary_search.arrayvec <- function(x, v) {
 #' @param x an object sorted by \code{\link{kd_sort}}
 #' @param v a vector specifying where to look
 #' @param n the number of neighbors to return
-#' @param ... addtional arguments
+#' @param ... additional arguments
 #'
 #' @examples
 #' x = matrix(runif(200), 100)

@@ -23,7 +23,7 @@ There are now two options for using kdtools, either on a C++ vector of arrays (a
 
 ##### Step 1. Sort data frame
 
-When working with a data frame, you can specify which columns to use and the order of inclusion using the ```cols``` argument. Ommitting the ```cols``` arguemnt uses all columns in order.
+When working with a data frame, you can specify which columns to use and the order of inclusion using the ```cols``` argument. Omitting the ```cols``` argument uses all columns in order.
 
 ```{r}
 # sort by weight, miles-per-gallon and displacement

@@ -1,12 +1,11 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
 <!-- badges: start -->
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/kdtools)](https://cran.r-project.org/package=kdtools)
 [![Travis build
-status](https://travis-ci.org/thk686/kdtools.svg?branch=master)](https://travis-ci.org/thk686/kdtools)
+status](https://travis-ci.com/thk686/kdtools.svg?branch=master)](https://travis-ci.org/thk686/kdtools)
 [![CircleCI build
 status](https://circleci.com/gh/thk686/kdtools.svg?style=svg)](https://circleci.com/gh/thk686/kdtools)
 [![AppVeyor build
@@ -54,24 +53,26 @@ df <- kd_sort(data.frame(a = runif(12),
                          stringsAsFactors = FALSE))
 print(df)
 #>             a b         c
-#> 8  0.22005867 0  December
-#> 1  0.05100523 0   January
-#> 9  0.12662847 0      June
-#> 12 0.04077643 0 September
-#> 10 0.06624199 3     April
-#> 6  0.18405158 3  November
-#> 5  0.22156547 0     March
-#> 3  0.85750353 0    August
-#> 11 0.30600644 0  February
-#> 4  0.92848702 0       May
-#> 2  0.91278945 3      July
-#> 7  0.47418294 0   October
+#> 8  0.28309700 0      July
+#> 7  0.01521800 1      June
+#> 1  0.03399387 1     March
+#> 10 0.07473811 1 September
+#> 9  0.25702259 1     April
+#> 3  0.29123249 2   October
+#> 12 0.36012635 0  November
+#> 4  0.68393471 0    August
+#> 11 0.69187151 0   January
+#> 6  0.76786078 1       May
+#> 2  0.72480842 2  December
+#> 5  0.62966472 4  February
 lower <- list(0.1, 1L, "August")
 upper <- list(0.9, 4L, "September")
 i <- kd_rq_indices(df, lower, upper)
 print(i)
-#> [1] 6
+#> [1]  6 10 11
 df[i, ]
 #>           a b        c
-#> 6 0.1840516 3 November
+#> 3 0.2912325 2  October
+#> 6 0.7678608 1      May
+#> 2 0.7248084 2 December
 ```

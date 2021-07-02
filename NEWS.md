@@ -1,3 +1,7 @@
+# kdtoools 0.5.0
+
+* added support for native data frames, distance weights and string distance
+
 # kdtools 0.4.1
 
 * range query and nearest neighbor search have variants that return indices

@@ -3,7 +3,7 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/thk686/kdtools/workflows/R-CMD-check/badge.svg)](https://github.com/thk686/kdtools/actions)
-/thk686/kdtools) [![CircleCI build
+[![CircleCI build
 status](https://circleci.com/gh/thk686/kdtools.svg?style=svg)](https://circleci.com/ghr&svg=true)\]
 [![Coverage
 status](https://codecov.io/gh/thk686/kdtools/branch/master/graph/badge.svg)](https://codecov.io/github/thk686/kdtools?branch=master)
@@ -48,30 +48,30 @@ df <- kd_sort(data.frame(a = runif(12),
                          stringsAsFactors = FALSE))
 print(df)
 #>            a b         c
-#> 6  0.1098208 2      July
-#> 3  0.2607019 0     March
-#> 10 0.1069173 0   October
-#> 5  0.2263929 2  December
-#> 8  0.2591978 3  February
-#> 7  0.1746201 2      June
-#> 4  0.3345214 1   January
-#> 9  0.6643432 1     April
-#> 1  0.6792880 0  November
-#> 2  0.5159339 1       May
-#> 12 0.8121497 2    August
-#> 11 0.7236776 1 September
+#> 2  0.1643255 1     April
+#> 10 0.3597047 1      July
+#> 11 0.3346495 1      June
+#> 1  0.3799457 1       May
+#> 4  0.3336463 2  December
+#> 5  0.5802684 3  November
+#> 3  0.5834557 3     March
+#> 6  0.8441197 0    August
+#> 8  0.9498293 1   January
+#> 7  0.8387977 1   October
+#> 9  0.9481442 2  February
+#> 12 0.7788817 4 September
 lower <- list(0.1, 1L, "August")
 upper <- list(0.9, 4L, "September")
 i <- kd_rq_indices(df, lower, upper)
 print(i)
-#> [1]  1  4  5  6  7 10 11
+#> [1]  2  3  4  5  6  7 10
 df[i, ]
 #>            a b        c
-#> 6  0.1098208 2     July
-#> 5  0.2263929 2 December
-#> 8  0.2591978 3 February
-#> 7  0.1746201 2     June
-#> 4  0.3345214 1  January
-#> 2  0.5159339 1      May
-#> 12 0.8121497 2   August
+#> 10 0.3597047 1     July
+#> 11 0.3346495 1     June
+#> 1  0.3799457 1      May
+#> 4  0.3336463 2 December
+#> 5  0.5802684 3 November
+#> 3  0.5834557 3    March
+#> 7  0.8387977 1  October
 ```

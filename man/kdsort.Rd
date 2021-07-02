@@ -26,8 +26,7 @@ kd_order(x, ...)
 
 \method{kd_order}{arrayvec}(x, inplace = FALSE, parallel = TRUE, ...)
 
-\method{kd_order}{data.frame}(x, cols = 1:ncol(x), parallel = TRUE,
-  ...)
+\method{kd_order}{data.frame}(x, cols = 1:ncol(x), parallel = TRUE, ...)
 
 kd_is_sorted(x, ...)
 }

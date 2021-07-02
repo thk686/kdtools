@@ -2,14 +2,9 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- badges: start -->
 
-[![CRAN
-status](https://www.r-pkg.org/badges/version/kdtools)](https://cran.r-project.org/package=kdtools)
-[![Travis build
-status](https://travis-ci.com/thk686/kdtools.svg?branch=master)](https://travis-ci.com/thk686/kdtools)
-[![CircleCI build
-status](https://circleci.com/gh/thk686/kdtools.svg?style=svg)](https://circleci.com/gh/thk686/kdtools)
-[![AppVeyor build
-status](https://ci.appveyor.com/api/projects/status/github/thk686/kdtools?branch=master&svg=true)](https://ci.appveyor.com/project/thk686/kdtools)
+[![R-CMD-check](https://github.com/thk686/kdtools/workflows/R-CMD-check/badge.svg)](https://github.com/thk686/kdtools/actions)
+/thk686/kdtools) [![CircleCI build
+status](https://circleci.com/gh/thk686/kdtools.svg?style=svg)](https://circleci.com/ghr&svg=true)\]
 [![Coverage
 status](https://codecov.io/gh/thk686/kdtools/branch/master/graph/badge.svg)](https://codecov.io/github/thk686/kdtools?branch=master)
 [![DOI](https://zenodo.org/badge/125262786.svg)](https://zenodo.org/badge/latestdoi/125262786)
@@ -52,29 +47,31 @@ df <- kd_sort(data.frame(a = runif(12),
                          c = sample(month.name),
                          stringsAsFactors = FALSE))
 print(df)
-#>             a b         c
-#> 8  0.11918000 0  December
-#> 1  0.41809739 0      June
-#> 12 0.37167230 0       May
-#> 10 0.44655391 1    August
-#> 9  0.09920249 2  February
-#> 2  0.39759275 2   October
-#> 5  0.50210280 2      July
-#> 11 0.57355531 2   January
-#> 7  0.57271534 2  November
-#> 4  0.76871993 2     April
-#> 6  0.95399264 2     March
-#> 3  0.66634571 3 September
+#>            a b         c
+#> 6  0.1098208 2      July
+#> 3  0.2607019 0     March
+#> 10 0.1069173 0   October
+#> 5  0.2263929 2  December
+#> 8  0.2591978 3  February
+#> 7  0.1746201 2      June
+#> 4  0.3345214 1   January
+#> 9  0.6643432 1     April
+#> 1  0.6792880 0  November
+#> 2  0.5159339 1       May
+#> 12 0.8121497 2    August
+#> 11 0.7236776 1 September
 lower <- list(0.1, 1L, "August")
 upper <- list(0.9, 4L, "September")
 i <- kd_rq_indices(df, lower, upper)
 print(i)
-#> [1] 4 6 7 8 9
+#> [1]  1  4  5  6  7 10 11
 df[i, ]
 #>            a b        c
-#> 10 0.4465539 1   August
-#> 2  0.3975927 2  October
-#> 5  0.5021028 2     July
-#> 11 0.5735553 2  January
-#> 7  0.5727153 2 November
+#> 6  0.1098208 2     July
+#> 5  0.2263929 2 December
+#> 8  0.2591978 3 February
+#> 7  0.1746201 2     June
+#> 4  0.3345214 1  January
+#> 2  0.5159339 1      May
+#> 12 0.8121497 2   August
 ```

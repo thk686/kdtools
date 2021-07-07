@@ -33,6 +33,10 @@ tuples_to_matrix_rows <- function(x, a, b) {
     .Call(`_kdtools_tuples_to_matrix_rows`, x, a, b)
 }
 
+kd_order_df_no_validation <- function(df, idx, parallel = TRUE) {
+    .Call(`_kdtools_kd_order_df_no_validation`, df, idx, parallel)
+}
+
 kd_order_df <- function(df, idx, parallel = TRUE) {
     .Call(`_kdtools_kd_order_df`, df, idx, parallel)
 }

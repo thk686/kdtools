@@ -10,7 +10,7 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-use_cached_data = TRUE
+use_cached_data = FALSE
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -21,8 +21,8 @@ library(tidytext)
 library(printr)
 library(scales)
 theme_set(theme_classic())
-bench_ntuples = 1e7
-bench_ntrials = 21
+bench_ntuples = 1e5
+bench_ntrials = 5
 ```
 
 ## Introduction
@@ -390,6 +390,15 @@ Rcpp::List time_build(int n, int m)
   test[4] = "rtree pack quadratic";
   time[4] = t;
   
+  using rtree_type_3 = boost::geometry::index::rtree<key_type,
+                        boost::geometry::index::rstar<16>>;
+  
+  auto do_rt_construct_3 = [&]{ rtree_type_3 x(data); };
+  
+  t = time_it(do_rt_construct_3, prep_data, m);
+  test[4] = "rtree pack rstar";
+  time[4] = t;
+
   Rcpp::List out;
   out["Test"] = test;
   out["Time"] = time;
@@ -400,8 +409,8 @@ Rcpp::List time_build(int n, int m)
 // [[Rcpp::export]]
 Rcpp::List time_query(int n, int m)
 {
-  Rcpp::CharacterVector test(3);
-  Rcpp::NumericVector time(3);
+  Rcpp::CharacterVector test(4);
+  Rcpp::NumericVector time(4);
     
   range_type data(n), res;
   key_type p1{{0.1, 0.1}}, p2{{0.2, 0.2}};
@@ -469,6 +478,28 @@ Rcpp::List time_query(int n, int m)
   test[2] = "rtree query quadratic";
   time[2] = t;
   
+  using rtree_type_3 = boost::geometry::index::rtree<key_type,
+                        boost::geometry::index::rstar<16>>;
+  
+  rtree_type_3 rt3;
+  
+  auto prep_rt_3 = [&]{
+    std::generate(begin(data), end(data), []{
+      return key_type{{R::runif(0, 1), R::runif(0, 1)}};
+    });
+    rt3.clear();
+    rt3.insert(begin(data), end(data));
+    res.clear();
+  };
+  
+  auto do_rt_3_query = [&]{ rt3.query(
+    boost::geometry::index::within(box),
+    std::back_inserter(res)); };
+  
+  t = time_it(do_rt_3_query, prep_rt_3, m);
+  test[3] = "rtree query rstar";
+  time[3] = t;
+
   Rcpp::List out;
   out["Test"] = test;
   out["Time"] = time;

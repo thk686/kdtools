@@ -41,6 +41,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// kd_order_df_no_validation
+IntegerVector kd_order_df_no_validation(const List& df, const IntegerVector& idx, bool parallel);
+RcppExport SEXP _kdtools_kd_order_df_no_validation(SEXP dfSEXP, SEXP idxSEXP, SEXP parallelSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const List& >::type df(dfSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type idx(idxSEXP);
+    Rcpp::traits::input_parameter< bool >::type parallel(parallelSEXP);
+    rcpp_result_gen = Rcpp::wrap(kd_order_df_no_validation(df, idx, parallel));
+    return rcpp_result_gen;
+END_RCPP
+}
 // kd_order_df
 IntegerVector kd_order_df(const List& df, const IntegerVector& idx, bool parallel);
 RcppExport SEXP _kdtools_kd_order_df(SEXP dfSEXP, SEXP idxSEXP, SEXP parallelSEXP) {
@@ -315,6 +328,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_matrix_to_tuples", (DL_FUNC) &_kdtools_matrix_to_tuples, 1},
     {"_kdtools_tuples_to_matrix", (DL_FUNC) &_kdtools_tuples_to_matrix, 1},
     {"_kdtools_tuples_to_matrix_rows", (DL_FUNC) &_kdtools_tuples_to_matrix_rows, 3},
+    {"_kdtools_kd_order_df_no_validation", (DL_FUNC) &_kdtools_kd_order_df_no_validation, 3},
     {"_kdtools_kd_order_df", (DL_FUNC) &_kdtools_kd_order_df, 3},
     {"_kdtools_kd_rq_df_no_validation", (DL_FUNC) &_kdtools_kd_rq_df_no_validation, 4},
     {"_kdtools_kd_rq_df", (DL_FUNC) &_kdtools_kd_rq_df, 4},

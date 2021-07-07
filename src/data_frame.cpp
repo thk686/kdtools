@@ -125,7 +125,7 @@ struct kd_less_df
   size_t m_dim, m_ndim, m_count;
 };
 
-#else // USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
+#else // (don't) USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
 
 struct kd_less_df
 {
@@ -208,24 +208,6 @@ void kd_order_df_threaded(Iter first, Iter last, const Pred& pred,
       kd_order_df_(first, pivot, ++pred);
     }
   }
-}
-
-// [[Rcpp::export]]
-IntegerVector kd_order_df(const List& df,
-                          const IntegerVector& idx,
-                          bool parallel = true) {
-  if (ncol(df) < 1 || nrow(df) < 1)
-    return IntegerVector();
-  if (not_in_range(idx, ncol(df)))
-    stop("Index out of range");
-  IntegerVector x(nrow(df));
-  iota(begin(x), end(x), 0);
-  auto pred = kd_less_df(df, idx);
-  if (parallel)
-    kd_order_df_threaded(begin(x), end(x), pred);
-  else
-    kd_order_df_(begin(x), end(x), pred);
-  return x + 1;
 }
 
 struct chck_nth_df
@@ -553,41 +535,6 @@ void kd_rq_df_(Iter first, Iter last, OutIter outp,
   return;
 }
 
-// [[Rcpp::export]]
-std::vector<int> kd_rq_df_no_validation(const List& df,
-                                        const IntegerVector& idx,
-                                        const List& lower,
-                                        const List& upper)
-{
-  std::vector<int> x(nrow(df));
-  iota(begin(x), end(x), 0);
-  auto wi = within_df(df, idx, lower, upper);
-  auto cn = chck_nth_df(df, idx, lower, upper);
-  std::vector<int> res;
-  auto oi = std::back_inserter(res);
-  kd_rq_df_(begin(x), end(x), oi, cn, wi);
-  for (auto& e : res) ++e;
-  return res;
-}
-
-// [[Rcpp::export]]
-std::vector<int> kd_rq_df(const List& df,
-                          const IntegerVector& idx,
-                          const List& lower,
-                          const List& upper)
-{
-  if (ncol(df) < 1 || nrow(df) < 1)
-    stop("Empty data frame");
-  if (not_in_range(idx, ncol(df)))
-    stop("Index out of range");
-  if (idx.size() != lower.size() ||
-      idx.size() != upper.size())
-    stop("Incorrect dimension of lower or upper bound");
-  if (type_mismatch(df, idx, lower, upper))
-    stop("Mismatched types in lower or upper bound");
-  return kd_rq_df_no_validation(df, idx, lower, upper);
-}
-
 template <typename Iter,
           typename EqualNth,
           typename ChckNth,
@@ -623,6 +570,66 @@ void knn_(Iter first, Iter last,
         knn_(first, pivot, ++equal_nth, ++chck_nth, ++dist_nth, l2dist, Q);
     }
   }
+}
+
+// [[Rcpp::export]]
+IntegerVector kd_order_df_no_validation(const List& df,
+                                        const IntegerVector& idx,
+                                        bool parallel = true) {
+  IntegerVector x(nrow(df));
+  iota(begin(x), end(x), 0);
+  auto pred = kd_less_df(df, idx);
+  if (parallel)
+    kd_order_df_threaded(begin(x), end(x), pred);
+  else
+    kd_order_df_(begin(x), end(x), pred);
+  return x + 1;
+}
+
+// [[Rcpp::export]]
+IntegerVector kd_order_df(const List& df,
+                          const IntegerVector& idx,
+                          bool parallel = true) {
+  if (ncol(df) < 1 || nrow(df) < 1)
+    return IntegerVector();
+  if (not_in_range(idx, ncol(df)))
+    stop("Index out of range");
+  return kd_order_df_no_validation(df, idx, parallel);
+}
+
+// [[Rcpp::export]]
+std::vector<int> kd_rq_df_no_validation(const List& df,
+                                        const IntegerVector& idx,
+                                        const List& lower,
+                                        const List& upper)
+{
+  std::vector<int> x(nrow(df));
+  iota(begin(x), end(x), 0);
+  auto wi = within_df(df, idx, lower, upper);
+  auto cn = chck_nth_df(df, idx, lower, upper);
+  std::vector<int> res;
+  auto oi = std::back_inserter(res);
+  kd_rq_df_(begin(x), end(x), oi, cn, wi);
+  for (auto& e : res) ++e;
+  return res;
+}
+
+// [[Rcpp::export]]
+std::vector<int> kd_rq_df(const List& df,
+                          const IntegerVector& idx,
+                          const List& lower,
+                          const List& upper)
+{
+  if (ncol(df) < 1 || nrow(df) < 1)
+    stop("Empty data frame");
+  if (not_in_range(idx, ncol(df)))
+    stop("Index out of range");
+  if (idx.size() != lower.size() ||
+      idx.size() != upper.size())
+    stop("Incorrect dimension of lower or upper bound");
+  if (type_mismatch(df, idx, lower, upper))
+    stop("Mismatched types in lower or upper bound");
+  return kd_rq_df_no_validation(df, idx, lower, upper);
 }
 
 // [[Rcpp::export]]

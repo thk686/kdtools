@@ -3,13 +3,13 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/thk686/kdtools/workflows/R-CMD-check/badge.svg)](https://github.com/thk686/kdtools/actions)
-[![CircleCI build
-status](https://circleci.com/gh/thk686/kdtools.svg?style=svg)](https://circleci.com/ghr&svg=true)
 [![Codecov test
 coverage](https://codecov.io/gh/thk686/kdtools/branch/master/graph/badge.svg)](https://codecov.io/gh/thk686/kdtools?branch=master)
 [![DOI](https://zenodo.org/badge/125262786.svg)](https://zenodo.org/badge/latestdoi/125262786)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/kdtools)](https://CRAN.R-project.org/package=kdtools)
+[![CircleCI build
+status](https://circleci.com/gh/thk686/kdtools.svg?style=svg)](https://circleci.com/gh/thk686/kdtools)
 
 <!-- badges: end -->
 
@@ -49,28 +49,29 @@ df <- kd_sort(data.frame(a = runif(12),
                          c = sample(month.name),
                          stringsAsFactors = FALSE))
 print(df)
-#>             a b         c
-#> 3  0.20677902 0  February
-#> 6  0.15005525 1   October
-#> 5  0.03177597 0 September
-#> 10 0.12168593 2      July
-#> 9  0.02825657 2      June
-#> 2  0.22717825 2  November
-#> 1  0.23413967 0  December
-#> 8  0.98255966 0     April
-#> 11 0.72837338 0    August
-#> 12 0.61216673 0     March
-#> 4  0.94480631 2   January
-#> 7  0.45118667 2       May
+#>            a b         c
+#> 12 0.5611445 0     April
+#> 6  0.4783884 0  February
+#> 8  0.4240752 0     March
+#> 1  0.5635279 0   October
+#> 11 0.4520168 2   January
+#> 9  0.3713406 2      July
+#> 7  0.6002583 3       May
+#> 3  0.6419641 0      June
+#> 5  0.8951297 0  November
+#> 2  0.8317521 1  December
+#> 10 0.8486102 3    August
+#> 4  0.8281034 4 September
 lower <- list(0.1, 1L, "August")
 upper <- list(0.9, 4L, "September")
 i <- kd_rq_indices(df, lower, upper)
 print(i)
-#> [1]  2  4  6 12
+#> [1]  5  6  7 10 11
 df[i, ]
 #>            a b        c
-#> 6  0.1500553 1  October
-#> 10 0.1216859 2     July
-#> 2  0.2271783 2 November
-#> 7  0.4511867 2      May
+#> 11 0.4520168 2  January
+#> 9  0.3713406 2     July
+#> 7  0.6002583 3      May
+#> 2  0.8317521 1 December
+#> 10 0.8486102 3   August
 ```

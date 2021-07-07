@@ -1,19 +1,15 @@
-version: 2.1
-#orbs:
-#  codecov: codecov/codecov@1.0.2
+version: 2
 jobs:
   build:
     docker:
       - image: rocker/verse:latest
-    parallelism: 4
     environment:
       R_LIBS: ~/R/Library
-      CXX_STD: CXX17
     steps:
       - restore_cache:
           keys:
-            - r-pkg-cache--
-            - r-pkg-cache--
+            - r-pkg-cache-{{ arch }}-{{ .Branch }}
+            - r-pkg-cache-{{ arch }}-
       - checkout
       - run:
           name: Install package dependencies
@@ -36,8 +32,6 @@ jobs:
       - store_artifacts:
           path: kdtools.Rcheck/
       - save_cache:
-          key: r-pkg-cache--
+          key: r-pkg-cache-{{ arch }}-{{ .Branch }}
           paths:
             - "~/R/Library"
-#      - codecov/upload:
-#          file: {{ coverage_report_filepath }}

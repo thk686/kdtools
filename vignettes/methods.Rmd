@@ -10,7 +10,7 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-use_cached_data = FALSE
+use_cached_data = TRUE
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -21,8 +21,8 @@ library(tidytext)
 library(printr)
 library(scales)
 theme_set(theme_classic())
-bench_ntuples = 1e5
-bench_ntrials = 5
+bench_ntuples = 1e7
+bench_ntrials = 21
 ```
 
 ## Introduction
@@ -294,7 +294,7 @@ ggplot(df, aes(x, y)) +
 
 ### Performance comparison to Boost Geometry
 
-The [Boost Geometry library](http://www.boost.org/doc/libs/release/libs/geometry/) is a highly sophisticated and performant framework for working with geometric features. It includes an [R-Tree index](https://en.wikipedia.org/wiki/R-tree) that allows access to objects within a bounding region in logarithmic time. Here I compare the speed of building and querying a collection of points. The only purpose of this comparison is to look for large (i.e., 5 to 10 fold) differences, which would indicate a problem in the implementation. Small differences in measured times are probably not meaningful and will likely change on different systems. Reported results are the median of `r bench_ntrials` trials using `r bench_ntuples` tuples.
+The [Boost Geometry library](https://www.boost.org/doc/libs/release/libs/geometry/) is a highly sophisticated and performant framework for working with geometric features. It includes an [R-Tree index](https://en.wikipedia.org/wiki/R-tree) that allows access to objects within a bounding region in logarithmic time. Here I compare the speed of building and querying a collection of points. The only purpose of this comparison is to look for large (i.e., 5 to 10 fold) differences, which would indicate a problem in the implementation. Small differences in measured times are probably not meaningful and will likely change on different systems. Reported results are the median of `r bench_ntrials` trials using `r bench_ntuples` tuples.
 
 ```{Rcpp include=FALSE}
 // [[Rcpp::depends(BH)]]

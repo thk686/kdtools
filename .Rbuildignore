@@ -10,3 +10,4 @@
 ^docs$
 ^\.github$
 ^CRAN-RELEASE$
+^\.circleci/config\.yml$

@@ -176,40 +176,6 @@ struct kd_less_df
 
 #endif // USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
 
-template <typename Iter, typename Pred>
-void kd_order_df_(Iter first, Iter last, const Pred& pred)
-{
-  if (distance(first, last) > 1)
-  {
-    auto pivot = median_part(first, last, pred);
-    kd_order_df_(next(pivot), last, ++pred);
-    kd_order_df_(first, pivot, ++pred);
-  }
-}
-
-template <typename Iter, typename Pred>
-void kd_order_df_threaded(Iter first, Iter last, const Pred& pred,
-                          int max_threads = std::thread::hardware_concurrency(),
-                          int thread_depth = 1)
-{
-  if (distance(first, last) > 1)
-  {
-    auto pivot = median_part(first, last, pred);
-    if ((1 << thread_depth) <= max_threads)
-    {
-      thread t(kd_order_df_threaded<Iter, Pred>,
-               next(pivot), last, ++pred, max_threads, thread_depth + 1);
-      kd_order_df_threaded<Iter, Pred>(first, pivot, ++pred, max_threads, thread_depth + 1);
-      t.join();
-    }
-    else
-    {
-      kd_order_df_(next(pivot), last, ++pred);
-      kd_order_df_(first, pivot, ++pred);
-    }
-  }
-}
-
 struct chck_nth_df
 {
   chck_nth_df(const List& df, const IntegerVector& idx,
@@ -510,6 +476,40 @@ bool type_mismatch(const List& df,
       return true;
   }
   return false;
+}
+
+template <typename Iter, typename Pred>
+void kd_order_df_(Iter first, Iter last, const Pred& pred)
+{
+  if (distance(first, last) > 1)
+  {
+    auto pivot = median_part(first, last, pred);
+    kd_order_df_(next(pivot), last, ++pred);
+    kd_order_df_(first, pivot, ++pred);
+  }
+}
+
+template <typename Iter, typename Pred>
+void kd_order_df_threaded(Iter first, Iter last, const Pred& pred,
+                          int max_threads = std::thread::hardware_concurrency(),
+                          int thread_depth = 1)
+{
+  if (distance(first, last) > 1)
+  {
+    auto pivot = median_part(first, last, pred);
+    if ((1 << thread_depth) <= max_threads)
+    {
+      thread t(kd_order_df_threaded<Iter, Pred>,
+               next(pivot), last, ++pred, max_threads, thread_depth + 1);
+      kd_order_df_threaded<Iter, Pred>(first, pivot, ++pred, max_threads, thread_depth + 1);
+      t.join();
+    }
+    else
+    {
+      kd_order_df_(next(pivot), last, ++pred);
+      kd_order_df_(first, pivot, ++pred);
+    }
+  }
 }
 
 template <typename Iter,

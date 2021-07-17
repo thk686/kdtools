@@ -10,7 +10,7 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-use_cached_data = FALSE
+use_cached_data = TRUE
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -341,8 +341,8 @@ double time_it(T x, U u, size_t n)
 // [[Rcpp::export]]
 Rcpp::List time_build(int n, int m)
 {
-  Rcpp::CharacterVector test(5);
-  Rcpp::NumericVector time(5);
+  Rcpp::CharacterVector test(6);
+  Rcpp::NumericVector time(6);
   
   range_type data(n);
 
@@ -396,8 +396,8 @@ Rcpp::List time_build(int n, int m)
   auto do_rt_construct_3 = [&]{ rtree_type_3 x(data); };
   
   t = time_it(do_rt_construct_3, prep_data, m);
-  test[4] = "rtree pack rstar";
-  time[4] = t;
+  test[5] = "rtree pack rstar";
+  time[5] = t;
 
   Rcpp::List out;
   out["Test"] = test;
@@ -578,8 +578,8 @@ double time_it(T x, U u, size_t n)
 // [[Rcpp::export]]
 Rcpp::List time_nn(int n, int m)
 {
-  Rcpp::CharacterVector test(6);
-  Rcpp::NumericVector time(6);
+  Rcpp::CharacterVector test(8);
+  Rcpp::NumericVector time(8);
     
   range_type data(n), res;
   key_type p{{0.1, 0.1}};
@@ -645,30 +645,60 @@ Rcpp::List time_nn(int n, int m)
   test[2] = "rtree nearest neighbor quadratic";
   time[2] = t;
   
+  using rtree_type_3 = boost::geometry::index::rtree<key_type,
+                        boost::geometry::index::rstar<16>>;
+  
+  rtree_type_3 rt3;
+  
+  auto prep_rt_3 = [&]{
+    std::generate(begin(data), end(data), []{
+      return key_type{{R::runif(0, 1), R::runif(0, 1)}};
+    });
+    rt3.clear();
+    rt3.insert(begin(data), end(data));
+    res.clear();
+  };
+  
+  auto do_rt_3_query = [&]{ rt3.query(
+    boost::geometry::index::nearest(p, 1),
+    std::back_inserter(res)); };
+  
+  t = time_it(do_rt_3_query, prep_rt_3, m);
+  test[3] = "rtree nearest neighbor rstar";
+  time[3] = t;
+
   auto do_nns = [&]{
     kdtools::kd_nearest_neighbors(begin(data), end(data),
                                   p, 100, back_inserter(res));
   };  
 
   t = time_it(do_nns, prep_data, m);
-  test[3] = "kd_nearest_neighbors 100";
-  time[3] = t;
+  test[4] = "kd_nearest_neighbors 100";
+  time[4] = t;
 
   auto do_rt_1_nn_query = [&]{ rt1.query(
     boost::geometry::index::nearest(p, 100),
     std::back_inserter(res)); };
   
   t = time_it(do_rt_1_nn_query, prep_rt_1, m);
-  test[4] = "rtree nearest 100 linear";
-  time[4] = t;
+  test[5] = "rtree nearest 100 linear";
+  time[5] = t;
 
   auto do_rt_2_nn_query = [&]{ rt2.query(
     boost::geometry::index::nearest(p, 100),
     std::back_inserter(res)); };
   
   t = time_it(do_rt_2_nn_query, prep_rt_2, m);
-  test[5] = "rtree nearest 100 quadratic";
-  time[5] = t;
+  test[6] = "rtree nearest 100 quadratic";
+  time[6] = t;
+
+  auto do_rt_3_nn_query = [&]{ rt3.query(
+    boost::geometry::index::nearest(p, 100),
+    std::back_inserter(res)); };
+  
+  t = time_it(do_rt_3_nn_query, prep_rt_3, m);
+  test[7] = "rtree nearest 100 rstar";
+  time[7] = t;
 
   
   Rcpp::List out;
@@ -688,8 +718,8 @@ if (use_cached_data && file.exists(cache_file)) {
 } else {
   res = as.data.frame(time_nn(bench_ntuples, bench_ntrials))
   res$Time = signif(res$Time, 3)
-  res1 = res[1:3,]
-  res2 = res[4:6,]
+  res1 = res[1:4,]
+  res2 = res[5:8,]
   rownames(res2) = NULL
   res1$Ratio = signif(res1$Time / res1$Time[1], 2)
   res2$Ratio = signif(res2$Time / res2$Time[1], 2)

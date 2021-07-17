@@ -551,78 +551,78 @@ double l2dist(const TupleType& lhs, const TupleType& rhs)
 #endif // NO_TUPLEMAPR
 
 template <size_t I, typename Iter, typename TupleType>
-Iter kd_lower_bound(Iter first, Iter last, const TupleType& value)
+Iter kd_lower_bound(Iter first, Iter last, const TupleType& key)
 {
   constexpr auto J = next_dim<I, TupleType>;
   if (distance(first, last) > 1)
   {
     auto pivot = middle_of(first, last);
-    if (none_less(*pivot, value))
-      return kd_lower_bound<J>(first, pivot, value);
-    if (all_less(*pivot, value))
-      return kd_lower_bound<J>(next(pivot), last, value);
-    auto it = kd_lower_bound<J>(first, pivot, value);
-    if (it != last && none_less(*it, value)) return it;
-    it = kd_lower_bound<J>(next(pivot), last, value);
-    if (it != last && none_less(*it, value)) return it;
+    if (none_less(*pivot, key))
+      return kd_lower_bound<J>(first, pivot, key);
+    if (all_less(*pivot, key))
+      return kd_lower_bound<J>(next(pivot), last, key);
+    auto it = kd_lower_bound<J>(first, pivot, key);
+    if (it != last && none_less(*it, key)) return it;
+    it = kd_lower_bound<J>(next(pivot), last, key);
+    if (it != last && none_less(*it, key)) return it;
     return last;
   }
-  return first != last && none_less(*first, value) ? first : last;
+  return first != last && none_less(*first, key) ? first : last;
 }
 
 template <size_t I, typename Iter, typename TupleType>
-Iter kd_upper_bound(Iter first, Iter last, const TupleType& value)
+Iter kd_upper_bound(Iter first, Iter last, const TupleType& key)
 {
   constexpr auto J = next_dim<I, TupleType>;
   if (distance(first, last) > 1)
   {
     auto pivot = middle_of(first, last);
-    if (all_less(value, *pivot))
-      return kd_upper_bound<J>(first, pivot, value);
-    if (none_less(value, *pivot))
-      return kd_upper_bound<J>(next(pivot), last, value);
-    auto it = kd_upper_bound<J>(first, pivot, value);
-    if (it != last && all_less(value, *it)) return it;
-    it = kd_upper_bound<J>(next(pivot), last, value);
-    if (it != last && all_less(value, *it)) return it;
+    if (all_less(key, *pivot))
+      return kd_upper_bound<J>(first, pivot, key);
+    if (none_less(key, *pivot))
+      return kd_upper_bound<J>(next(pivot), last, key);
+    auto it = kd_upper_bound<J>(first, pivot, key);
+    if (it != last && all_less(key, *it)) return it;
+    it = kd_upper_bound<J>(next(pivot), last, key);
+    if (it != last && all_less(key, *it)) return it;
     return last;
   }
-  return first != last && all_less(value, *first) ? first : last;
+  return first != last && all_less(key, *first) ? first : last;
 }
 
 template <size_t I, typename Iter, typename TupleType>
-Iter kd_nearest_neighbor(Iter first, Iter last, const TupleType& value)
+Iter kd_nearest_neighbor(Iter first, Iter last, const TupleType& key)
 {
   constexpr auto J = next_dim<I, TupleType>;
   if (distance(first, last) > 1)
   {
     auto pivot = middle_of(first, last);
-    if (equal_nth<I>()(*pivot, value)) {
-      auto left_res = kd_nearest_neighbor<J>(first, pivot, value);
-      auto right_res = kd_nearest_neighbor<J>(next(pivot), last, value);
-      if (l2dist(*right_res, value) < l2dist(*left_res, value)) {
+    if (equal_nth<I>()(*pivot, key)) {
+      auto left_res = kd_nearest_neighbor<J>(first, pivot, key);
+      auto right_res = kd_nearest_neighbor<J>(next(pivot), last, key);
+      if (l2dist(*right_res, key) < l2dist(*left_res, key)) {
         return right_res;
       } else {
         return left_res;
       }
     } else {
-      auto search_left = less_nth<I>()(value, *pivot);
+      auto search_left = less_nth<I>()(key, *pivot);
       auto search = search_left ?
-        kd_nearest_neighbor<J>(first, pivot, value) :
-          kd_nearest_neighbor<J>(next(pivot), last, value);
-      auto min_dist = l2dist(*pivot, value);
+        kd_nearest_neighbor<J>(first, pivot, key) :
+          kd_nearest_neighbor<J>(next(pivot), last, key);
+      auto min_dist = l2dist(*pivot, key);
       if (search == last) {
         search = pivot;
       } else {
-        auto sdist = l2dist(*search, value);
+        auto sdist = l2dist(*search, key);
         if (sdist < min_dist) min_dist = sdist;
         else search = pivot;
       }
-      if (dist_nth<I>(value, *pivot) < min_dist) {
+      if (dist_nth<I>(key, *pivot) < min_dist) {
       auto s2 = search_left ?
-        kd_nearest_neighbor<J>(next(pivot), last, value) :
-          kd_nearest_neighbor<J>(first, pivot, value);
-      if (s2 != last && l2dist(*s2, value) < min_dist) search = s2;
+        kd_nearest_neighbor<J>(next(pivot), last, key) :
+          kd_nearest_neighbor<J>(first, pivot, key);
+      if (s2 != last && l2dist(*s2, key) < min_dist) search = s2;
       }
      return search;
     }
@@ -631,11 +631,11 @@ Iter kd_nearest_neighbor(Iter first, Iter last, const TupleType& value)
 }
 
 template <typename TupleType>
-bool within(const TupleType& value,
+bool within(const TupleType& key,
             const TupleType& lower,
             const TupleType& upper)
 {
-  return none_less(value, lower) && all_less(value, upper);
+  return none_less(key, lower) && all_less(key, upper);
 }
 
 template <size_t I,
@@ -810,30 +810,30 @@ template <size_t I,
           typename TupleType,
           typename QType>
 void knn(Iter first, Iter last,
-         const TupleType& value,
+         const TupleType& key,
          QType& Q)
 {
   switch(distance(first, last)) {
-  case 1 : Q.add(l2dist(*first, value), first);
+  case 1 : Q.add(l2dist(*first, key), first);
   case 0 : return; } // switch end
   auto pivot = middle_of(first, last);
-  Q.add(l2dist(*pivot, value), pivot);
+  Q.add(l2dist(*pivot, key), pivot);
   constexpr auto J = next_dim<I, TupleType>;
-  if (equal_nth<I>()(*pivot, value)) {
-    knn<J>(first, pivot, value, Q);
-    knn<J>(next(pivot), last, value, Q);
+  if (equal_nth<I>()(*pivot, key)) {
+    knn<J>(first, pivot, key, Q);
+    knn<J>(next(pivot), last, key, Q);
   } else {
-    auto search_left = less_nth<I>()(value, *pivot);
+    auto search_left = less_nth<I>()(key, *pivot);
     if (search_left)
-      knn<J>(first, pivot, value, Q);
+      knn<J>(first, pivot, key, Q);
     else
-      knn<J>(next(pivot), last, value, Q);
-    if (dist_nth<I>(value, *pivot) <= Q.max_key())
+      knn<J>(next(pivot), last, key, Q);
+    if (dist_nth<I>(key, *pivot) <= Q.max_key())
     {
       if (search_left)
-        knn<J>(next(pivot), last, value, Q);
+        knn<J>(next(pivot), last, key, Q);
       else
-        knn<J>(first, pivot, value, Q);
+        knn<J>(first, pivot, key, Q);
     }
   }
 }
@@ -928,36 +928,36 @@ bool kd_is_sorted_threaded(Iter first, Iter last, const Compare& comp)
   return detail::kd_is_sorted_threaded<0>(first, last, comp);
 }
 
-template <typename Iter, typename Value>
-Iter kd_lower_bound(Iter first, Iter last, const Value& value)
+template <typename Iter, typename Key>
+Iter kd_lower_bound(Iter first, Iter last, const Key& key)
 {
-  return detail::kd_lower_bound<0>(first, last, value);
+  return detail::kd_lower_bound<0>(first, last, key);
 }
 
-template <typename Iter, typename Value>
-Iter kd_upper_bound(Iter first, Iter last, const Value& value)
+template <typename Iter, typename Key>
+Iter kd_upper_bound(Iter first, Iter last, const Key& key)
 {
-  return detail::kd_upper_bound<0>(first, last, value);
-}
-
-template <typename Iter, typename TupleType>
-bool kd_binary_search(Iter first, Iter last, const TupleType& value)
-{
-  first = detail::kd_lower_bound<0>(first, last, value);
-  return first != last && utils::none_less(value, *first);
-}
-
-template <typename Iter, typename Value>
-std::pair<Iter, Iter> kd_equal_range(Iter first, Iter last, const Value& value)
-{
-  return std::make_pair(detail::kd_lower_bound<0>(first, last, value),
-                        detail::kd_upper_bound<0>(first, last, value));
+  return detail::kd_upper_bound<0>(first, last, key);
 }
 
 template <typename Iter, typename TupleType>
-Iter kd_nearest_neighbor(Iter first, Iter last, const TupleType& value)
+bool kd_binary_search(Iter first, Iter last, const TupleType& key)
 {
-  return detail::kd_nearest_neighbor<0>(first, last, value);
+  first = detail::kd_lower_bound<0>(first, last, key);
+  return first != last && utils::none_less(key, *first);
+}
+
+template <typename Iter, typename Key>
+std::pair<Iter, Iter> kd_equal_range(Iter first, Iter last, const Key& key)
+{
+  return std::make_pair(detail::kd_lower_bound<0>(first, last, key),
+                        detail::kd_upper_bound<0>(first, last, key));
+}
+
+template <typename Iter, typename TupleType>
+Iter kd_nearest_neighbor(Iter first, Iter last, const TupleType& key)
+{
+  return detail::kd_nearest_neighbor<0>(first, last, key);
 }
 
 template <typename Iter,
@@ -1007,24 +1007,20 @@ void kd_rq_iters(Iter first, Iter last,
 template <typename Iter,
           typename TupleType,
           typename OutIter>
-void kd_nearest_neighbors(Iter first, Iter last,
-                          const TupleType& value,
-                          size_t n, OutIter outp)
+void kd_nearest_neighbors(Iter first, Iter last, const TupleType& key, size_t n, OutIter outp)
 {
   detail::n_best<Iter> Q(n);
-  detail::knn<0>(first, last, value, Q);
+  detail::knn<0>(first, last, key, Q);
   Q.copy_to(outp);
 }
 
 template <typename Iter,
           typename TupleType,
           typename OutIter>
-void kd_nn_iters(Iter first, Iter last,
-                 const TupleType& value,
-                 size_t n, OutIter outp)
+void kd_nn_iters(Iter first, Iter last, const TupleType& key, size_t n, OutIter outp)
 {
   detail::n_best<Iter> Q(n);
-  detail::knn<0>(first, last, value, Q);
+  detail::knn<0>(first, last, key, Q);
   Q.copy_iters_to(outp);
 }
 

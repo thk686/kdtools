@@ -11,18 +11,23 @@ vignette: >
 
 ```{r setup, include=FALSE}
 use_cached_data = TRUE
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
-library(kdtools)
-library(ggplot2)
-library(tidytext)
-library(printr)
-library(scales)
+has_pkgs = require(kdtools) &&
+  require(ggplot2) &&
+  require(tidytext) &&
+  require(printr) &&
+  require(scales)
 theme_set(theme_classic())
 bench_ntuples = 1e7
 bench_ntrials = 21
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = has_pkgs
+)
+```
+
+```{r eval=!has_pkgs, echo=FALSE}
+message("Required packages missing -- code will not be evaluated")
 ```
 
 ## Introduction
@@ -88,7 +93,7 @@ ggplot(z, aes(x, y)) +
   geom_point(size = 0.25) + 
   geom_point(aes(color = i), alpha = 0.15, size = 5) +
   scale_color_gradientn(colors = rainbow(100, s = 0.8, v = 0.8)) +
-  guides(color = FALSE) +
+  guides(color = "none") +
   coord_fixed()
 ```
 
@@ -183,6 +188,8 @@ ggplot(res) +
 In the above results, ```lex_sort``` is the Standard Library built-in [```std::sort```](http://en.cppreference.com/w/cpp/algorithm/sort) algorithm using ```kd_less``` as the predicate. The results indicate that ```kd_sort``` is reasonably fast, requiring roughly twice the time as the Standard Library built-in sorting algorithm. Because of the divide-and-conquer nature of ```kd_sort```, it is trivially parallelizable. The threaded version is equal to or faster than the regular sort. Performance comparable to the build-in Standard Library ```sort``` function indicates that this reference implementation is reasonable.
 
 ### Multidimensional comparisons
+
+Note: In recent versions of kdtools, this behavior is controlled at compile time by defining USE_CIRCULAR_LEXICOGRAPHIC_COMPARE, which is not defined by default, so results in this section may be misleading.
 
 To ensure the correct behavior in the presence of multiple ties, or even when all keys in one dimension are equal, the ```kd_less``` predicate implements circular lexicographic comparison. If elements in one dimension are tied, the next dimension is interrogated to break the tie. The comparisons cycle from trailing dimensions to leading dimensions using modulo arithmetic. It is implemented as a recursive, templated function object with the dimension index incremented at compile-time. The recursion is terminated using [constexpr if](https://en.cppreference.com/w/cpp/language/if).
 
@@ -286,7 +293,7 @@ ggplot(df, aes(x, y)) +
   geom_hline(yintercept = p[2], color = "red") +
   geom_vline(xintercept = p[3], color = "red") +
   geom_hline(yintercept = p[4], color = "red") +
-  guides(color = FALSE) +
+  guides(color = "none") +
   coord_fixed() +
   facet_wrap(~j) + 
   theme(strip.background = element_blank())
@@ -729,7 +736,7 @@ res1
 res2
 ```
 
-As before, the results show kdtools to be as fast or faster than Boost Geometry search. This is not surprising as the R-Tree data structure is optimized for indexing boxed regions, not points. The exception is rstar search for 100 nearest neighbors, which is faster. This might have to do with differences in the priority queue implmentation or it could be that the rtree buckets allow rapid retrieval of groups of nearby points all at once. The main conclusion here is that the current implementation of kdtools is reasonably efficient.
+As before, the results show kdtools to be as fast or faster than Boost Geometry search. This is not surprising as the R-Tree data structure is optimized for indexing boxed regions, not points. The exception is rstar search for 100 nearest neighbors, which is faster. This might have to do with differences in the priority queue implementation or it could be that the rtree buckets allow rapid retrieval of groups of nearby points all at once. The main conclusion here is that the current implementation of kdtools is reasonably efficient.
 
 ### Mixed-type searches
 

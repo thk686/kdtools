@@ -729,7 +729,7 @@ res1
 res2
 ```
 
-As before, the results show kdtools to be as fast or faster than Boost Geometry search. This is not surprising as the R-Tree data structure is optimized for indexing boxed regions, not points. The main conclusion here is that the current implementation of kdtools is reasonably efficient. 
+As before, the results show kdtools to be as fast or faster than Boost Geometry search. This is not surprising as the R-Tree data structure is optimized for indexing boxed regions, not points. The exception is rstar search for 100 nearest neighbors, which is faster. This might have to do with differences in the priority queue implmentation or it could be that the rtree buckets allow rapid retrieval of groups of nearby points all at once. The main conclusion here is that the current implementation of kdtools is reasonably efficient.
 
 ### Mixed-type searches
 

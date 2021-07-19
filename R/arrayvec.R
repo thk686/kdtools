@@ -5,6 +5,14 @@
 #'   pointer to a vector of arrays. These functions provide some ability to
 #'   manipulate the data as if it were a matrix.
 #'
+#' @return \tabular{ll}{
+#' \code{print.arrayvec} \tab the object invisibly \cr
+#' \code{dim.arrayvec} \tab the rows and columns \cr
+#' \code{as.matrix.arrayvec} \tab a matrix \cr
+#' \code{as.data.frame.arrayvec} \tab a data frame \cr
+#' \code{`[.arrayvec`} \tab a matrix or vector \cr
+#' \code{`[[.arrayvec`} \tab a column vector \cr
+#' }
 #' @aliases arrayvec
 #' @rdname arrayvec
 #' @export
@@ -21,6 +29,7 @@ print.arrayvec <- function(x, ...) {
   else {
     print(as.matrix(x))
   }
+  return(invisible(x))
 }
 
 #' @rdname arrayvec

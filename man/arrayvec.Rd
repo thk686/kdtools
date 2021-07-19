@@ -33,6 +33,16 @@
 
 \item{drop}{drop singleton dimensions if true}
 }
+\value{
+\tabular{ll}{
+\code{print.arrayvec} \tab the object invisibly \cr
+\code{dim.arrayvec} \tab the rows and columns \cr
+\code{as.matrix.arrayvec} \tab a matrix \cr
+\code{as.data.frame.arrayvec} \tab a data frame \cr
+\code{`[.arrayvec`} \tab a matrix or vector \cr
+\code{`[[.arrayvec`} \tab a column vector \cr
+}
+}
 \description{
 Support for C++ vector of arrays
 }

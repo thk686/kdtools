@@ -55,6 +55,13 @@ kd_binary_search(x, v)
 
 \item{cols}{integer vector of column indices}
 }
+\value{
+\tabular{ll}{\code{kd_lower_bound} \tab a row of values (vector) \cr
+  \code{kd_upper_bound} \tab a row of values (vector) \cr
+  \code{kd_range_query} \tab a set of rows in the same format as the sorted input \cr
+  \code{kd_rq_indices} \tab a vector of integer indices specifying rows in the input \cr
+  \code{kd_binary_search} \tab a boolean \cr}
+}
 \description{
 Search sorted data
 }

@@ -49,6 +49,13 @@ kd_nearest_neighbor(x, v)
 
 \item{w}{distance weights}
 }
+\value{
+\tabular{ll}{
+\code{kd_nearest_neighbors} \tab one or more rows from the sorted input \cr
+\code{kd_nn_indices} \tab a vector of row indices indicating the result \cr
+\code{kd_nearest_neighbor} \tab the row index of the neighbor \cr
+}
+}
 \description{
 Find nearest neighbors
 }

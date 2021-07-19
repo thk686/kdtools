@@ -11,6 +11,9 @@ lex_sort(x, ...)
 
 \item{...}{other parameters}
 }
+\value{
+the input type sorted
+}
 \description{
 Sort a matrix into lexicographical order
 }

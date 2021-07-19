@@ -37,6 +37,9 @@ colspec <- function(x, cols) {
 #'   long as equality and comparison operators are defined). Additional, the
 #'   user can specify a sequence of column indices that will be used for
 #'   sorting. These can be a subset of columns and given in any order.
+#' @return \tabular{ll}{\code{kd_sort} \tab the table sorted in kd-tree order
+#'   \cr \code{kd_order} \tab a permutation vector \cr \code{kd_is_sorted} \tab
+#'   a boolean \cr}
 #' @note The matrix version will be slower because of data structure
 #'   conversions.
 #' @examples
@@ -118,6 +121,7 @@ kd_is_sorted.arrayvec <- function(x, parallel = FALSE, ...) {
 #' @param x a matrix or arrayvec object
 #' @param ... other parameters
 #' @details Sorts a range of tuples into lexicographical order.
+#' @return the input type sorted
 #' @examples
 #' x = lex_sort(matrix(runif(200), 100))
 #' plot(x, type = "o", pch = 19, col = "steelblue", asp = 1)
@@ -142,6 +146,11 @@ lex_sort.arrayvec <- function(x, inplace = FALSE, ...) {
 #' @param x an object sorted by \code{\link{kd_sort}}
 #' @param v a vector specifying where to look
 #' @param ... additional arguments
+#' @return \tabular{ll}{\code{kd_lower_bound} \tab a row of values (vector) \cr
+#'   \code{kd_upper_bound} \tab a row of values (vector) \cr
+#'   \code{kd_range_query} \tab a set of rows in the same format as the sorted input \cr
+#'   \code{kd_rq_indices} \tab a vector of integer indices specifying rows in the input \cr
+#'   \code{kd_binary_search} \tab a boolean \cr}
 #' @examples
 #' x = matrix(runif(200), 100)
 #' y = matrix_to_tuples(x)
@@ -255,6 +264,11 @@ kd_binary_search.arrayvec <- function(x, v) {
 #' @param v a vector specifying where to look
 #' @param n the number of neighbors to return
 #' @param ... additional arguments
+#' @return \tabular{ll}{
+#' \code{kd_nearest_neighbors} \tab one or more rows from the sorted input \cr
+#' \code{kd_nn_indices} \tab a vector of row indices indicating the result \cr
+#' \code{kd_nearest_neighbor} \tab the row index of the neighbor \cr
+#' }
 #'
 #' @examples
 #' x = matrix(runif(200), 100)

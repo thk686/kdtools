@@ -41,6 +41,11 @@ kd_is_sorted(x, ...)
 
 \item{cols}{integer vector of column indices}
 }
+\value{
+\tabular{ll}{\code{kd_sort} \tab the table sorted in kd-tree order
+  \cr \code{kd_order} \tab a permutation vector \cr \code{kd_is_sorted} \tab
+  a boolean \cr}
+}
 \description{
 Sort multidimensional data
 }

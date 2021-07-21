@@ -52,11 +52,15 @@ bool not_in_range(const T& x, U n) {
   return (*r.first < 1 || *r.second > n) ? true : false;
 }
 
+namespace {
+
 std::string_view get_string(SEXP x, int i = 0) {
   return std::string_view(CHAR(STRING_ELT(x, i)));
 }
 
 Function Requal("=="), Rless("<"), Rdiff("-");
+
+};
 
 #ifdef USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
 
@@ -196,25 +200,25 @@ struct chck_nth_df
       lwr = SEXP(m_lower[m_dim]);
     switch(TYPEOF(col)) {
     case LGLSXP: {
-      if (LOGICAL(col)[i] < LOGICAL(lwr)[0]) return false;
+      if (!(LOGICAL(col)[i] < LOGICAL(lwr)[0])) return false;
       break;
     }
     case REALSXP: {
-      if (REAL(col)[i] < REAL(lwr)[0]) return false;
+      if (!(REAL(col)[i] < REAL(lwr)[0])) return false;
       break;
     }
     case INTSXP: {
-      if (INTEGER(col)[i] < INTEGER(lwr)[0]) return false;
+      if (!(INTEGER(col)[i] < INTEGER(lwr)[0])) return false;
       break;
     }
     case STRSXP: {
-      if (get_string(col, i) < get_string(lwr)) return false;
+      if (!(get_string(col, i) < get_string(lwr))) return false;
       break;
     }
     case VECSXP: {
       SEXP lhs_ = VECTOR_ELT(col, i),
         rhs_ = VECTOR_ELT(lwr, 0);
-      if (Rless(lhs_, rhs_)) return false;
+      if (!Rless(lhs_, rhs_)) return false;
       break;
     }
     default: stop("Invalid column type");

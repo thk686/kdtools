@@ -117,6 +117,30 @@ using_circular_lexicographical_compare <- function() {
     .Call(`_kdtools_using_circular_lexicographical_compare`)
 }
 
+kd_order_mat_no_validation <- function(mat, idx, parallel = TRUE) {
+    .Call(`_kdtools_kd_order_mat_no_validation`, mat, idx, parallel)
+}
+
+kd_order_mat <- function(mat, idx, parallel = TRUE) {
+    .Call(`_kdtools_kd_order_mat`, mat, idx, parallel)
+}
+
+kd_rq_mat_no_validation <- function(mat, idx, lower, upper) {
+    .Call(`_kdtools_kd_rq_mat_no_validation`, mat, idx, lower, upper)
+}
+
+kd_rq_mat <- function(mat, idx, lower, upper) {
+    .Call(`_kdtools_kd_rq_mat`, mat, idx, lower, upper)
+}
+
+kd_nn_mat_no_validation <- function(mat, idx, key, n) {
+    .Call(`_kdtools_kd_nn_mat_no_validation`, mat, idx, key, n)
+}
+
+kd_nn_mat <- function(mat, idx, key, n) {
+    .Call(`_kdtools_kd_nn_mat`, mat, idx, key, n)
+}
+
 levenshtein <- function(s1, s2) {
     .Call(`_kdtools_levenshtein`, s1, s2)
 }

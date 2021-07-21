@@ -1,5 +1,5 @@
 library(kdtools)
-context("Searching")
+context("Search matrix")
 
 mk_ties <- function(nc) {
   x <- double()

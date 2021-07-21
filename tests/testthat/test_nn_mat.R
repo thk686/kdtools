@@ -1,5 +1,5 @@
 library(kdtools)
-context("Nearest neighbor")
+context("Nearest neighbor matrix")
 
 r_nn <- function(x, y) {
   which.min(vapply(seq_len(nrow(x)),

@@ -111,30 +111,31 @@
                          c <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="va">month.name</span><span class="op">)</span>,
                          stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span>
-<span class="co">#&gt;             a b         c</span>
-<span class="co">#&gt; 3  0.20677902 0  February</span>
-<span class="co">#&gt; 6  0.15005525 1   October</span>
-<span class="co">#&gt; 5  0.03177597 0 September</span>
-<span class="co">#&gt; 10 0.12168593 2      July</span>
-<span class="co">#&gt; 9  0.02825657 2      June</span>
-<span class="co">#&gt; 2  0.22717825 2  November</span>
-<span class="co">#&gt; 1  0.23413967 0  December</span>
-<span class="co">#&gt; 8  0.98255966 0     April</span>
-<span class="co">#&gt; 11 0.72837338 0    August</span>
-<span class="co">#&gt; 12 0.61216673 0     March</span>
-<span class="co">#&gt; 4  0.94480631 2   January</span>
-<span class="co">#&gt; 7  0.45118667 2       May</span>
+<span class="co">#&gt;            a b         c</span>
+<span class="co">#&gt; 12 0.5611445 0     April</span>
+<span class="co">#&gt; 6  0.4783884 0  February</span>
+<span class="co">#&gt; 8  0.4240752 0     March</span>
+<span class="co">#&gt; 1  0.5635279 0   October</span>
+<span class="co">#&gt; 11 0.4520168 2   January</span>
+<span class="co">#&gt; 9  0.3713406 2      July</span>
+<span class="co">#&gt; 7  0.6002583 3       May</span>
+<span class="co">#&gt; 3  0.6419641 0      June</span>
+<span class="co">#&gt; 5  0.8951297 0  November</span>
+<span class="co">#&gt; 2  0.8317521 1  December</span>
+<span class="co">#&gt; 10 0.8486102 3    August</span>
+<span class="co">#&gt; 4  0.8281034 4 September</span>
 <span class="va">lower</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">1L</span>, <span class="st">"August"</span><span class="op">)</span>
 <span class="va">upper</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fl">0.9</span>, <span class="fl">4L</span>, <span class="st">"September"</span><span class="op">)</span>
 <span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/kd_lower_bound.html">kd_rq_indices</a></span><span class="op">(</span><span class="va">df</span>, <span class="va">lower</span>, <span class="va">upper</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span>
-<span class="co">#&gt; [1]  2  4  6 12</span>
+<span class="co">#&gt; [1]  5  6  7 10 11</span>
 <span class="va">df</span><span class="op">[</span><span class="va">i</span>, <span class="op">]</span>
 <span class="co">#&gt;            a b        c</span>
-<span class="co">#&gt; 6  0.1500553 1  October</span>
-<span class="co">#&gt; 10 0.1216859 2     July</span>
-<span class="co">#&gt; 2  0.2271783 2 November</span>
-<span class="co">#&gt; 7  0.4511867 2      May</span></code></pre></div>
+<span class="co">#&gt; 11 0.4520168 2  January</span>
+<span class="co">#&gt; 9  0.3713406 2     July</span>
+<span class="co">#&gt; 7  0.6002583 3      May</span>
+<span class="co">#&gt; 2  0.8317521 1 December</span>
+<span class="co">#&gt; 10 0.8486102 3   August</span></code></pre></div>
 </div>
 </div>
 
@@ -170,10 +171,10 @@
 <h2>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://github.com/thk686/kdtools/actions"><img src="https://github.com/thk686/kdtools/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
-<li><a href="https://circleci.com/ghr&amp;svg=true"><img src="https://circleci.com/gh/thk686/kdtools.svg?style=svg" alt="CircleCI build status"></a></li>
 <li><a href="https://codecov.io/gh/thk686/kdtools?branch=master"><img src="https://codecov.io/gh/thk686/kdtools/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
 <li><a href="https://zenodo.org/badge/latestdoi/125262786"><img src="https://zenodo.org/badge/125262786.svg" alt="DOI"></a></li>
 <li><a href="https://CRAN.R-project.org/package=kdtools"><img src="https://www.r-pkg.org/badges/version/kdtools" alt="CRAN status"></a></li>
+<li><a href="https://circleci.com/gh/thk686/kdtools"><img src="https://circleci.com/gh/thk686/kdtools.svg?style=svg" alt="CircleCI build status"></a></li>
 </ul>
 </div>
 </div>

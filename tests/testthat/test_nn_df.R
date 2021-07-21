@@ -1,6 +1,8 @@
 library(kdtools)
 context("Nearest neighbor data.frame")
 
+reps <- 3
+
 r_nn <- function(x, y) {
   which.min(vapply(seq_len(nrow(x)),
                    function(i) { dist(rbind(x[i, ], y)) },
@@ -18,7 +20,7 @@ mk_ties <- function(nc) {
 pair_dist <- function(a, b) sqrt(sum((a - b)^2))
 
 # test_that("nearest neighbor works", {
-#   for (ignore in 1:10)
+#   for (ignore in 1:reps)
 #   {
 #     for (n in 1:9)
 #     {
@@ -50,7 +52,7 @@ r_nns <- function(x, y, n) {
 }
 
 test_that("nearest neighbors works", {
-  for (ignore in 1:10)
+  for (ignore in 1:reps)
   {
     for (n in 1:9)
     {
@@ -89,7 +91,7 @@ r_nns_i <- function(x, y, n) {
 }
 
 test_that("nearest neighbors indices works", {
-  for (ignore in 1:10)
+  for (ignore in 1:reps)
   {
     for (n in 1:9)
     {

@@ -1,6 +1,8 @@
 library(kdtools)
 context("Search matrix")
 
+reps <- 10
+
 mk_ties <- function(nc) {
   x <- double()
   for (i in 1:nc)
@@ -16,7 +18,7 @@ r_lower_bound <- function(x, y) {
 }
 
 test_that("correct lower bound", {
-  for (ignore in 1:10)
+  for (ignore in 1:reps)
   {
     for (n in 1:9)
     {
@@ -44,7 +46,7 @@ r_upper_bound <- function(x, y) {
 }
 
 test_that("correct upper bound", {
-  for (ignore in 1:10)
+  for (ignore in 1:reps)
   {
     for (n in 1:9)
     {
@@ -75,7 +77,7 @@ r_contains <- function(x, a, b) {
 }
 
 test_that("range query works", {
-  for (ignore in 1:10)
+  for (ignore in 1:reps)
   {
     for (n in 1:9)
     {
@@ -87,7 +89,8 @@ test_that("range query works", {
       z2 <- r_contains(x, l, u)
       z1 <- kd_sort(z1)
       z2 <- kd_sort(z2)
-      expect_equal(z1, z2)
+      expect_equal(nrow(z1), nrow(z2))
+      if (nrow(z1) > 0) expect_equal(z1, z2)
     }
     for (n in 1:9)
     {
@@ -99,7 +102,8 @@ test_that("range query works", {
       z2 <- r_contains(x, l, u)
       z1 <- kd_sort(z1)
       z2 <- kd_sort(z2)
-      expect_equal(z1, z2)
+      expect_equal(nrow(z1), nrow(z2))
+      if (nrow(z1) > 0) expect_equal(z1, z2)
     }
   }
 })
@@ -114,7 +118,7 @@ r_contains_indices <- function(x, a, b) {
 }
 
 test_that("range query works", {
-  for (ignore in 1:10)
+  for (ignore in 1:reps)
   {
     for (n in 1:9)
     {
@@ -152,7 +156,7 @@ r_search <- function(x, y) {
 }
 
 test_that("binary search works", {
-  for (ignore in 1:10)
+  for (ignore in 1:reps)
   {
     for (n in 1:9)
     {

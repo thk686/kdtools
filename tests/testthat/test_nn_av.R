@@ -1,6 +1,8 @@
 library(kdtools)
 context("Nearest neighbor arrayvec")
 
+reps <- 10
+
 to_av <- function(x) matrix_to_tuples(as.matrix(x))
 mk_av <- function(...) matrix_to_tuples(matrix(...))
 
@@ -21,7 +23,7 @@ mk_ties <- function(nc) {
 pair_dist <- function(a, b) sqrt(sum((a - b)^2))
 
 test_that("nearest neighbor works", {
-  for (ignore in 1:10)
+  for (ignore in 1:reps)
   {
     for (n in 1:9)
     {
@@ -53,7 +55,7 @@ r_nns <- function(x, y, n) {
 }
 
 test_that("nearest neighbors works", {
-  for (ignore in 1:10)
+  for (ignore in 1:reps)
   {
     for (n in 1:9)
     {
@@ -90,7 +92,7 @@ r_nns_i <- function(x, y, n) {
 }
 
 test_that("nearest neighbors indices works", {
-  for (ignore in 1:10)
+  for (ignore in 1:reps)
   {
     for (n in 1:9)
     {

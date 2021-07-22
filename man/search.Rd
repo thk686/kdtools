@@ -22,7 +22,7 @@ kd_upper_bound(x, v)
 
 kd_range_query(x, l, u, ...)
 
-\method{kd_range_query}{matrix}(x, l, u, ...)
+\method{kd_range_query}{matrix}(x, l, u, cols = 1:ncol(x), ...)
 
 \method{kd_range_query}{arrayvec}(x, l, u, ...)
 
@@ -30,7 +30,7 @@ kd_range_query(x, l, u, ...)
 
 kd_rq_indices(x, l, u, ...)
 
-\method{kd_rq_indices}{matrix}(x, l, u, ...)
+\method{kd_rq_indices}{matrix}(x, l, u, cols = 1:ncol(x), ...)
 
 \method{kd_rq_indices}{arrayvec}(x, l, u, ...)
 

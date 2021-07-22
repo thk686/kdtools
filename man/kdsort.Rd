@@ -5,6 +5,7 @@
 \alias{kd_sort.matrix}
 \alias{kd_sort.arrayvec}
 \alias{kd_sort.data.frame}
+\alias{kd_sort.sf}
 \alias{kd_order}
 \alias{kd_order.matrix}
 \alias{kd_order.arrayvec}
@@ -14,15 +15,17 @@
 \usage{
 kd_sort(x, ...)
 
-\method{kd_sort}{matrix}(x, parallel = TRUE, ...)
+\method{kd_sort}{matrix}(x, cols = 1:ncol(x), parallel = TRUE, ...)
 
 \method{kd_sort}{arrayvec}(x, inplace = FALSE, parallel = TRUE, ...)
 
 \method{kd_sort}{data.frame}(x, cols = 1:ncol(x), parallel = TRUE, ...)
 
+\method{kd_sort}{sf}(x, cols = 1:ncol(x), parallel = TRUE, ...)
+
 kd_order(x, ...)
 
-\method{kd_order}{matrix}(x, parallel = TRUE, ...)
+\method{kd_order}{matrix}(x, cols = 1:ncol(x), parallel = TRUE, ...)
 
 \method{kd_order}{arrayvec}(x, inplace = FALSE, parallel = TRUE, ...)
 
@@ -35,11 +38,11 @@ kd_is_sorted(x, ...)
 
 \item{...}{ignored}
 
+\item{cols}{integer vector of column indices}
+
 \item{parallel}{use multiple threads if true}
 
 \item{inplace}{sort as a side-effect if true}
-
-\item{cols}{integer vector of column indices}
 }
 \value{
 \tabular{ll}{\code{kd_sort} \tab the table sorted in kd-tree order

@@ -79,6 +79,15 @@ kd_sort.data.frame <- function(x, cols = 1:ncol(x), parallel = TRUE, ...) {
 
 #' @rdname kdsort
 #' @export
+kd_sort.sf <- function(x, cols = NULL, parallel = TRUE, ...) {
+  if (is.null(cols))
+    return(x[kd_order(sf::st_coordinates(x), parallel = parallel),, drop = FALSE])
+  else
+    return(x[kd_order(sf::st_drop_geometry(x)[, cols], parallel = parallel),, drop = FALSE])
+}
+
+#' @rdname kdsort
+#' @export
 kd_order <- function(x, ...) UseMethod("kd_order")
 
 #' @rdname kdsort

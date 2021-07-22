@@ -16,7 +16,7 @@
 \usage{
 kd_nearest_neighbors(x, v, n, ...)
 
-\method{kd_nearest_neighbors}{matrix}(x, v, n, ...)
+\method{kd_nearest_neighbors}{matrix}(x, v, n, cols = 1:ncol(x), ...)
 
 \method{kd_nearest_neighbors}{arrayvec}(x, v, n, ...)
 

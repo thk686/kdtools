@@ -261,6 +261,51 @@ void kd_order_mat_threaded(Iter first, Iter last, const Pred& pred,
   }
 }
 
+template <typename Iter, typename Pred>
+bool check_partition(Iter first, Iter pivot, Iter last, Pred pred)
+{
+  while (first != pivot) if (pred(*pivot, *first++)) return false;
+  while (first != last) if (pred(*first++, *pivot)) return false;
+  return true;
+}
+
+template <typename Iter, typename Pred>
+bool kd_is_sorted_mat_(Iter first, Iter last, const Pred& pred)
+{
+  if (distance(first, last) < 2) return true;
+  auto pivot = middle_of(first, last);
+  return check_partition(first, pivot, last, pred) &&
+    kd_is_sorted_mat_(first, pivot, ++pred) &&
+    kd_is_sorted_mat_(next(pivot), last, ++pred);
+}
+
+template <typename Iter, typename Pred>
+bool kd_is_sorted_mat_threaded(Iter first, Iter last, const Pred& pred,
+                               int max_threads = std::thread::hardware_concurrency(),
+                               int thread_depth = 1)
+{
+  if (distance(first, last) < 2) return true;
+  auto pivot = middle_of(first, last);
+  if (check_partition(first, pivot, last, pred)) {
+    if ((1 << thread_depth) <= max_threads)
+    {
+      bool res_left, res_right;
+      thread t([=, &res_left](){
+        res_left = kd_is_sorted_mat_threaded(first, pivot, ++pred, max_threads, thread_depth + 1);
+      });
+      res_right = kd_is_sorted_mat_threaded(next(pivot), last, ++pred, max_threads, thread_depth + 1);
+      t.join();
+      return res_left && res_right;
+    }
+    else
+    {
+      return kd_is_sorted_mat_(first, pivot, ++pred) && kd_is_sorted_mat_(next(pivot), last, ++pred);
+    }
+  } else {
+    return false;
+  }
+}
+
 template <typename Iter,
           typename OutIter,
           typename ChckNth,
@@ -344,6 +389,30 @@ IntegerVector kd_order_mat(const NumericMatrix& mat,
   if (not_in_range(idx, mat.ncol()))
     stop("Index out of range");
   return kd_order_mat_no_validation(mat, idx, parallel);
+}
+
+// [[Rcpp::export]]
+bool kd_is_sorted_mat_no_validation(const NumericMatrix& mat,
+                                    const IntegerVector& idx,
+                                    bool parallel = true) {
+  IntegerVector x(mat.nrow());
+  iota(begin(x), end(x), 0);
+  auto pred = kd_less_mat(mat, idx);
+  if (parallel)
+    return kd_is_sorted_mat_threaded(begin(x), end(x), pred);
+  else
+    return kd_is_sorted_mat_(begin(x), end(x), pred);
+}
+
+// [[Rcpp::export]]
+bool kd_is_sorted_mat(const NumericMatrix& mat,
+                      const IntegerVector& idx,
+                      bool parallel = true) {
+  if (mat.ncol() < 1 || mat.nrow() < 1)
+    stop("Invalid input matrix");
+  if (not_in_range(idx, mat.ncol()))
+    stop("Index out of range");
+  return kd_is_sorted_mat_no_validation(mat, idx, parallel);
 }
 
 // [[Rcpp::export]]

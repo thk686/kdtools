@@ -41,6 +41,14 @@ kd_order_df <- function(df, idx, parallel = TRUE) {
     .Call(`_kdtools_kd_order_df`, df, idx, parallel)
 }
 
+kd_is_sorted_df_no_validation <- function(df, idx, parallel = TRUE) {
+    .Call(`_kdtools_kd_is_sorted_df_no_validation`, df, idx, parallel)
+}
+
+kd_is_sorted_df <- function(df, idx, parallel = TRUE) {
+    .Call(`_kdtools_kd_is_sorted_df`, df, idx, parallel)
+}
+
 kd_rq_df_no_validation <- function(df, idx, lower, upper) {
     .Call(`_kdtools_kd_rq_df_no_validation`, df, idx, lower, upper)
 }
@@ -123,6 +131,14 @@ kd_order_mat_no_validation <- function(mat, idx, parallel = TRUE) {
 
 kd_order_mat <- function(mat, idx, parallel = TRUE) {
     .Call(`_kdtools_kd_order_mat`, mat, idx, parallel)
+}
+
+kd_is_sorted_mat_no_validation <- function(mat, idx, parallel = TRUE) {
+    .Call(`_kdtools_kd_is_sorted_mat_no_validation`, mat, idx, parallel)
+}
+
+kd_is_sorted_mat <- function(mat, idx, parallel = TRUE) {
+    .Call(`_kdtools_kd_is_sorted_mat`, mat, idx, parallel)
 }
 
 kd_rq_mat_no_validation <- function(mat, idx, lower, upper) {

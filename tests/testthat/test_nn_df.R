@@ -2,6 +2,7 @@ library(kdtools)
 context("Nearest neighbor data.frame")
 
 reps <- 3
+nci <- seq(1, 9, 2)
 
 r_nn <- function(x, y) {
   which.min(vapply(seq_len(nrow(x)),
@@ -22,7 +23,7 @@ pair_dist <- function(a, b) sqrt(sum((a - b)^2))
 # test_that("nearest neighbor works", {
 #   for (ignore in 1:reps)
 #   {
-#     for (n in 1:9)
+#     for (n in nci)
 #     {
 #       x <- as.data.frame(matrix(runif(n * 100), ncol = n))
 #       x <- kd_sort(x)
@@ -31,7 +32,7 @@ pair_dist <- function(a, b) sqrt(sum((a - b)^2))
 #       j <- r_nn(x, y)
 #       expect_equal(i, j)
 #     }
-#     for (n in 1:9)
+#     for (n in nci)
 #     {
 #       x <- mk_ties(n)
 #       x <- kd_sort(x)
@@ -54,7 +55,7 @@ r_nns <- function(x, y, n) {
 test_that("nearest neighbors works", {
   for (ignore in 1:reps)
   {
-    for (n in 1:9)
+    for (n in nci)
     {
       for (m in c(1, 10, 2 * n * 100))
       {
@@ -66,7 +67,7 @@ test_that("nearest neighbors works", {
         expect_equal(kd_sort(z1), kd_sort(z2))
       }
     }
-    for (n in 1:9)
+    for (n in nci)
     {
       for (m in c(1, 10, 2 * n * 100))
       {
@@ -93,7 +94,7 @@ r_nns_i <- function(x, y, n) {
 test_that("nearest neighbors indices works", {
   for (ignore in 1:reps)
   {
-    for (n in 1:9)
+    for (n in nci)
     {
       for (m in c(1, 10, 2 * n * 100))
       {

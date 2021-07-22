@@ -1,9 +1,11 @@
 library(kdtools)
 context("Arrayvec")
 
+nci <- seq(1, 9, 2)
+
 test_that("Arrayvec works", {
   nr <- 1e4
-  for (nc in 1:9)
+  for (nc in nci)
   {
     x <- matrix(1:(nc * nr), nr)
     y <- matrix_to_tuples(x)

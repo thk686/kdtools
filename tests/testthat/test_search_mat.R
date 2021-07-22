@@ -1,7 +1,8 @@
 library(kdtools)
 context("Search matrix")
 
-reps <- 10
+reps <- 5
+nci <- seq(1, 9, 2)
 
 mk_ties <- function(nc) {
   x <- double()
@@ -20,7 +21,7 @@ r_lower_bound <- function(x, y) {
 test_that("correct lower bound", {
   for (ignore in 1:reps)
   {
-    for (n in 1:9)
+    for (n in nci)
     {
       x <- kd_sort(matrix(runif(n * 100), ncol = n))
       y <- rep(0.5, n)
@@ -28,7 +29,7 @@ test_that("correct lower bound", {
       j <- r_lower_bound(x, y)
       expect_equal(i, j)
     }
-    for (n in 1:9)
+    for (n in nci)
     {
       x <- kd_sort(mk_ties(n))
       y <- apply(x, 2, mean)
@@ -48,7 +49,7 @@ r_upper_bound <- function(x, y) {
 test_that("correct upper bound", {
   for (ignore in 1:reps)
   {
-    for (n in 1:9)
+    for (n in nci)
     {
       x <- kd_sort(matrix(runif(n * 100), ncol = n))
       y <- rep(0.5, n)
@@ -57,7 +58,7 @@ test_that("correct upper bound", {
       expect_equal(i, j)
     }
   }
-  for (n in 1:9)
+  for (n in nci)
   {
     x <- kd_sort(mk_ties(n))
     y <- apply(x, 2, mean)
@@ -79,7 +80,7 @@ r_contains <- function(x, a, b) {
 test_that("range query works", {
   for (ignore in 1:reps)
   {
-    for (n in 1:9)
+    for (n in nci)
     {
       x <- matrix(runif(n * 100), ncol = n)
       y <- kd_sort(x)
@@ -92,7 +93,7 @@ test_that("range query works", {
       expect_equal(nrow(z1), nrow(z2))
       if (nrow(z1) > 0) expect_equal(z1, z2)
     }
-    for (n in 1:9)
+    for (n in nci)
     {
       x <- mk_ties(n)
       y <- kd_sort(x)
@@ -120,7 +121,7 @@ r_contains_indices <- function(x, a, b) {
 test_that("range query works", {
   for (ignore in 1:reps)
   {
-    for (n in 1:9)
+    for (n in nci)
     {
       x <- matrix(runif(n * 100), ncol = n)
       y <- kd_sort(x)
@@ -132,7 +133,7 @@ test_that("range query works", {
       z2 <- sort(z2)
       expect_equal(z1, z2)
     }
-    for (n in 1:9)
+    for (n in nci)
     {
       x <- mk_ties(n)
       y <- kd_sort(x)
@@ -158,7 +159,7 @@ r_search <- function(x, y) {
 test_that("binary search works", {
   for (ignore in 1:reps)
   {
-    for (n in 1:9)
+    for (n in nci)
     {
       x <- kd_sort(matrix(runif(n * 100), ncol = n))
       y <- x[sample(seq_len(nrow(x)), 1), , drop = FALSE]

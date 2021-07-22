@@ -105,8 +105,13 @@ kd_order.data.frame <- function(x, cols = 1:ncol(x), parallel = TRUE, ...) {
 kd_is_sorted <- function(x, ...) UseMethod("kd_is_sorted")
 
 #' @export
-kd_is_sorted.matrix <- function(x, parallel = FALSE, ...) {
-  return(kd_is_sorted_(matrix_to_tuples(x), parallel))
+kd_is_sorted.matrix <- function(x, cols = 1:ncol(x), parallel = FALSE, ...) {
+  return(kd_is_sorted_mat(x, cols, parallel))
+}
+
+#' @export
+kd_is_sorted.data.frame <- function(x, cols = 1:ncol(x), parallel = FALSE, ...) {
+  return(kd_is_sorted_df(x, colspec(x, cols), parallel))
 }
 
 #' @export

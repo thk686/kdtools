@@ -67,6 +67,32 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// kd_is_sorted_df_no_validation
+bool kd_is_sorted_df_no_validation(const List& df, const IntegerVector& idx, bool parallel);
+RcppExport SEXP _kdtools_kd_is_sorted_df_no_validation(SEXP dfSEXP, SEXP idxSEXP, SEXP parallelSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const List& >::type df(dfSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type idx(idxSEXP);
+    Rcpp::traits::input_parameter< bool >::type parallel(parallelSEXP);
+    rcpp_result_gen = Rcpp::wrap(kd_is_sorted_df_no_validation(df, idx, parallel));
+    return rcpp_result_gen;
+END_RCPP
+}
+// kd_is_sorted_df
+bool kd_is_sorted_df(const List& df, const IntegerVector& idx, bool parallel);
+RcppExport SEXP _kdtools_kd_is_sorted_df(SEXP dfSEXP, SEXP idxSEXP, SEXP parallelSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const List& >::type df(dfSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type idx(idxSEXP);
+    Rcpp::traits::input_parameter< bool >::type parallel(parallelSEXP);
+    rcpp_result_gen = Rcpp::wrap(kd_is_sorted_df(df, idx, parallel));
+    return rcpp_result_gen;
+END_RCPP
+}
 // kd_rq_df_no_validation
 std::vector<int> kd_rq_df_no_validation(const List& df, const IntegerVector& idx, const List& lower, const List& upper);
 RcppExport SEXP _kdtools_kd_rq_df_no_validation(SEXP dfSEXP, SEXP idxSEXP, SEXP lowerSEXP, SEXP upperSEXP) {
@@ -337,6 +363,32 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// kd_is_sorted_mat_no_validation
+bool kd_is_sorted_mat_no_validation(const NumericMatrix& mat, const IntegerVector& idx, bool parallel);
+RcppExport SEXP _kdtools_kd_is_sorted_mat_no_validation(SEXP matSEXP, SEXP idxSEXP, SEXP parallelSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type idx(idxSEXP);
+    Rcpp::traits::input_parameter< bool >::type parallel(parallelSEXP);
+    rcpp_result_gen = Rcpp::wrap(kd_is_sorted_mat_no_validation(mat, idx, parallel));
+    return rcpp_result_gen;
+END_RCPP
+}
+// kd_is_sorted_mat
+bool kd_is_sorted_mat(const NumericMatrix& mat, const IntegerVector& idx, bool parallel);
+RcppExport SEXP _kdtools_kd_is_sorted_mat(SEXP matSEXP, SEXP idxSEXP, SEXP parallelSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type idx(idxSEXP);
+    Rcpp::traits::input_parameter< bool >::type parallel(parallelSEXP);
+    rcpp_result_gen = Rcpp::wrap(kd_is_sorted_mat(mat, idx, parallel));
+    return rcpp_result_gen;
+END_RCPP
+}
 // kd_rq_mat_no_validation
 std::vector<int> kd_rq_mat_no_validation(const NumericMatrix& mat, const IntegerVector& idx, const NumericVector& lower, const NumericVector& upper);
 RcppExport SEXP _kdtools_kd_rq_mat_no_validation(SEXP matSEXP, SEXP idxSEXP, SEXP lowerSEXP, SEXP upperSEXP) {
@@ -412,6 +464,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_tuples_to_matrix_rows", (DL_FUNC) &_kdtools_tuples_to_matrix_rows, 3},
     {"_kdtools_kd_order_df_no_validation", (DL_FUNC) &_kdtools_kd_order_df_no_validation, 3},
     {"_kdtools_kd_order_df", (DL_FUNC) &_kdtools_kd_order_df, 3},
+    {"_kdtools_kd_is_sorted_df_no_validation", (DL_FUNC) &_kdtools_kd_is_sorted_df_no_validation, 3},
+    {"_kdtools_kd_is_sorted_df", (DL_FUNC) &_kdtools_kd_is_sorted_df, 3},
     {"_kdtools_kd_rq_df_no_validation", (DL_FUNC) &_kdtools_kd_rq_df_no_validation, 4},
     {"_kdtools_kd_rq_df", (DL_FUNC) &_kdtools_kd_rq_df, 4},
     {"_kdtools_kd_nn_df_no_validation", (DL_FUNC) &_kdtools_kd_nn_df_no_validation, 5},
@@ -433,6 +487,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_using_circular_lexicographical_compare", (DL_FUNC) &_kdtools_using_circular_lexicographical_compare, 0},
     {"_kdtools_kd_order_mat_no_validation", (DL_FUNC) &_kdtools_kd_order_mat_no_validation, 3},
     {"_kdtools_kd_order_mat", (DL_FUNC) &_kdtools_kd_order_mat, 3},
+    {"_kdtools_kd_is_sorted_mat_no_validation", (DL_FUNC) &_kdtools_kd_is_sorted_mat_no_validation, 3},
+    {"_kdtools_kd_is_sorted_mat", (DL_FUNC) &_kdtools_kd_is_sorted_mat, 3},
     {"_kdtools_kd_rq_mat_no_validation", (DL_FUNC) &_kdtools_kd_rq_mat_no_validation, 4},
     {"_kdtools_kd_rq_mat", (DL_FUNC) &_kdtools_kd_rq_mat, 4},
     {"_kdtools_kd_nn_mat_no_validation", (DL_FUNC) &_kdtools_kd_nn_mat_no_validation, 4},

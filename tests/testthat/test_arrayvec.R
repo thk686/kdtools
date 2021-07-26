@@ -23,3 +23,4 @@ test_that("Arrayvec works", {
     expect_equal(x, z)
   }
 })
+

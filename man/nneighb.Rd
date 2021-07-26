@@ -16,11 +16,11 @@
 \usage{
 kd_nearest_neighbors(x, v, n, ...)
 
-\method{kd_nearest_neighbors}{matrix}(x, v, n, cols = 1:ncol(x), ...)
+\method{kd_nearest_neighbors}{matrix}(x, v, n, cols = NULL, ...)
 
 \method{kd_nearest_neighbors}{arrayvec}(x, v, n, ...)
 
-\method{kd_nearest_neighbors}{data.frame}(x, v, n, cols = 1:ncol(x), w = rep(1, length(cols)), ...)
+\method{kd_nearest_neighbors}{data.frame}(x, v, n, cols = NULL, w = rep(1, length(cols)), ...)
 
 kd_nn_indices(x, v, n, ...)
 
@@ -28,7 +28,7 @@ kd_nn_indices(x, v, n, ...)
 
 \method{kd_nn_indices}{arrayvec}(x, v, n, ...)
 
-\method{kd_nn_indices}{data.frame}(x, v, n, cols = 1:ncol(x), w = rep(1, length(cols)), ...)
+\method{kd_nn_indices}{data.frame}(x, v, n, cols = NULL, w = rep(1, length(cols)), ...)
 
 kd_nearest_neighbor(x, v)
 

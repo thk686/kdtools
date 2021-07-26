@@ -15,21 +15,21 @@
 \usage{
 kd_sort(x, ...)
 
-\method{kd_sort}{matrix}(x, cols = 1:ncol(x), parallel = TRUE, ...)
+\method{kd_sort}{matrix}(x, cols = NULL, parallel = TRUE, ...)
 
 \method{kd_sort}{arrayvec}(x, inplace = FALSE, parallel = TRUE, ...)
 
-\method{kd_sort}{data.frame}(x, cols = 1:ncol(x), parallel = TRUE, ...)
+\method{kd_sort}{data.frame}(x, cols = NULL, parallel = TRUE, ...)
 
-\method{kd_sort}{sf}(x, cols = 1:ncol(x), parallel = TRUE, ...)
+\method{kd_sort}{sf}(x, cols = NULL, parallel = TRUE, ...)
 
 kd_order(x, ...)
 
-\method{kd_order}{matrix}(x, cols = 1:ncol(x), parallel = TRUE, ...)
+\method{kd_order}{matrix}(x, cols = NULL, parallel = TRUE, ...)
 
 \method{kd_order}{arrayvec}(x, inplace = FALSE, parallel = TRUE, ...)
 
-\method{kd_order}{data.frame}(x, cols = 1:ncol(x), parallel = TRUE, ...)
+\method{kd_order}{data.frame}(x, cols = NULL, parallel = TRUE, ...)
 
 kd_is_sorted(x, ...)
 }

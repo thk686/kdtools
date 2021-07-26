@@ -30,9 +30,6 @@ using std::distance;
 using std::begin;
 using std::end;
 
-#include <strider.h>
-using strider::make_strided;
-
 template <size_t I>
 using vec_type = array<double, I>;
 
@@ -65,15 +62,11 @@ List matrix_to_tuples_(const NumericMatrix& x)
   auto nr = x.nrow();
   auto p = make_xptr(new arrayvec<I>);
   p->reserve(nr);
-  auto oi = back_inserter(*p);
-  transform(begin(x), begin(x) + nr, oi,
-            [&](const double& v)
-            {
-              vec_type<I> a;
-              auto i = make_strided(&v, nr);
-              copy(i, i + I, begin(a));
-              return a;
-            });
+  for (auto i = 0; i != nr; ++i) {
+    vec_type<I> a;
+    for (auto j = 0; j != I; ++j) a[j] = x(i, j);
+    p->push_back(a);
+  }
   return wrap_ptr(p);
 }
 
@@ -88,13 +81,9 @@ NumericMatrix tuples_to_matrix_(List x)
 {
   auto p = get_ptr<I>(x);
   NumericMatrix res(p->size(), I);
-  transform(begin(*p), end(*p), begin(res), begin(res),
-            [&](const array<double, I>& a, double& v)
-            {
-              auto i = make_strided(&v, p->size());
-              copy(begin(a), end(a), i);
-              return v;
-            });
+  for (auto i = 0; i != res.nrow(); ++i)
+    for (auto j = 0; j != I; ++j)
+      res(i, j) = (*p)[i][j];
   return res;
 }
 
@@ -103,17 +92,11 @@ NumericMatrix tuples_to_matrix_(List x, size_t a, size_t b)
 {
   auto nr = b - a + 1;
   auto p = get_ptr<I>(x);
-  if (b < a || p->size() < b + 1) stop("Invalid range");
+  if (a < 1 || b < a || p->size() < b) stop("Invalid range");
   NumericMatrix res(nr, I);
-  auto begin_ = begin(*p) + a,
-       end_ = begin(*p) + b + 1;
-  transform(begin_, end_, begin(res), begin(res),
-            [&](const array<double, I>& u, double& v)
-            {
-              auto i = make_strided(&v, nr);
-              copy(begin(u), end(u), i);
-              return v;
-            });
+  for (auto i = a; i != b + 1; ++i)
+    for (auto j = 0; j != I; ++j)
+      res(i - 1, j - 1) = (*p)[i - 1][j - 1];
   return res;
 }
 

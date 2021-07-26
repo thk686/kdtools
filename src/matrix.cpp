@@ -45,10 +45,6 @@ bool not_in_range(const T& x, U n) {
 
 namespace {
 
-std::string_view get_string(SEXP x, int i = 0) {
-  return std::string_view(CHAR(STRING_ELT(x, i)));
-}
-
 Function Requal("=="), Rless("<"), Rdiff("-");
 
 };

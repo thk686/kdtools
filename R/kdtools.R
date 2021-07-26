@@ -2,20 +2,17 @@
 #' @useDynLib kdtools, .registration = TRUE
 NULL
 
-colspec <- function(x, cols) {
-  switch(mode(cols),
-         "character" = {
-           if (!all(cols %in% names(x)))
-             warning("Non-existent column name ignored")
-           which(names(x) %in% cols)
-          },
-         "numeric" = {
-           (1:ncol(x))[cols]
-         },
-         "logical" = {
-           (1:ncol(x))[cols]
-          },
-         stop("Invalid column spec"))
+colspec <- function(x, cols = NULL) {
+  res <- switch(mode(cols),
+         "character" = match(cols, colnames(x)),
+         "numeric" = cols,
+         "logical" = (1:ncol(x))[cols],
+         "NULL" = 1:ncol(x),
+         stop("Invalid column specificaiton"))
+  if (length(res) == 0 ||
+      !all(res %in% 1:ncol(x)))
+    stop("Invalid column specificaiton")
+  return(res)
 }
 
 #' Sort multidimensional data
@@ -60,7 +57,7 @@ kd_sort <- function(x, ...) UseMethod("kd_sort")
 #' @param parallel use multiple threads if true
 #' @rdname kdsort
 #' @export
-kd_sort.matrix <- function(x, cols = 1:ncol(x), parallel = TRUE, ...) {
+kd_sort.matrix <- function(x, cols = NULL, parallel = TRUE, ...) {
   return(x[kd_order(x, cols = colspec(x, cols), parallel = parallel),, drop = FALSE])
 }
 
@@ -73,7 +70,7 @@ kd_sort.arrayvec <- function(x, inplace = FALSE, parallel = TRUE, ...) {
 
 #' @rdname kdsort
 #' @export
-kd_sort.data.frame <- function(x, cols = 1:ncol(x), parallel = TRUE, ...) {
+kd_sort.data.frame <- function(x, cols = NULL, parallel = TRUE, ...) {
   return(x[kd_order(x, cols = colspec(x, cols), parallel = parallel),, drop = FALSE])
 }
 
@@ -82,8 +79,9 @@ kd_sort.data.frame <- function(x, cols = 1:ncol(x), parallel = TRUE, ...) {
 kd_sort.sf <- function(x, cols = NULL, parallel = TRUE, ...) {
   if (is.null(cols))
     return(x[kd_order(sf::st_coordinates(x), parallel = parallel),, drop = FALSE])
-  else
-    return(x[kd_order(sf::st_drop_geometry(x)[, cols], parallel = parallel),, drop = FALSE])
+  else {
+    return(x[kd_order(sf::st_drop_geometry(x), colspec(x, cols), parallel = parallel),, drop = FALSE])
+  }
 }
 
 #' @rdname kdsort
@@ -92,7 +90,7 @@ kd_order <- function(x, ...) UseMethod("kd_order")
 
 #' @rdname kdsort
 #' @export
-kd_order.matrix <- function(x, cols = 1:ncol(x), parallel = TRUE, ...) {
+kd_order.matrix <- function(x, cols = NULL, parallel = TRUE, ...) {
   return(kd_order_mat(x, colspec(x, cols), parallel = parallel))
 }
 
@@ -105,7 +103,7 @@ kd_order.arrayvec <- function(x, inplace = FALSE, parallel = TRUE, ...) {
 #' @param cols integer vector of column indices
 #' @rdname kdsort
 #' @export
-kd_order.data.frame <- function(x, cols = 1:ncol(x), parallel = TRUE, ...) {
+kd_order.data.frame <- function(x, cols = NULL, parallel = TRUE, ...) {
   return(kd_order_df(x, colspec(x, cols), parallel = parallel))
 }
 
@@ -114,12 +112,12 @@ kd_order.data.frame <- function(x, cols = 1:ncol(x), parallel = TRUE, ...) {
 kd_is_sorted <- function(x, ...) UseMethod("kd_is_sorted")
 
 #' @export
-kd_is_sorted.matrix <- function(x, cols = 1:ncol(x), parallel = FALSE, ...) {
-  return(kd_is_sorted_mat(x, cols, parallel))
+kd_is_sorted.matrix <- function(x, cols = NULL, parallel = FALSE, ...) {
+  return(kd_is_sorted_mat(x, colspec(x, cols), parallel))
 }
 
 #' @export
-kd_is_sorted.data.frame <- function(x, cols = 1:ncol(x), parallel = FALSE, ...) {
+kd_is_sorted.data.frame <- function(x, cols = NULL, parallel = FALSE, ...) {
   return(kd_is_sorted_df(x, colspec(x, cols), parallel))
 }
 
@@ -211,7 +209,7 @@ kd_range_query <- function(x, l, u, ...) UseMethod("kd_range_query")
 
 #' @rdname search
 #' @export
-kd_range_query.matrix <- function(x, l, u, cols = 1:ncol(x), ...) {
+kd_range_query.matrix <- function(x, l, u, cols = NULL, ...) {
   return(x[kd_rq_indices(x, l, u, colspec(x, cols)),, drop = FALSE])
 }
 
@@ -223,7 +221,7 @@ kd_range_query.arrayvec <- function(x, l, u, ...) {
 
 #' @rdname search
 #' @export
-kd_range_query.data.frame <- function(x, l, u, cols = 1:ncol(x), ...) {
+kd_range_query.data.frame <- function(x, l, u, cols = NULL, ...) {
   return(x[kd_rq_indices(x, l, u, colspec(x, cols)),, drop = FALSE])
 }
 
@@ -233,7 +231,7 @@ kd_rq_indices <- function(x, l, u, ...) UseMethod("kd_rq_indices")
 
 #' @rdname search
 #' @export
-kd_rq_indices.matrix <- function(x, l, u, cols = 1:ncol(x), ...) {
+kd_rq_indices.matrix <- function(x, l, u, cols = NULL, ...) {
   return(kd_rq_mat(x, colspec(x, cols), l, u))
 }
 
@@ -246,7 +244,7 @@ kd_rq_indices.arrayvec <- function(x, l, u, ...) {
 #' @rdname search
 #' @param cols integer vector of column indices
 #' @export
-kd_rq_indices.data.frame <- function(x, l, u, cols = 1:ncol(x), ...) {
+kd_rq_indices.data.frame <- function(x, l, u, cols = NULL, ...) {
   return(kd_rq_df(x, colspec(x, cols), l, u))
 }
 
@@ -292,7 +290,7 @@ kd_nearest_neighbors <- function(x, v, n, ...) UseMethod("kd_nearest_neighbors")
 
 #' @rdname nneighb
 #' @export
-kd_nearest_neighbors.matrix <- function(x, v, n, cols = 1:ncol(x), ...) {
+kd_nearest_neighbors.matrix <- function(x, v, n, cols = NULL, ...) {
   return(x[kd_nn_indices(x, v, n, colspec(x, cols)),, drop = FALSE])
 }
 
@@ -306,8 +304,7 @@ kd_nearest_neighbors.arrayvec <- function(x, v, n, ...) {
 #' @param w distance weights
 #' @rdname nneighb
 #' @export
-kd_nearest_neighbors.data.frame <- function(x, v, n, cols = 1:ncol(x),
-                                            w = rep(1, length(cols)), ...) {
+kd_nearest_neighbors.data.frame <- function(x, v, n, cols = NULL, w = NULL, ...) {
   return(x[kd_nn_indices(x, v, n, colspec(x, cols), w),, drop = FALSE])
 }
 
@@ -330,9 +327,10 @@ kd_nn_indices.arrayvec <- function(x, v, n, ...) {
 
 #' @rdname nneighb
 #' @export
-kd_nn_indices.data.frame <- function(x, v, n, cols = 1:ncol(x),
-                                     w = rep(1, length(cols)), ...) {
-  return(kd_nn_df(x, colspec(x, cols), w, v, n))
+kd_nn_indices.data.frame <- function(x, v, n, cols = NULL, w = NULL, ...) {
+  cols <- colspec(x, cols)
+  if (is.null(w)) w <- rep_len(1, length(cols))
+  return(kd_nn_df(x, cols, w, v, n))
 }
 
 #' @rdname nneighb

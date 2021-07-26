@@ -5,7 +5,10 @@ reps <- 5
 nci <- seq(1, 9, 2)
 
 to_av <- function(x) matrix_to_tuples(as.matrix(x))
-mk_av <- function(...) matrix_to_tuples(matrix(...))
+mk_av <- function(...) {
+  x <- do.call("matrix", list(...))
+  return(matrix_to_tuples(x))
+}
 
 r_nn <- function(x, y) {
   which.min(vapply(seq_len(nrow(x)),

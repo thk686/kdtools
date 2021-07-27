@@ -310,6 +310,7 @@ The [Boost Geometry library](https://www.boost.org/doc/libs/release/libs/geometr
 // [[Rcpp::plugins(cpp17)]]
 
 #define NO_TUPLEMAPR
+#define HAS_CXX17
 
 #include <Rcpp.h>
 #include <vector>
@@ -547,6 +548,7 @@ The kdtools package also provides routines for nearest- and k-nearest- neighbor 
 // [[Rcpp::plugins(cpp17)]]
 
 #define NO_TUPLEMAPR
+#define HAS_CXX17
 
 #include <Rcpp.h>
 #include <vector>
@@ -766,6 +768,7 @@ using std::vector;
 using std::string;
 
 #define NO_TUPLEMAPR
+#define HAS_CXX17
 
 #include <kdtools.h>
 using namespace keittlab;

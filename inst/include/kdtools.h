@@ -3,6 +3,8 @@
 #ifndef __KDTOOLS_H__
 #define __KDTOOLS_H__
 
+#ifdef HAS_CXX17 // CRAN
+
 #include <functional>
 #include <algorithm>
 #include <iterator>
@@ -1026,5 +1028,7 @@ void kd_nn_iters(Iter first, Iter last, const TupleType& key, size_t n, OutIter 
 
 } // namespace kdtools
 } // namespace keittlab
+
+#endif // HAS_CXX17
 
 #endif // __KDTOOLS_H__

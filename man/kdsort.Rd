@@ -75,6 +75,7 @@ The matrix version will be slower because of data structure
   conversions.
 }
 \examples{
+if (has_cxx17()) {
 z <- data.frame(real = runif(10), lgl = runif(10) > 0.5,
                 int = as.integer(rpois(10, 2)), char = sample(month.name, 10),
                 stringsAsFactors = FALSE)
@@ -84,6 +85,7 @@ y <- kd_sort(x)
 kd_is_sorted(y)
 kd_order(x)
 plot(y, type = "o", pch = 19, col = "steelblue", asp = 1)
+}
 }
 \seealso{
 \code{\link{arrayvec}}

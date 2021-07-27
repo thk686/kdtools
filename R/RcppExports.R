@@ -11,11 +11,13 @@
 #' a matrix. For optimal performance, pre-convert matrices.
 #'
 #' @examples
+#' if (has_cxx17()) {
 #' x = matrix(1:10, 5)
 #' y = matrix_to_tuples(x)
 #' str(x)
 #' str(y)
 #' y[1:2, ]
+#' }
 #'
 #' @rdname convert
 #' @export
@@ -65,12 +67,32 @@ kd_nn_df <- function(df, idx, w, key, n) {
     .Call(`_kdtools_kd_nn_df`, df, idx, w, key, n)
 }
 
-kd_sort_ <- function(x, inplace, parallel) {
-    .Call(`_kdtools_kd_sort_`, x, inplace, parallel)
+#' Check if package was compiled with circular comparisons
+#'
+#' @rdname utils
+#' @export
+using_circular_lexicographical_compare <- function() {
+    .Call(`_kdtools_using_circular_lexicographical_compare`)
+}
+
+#' Check if C++ 17 was available when building package
+#'
+#' @rdname utils
+#' @export
+has_cxx17 <- function() {
+    .Call(`_kdtools_has_cxx17`)
+}
+
+kd_order_ <- function(x, inplace, parallel) {
+    .Call(`_kdtools_kd_order_`, x, inplace, parallel)
 }
 
 kd_is_sorted_ <- function(x, parallel) {
     .Call(`_kdtools_kd_is_sorted_`, x, parallel)
+}
+
+kd_sort_ <- function(x, inplace, parallel) {
+    .Call(`_kdtools_kd_sort_`, x, inplace, parallel)
 }
 
 lex_sort_ <- function(x, inplace) {
@@ -115,14 +137,6 @@ kd_nearest_neighbors_ <- function(x, value, n) {
 
 kd_nn_indices_ <- function(x, value, n) {
     .Call(`_kdtools_kd_nn_indices_`, x, value, n)
-}
-
-kd_order_ <- function(x, inplace, parallel) {
-    .Call(`_kdtools_kd_order_`, x, inplace, parallel)
-}
-
-using_circular_lexicographical_compare <- function() {
-    .Call(`_kdtools_using_circular_lexicographical_compare`)
 }
 
 kd_order_mat_no_validation <- function(mat, idx, parallel = TRUE) {

@@ -40,6 +40,7 @@ colspec <- function(x, cols = NULL) {
 #' @note The matrix version will be slower because of data structure
 #'   conversions.
 #' @examples
+#' if (has_cxx17()) {
 #' z <- data.frame(real = runif(10), lgl = runif(10) > 0.5,
 #'                 int = as.integer(rpois(10, 2)), char = sample(month.name, 10),
 #'                 stringsAsFactors = FALSE)
@@ -49,6 +50,7 @@ colspec <- function(x, cols = NULL) {
 #' kd_is_sorted(y)
 #' kd_order(x)
 #' plot(y, type = "o", pch = 19, col = "steelblue", asp = 1)
+#' }
 #' @seealso \code{\link{arrayvec}}
 #' @rdname kdsort
 #' @export
@@ -132,9 +134,10 @@ kd_is_sorted.arrayvec <- function(x, parallel = FALSE, ...) {
 #' @details Sorts a range of tuples into lexicographical order.
 #' @return the input type sorted
 #' @examples
+#' if (has_cxx17()) {
 #' x = lex_sort(matrix(runif(200), 100))
 #' plot(x, type = "o", pch = 19, col = "steelblue", asp = 1)
-#'
+#' }
 #' @rdname lexsort
 #' @export
 lex_sort <- function(x, ...) UseMethod("lex_sort")
@@ -161,6 +164,7 @@ lex_sort.arrayvec <- function(x, inplace = FALSE, ...) {
 #'   \code{kd_rq_indices} \tab a vector of integer indices specifying rows in the input \cr
 #'   \code{kd_binary_search} \tab a boolean \cr}
 #' @examples
+#' if (has_cxx17()) {
 #' x = matrix(runif(200), 100)
 #' y = matrix_to_tuples(x)
 #' kd_sort(y, inplace = TRUE)
@@ -169,7 +173,7 @@ lex_sort.arrayvec <- function(x, inplace = FALSE, ...) {
 #' kd_binary_search(y, c(1/2, 1/2))
 #' kd_range_query(y, c(1/3, 1/3), c(2/3, 2/3))
 #' kd_rq_indices(y, c(1/3, 1/3), c(2/3, 2/3))
-#'
+#' }
 #' @aliases kd_lower_bound
 #' @rdname search
 #' @export
@@ -277,13 +281,14 @@ kd_binary_search.arrayvec <- function(x, v) {
 #' }
 #'
 #' @examples
+#' if (has_cxx17()) {
 #' x = matrix(runif(200), 100)
 #' y = matrix_to_tuples(x)
 #' kd_sort(y, inplace = TRUE)
 #' y[kd_nearest_neighbor(y, c(1/2, 1/2)),]
 #' kd_nearest_neighbors(y, c(1/2, 1/2), 3)
 #' y[kd_nn_indices(y, c(1/2, 1/2), 5),]
-#'
+#' }
 #' @rdname nneighb
 #' @export
 kd_nearest_neighbors <- function(x, v, n, ...) UseMethod("kd_nearest_neighbors")

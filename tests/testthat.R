@@ -1,4 +1,4 @@
 library(testthat)
 library(kdtools)
 
-test_check("kdtools")
+if (has_cxx17()) test_check("kdtools")

@@ -60,11 +60,12 @@ kd_nearest_neighbor(x, v)
 Find nearest neighbors
 }
 \examples{
+if (has_cxx17()) {
 x = matrix(runif(200), 100)
 y = matrix_to_tuples(x)
 kd_sort(y, inplace = TRUE)
 y[kd_nearest_neighbor(y, c(1/2, 1/2)),]
 kd_nearest_neighbors(y, c(1/2, 1/2), 3)
 y[kd_nn_indices(y, c(1/2, 1/2), 5),]
-
+}
 }

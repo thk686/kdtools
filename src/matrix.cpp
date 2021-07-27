@@ -8,16 +8,6 @@ using Rcpp::NumericVector;
 using Rcpp::IntegerVector;
 using Rcpp::NumericMatrix;
 
-#include "kdtools.h"
-using namespace keittlab;
-using kdtools::utils::median_part;
-using kdtools::utils::iter_value_t;
-using kdtools::utils::middle_of;
-using kdtools::utils::n_best;
-
-#include "strdist.h"
-using namespace keittlab;
-
 #include <algorithm>
 using std::end;
 using std::next;
@@ -33,9 +23,19 @@ using std::partition_point;
 
 #include <cmath>
 
-// [[Rcpp::plugins(cpp17)]]
-
 // #define USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
+
+#ifdef HAS_CXX17
+
+#include "kdtools.h"
+using namespace keittlab;
+using kdtools::utils::median_part;
+using kdtools::utils::iter_value_t;
+using kdtools::utils::middle_of;
+using kdtools::utils::n_best;
+
+#include "strdist.h"
+using namespace keittlab;
 
 template<typename T, typename U>
 bool not_in_range(const T& x, U n) {
@@ -362,10 +362,13 @@ void knn_(Iter first, Iter last,
   }
 }
 
+#endif // HAS_CXX17
+
 // [[Rcpp::export]]
 IntegerVector kd_order_mat_no_validation(const NumericMatrix& mat,
                                         const IntegerVector& idx,
                                         bool parallel = true) {
+#ifdef HAS_CXX17
   IntegerVector x(mat.nrow());
   iota(begin(x), end(x), 0);
   auto pred = kd_less_mat(mat, idx);
@@ -374,23 +377,31 @@ IntegerVector kd_order_mat_no_validation(const NumericMatrix& mat,
   else
     kd_order_mat_(begin(x), end(x), pred);
   return x + 1;
+#else
+  return IntegerVector();
+#endif
 }
 
 // [[Rcpp::export]]
 IntegerVector kd_order_mat(const NumericMatrix& mat,
                            const IntegerVector& idx,
                            bool parallel = true) {
+#ifdef HAS_CXX17
   if (mat.ncol() < 1 || mat.nrow() < 1)
     return IntegerVector();
   if (not_in_range(idx, mat.ncol()))
     stop("Index out of range");
   return kd_order_mat_no_validation(mat, idx, parallel);
+#else
+  return IntegerVector();
+#endif
 }
 
 // [[Rcpp::export]]
 bool kd_is_sorted_mat_no_validation(const NumericMatrix& mat,
                                     const IntegerVector& idx,
                                     bool parallel = true) {
+#ifdef HAS_CXX17
   IntegerVector x(mat.nrow());
   iota(begin(x), end(x), 0);
   auto pred = kd_less_mat(mat, idx);
@@ -398,17 +409,24 @@ bool kd_is_sorted_mat_no_validation(const NumericMatrix& mat,
     return kd_is_sorted_mat_threaded(begin(x), end(x), pred);
   else
     return kd_is_sorted_mat_(begin(x), end(x), pred);
+#else
+  return NA_LOGICAL;
+#endif
 }
 
 // [[Rcpp::export]]
 bool kd_is_sorted_mat(const NumericMatrix& mat,
                       const IntegerVector& idx,
                       bool parallel = true) {
+#ifdef HAS_CXX17
   if (mat.ncol() < 1 || mat.nrow() < 1)
     stop("Invalid input matrix");
   if (not_in_range(idx, mat.ncol()))
     stop("Index out of range");
   return kd_is_sorted_mat_no_validation(mat, idx, parallel);
+#else
+  return NA_LOGICAL;
+#endif
 }
 
 // [[Rcpp::export]]
@@ -417,6 +435,7 @@ std::vector<int> kd_rq_mat_no_validation(const NumericMatrix& mat,
                                         const NumericVector& lower,
                                         const NumericVector& upper)
 {
+#ifdef HAS_CXX17
   std::vector<int> x(mat.nrow());
   iota(begin(x), end(x), 0);
   auto wi = within_mat(mat, idx, lower, upper);
@@ -426,6 +445,9 @@ std::vector<int> kd_rq_mat_no_validation(const NumericMatrix& mat,
   kd_rq_mat_(begin(x), end(x), oi, cn, wi);
   for (auto& e : res) ++e;
   return res;
+#else
+  return std::vector<int>();
+#endif
 }
 
 // [[Rcpp::export]]
@@ -434,6 +456,7 @@ std::vector<int> kd_rq_mat(const NumericMatrix& mat,
                           const NumericVector& lower,
                           const NumericVector& upper)
 {
+#ifdef HAS_CXX17
   if (mat.ncol() < 1 || mat.nrow() < 1)
     stop("Empty data frame");
   if (not_in_range(idx, mat.ncol()))
@@ -442,6 +465,9 @@ std::vector<int> kd_rq_mat(const NumericMatrix& mat,
       idx.size() != upper.size())
     stop("Incorrect dimension of lower or upper bound");
   return kd_rq_mat_no_validation(mat, idx, lower, upper);
+#else
+  return std::vector<int>();
+#endif
 }
 
 // [[Rcpp::export]]
@@ -450,6 +476,7 @@ std::vector<int> kd_nn_mat_no_validation(const NumericMatrix& mat,
                                         const NumericVector& key,
                                         const int n)
 {
+#ifdef HAS_CXX17
   std::vector<int> x(mat.nrow());
   iota(begin(x), end(x), 0);
   auto equal_nth = equal_nth_mat(mat, idx, key);
@@ -463,6 +490,9 @@ std::vector<int> kd_nn_mat_no_validation(const NumericMatrix& mat,
   Q.copy_to(oi);
   for (auto& e : res) ++e;
   return res;
+#else
+  return std::vector<int>();
+#endif
 }
 
 // [[Rcpp::export]]
@@ -471,6 +501,7 @@ std::vector<int> kd_nn_mat(const NumericMatrix& mat,
                            const NumericVector& key,
                            const int n)
 {
+#ifdef HAS_CXX17
   if (mat.ncol() < 1 || mat.nrow() < 1)
     stop("Empty matrix");
   if (not_in_range(idx, mat.ncol()))
@@ -478,5 +509,8 @@ std::vector<int> kd_nn_mat(const NumericMatrix& mat,
   if (idx.size() != key.size())
     stop("Incorrect dimension of key");
   return kd_nn_mat_no_validation(mat, idx, key, n);
+#else
+  return std::vector<int>();
+#endif
 }
 

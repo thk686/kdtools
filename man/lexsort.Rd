@@ -21,7 +21,8 @@ Sort a matrix into lexicographical order
 Sorts a range of tuples into lexicographical order.
 }
 \examples{
+if (has_cxx17()) {
 x = lex_sort(matrix(runif(200), 100))
 plot(x, type = "o", pch = 19, col = "steelblue", asp = 1)
-
+}
 }

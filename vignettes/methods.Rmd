@@ -15,7 +15,8 @@ has_pkgs = require(kdtools) &&
   require(ggplot2) &&
   require(tidytext) &&
   require(printr) &&
-  require(scales)
+  require(scales) &&
+  kdtools::has_cxx17()
 theme_set(theme_classic())
 bench_ntuples = 1e7
 bench_ntrials = 21

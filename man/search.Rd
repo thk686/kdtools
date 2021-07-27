@@ -66,6 +66,7 @@ kd_binary_search(x, v)
 Search sorted data
 }
 \examples{
+if (has_cxx17()) {
 x = matrix(runif(200), 100)
 y = matrix_to_tuples(x)
 kd_sort(y, inplace = TRUE)
@@ -74,5 +75,5 @@ y[kd_upper_bound(y, c(1/2, 1/2)),]
 kd_binary_search(y, c(1/2, 1/2))
 kd_range_query(y, c(1/3, 1/3), c(2/3, 2/3))
 kd_rq_indices(y, c(1/3, 1/3), c(2/3, 2/3))
-
+}
 }

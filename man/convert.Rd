@@ -22,10 +22,12 @@ an arrayvec object internally and the results are converted back to
 a matrix. For optimal performance, pre-convert matrices.
 }
 \examples{
+if (has_cxx17()) {
 x = matrix(1:10, 5)
 y = matrix_to_tuples(x)
 str(x)
 str(y)
 y[1:2, ]
+}
 
 }

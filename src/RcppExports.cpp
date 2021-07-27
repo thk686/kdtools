@@ -156,16 +156,36 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// kd_sort_
-List kd_sort_(List x, bool inplace, bool parallel);
-RcppExport SEXP _kdtools_kd_sort_(SEXP xSEXP, SEXP inplaceSEXP, SEXP parallelSEXP) {
+// using_circular_lexicographical_compare
+bool using_circular_lexicographical_compare();
+RcppExport SEXP _kdtools_using_circular_lexicographical_compare() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(using_circular_lexicographical_compare());
+    return rcpp_result_gen;
+END_RCPP
+}
+// has_cxx17
+bool has_cxx17();
+RcppExport SEXP _kdtools_has_cxx17() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(has_cxx17());
+    return rcpp_result_gen;
+END_RCPP
+}
+// kd_order_
+IntegerVector kd_order_(List x, bool inplace, bool parallel);
+RcppExport SEXP _kdtools_kd_order_(SEXP xSEXP, SEXP inplaceSEXP, SEXP parallelSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< List >::type x(xSEXP);
     Rcpp::traits::input_parameter< bool >::type inplace(inplaceSEXP);
     Rcpp::traits::input_parameter< bool >::type parallel(parallelSEXP);
-    rcpp_result_gen = Rcpp::wrap(kd_sort_(x, inplace, parallel));
+    rcpp_result_gen = Rcpp::wrap(kd_order_(x, inplace, parallel));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -178,6 +198,19 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< List >::type x(xSEXP);
     Rcpp::traits::input_parameter< bool >::type parallel(parallelSEXP);
     rcpp_result_gen = Rcpp::wrap(kd_is_sorted_(x, parallel));
+    return rcpp_result_gen;
+END_RCPP
+}
+// kd_sort_
+List kd_sort_(List x, bool inplace, bool parallel);
+RcppExport SEXP _kdtools_kd_sort_(SEXP xSEXP, SEXP inplaceSEXP, SEXP parallelSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type x(xSEXP);
+    Rcpp::traits::input_parameter< bool >::type inplace(inplaceSEXP);
+    Rcpp::traits::input_parameter< bool >::type parallel(parallelSEXP);
+    rcpp_result_gen = Rcpp::wrap(kd_sort_(x, inplace, parallel));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -319,29 +352,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// kd_order_
-IntegerVector kd_order_(List x, bool inplace, bool parallel);
-RcppExport SEXP _kdtools_kd_order_(SEXP xSEXP, SEXP inplaceSEXP, SEXP parallelSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type x(xSEXP);
-    Rcpp::traits::input_parameter< bool >::type inplace(inplaceSEXP);
-    Rcpp::traits::input_parameter< bool >::type parallel(parallelSEXP);
-    rcpp_result_gen = Rcpp::wrap(kd_order_(x, inplace, parallel));
-    return rcpp_result_gen;
-END_RCPP
-}
-// using_circular_lexicographical_compare
-bool using_circular_lexicographical_compare();
-RcppExport SEXP _kdtools_using_circular_lexicographical_compare() {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(using_circular_lexicographical_compare());
-    return rcpp_result_gen;
-END_RCPP
-}
 // kd_order_mat_no_validation
 IntegerVector kd_order_mat_no_validation(const NumericMatrix& mat, const IntegerVector& idx, bool parallel);
 RcppExport SEXP _kdtools_kd_order_mat_no_validation(SEXP matSEXP, SEXP idxSEXP, SEXP parallelSEXP) {
@@ -475,8 +485,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_kd_rq_df", (DL_FUNC) &_kdtools_kd_rq_df, 4},
     {"_kdtools_kd_nn_df_no_validation", (DL_FUNC) &_kdtools_kd_nn_df_no_validation, 5},
     {"_kdtools_kd_nn_df", (DL_FUNC) &_kdtools_kd_nn_df, 5},
-    {"_kdtools_kd_sort_", (DL_FUNC) &_kdtools_kd_sort_, 3},
+    {"_kdtools_using_circular_lexicographical_compare", (DL_FUNC) &_kdtools_using_circular_lexicographical_compare, 0},
+    {"_kdtools_has_cxx17", (DL_FUNC) &_kdtools_has_cxx17, 0},
+    {"_kdtools_kd_order_", (DL_FUNC) &_kdtools_kd_order_, 3},
     {"_kdtools_kd_is_sorted_", (DL_FUNC) &_kdtools_kd_is_sorted_, 2},
+    {"_kdtools_kd_sort_", (DL_FUNC) &_kdtools_kd_sort_, 3},
     {"_kdtools_lex_sort_", (DL_FUNC) &_kdtools_lex_sort_, 2},
     {"_kdtools_kd_lower_bound_", (DL_FUNC) &_kdtools_kd_lower_bound_, 2},
     {"_kdtools_kd_upper_bound_", (DL_FUNC) &_kdtools_kd_upper_bound_, 2},
@@ -488,8 +501,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_kd_binary_search_", (DL_FUNC) &_kdtools_kd_binary_search_, 2},
     {"_kdtools_kd_nearest_neighbors_", (DL_FUNC) &_kdtools_kd_nearest_neighbors_, 3},
     {"_kdtools_kd_nn_indices_", (DL_FUNC) &_kdtools_kd_nn_indices_, 3},
-    {"_kdtools_kd_order_", (DL_FUNC) &_kdtools_kd_order_, 3},
-    {"_kdtools_using_circular_lexicographical_compare", (DL_FUNC) &_kdtools_using_circular_lexicographical_compare, 0},
     {"_kdtools_kd_order_mat_no_validation", (DL_FUNC) &_kdtools_kd_order_mat_no_validation, 3},
     {"_kdtools_kd_order_mat", (DL_FUNC) &_kdtools_kd_order_mat, 3},
     {"_kdtools_kd_is_sorted_mat_no_validation", (DL_FUNC) &_kdtools_kd_is_sorted_mat_no_validation, 3},

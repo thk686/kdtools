@@ -7,16 +7,6 @@ using Rcpp::Function;
 using Rcpp::NumericVector;
 using Rcpp::IntegerVector;
 
-#include "kdtools.h"
-using namespace keittlab;
-using kdtools::utils::median_part;
-using kdtools::utils::iter_value_t;
-using kdtools::utils::middle_of;
-using kdtools::utils::n_best;
-
-#include "strdist.h"
-using namespace keittlab;
-
 #include <algorithm>
 using std::end;
 using std::next;
@@ -32,9 +22,19 @@ using std::partition_point;
 
 #include <cmath>
 
-// [[Rcpp::plugins(cpp17)]]
-
 // #define USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
+
+#ifdef HAS_CXX17
+
+#include "kdtools.h"
+using namespace keittlab;
+using kdtools::utils::median_part;
+using kdtools::utils::iter_value_t;
+using kdtools::utils::middle_of;
+using kdtools::utils::n_best;
+
+#include "strdist.h"
+using namespace keittlab;
 
 template<typename T>
 int ncol(const T& x) {
@@ -621,10 +621,13 @@ void knn_(Iter first, Iter last,
   }
 }
 
+#endif // HAS_CXX17
+
 // [[Rcpp::export]]
 IntegerVector kd_order_df_no_validation(const List& df,
                                         const IntegerVector& idx,
                                         bool parallel = true) {
+#ifdef HAS_CXX17
   IntegerVector x(nrow(df));
   iota(begin(x), end(x), 0);
   auto pred = kd_less_df(df, idx);
@@ -633,23 +636,31 @@ IntegerVector kd_order_df_no_validation(const List& df,
   else
     kd_order_df_(begin(x), end(x), pred);
   return x + 1;
+#else
+  return IntegerVector();
+#endif
 }
 
 // [[Rcpp::export]]
 IntegerVector kd_order_df(const List& df,
                           const IntegerVector& idx,
                           bool parallel = true) {
+#ifdef HAS_CXX17
   if (ncol(df) < 1 || nrow(df) < 1)
     return IntegerVector();
   if (not_in_range(idx, ncol(df)))
     stop("Index out of range");
   return kd_order_df_no_validation(df, idx, parallel);
+#else
+  return IntegerVector();
+#endif
 }
 
 // [[Rcpp::export]]
 bool kd_is_sorted_df_no_validation(const List& df,
                                    const IntegerVector& idx,
                                    bool parallel = true) {
+#ifdef HAS_CXX17
   IntegerVector x(nrow(df));
   iota(begin(x), end(x), 0);
   auto pred = kd_less_df(df, idx);
@@ -657,17 +668,24 @@ bool kd_is_sorted_df_no_validation(const List& df,
     return kd_is_sorted_df_threaded(begin(x), end(x), pred);
   else
     return kd_is_sorted_df_(begin(x), end(x), pred);
+#else
+  return NA_LOGICAL;
+#endif
 }
 
 // [[Rcpp::export]]
 bool kd_is_sorted_df(const List& df,
                      const IntegerVector& idx,
                      bool parallel = true) {
+#ifdef HAS_CXX17
   if (ncol(df) < 1 || nrow(df) < 1)
     stop("Invalid data frame");
   if (not_in_range(idx, ncol(df)))
     stop("Index out of range");
   return kd_is_sorted_df_no_validation(df, idx, parallel);
+#else
+  return NA_LOGICAL;
+#endif
 }
 
 // [[Rcpp::export]]
@@ -676,6 +694,7 @@ std::vector<int> kd_rq_df_no_validation(const List& df,
                                         const List& lower,
                                         const List& upper)
 {
+#ifdef HAS_CXX17
   std::vector<int> x(nrow(df));
   iota(begin(x), end(x), 0);
   auto wi = within_df(df, idx, lower, upper);
@@ -685,6 +704,9 @@ std::vector<int> kd_rq_df_no_validation(const List& df,
   kd_rq_df_(begin(x), end(x), oi, cn, wi);
   for (auto& e : res) ++e;
   return res;
+#else
+  return std::vector<int>();
+#endif
 }
 
 // [[Rcpp::export]]
@@ -693,6 +715,7 @@ std::vector<int> kd_rq_df(const List& df,
                           const List& lower,
                           const List& upper)
 {
+#ifdef HAS_CXX17
   if (ncol(df) < 1 || nrow(df) < 1)
     stop("Empty data frame");
   if (not_in_range(idx, ncol(df)))
@@ -703,6 +726,9 @@ std::vector<int> kd_rq_df(const List& df,
   if (type_mismatch(df, idx, lower, upper))
     stop("Mismatched types in lower or upper bound");
   return kd_rq_df_no_validation(df, idx, lower, upper);
+#else
+  return std::vector<int>();
+#endif
 }
 
 // [[Rcpp::export]]
@@ -712,6 +738,7 @@ std::vector<int> kd_nn_df_no_validation(const List& df,
                                         const List& key,
                                         const int n)
 {
+#ifdef HAS_CXX17
   std::vector<int> x(nrow(df));
   iota(begin(x), end(x), 0);
   auto equal_nth = equal_nth_df(df, idx, key);
@@ -725,6 +752,9 @@ std::vector<int> kd_nn_df_no_validation(const List& df,
   Q.copy_to(oi);
   for (auto& e : res) ++e;
   return res;
+#else
+  return std::vector<int>();
+#endif
 }
 
 // [[Rcpp::export]]
@@ -734,6 +764,7 @@ std::vector<int> kd_nn_df(const List& df,
                           const List& key,
                           const int n)
 {
+#ifdef HAS_CXX17
   if (ncol(df) < 1 || nrow(df) < 1)
     stop("Empty data frame");
   if (not_in_range(idx, ncol(df)))
@@ -745,5 +776,8 @@ std::vector<int> kd_nn_df(const List& df,
   if (type_mismatch(df, idx, key))
     stop("Mismatched types in key");
   return kd_nn_df_no_validation(df, idx, w, key, n);
+#else
+  return std::vector<int>();
+#endif
 }
 

@@ -1,0 +1,4 @@
+PKG_CPPFLAGS = -I"../inst/include" -I"../include" @HASCXX17@
+CXX_STD = @CXXSTD@
+
+

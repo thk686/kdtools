@@ -16,10 +16,12 @@ using std::iota;
 using std::begin;
 using std::size_t;
 using std::vector;
-using std::thread;
 using std::distance;
 using std::minmax_element;
 using std::partition_point;
+
+#include <thread>
+using std::thread;
 
 #include <cmath>
 

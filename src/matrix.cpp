@@ -25,7 +25,7 @@ using std::partition_point;
 
 // #define USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
 
-#ifdef HAS_CXX17
+#ifndef NO_CXX17
 
 #include "kdtools.h"
 using namespace keittlab;
@@ -362,13 +362,13 @@ void knn_(Iter first, Iter last,
   }
 }
 
-#endif // HAS_CXX17
+#endif // NO_CXX17
 
 // [[Rcpp::export]]
 IntegerVector kd_order_mat_no_validation(const NumericMatrix& mat,
                                         const IntegerVector& idx,
                                         bool parallel = true) {
-#ifdef HAS_CXX17
+#ifndef NO_CXX17
   IntegerVector x(mat.nrow());
   iota(begin(x), end(x), 0);
   auto pred = kd_less_mat(mat, idx);
@@ -386,7 +386,7 @@ IntegerVector kd_order_mat_no_validation(const NumericMatrix& mat,
 IntegerVector kd_order_mat(const NumericMatrix& mat,
                            const IntegerVector& idx,
                            bool parallel = true) {
-#ifdef HAS_CXX17
+#ifndef NO_CXX17
   if (mat.ncol() < 1 || mat.nrow() < 1)
     return IntegerVector();
   if (not_in_range(idx, mat.ncol()))
@@ -401,7 +401,7 @@ IntegerVector kd_order_mat(const NumericMatrix& mat,
 bool kd_is_sorted_mat_no_validation(const NumericMatrix& mat,
                                     const IntegerVector& idx,
                                     bool parallel = true) {
-#ifdef HAS_CXX17
+#ifndef NO_CXX17
   IntegerVector x(mat.nrow());
   iota(begin(x), end(x), 0);
   auto pred = kd_less_mat(mat, idx);
@@ -418,7 +418,7 @@ bool kd_is_sorted_mat_no_validation(const NumericMatrix& mat,
 bool kd_is_sorted_mat(const NumericMatrix& mat,
                       const IntegerVector& idx,
                       bool parallel = true) {
-#ifdef HAS_CXX17
+#ifndef NO_CXX17
   if (mat.ncol() < 1 || mat.nrow() < 1)
     stop("Invalid input matrix");
   if (not_in_range(idx, mat.ncol()))
@@ -435,7 +435,7 @@ std::vector<int> kd_rq_mat_no_validation(const NumericMatrix& mat,
                                         const NumericVector& lower,
                                         const NumericVector& upper)
 {
-#ifdef HAS_CXX17
+#ifndef NO_CXX17
   std::vector<int> x(mat.nrow());
   iota(begin(x), end(x), 0);
   auto wi = within_mat(mat, idx, lower, upper);
@@ -456,7 +456,7 @@ std::vector<int> kd_rq_mat(const NumericMatrix& mat,
                           const NumericVector& lower,
                           const NumericVector& upper)
 {
-#ifdef HAS_CXX17
+#ifndef NO_CXX17
   if (mat.ncol() < 1 || mat.nrow() < 1)
     stop("Empty data frame");
   if (not_in_range(idx, mat.ncol()))
@@ -476,7 +476,7 @@ std::vector<int> kd_nn_mat_no_validation(const NumericMatrix& mat,
                                         const NumericVector& key,
                                         const int n)
 {
-#ifdef HAS_CXX17
+#ifndef NO_CXX17
   std::vector<int> x(mat.nrow());
   iota(begin(x), end(x), 0);
   auto equal_nth = equal_nth_mat(mat, idx, key);
@@ -501,7 +501,7 @@ std::vector<int> kd_nn_mat(const NumericMatrix& mat,
                            const NumericVector& key,
                            const int n)
 {
-#ifdef HAS_CXX17
+#ifndef NO_CXX17
   if (mat.ncol() < 1 || mat.nrow() < 1)
     stop("Empty matrix");
   if (not_in_range(idx, mat.ncol()))

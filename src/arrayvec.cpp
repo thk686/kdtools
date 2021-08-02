@@ -23,7 +23,7 @@
 // [[Rcpp::export]]
 List matrix_to_tuples(const NumericMatrix& x)
 {
-#ifdef HAS_CXX17
+#ifndef NO_CXX17
   switch(x.ncol())
   {
   case 1: return matrix_to_tuples_<1>(x);
@@ -47,7 +47,7 @@ List matrix_to_tuples(const NumericMatrix& x)
 // [[Rcpp::export]]
 NumericMatrix tuples_to_matrix(List x)
 {
-#ifdef HAS_CXX17
+#ifndef NO_CXX17
   if (!x.inherits("arrayvec"))
     stop("Expecting arrayvec object");
   switch(arrayvec_dim(x))
@@ -71,7 +71,7 @@ NumericMatrix tuples_to_matrix(List x)
 // [[Rcpp::export]]
 NumericMatrix tuples_to_matrix_rows(List x, int a, int b)
 {
-#ifdef HAS_CXX17
+#ifndef NO_CXX17
   if (!x.inherits("arrayvec"))
     stop("Expecting arrayvec object");
   switch(arrayvec_dim(x))

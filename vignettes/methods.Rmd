@@ -11,7 +11,7 @@ vignette: >
 
 ```{r setup, include=FALSE}
 use_cached_data = TRUE
-has_pkgs = require(kdtools) &&
+can_run = require(kdtools) &&
   require(ggplot2) &&
   require(tidytext) &&
   require(printr) &&
@@ -23,12 +23,16 @@ bench_ntrials = 21
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  eval = has_pkgs
+  eval = can_run
 )
 ```
 
-```{r eval=!has_pkgs, echo=FALSE}
-message("Required packages missing -- code will not be evaluated")
+```{r eval=!can_run, echo=FALSE}
+if (has_cxx17()) {
+  message("Required packages missing -- code will not be evaluated")
+} else {
+  message("kdtools needs C++17 for full functionality, code will not be evaluated")
+}
 ```
 
 ## Introduction
@@ -310,7 +314,6 @@ The [Boost Geometry library](https://www.boost.org/doc/libs/release/libs/geometr
 // [[Rcpp::plugins(cpp17)]]
 
 #define NO_TUPLEMAPR
-#define HAS_CXX17
 
 #include <Rcpp.h>
 #include <vector>
@@ -548,7 +551,6 @@ The kdtools package also provides routines for nearest- and k-nearest- neighbor 
 // [[Rcpp::plugins(cpp17)]]
 
 #define NO_TUPLEMAPR
-#define HAS_CXX17
 
 #include <Rcpp.h>
 #include <vector>
@@ -768,7 +770,6 @@ using std::vector;
 using std::string;
 
 #define NO_TUPLEMAPR
-#define HAS_CXX17
 
 #include <kdtools.h>
 using namespace keittlab;

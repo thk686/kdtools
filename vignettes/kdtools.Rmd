@@ -10,16 +10,20 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-has_pkgs = require(kdtools) && kdtools::has_cxx17()
+can_run = require(kdtools) && kdtools::has_cxx17()
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  eval = has_pkgs
+  eval = can_run
 )
 ```
 
-```{r eval=!has_pkgs, echo=FALSE}
-message("kdtools package not available, code will not be evaluated")
+```{r eval=!can_run, echo=FALSE}
+if (has_cxx17()) {
+  message("kdtools package not available, code will not be evaluated")
+} else {
+  message("kdtools needs C++17 for full functionality, code will not be evaluated")
+}
 ```
 
 There are now two options for using kdtools, either on a C++ vector of arrays (arrayvec object) or natively on a data frame. Sorting on arrayvec objects is fast. Passing a data frame is slower, but automatically supports mixed types.

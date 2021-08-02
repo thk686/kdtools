@@ -24,7 +24,7 @@ using std::partition_point;
 
 // #define USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
 
-#ifdef HAS_CXX17
+#ifndef NO_CXX17
 
 #include "kdtools.h"
 using namespace keittlab;
@@ -621,13 +621,13 @@ void knn_(Iter first, Iter last,
   }
 }
 
-#endif // HAS_CXX17
+#endif // NO_CXX17
 
 // [[Rcpp::export]]
 IntegerVector kd_order_df_no_validation(const List& df,
                                         const IntegerVector& idx,
                                         bool parallel = true) {
-#ifdef HAS_CXX17
+#ifndef NO_CXX17
   IntegerVector x(nrow(df));
   iota(begin(x), end(x), 0);
   auto pred = kd_less_df(df, idx);
@@ -645,7 +645,7 @@ IntegerVector kd_order_df_no_validation(const List& df,
 IntegerVector kd_order_df(const List& df,
                           const IntegerVector& idx,
                           bool parallel = true) {
-#ifdef HAS_CXX17
+#ifndef NO_CXX17
   if (ncol(df) < 1 || nrow(df) < 1)
     return IntegerVector();
   if (not_in_range(idx, ncol(df)))
@@ -660,7 +660,7 @@ IntegerVector kd_order_df(const List& df,
 bool kd_is_sorted_df_no_validation(const List& df,
                                    const IntegerVector& idx,
                                    bool parallel = true) {
-#ifdef HAS_CXX17
+#ifndef NO_CXX17
   IntegerVector x(nrow(df));
   iota(begin(x), end(x), 0);
   auto pred = kd_less_df(df, idx);
@@ -677,7 +677,7 @@ bool kd_is_sorted_df_no_validation(const List& df,
 bool kd_is_sorted_df(const List& df,
                      const IntegerVector& idx,
                      bool parallel = true) {
-#ifdef HAS_CXX17
+#ifndef NO_CXX17
   if (ncol(df) < 1 || nrow(df) < 1)
     stop("Invalid data frame");
   if (not_in_range(idx, ncol(df)))
@@ -694,7 +694,7 @@ std::vector<int> kd_rq_df_no_validation(const List& df,
                                         const List& lower,
                                         const List& upper)
 {
-#ifdef HAS_CXX17
+#ifndef NO_CXX17
   std::vector<int> x(nrow(df));
   iota(begin(x), end(x), 0);
   auto wi = within_df(df, idx, lower, upper);
@@ -715,7 +715,7 @@ std::vector<int> kd_rq_df(const List& df,
                           const List& lower,
                           const List& upper)
 {
-#ifdef HAS_CXX17
+#ifndef NO_CXX17
   if (ncol(df) < 1 || nrow(df) < 1)
     stop("Empty data frame");
   if (not_in_range(idx, ncol(df)))
@@ -738,7 +738,7 @@ std::vector<int> kd_nn_df_no_validation(const List& df,
                                         const List& key,
                                         const int n)
 {
-#ifdef HAS_CXX17
+#ifndef NO_CXX17
   std::vector<int> x(nrow(df));
   iota(begin(x), end(x), 0);
   auto equal_nth = equal_nth_df(df, idx, key);
@@ -764,7 +764,7 @@ std::vector<int> kd_nn_df(const List& df,
                           const List& key,
                           const int n)
 {
-#ifdef HAS_CXX17
+#ifndef NO_CXX17
   if (ncol(df) < 1 || nrow(df) < 1)
     stop("Empty data frame");
   if (not_in_range(idx, ncol(df)))

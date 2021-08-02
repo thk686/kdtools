@@ -30,7 +30,7 @@ using std::distance;
 using std::begin;
 using std::end;
 
-#ifdef HAS_CXX17
+#ifndef NO_CXX17
 
 template <size_t I>
 using vec_type = array<double, I>;
@@ -120,6 +120,6 @@ int arrayvec_dim(const List& x)
   return as<int>(x["ncol"]);
 }
 
-#endif // HAS_CXX17
+#endif // NO_CXX17
 
 #endif // __ARRAYVEC_H__

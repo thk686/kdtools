@@ -15,12 +15,46 @@ status](https://circleci.com/gh/thk686/kdtools.svg?style=svg)](https://circleci.
 
 # kdtools
 
-The kdtools package exports a C++ header implementing sorting and
-searching on ranges of tuple-like objects without using trees. **Note
-that searching and sorting are supported on mixed-types.** It is based
-on a kd-tree-like recursive sorting algorithm. Once sorted, one can
-perform a range- or nearest-neighbor- query. More details are
-[here](https://thk686.github.io/kdtools/). Methods and benchmarks are
+This package emerged from a fascination with spatial partitioning
+algorithms. I was curious if there was a simple and fast way to move
+multidimensional data elements near to each other in memory so that they
+could be retrieved quickly. I also admire the structure of the C++
+standard library and was curious if the search functions for sorted
+sequences could be extended to higher dimensions. At the same time, I
+was interested to learn some of the newer feature of C++17.
+
+The result is this package, which collects several ideas, including:
+
+1.  A C++17 header file (`kdtools.h`) that can be used separately from
+    this package. It has multidimensional analogs to the C++ standard
+    library functions for searching sorted lists (e.g., upper\_bound,
+    binary\_search) but that operate on sequences of tuples rather than
+    scalar values. It uses template metaprogramming to generate code for
+    each dimension at compile time. Sorting multidimensional arrays is
+    fully threaded and very fast. It produces an implicit kd-tree split
+    on medians that supports fast range queries and nearest-neighbor
+    searches.
+2.  Along the way, I needed to manipulate tuple-like objects to, for
+    example, compute the euclidean distance between fixed-length arrays.
+    I was curious about variadic templates and wondered if I could
+    figure out nested variadic templates. The result is the included
+    `tuplemapr.h` header, which allows one to apply an arbitrary
+    callable over the dimensions of a collection of tuple-like objects.
+    It is entirely `constexpr` (except when calling certain standard
+    library functions) and employs fold-expressions where convenient.
+3.  I generalized the code to work natively on data frames. This is
+    slower, but still pretty fast (approx. 0.18 seconds to sort the
+    nycflights13 flights data with 337k rows on an older macbook air).
+    This code works on any R data type that supports comparison
+    operators, including strings. Range and nearest-neighbors queries
+    also support mixed types with different weights in each dimension.
+4.  To support nearest-neighbor searches on strings, I coded a fast
+    implementation of Levenshtein- or edit- distance. Allocating scratch
+    space for the tableau is amortized constant. Most implementations
+    allocate on every call, which is dramatically slower.
+
+More details are [here](https://thk686.github.io/kdtools/). Methods and
+benchmarks are
 [here](https://thk686.github.io/kdtools/articles/methods.html).
 
 ``` r
@@ -34,14 +68,7 @@ points(y, pch = 19, cex = 0.5, col = "red")
 
 <img src="man/figures/README-unnamed-chunk-1-1.png" width="100%" />
 
-## Native Data Frame Support
-
-The core C++ header implements sorting and searching on vectors of
-tuples with the number of dimensions determined at compile time. I have
-generalized the package code to work on an arbitrary data frame (or any
-list of equal-length vectors). This sorting and search works on any
-times that are equality-comparable and less-than-comparable in the C++
-STL sense.
+The following demonstrates a mixed-type range query on a data frame.
 
 ``` r
 df <- kd_sort(data.frame(a = runif(12),
@@ -49,29 +76,28 @@ df <- kd_sort(data.frame(a = runif(12),
                          c = sample(month.name),
                          stringsAsFactors = FALSE))
 print(df)
-#>            a b         c
-#> 12 0.5611445 0     April
-#> 6  0.4783884 0  February
-#> 8  0.4240752 0     March
-#> 1  0.5635279 0   October
-#> 11 0.4520168 2   January
-#> 9  0.3713406 2      July
-#> 7  0.6002583 3       May
-#> 3  0.6419641 0      June
-#> 5  0.8951297 0  November
-#> 2  0.8317521 1  December
-#> 10 0.8486102 3    August
-#> 4  0.8281034 4 September
+#>             a b         c
+#> 11 0.07035400 0  December
+#> 8  0.17601206 1  February
+#> 12 0.32910504 1       May
+#> 5  0.40281805 1 September
+#> 10 0.05568524 2      June
+#> 6  0.40731102 2     March
+#> 7  0.54364982 2      July
+#> 9  0.88907691 0     April
+#> 4  0.57183950 0    August
+#> 3  0.76644501 0   January
+#> 2  0.92866102 0  November
+#> 1  0.91877685 0   October
 lower <- list(0.1, 1L, "August")
 upper <- list(0.9, 4L, "September")
 i <- kd_rq_indices(df, lower, upper)
 print(i)
-#> [1]  5  6  7 10 11
+#> [1] 2 3 6 7
 df[i, ]
 #>            a b        c
-#> 11 0.4520168 2  January
-#> 9  0.3713406 2     July
-#> 7  0.6002583 3      May
-#> 2  0.8317521 1 December
-#> 10 0.8486102 3   August
+#> 8  0.1760121 1 February
+#> 12 0.3291050 1      May
+#> 6  0.4073110 2    March
+#> 7  0.5436498 2     July
 ```

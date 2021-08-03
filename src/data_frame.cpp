@@ -13,7 +13,6 @@ using std::next;
 using std::swap;
 using std::iota;
 using std::begin;
-using std::size_t;
 using std::vector;
 using std::distance;
 using std::minmax_element;
@@ -68,7 +67,7 @@ Function Requal("=="), Rless("<"), Rdiff("-");
 
 struct kd_less_df
 {
-  kd_less_df(const List& df, const IntegerVector& idx, size_t dim = 0, size_t count = 0)
+  kd_less_df(const List& df, const IntegerVector& idx, int dim = 0, int count = 0)
     : m_df(df), m_idx(idx), m_dim(dim), m_ndim(m_idx.size()), m_count(count) {}
 
   kd_less_df next_dim(bool inc_count = false) const {
@@ -128,14 +127,14 @@ struct kd_less_df
   }
   const List& m_df;
   const IntegerVector& m_idx;
-  size_t m_dim, m_ndim, m_count;
+  int m_dim, m_ndim, m_count;
 };
 
 #else // (don't) USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
 
 struct kd_less_df
 {
-  kd_less_df(const List& df, const IntegerVector& idx, size_t dim = 0)
+  kd_less_df(const List& df, const IntegerVector& idx, int dim = 0)
     : m_df(df), m_idx(idx), m_dim(dim), m_ndim(m_idx.size()) {}
 
   kd_less_df next_dim() const {
@@ -177,7 +176,7 @@ struct kd_less_df
   }
   const List& m_df;
   const IntegerVector& m_idx;
-  size_t m_dim, m_ndim;
+  int m_dim, m_ndim;
 };
 
 #endif // USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
@@ -185,7 +184,7 @@ struct kd_less_df
 struct chck_nth_df
 {
   chck_nth_df(const List& df, const IntegerVector& idx,
-              const List& lower, const List& upper, size_t dim = 0)
+              const List& lower, const List& upper, int dim = 0)
     : m_df(df), m_lower(lower), m_upper(upper),
       m_idx(idx), m_dim(dim) {}
 
@@ -261,13 +260,13 @@ struct chck_nth_df
 
   const List& m_df, m_lower, m_upper;
   const IntegerVector& m_idx;
-  size_t m_dim;
+  int m_dim;
 };
 
 struct equal_nth_df
 {
   equal_nth_df(const List& df, const IntegerVector& idx,
-               const List& key, size_t dim = 0)
+               const List& key, int dim = 0)
     : m_df(df), m_key(key), m_idx(idx), m_dim(dim) {}
 
   equal_nth_df next_dim() const {
@@ -311,13 +310,13 @@ struct equal_nth_df
 
   const List& m_df, m_key;
   const IntegerVector& m_idx;
-  size_t m_dim;
+  int m_dim;
 };
 
 struct dist_nth_df
 {
   dist_nth_df(const List& df, const IntegerVector& idx,
-              const NumericVector& w, const List& key, size_t dim = 0)
+              const NumericVector& w, const List& key, int dim = 0)
     : m_df(df), m_key(key), m_idx(idx), m_w(w), m_dim(dim) {}
 
   dist_nth_df next_dim() const {
@@ -360,7 +359,7 @@ struct dist_nth_df
   const List& m_df, m_key;
   const IntegerVector& m_idx;
   const NumericVector& m_w;
-  size_t m_dim;
+  int m_dim;
 };
 
 struct within_df {
@@ -410,7 +409,7 @@ struct within_df {
   }
   const List& m_df, m_lower, m_upper;
   const IntegerVector& m_idx;
-  size_t m_ndim;
+  int m_ndim;
 };
 
 struct l2dist_df {
@@ -452,7 +451,7 @@ struct l2dist_df {
   const List& m_df, m_key;
   const IntegerVector& m_idx;
   const NumericVector& m_w;
-  size_t m_ndim;
+  int m_ndim;
 };
 
 bool type_mismatch(const List& df,

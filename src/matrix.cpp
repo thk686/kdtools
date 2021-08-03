@@ -14,7 +14,6 @@ using std::next;
 using std::swap;
 using std::iota;
 using std::begin;
-using std::size_t;
 using std::vector;
 using std::distance;
 using std::minmax_element;
@@ -55,7 +54,7 @@ Function Requal("=="), Rless("<"), Rdiff("-");
 
 struct kd_less_mat
 {
-  kd_less_mat(const NumericMatrix& mat, const IntegerVector& idx, size_t dim = 0, size_t count = 0)
+  kd_less_mat(const NumericMatrix& mat, const IntegerVector& idx, int dim = 0, int count = 0)
     : m_mat(mat), m_idx(idx), m_dim(dim), m_ndim(m_idx.size()), m_count(count) {}
 
   kd_less_mat next_dim(bool inc_count = false) const {
@@ -77,14 +76,14 @@ struct kd_less_mat
 
   const NumericMatrix& m_mat;
   const IntegerVector& m_idx;
-  size_t m_dim, m_ndim, m_count;
+  int m_dim, m_ndim, m_count;
 };
 
 #else // (don't) USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
 
 struct kd_less_mat
 {
-  kd_less_mat(const NumericMatrix& mat, const IntegerVector& idx, size_t dim = 0)
+  kd_less_mat(const NumericMatrix& mat, const IntegerVector& idx, int dim = 0)
     : m_mat(mat), m_idx(idx), m_dim(dim), m_ndim(m_idx.size()) {}
 
   kd_less_mat next_dim() const {
@@ -102,7 +101,7 @@ struct kd_less_mat
 
   const NumericMatrix& m_mat;
   const IntegerVector& m_idx;
-  size_t m_dim, m_ndim;
+  int m_dim, m_ndim;
 };
 
 #endif // USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
@@ -110,7 +109,7 @@ struct kd_less_mat
 struct chck_nth_mat
 {
   chck_nth_mat(const NumericMatrix& mat, const IntegerVector& idx,
-              const NumericVector& lower, const NumericVector& upper, size_t dim = 0)
+              const NumericVector& lower, const NumericVector& upper, int dim = 0)
     : m_mat(mat), m_lower(lower), m_upper(upper),
       m_idx(idx), m_dim(dim) {}
 
@@ -135,13 +134,13 @@ struct chck_nth_mat
   const NumericMatrix& m_mat;
   const NumericVector& m_lower, m_upper;
   const IntegerVector& m_idx;
-  size_t m_dim;
+  int m_dim;
 };
 
 struct equal_nth_mat
 {
   equal_nth_mat(const NumericMatrix& mat, const IntegerVector& idx,
-                const NumericVector& key, size_t dim = 0)
+                const NumericVector& key, int dim = 0)
     : m_mat(mat), m_key(key), m_idx(idx), m_dim(dim) {}
 
   equal_nth_mat next_dim() const {
@@ -158,13 +157,13 @@ struct equal_nth_mat
   const NumericMatrix& m_mat;
   const NumericVector& m_key;
   const IntegerVector& m_idx;
-  size_t m_dim;
+  int m_dim;
 };
 
 struct dist_nth_mat
 {
   dist_nth_mat(const NumericMatrix& mat, const IntegerVector& idx,
-               const NumericVector& key, size_t dim = 0)
+               const NumericVector& key, int dim = 0)
     : m_mat(mat), m_key(key), m_idx(idx), m_dim(dim) {}
 
   dist_nth_mat next_dim() const {
@@ -181,7 +180,7 @@ struct dist_nth_mat
   const NumericMatrix& m_mat;
   const NumericVector& m_key;
   const IntegerVector& m_idx;
-  size_t m_dim;
+  int m_dim;
 };
 
 struct within_mat {
@@ -203,7 +202,7 @@ struct within_mat {
   const NumericMatrix& m_mat;
   const NumericVector& m_lower, m_upper;
   const IntegerVector& m_idx;
-  size_t m_ndim;
+  int m_ndim;
 };
 
 struct l2dist_mat {
@@ -222,7 +221,7 @@ struct l2dist_mat {
   const NumericMatrix& m_mat;
   const NumericVector& m_key;
   const IntegerVector& m_idx;
-  size_t m_ndim;
+  int m_ndim;
 };
 
 template <typename Iter, typename Pred>

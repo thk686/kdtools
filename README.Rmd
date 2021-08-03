@@ -19,7 +19,6 @@ knitr::opts_chunk$set(
 [![Codecov test coverage](https://codecov.io/gh/thk686/kdtools/branch/master/graph/badge.svg)](https://codecov.io/gh/thk686/kdtools?branch=master)
 [![DOI](https://zenodo.org/badge/125262786.svg)](https://zenodo.org/badge/latestdoi/125262786)
 [![CRAN status](https://www.r-pkg.org/badges/version/kdtools)](https://CRAN.R-project.org/package=kdtools)
-[![CircleCI build status](https://circleci.com/gh/thk686/kdtools.svg?style=svg)](https://circleci.com/gh/thk686/kdtools)
 
 <!-- badges: end -->
   
@@ -29,7 +28,7 @@ This package emerged from a fascination with spatial partitioning algorithms. I 
 
 The result is this package, which collects several ideas, including:
 
-1. A C++17 header file (`kdtools.h`) that can be used separately from this package. It has multidimensional analogs to the C++ standard library functions for searching sorted lists (e.g., upper_bound, binary_search) but that operate on sequences of tuples rather than scalar values. It uses template metaprogramming to generate code for each dimension at compile time. Sorting multidimensional arrays is fully threaded and very fast. It produces an implicit kd-tree split on medians that supports fast range queries and nearest-neighbor searches.
+1. A C++17 header file (`kdtools.h`) that can be used separately from this package. It has multidimensional analogs to the C++ standard library functions for searching sorted lists (e.g., upper_bound, binary_search) but that operate on sequences of tuples rather than scalar values. It uses template metaprogramming to generate code for each dimension at compile time at the cost of some binary bloat. Sorting multidimensional arrays is fully threaded and very fast. It produces an implicit kd-tree split on medians that supports fast range queries and nearest-neighbor searches.
 2. Along the way, I needed to manipulate tuple-like objects to, for example, compute the euclidean distance between fixed-length arrays. I was curious about variadic templates and wondered if I could figure out nested variadic templates. The result is the included `tuplemapr.h` header, which allows one to apply an arbitrary callable over the dimensions of a collection of tuple-like objects. It is entirely `constexpr` (except when calling certain standard library functions) and employs fold-expressions where convenient.
 3. I generalized the code to work natively on data frames. This is slower, but still pretty fast (approx. 0.18 seconds to sort the nycflights13 flights data with 337k rows on an older macbook air). This code works on any R data type that supports comparison operators, including strings. Range and nearest-neighbors queries also support mixed types with different weights in each dimension.
 4. To support nearest-neighbor searches on strings, I coded a fast implementation of Levenshtein- or edit- distance. Allocating scratch space for the tableau is amortized constant. Most implementations allocate on every call, which is dramatically slower.

@@ -253,7 +253,7 @@ _map(F&& f, Ts&&... ts) {
   } else {
     return std::apply(_<F>(f), _<Ts>(ts)...);
   }
-};
+}
 
 /*
  * Helper avoids static_cast

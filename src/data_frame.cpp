@@ -628,7 +628,9 @@ void knn_(Iter first, Iter last,
 IntegerVector kd_order_df_no_validation(const List& df,
                                         const IntegerVector& idx,
                                         bool parallel = true) {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return IntegerVector();
+#else
   IntegerVector x(nrow(df));
   iota(begin(x), end(x), 0);
   auto pred = kd_less_df(df, idx);
@@ -637,8 +639,6 @@ IntegerVector kd_order_df_no_validation(const List& df,
   else
     kd_order_df_(begin(x), end(x), pred);
   return x + 1;
-#else
-  return IntegerVector();
 #endif
 }
 
@@ -646,14 +646,14 @@ IntegerVector kd_order_df_no_validation(const List& df,
 IntegerVector kd_order_df(const List& df,
                           const IntegerVector& idx,
                           bool parallel = true) {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return IntegerVector();
+#else
   if (ncol(df) < 1 || nrow(df) < 1)
     return IntegerVector();
   if (not_in_range(idx, ncol(df)))
     stop("Index out of range");
   return kd_order_df_no_validation(df, idx, parallel);
-#else
-  return IntegerVector();
 #endif
 }
 
@@ -661,7 +661,9 @@ IntegerVector kd_order_df(const List& df,
 bool kd_is_sorted_df_no_validation(const List& df,
                                    const IntegerVector& idx,
                                    bool parallel = true) {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return NA_LOGICAL;
+#else
   IntegerVector x(nrow(df));
   iota(begin(x), end(x), 0);
   auto pred = kd_less_df(df, idx);
@@ -669,8 +671,6 @@ bool kd_is_sorted_df_no_validation(const List& df,
     return kd_is_sorted_df_threaded(begin(x), end(x), pred);
   else
     return kd_is_sorted_df_(begin(x), end(x), pred);
-#else
-  return NA_LOGICAL;
 #endif
 }
 
@@ -678,14 +678,14 @@ bool kd_is_sorted_df_no_validation(const List& df,
 bool kd_is_sorted_df(const List& df,
                      const IntegerVector& idx,
                      bool parallel = true) {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return NA_LOGICAL;
+#else
   if (ncol(df) < 1 || nrow(df) < 1)
     stop("Invalid data frame");
   if (not_in_range(idx, ncol(df)))
     stop("Index out of range");
   return kd_is_sorted_df_no_validation(df, idx, parallel);
-#else
-  return NA_LOGICAL;
 #endif
 }
 
@@ -695,7 +695,9 @@ std::vector<int> kd_rq_df_no_validation(const List& df,
                                         const List& lower,
                                         const List& upper)
 {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return std::vector<int>();
+#else
   std::vector<int> x(nrow(df));
   iota(begin(x), end(x), 0);
   auto wi = within_df(df, idx, lower, upper);
@@ -705,8 +707,6 @@ std::vector<int> kd_rq_df_no_validation(const List& df,
   kd_rq_df_(begin(x), end(x), oi, cn, wi);
   for (auto& e : res) ++e;
   return res;
-#else
-  return std::vector<int>();
 #endif
 }
 
@@ -716,7 +716,9 @@ std::vector<int> kd_rq_df(const List& df,
                           const List& lower,
                           const List& upper)
 {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return std::vector<int>();
+#else
   if (ncol(df) < 1 || nrow(df) < 1)
     stop("Empty data frame");
   if (not_in_range(idx, ncol(df)))
@@ -727,8 +729,6 @@ std::vector<int> kd_rq_df(const List& df,
   if (type_mismatch(df, idx, lower, upper))
     stop("Mismatched types in lower or upper bound");
   return kd_rq_df_no_validation(df, idx, lower, upper);
-#else
-  return std::vector<int>();
 #endif
 }
 
@@ -739,7 +739,9 @@ std::vector<int> kd_nn_df_no_validation(const List& df,
                                         const List& key,
                                         const int n)
 {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return std::vector<int>();
+#else
   std::vector<int> x(nrow(df));
   iota(begin(x), end(x), 0);
   auto equal_nth = equal_nth_df(df, idx, key);
@@ -753,8 +755,6 @@ std::vector<int> kd_nn_df_no_validation(const List& df,
   Q.copy_to(oi);
   for (auto& e : res) ++e;
   return res;
-#else
-  return std::vector<int>();
 #endif
 }
 
@@ -765,7 +765,9 @@ std::vector<int> kd_nn_df(const List& df,
                           const List& key,
                           const int n)
 {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return std::vector<int>();
+#else
   if (ncol(df) < 1 || nrow(df) < 1)
     stop("Empty data frame");
   if (not_in_range(idx, ncol(df)))
@@ -777,8 +779,6 @@ std::vector<int> kd_nn_df(const List& df,
   if (type_mismatch(df, idx, key))
     stop("Mismatched types in key");
   return kd_nn_df_no_validation(df, idx, w, key, n);
-#else
-  return std::vector<int>();
 #endif
 }
 

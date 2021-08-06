@@ -54,7 +54,7 @@ Sort multidimensional data
 }
 \details{
 The algorithm used is a divide-and-conquer quicksort variant that
-  recursively partions an range of tuples using the median of each successive
+  recursively partitions an range of tuples using the median of each successive
   dimension. Ties are resolved by cycling over successive dimensions. The
   result is an ordering of tuples matching their order if they were inserted
   into a kd-tree.

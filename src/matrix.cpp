@@ -369,7 +369,9 @@ void knn_(Iter first, Iter last,
 IntegerVector kd_order_mat_no_validation(const NumericMatrix& mat,
                                         const IntegerVector& idx,
                                         bool parallel = true) {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return IntegerVector();
+#else
   IntegerVector x(mat.nrow());
   iota(begin(x), end(x), 0);
   auto pred = kd_less_mat(mat, idx);
@@ -378,8 +380,6 @@ IntegerVector kd_order_mat_no_validation(const NumericMatrix& mat,
   else
     kd_order_mat_(begin(x), end(x), pred);
   return x + 1;
-#else
-  return IntegerVector();
 #endif
 }
 
@@ -387,14 +387,14 @@ IntegerVector kd_order_mat_no_validation(const NumericMatrix& mat,
 IntegerVector kd_order_mat(const NumericMatrix& mat,
                            const IntegerVector& idx,
                            bool parallel = true) {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return IntegerVector();
+#else
   if (mat.ncol() < 1 || mat.nrow() < 1)
     return IntegerVector();
   if (not_in_range(idx, mat.ncol()))
     stop("Index out of range");
   return kd_order_mat_no_validation(mat, idx, parallel);
-#else
-  return IntegerVector();
 #endif
 }
 
@@ -402,7 +402,9 @@ IntegerVector kd_order_mat(const NumericMatrix& mat,
 bool kd_is_sorted_mat_no_validation(const NumericMatrix& mat,
                                     const IntegerVector& idx,
                                     bool parallel = true) {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return NA_LOGICAL;
+#else
   IntegerVector x(mat.nrow());
   iota(begin(x), end(x), 0);
   auto pred = kd_less_mat(mat, idx);
@@ -410,8 +412,6 @@ bool kd_is_sorted_mat_no_validation(const NumericMatrix& mat,
     return kd_is_sorted_mat_threaded(begin(x), end(x), pred);
   else
     return kd_is_sorted_mat_(begin(x), end(x), pred);
-#else
-  return NA_LOGICAL;
 #endif
 }
 
@@ -419,14 +419,14 @@ bool kd_is_sorted_mat_no_validation(const NumericMatrix& mat,
 bool kd_is_sorted_mat(const NumericMatrix& mat,
                       const IntegerVector& idx,
                       bool parallel = true) {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return NA_LOGICAL;
+#else
   if (mat.ncol() < 1 || mat.nrow() < 1)
     stop("Invalid input matrix");
   if (not_in_range(idx, mat.ncol()))
     stop("Index out of range");
   return kd_is_sorted_mat_no_validation(mat, idx, parallel);
-#else
-  return NA_LOGICAL;
 #endif
 }
 
@@ -436,7 +436,9 @@ std::vector<int> kd_rq_mat_no_validation(const NumericMatrix& mat,
                                         const NumericVector& lower,
                                         const NumericVector& upper)
 {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return std::vector<int>();
+#else
   std::vector<int> x(mat.nrow());
   iota(begin(x), end(x), 0);
   auto wi = within_mat(mat, idx, lower, upper);
@@ -446,8 +448,6 @@ std::vector<int> kd_rq_mat_no_validation(const NumericMatrix& mat,
   kd_rq_mat_(begin(x), end(x), oi, cn, wi);
   for (auto& e : res) ++e;
   return res;
-#else
-  return std::vector<int>();
 #endif
 }
 
@@ -457,7 +457,9 @@ std::vector<int> kd_rq_mat(const NumericMatrix& mat,
                           const NumericVector& lower,
                           const NumericVector& upper)
 {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return std::vector<int>();
+#else
   if (mat.ncol() < 1 || mat.nrow() < 1)
     stop("Empty data frame");
   if (not_in_range(idx, mat.ncol()))
@@ -466,8 +468,6 @@ std::vector<int> kd_rq_mat(const NumericMatrix& mat,
       idx.size() != upper.size())
     stop("Incorrect dimension of lower or upper bound");
   return kd_rq_mat_no_validation(mat, idx, lower, upper);
-#else
-  return std::vector<int>();
 #endif
 }
 
@@ -477,7 +477,9 @@ std::vector<int> kd_nn_mat_no_validation(const NumericMatrix& mat,
                                         const NumericVector& key,
                                         const int n)
 {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return std::vector<int>();
+#else
   std::vector<int> x(mat.nrow());
   iota(begin(x), end(x), 0);
   auto equal_nth = equal_nth_mat(mat, idx, key);
@@ -491,8 +493,6 @@ std::vector<int> kd_nn_mat_no_validation(const NumericMatrix& mat,
   Q.copy_to(oi);
   for (auto& e : res) ++e;
   return res;
-#else
-  return std::vector<int>();
 #endif
 }
 
@@ -502,7 +502,9 @@ std::vector<int> kd_nn_mat(const NumericMatrix& mat,
                            const NumericVector& key,
                            const int n)
 {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return std::vector<int>();
+#else
   if (mat.ncol() < 1 || mat.nrow() < 1)
     stop("Empty matrix");
   if (not_in_range(idx, mat.ncol()))
@@ -510,8 +512,6 @@ std::vector<int> kd_nn_mat(const NumericMatrix& mat,
   if (idx.size() != key.size())
     stop("Incorrect dimension of key");
   return kd_nn_mat_no_validation(mat, idx, key, n);
-#else
-  return std::vector<int>();
 #endif
 }
 

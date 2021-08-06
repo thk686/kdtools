@@ -11,7 +11,6 @@ Encoding: UTF-8
 LazyData: true
 Imports: Rcpp (>= 0.12.14)
 LinkingTo: Rcpp
-SystemRequirements: C++17
 Suggests: 
     testthat,
     knitr,

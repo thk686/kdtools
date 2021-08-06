@@ -217,17 +217,19 @@ bool using_circular_lexicographical_compare() {
 //' @export
 // [[Rcpp::export]]
 bool has_cxx17() {
-#ifndef NO_CXX17
-  return true;
-#else
+#ifdef NO_CXX17
   return false;
+#else
+  return true;
 #endif
 }
 
 // [[Rcpp::export]]
 IntegerVector kd_order_(List x, bool inplace, bool parallel)
 {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return IntegerVector();
+#else
   switch(arrayvec_dim(x)) {
   case 1: return kd_order__<1>(x, inplace, parallel);
   case 2: return kd_order__<2>(x, inplace, parallel);
@@ -240,15 +242,15 @@ IntegerVector kd_order_(List x, bool inplace, bool parallel)
   case 9: return kd_order__<9>(x, inplace, parallel);
   default: stop("Invalid dimensions");
   }
-#else
-  return IntegerVector();
 #endif
 }
 
 // [[Rcpp::export]]
 bool kd_is_sorted_(List x, bool parallel)
 {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return NA_LOGICAL;
+#else
   switch(arrayvec_dim(x)) {
   case 1: return kd_is_sorted__<1>(x, parallel);
   case 2: return kd_is_sorted__<2>(x, parallel);
@@ -261,15 +263,15 @@ bool kd_is_sorted_(List x, bool parallel)
   case 9: return kd_is_sorted__<9>(x, parallel);
   default: stop("Invalid dimensions");
   }
-#else
-  return NA_LOGICAL;
 #endif
 }
 
 // [[Rcpp::export]]
 List kd_sort_(List x, bool inplace, bool parallel)
 {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return List();
+#else
   switch(arrayvec_dim(x)) {
   case 1: return kd_sort__<1>(x, inplace, parallel);
   case 2: return kd_sort__<2>(x, inplace, parallel);
@@ -282,15 +284,15 @@ List kd_sort_(List x, bool inplace, bool parallel)
   case 9: return kd_sort__<9>(x, inplace, parallel);
   default: stop("Invalid dimensions");
   }
-#else
-  return List();
 #endif
 }
 
 // [[Rcpp::export]]
 List lex_sort_(List x, bool inplace)
 {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return List();
+#else
   switch(arrayvec_dim(x)) {
   case 1: return lex_sort__<1>(x, inplace);
   case 2: return lex_sort__<2>(x, inplace);
@@ -303,15 +305,15 @@ List lex_sort_(List x, bool inplace)
   case 9: return lex_sort__<9>(x, inplace);
   default: stop("Invalid dimensions");
   }
-#else
-  return List();
 #endif
 }
 
 // [[Rcpp::export]]
 int kd_lower_bound_(List x, NumericVector value)
 {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return NA_INTEGER;
+#else
   switch(arrayvec_dim(x)) {
   case 1: return kd_lower_bound__<1>(x, value);
   case 2: return kd_lower_bound__<2>(x, value);
@@ -324,15 +326,15 @@ int kd_lower_bound_(List x, NumericVector value)
   case 9: return kd_lower_bound__<9>(x, value);
   default: stop("Invalid dimensions");
   }
-#else
-  return NA_INTEGER;
 #endif
 }
 
 // [[Rcpp::export]]
 int kd_upper_bound_(List x, NumericVector value)
 {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return NA_INTEGER;
+#else
   switch(arrayvec_dim(x)) {
   case 1: return kd_upper_bound__<1>(x, value);
   case 2: return kd_upper_bound__<2>(x, value);
@@ -345,15 +347,15 @@ int kd_upper_bound_(List x, NumericVector value)
   case 9: return kd_upper_bound__<9>(x, value);
   default: stop("Invalid dimensions");
   }
-#else
-  return NA_INTEGER;
 #endif
 }
 
 // [[Rcpp::export]]
 List kd_range_query_(List x, NumericVector lower, NumericVector upper)
 {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return List();
+#else
   switch(arrayvec_dim(x)) {
   case 1: return kd_range_query__<1>(x, lower, upper);
   case 2: return kd_range_query__<2>(x, lower, upper);
@@ -366,15 +368,15 @@ List kd_range_query_(List x, NumericVector lower, NumericVector upper)
   case 9: return kd_range_query__<9>(x, lower, upper);
   default: stop("Invalid dimensions");
   }
-#else
-  return List();
 #endif
 }
 
 // [[Rcpp::export]]
 IntegerVector kd_rq_indices_(List x, NumericVector lower, NumericVector upper)
 {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return IntegerVector();
+#else
   switch(arrayvec_dim(x)) {
   case 1: return kd_rq_indices__<1>(x, lower, upper);
   case 2: return kd_rq_indices__<2>(x, lower, upper);
@@ -387,15 +389,15 @@ IntegerVector kd_rq_indices_(List x, NumericVector lower, NumericVector upper)
   case 9: return kd_rq_indices__<9>(x, lower, upper);
   default: stop("Invalid dimensions");
   }
-#else
-  return IntegerVector();
 #endif
 }
 
 // [[Rcpp::export]]
 List kd_rq_circular_(List x, NumericVector center, double radius)
 {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return List();
+#else
   switch(arrayvec_dim(x)) {
   case 1: return kd_rq_circular__<1>(x, center, radius);
   case 2: return kd_rq_circular__<2>(x, center, radius);
@@ -408,15 +410,15 @@ List kd_rq_circular_(List x, NumericVector center, double radius)
   case 9: return kd_rq_circular__<9>(x, center, radius);
   default: stop("Invalid dimensions");
   }
-#else
-  return List();
 #endif
 }
 
 // [[Rcpp::export]]
 IntegerVector kd_rqi_circular_(List x, NumericVector center, double radius)
 {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return IntegerVector();
+#else
   switch(arrayvec_dim(x)) {
   case 1: return kd_rqi_circular__<1>(x, center, radius);
   case 2: return kd_rqi_circular__<2>(x, center, radius);
@@ -429,15 +431,15 @@ IntegerVector kd_rqi_circular_(List x, NumericVector center, double radius)
   case 9: return kd_rqi_circular__<9>(x, center, radius);
   default: stop("Invalid dimensions");
   }
-#else
-  return IntegerVector();
 #endif
 }
 
 // [[Rcpp::export]]
 int kd_nearest_neighbor_(List x, NumericVector value)
 {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return NA_INTEGER;
+#else
   switch(arrayvec_dim(x)) {
   case 1: return kd_nearest_neighbor__<1>(x, value);
   case 2: return kd_nearest_neighbor__<2>(x, value);
@@ -450,15 +452,15 @@ int kd_nearest_neighbor_(List x, NumericVector value)
   case 9: return kd_nearest_neighbor__<9>(x, value);
   default: stop("Invalid dimensions");
   }
-#else
-  return NA_INTEGER;
 #endif
 }
 
 // [[Rcpp::export]]
 bool kd_binary_search_(List x, NumericVector value)
 {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return NA_LOGICAL;
+#else
   switch(arrayvec_dim(x)) {
   case 1: return kd_binary_search__<1>(x, value);
   case 2: return kd_binary_search__<2>(x, value);
@@ -471,15 +473,15 @@ bool kd_binary_search_(List x, NumericVector value)
   case 9: return kd_binary_search__<9>(x, value);
   default: stop("Invalid dimensions");
   }
-#else
-  return NA_LOGICAL;
 #endif
 }
 
 // [[Rcpp::export]]
 List kd_nearest_neighbors_(List x, NumericVector value, int n)
 {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return List();
+#else
   switch(arrayvec_dim(x)) {
   case 1: return kd_nearest_neighbors__<1>(x, value, n);
   case 2: return kd_nearest_neighbors__<2>(x, value, n);
@@ -492,15 +494,15 @@ List kd_nearest_neighbors_(List x, NumericVector value, int n)
   case 9: return kd_nearest_neighbors__<9>(x, value, n);
   default: stop("Invalid dimensions");
   }
-#else
-  return List();
 #endif
 }
 
 // [[Rcpp::export]]
 IntegerVector kd_nn_indices_(List x, NumericVector value, int n)
 {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return IntegerVector();
+#else
   switch(arrayvec_dim(x)) {
   case 1: return kd_nn_indices__<1>(x, value, n);
   case 2: return kd_nn_indices__<2>(x, value, n);
@@ -513,8 +515,6 @@ IntegerVector kd_nn_indices_(List x, NumericVector value, int n)
   case 9: return kd_nn_indices__<9>(x, value, n);
   default: stop("Invalid dimensions");
   }
-#else
-  return IntegerVector();
 #endif
 }
 

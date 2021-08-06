@@ -23,7 +23,9 @@
 // [[Rcpp::export]]
 List matrix_to_tuples(const NumericMatrix& x)
 {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return List();
+#else
   switch(x.ncol())
   {
   case 1: return matrix_to_tuples_<1>(x);
@@ -37,8 +39,6 @@ List matrix_to_tuples(const NumericMatrix& x)
   case 9: return matrix_to_tuples_<9>(x);
   default: stop("Invalid dimensions");
   }
-#else
-  return List();
 #endif
 }
 
@@ -47,7 +47,9 @@ List matrix_to_tuples(const NumericMatrix& x)
 // [[Rcpp::export]]
 NumericMatrix tuples_to_matrix(List x)
 {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return NumericMatrix();
+#else
   if (!x.inherits("arrayvec"))
     stop("Expecting arrayvec object");
   switch(arrayvec_dim(x))
@@ -63,15 +65,15 @@ NumericMatrix tuples_to_matrix(List x)
   case 9: return tuples_to_matrix_<9>(x);
   default: stop("Invalid dimensions");
   }
-#else
-  return NumericMatrix();
 #endif
 }
 
 // [[Rcpp::export]]
 NumericMatrix tuples_to_matrix_rows(List x, int a, int b)
 {
-#ifndef NO_CXX17
+#ifdef NO_CXX17
+  return NumericMatrix();
+#else
   if (!x.inherits("arrayvec"))
     stop("Expecting arrayvec object");
   switch(arrayvec_dim(x))
@@ -87,8 +89,6 @@ NumericMatrix tuples_to_matrix_rows(List x, int a, int b)
   case 9: return tuples_to_matrix_<9>(x, a, b);
   default: stop("Invalid dimensions");
   }
-#else
-  return NumericMatrix();
 #endif
 }
 

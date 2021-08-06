@@ -1,4 +1,8 @@
-PKG_CPPFLAGS = -I"../inst/include" -I"../include" 
+XXX := $(shell "$(R_HOME)/bin$(R_ARCH_BIN)/R" CMD config CXX17)
+
+PKG_CPPFLAGS = -I"../inst/include" -I"../include" -D"$(XXX)" 
 CXX_STD = CXX17
+
+
 
 

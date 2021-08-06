@@ -1,14 +1,12 @@
 #!/bin/sh
 
-# Borrowed from https://github.com/eddelbuettel/rcppsimdjson/blob/master/configure
-
 : ${R_HOME=`R RHOME`}
 if test -z "${R_HOME}"; then
     echo Could not determine R_HOME.
     exit 1
 fi
 
-CXX17=`${R_HOME}/bin/R CMD config --all | awk '{print $1}' | grep "^CXX17$"`
+CXX17=`${R_HOME}/bin/R CMD config CXX17`
 
 if test "x${CXX17}" = "x"; then
    sed -e 's/@CXXSTD@/CXX11/' -e 's/@NOCXX17@/-DNO_CXX17/' src/Makevars.in > src/Makevars

@@ -1,6 +1,8 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
+#ifndef NO_CXX17
+
 #include "strdist.h"
 
 namespace keittlab {
@@ -29,7 +31,13 @@ int levenshtein(std::string_view s1, std::string_view s2) {
 }; // namespace strdist
 }; // namespace keittlab
 
+#endif // NO_CXX17
+
 // [[Rcpp::export]]
 int levenshtein(const char* s1, const char* s2) {
+#ifdef NO_CXX17
+  return NA_INTEGER;
+#else
   return keittlab::strdist::levenshtein(s1, s2);
+#endif
 }

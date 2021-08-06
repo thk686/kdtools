@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">kdtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.1</span>
       </span>
     </div>
 
@@ -82,13 +82,13 @@
 
       
 
-      </header><script src="methods_files/header-attrs-2.8/header-attrs.js"></script><div class="row">
+      </header><script src="methods_files/header-attrs-2.9/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Compact multidimensional sorting and searching with kdtools</h1>
                         <h4 class="author">Timothy H. Keitt</h4>
             
-            <h4 class="date">2021-07-20</h4>
+            <h4 class="date">2021-08-05</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/thk686/kdtools/blob/master/vignettes/methods.Rmd"><code>vignettes/methods.Rmd</code></a></small>
       <div class="hidden name"><code>methods.Rmd</code></div>
@@ -236,26 +236,26 @@
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="fu"><a href="../reference/kd_sort.html">kd_sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">j</span>, <span class="va">k</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <table class="table"><tbody>
 <tr class="odd">
-<td align="right">2</td>
-<td align="right">3</td>
-<td align="right">4</td>
 <td align="right">1</td>
+<td align="right">4</td>
+<td align="right">3</td>
+<td align="right">2</td>
 <td align="right">5</td>
-<td align="right">8</td>
+<td align="right">6</td>
 <td align="right">9</td>
 <td align="right">7</td>
-<td align="right">6</td>
+<td align="right">8</td>
 </tr>
 <tr class="even">
-<td align="right">3</td>
-<td align="right">2</td>
-<td align="right">4</td>
 <td align="right">7</td>
-<td align="right">6</td>
-<td align="right">5</td>
-<td align="right">1</td>
+<td align="right">4</td>
 <td align="right">8</td>
 <td align="right">9</td>
+<td align="right">6</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">3</td>
+<td align="right">5</td>
 </tr>
 </tbody></table>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -273,52 +273,52 @@
 <td align="right">0</td>
 </tr>
 <tr class="even">
+<td align="right">6</td>
+<td align="right">2</td>
+<td align="right">8</td>
+<td align="right">9</td>
+<td align="right">7</td>
+<td align="right">1</td>
 <td align="right">3</td>
 <td align="right">4</td>
 <td align="right">5</td>
-<td align="right">9</td>
-<td align="right">8</td>
-<td align="right">2</td>
-<td align="right">1</td>
-<td align="right">6</td>
-<td align="right">7</td>
 </tr>
 <tr class="odd">
-<td align="right">2</td>
-<td align="right">4</td>
-<td align="right">6</td>
 <td align="right">1</td>
+<td align="right">9</td>
 <td align="right">5</td>
+<td align="right">2</td>
 <td align="right">3</td>
 <td align="right">7</td>
-<td align="right">9</td>
 <td align="right">8</td>
+<td align="right">4</td>
+<td align="right">6</td>
 </tr>
 </tbody></table>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="fu"><a href="../reference/kd_sort.html">kd_sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">j</span>, <span class="va">k</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <table class="table"><tbody>
 <tr class="odd">
-<td align="right">3</td>
-<td align="right">2</td>
 <td align="right">4</td>
 <td align="right">1</td>
+<td align="right">3</td>
+<td align="right">2</td>
 <td align="right">5</td>
-<td align="right">9</td>
-<td align="right">8</td>
-<td align="right">7</td>
 <td align="right">6</td>
+<td align="right">9</td>
+<td align="right">7</td>
+<td align="right">8</td>
 </tr>
 <tr class="even">
-<td align="right">2</td>
-<td align="right">3</td>
 <td align="right">4</td>
 <td align="right">7</td>
-<td align="right">6</td>
-<td align="right">1</td>
-<td align="right">5</td>
 <td align="right">8</td>
 <td align="right">9</td>
+<td align="right">6</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">3</td>
+<td align="right">5</td>
 </tr>
 <tr class="odd">
 <td align="right">0</td>
@@ -347,15 +347,15 @@
 <td align="right">0</td>
 </tr>
 <tr class="even">
+<td align="right">2</td>
+<td align="right">6</td>
+<td align="right">8</td>
+<td align="right">9</td>
+<td align="right">7</td>
+<td align="right">1</td>
 <td align="right">3</td>
 <td align="right">4</td>
 <td align="right">5</td>
-<td align="right">9</td>
-<td align="right">8</td>
-<td align="right">1</td>
-<td align="right">2</td>
-<td align="right">6</td>
-<td align="right">7</td>
 </tr>
 <tr class="odd">
 <td align="right">0</td>
@@ -609,41 +609,41 @@
 <span class="va">strings</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/chartr.html">tolower</a></span><span class="op">(</span><span class="va">parts_of_speech</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
 <span class="fu">mixed_query</span><span class="op">(</span><span class="va">numbers</span>, <span class="va">strings</span><span class="op">)</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Sort time: 0.0545689 seconds</span>
+<span class="co">#&gt; Sort time: 0.0747917 seconds</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; First and last 3 elements of sorted data:</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.000894 abbott</span>
-<span class="co">#&gt; 1 0.001192 abmho</span>
-<span class="co">#&gt; 2 0.001486 abenezra</span>
+<span class="co">#&gt; 0 0.0004101 aarhus</span>
+<span class="co">#&gt; 1 0.001013 abbotship</span>
+<span class="co">#&gt; 2 0.005872 ablactate</span>
 <span class="co">#&gt; ...</span>
-<span class="co">#&gt; 208256 0.9965 worser</span>
-<span class="co">#&gt; 208257 0.995 zeph</span>
-<span class="co">#&gt; 208258 0.9986 zitvaa</span>
+<span class="co">#&gt; 208256 0.9963 xanthochroid</span>
+<span class="co">#&gt; 208257 0.997 yamashita</span>
+<span class="co">#&gt; 208258 0.9975 zahedan</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Query time: 4.6094e-05 seconds</span>
+<span class="co">#&gt; Query time: 7.7476e-05 seconds</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; First and last 3 elements of query return:</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.4017 wailoo</span>
-<span class="co">#&gt; 1 0.4014 wainage</span>
-<span class="co">#&gt; 2 0.4025 w/b</span>
+<span class="co">#&gt; 0 0.4014 wadesworth</span>
+<span class="co">#&gt; 1 0.4042 wakefield</span>
+<span class="co">#&gt; 2 0.4057 waddled</span>
 <span class="co">#&gt; ...</span>
-<span class="co">#&gt; 1061 0.5967 yawn</span>
-<span class="co">#&gt; 1062 0.5972 you're</span>
-<span class="co">#&gt; 1063 0.5985 yerba</span>
+<span class="co">#&gt; 1099 0.5896 yungning</span>
+<span class="co">#&gt; 1100 0.592 yuk</span>
+<span class="co">#&gt; 1101 0.5984 youskevitch</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Neighbors query time: 0.000359934 seconds</span>
+<span class="co">#&gt; Neighbors query time: 0.000595378 seconds</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; First and last 3 elements of neighbors query return:</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.77 holocaustal</span>
-<span class="co">#&gt; 1 0.8019 isotone</span>
-<span class="co">#&gt; 2 0.7149 kallista</span>
+<span class="co">#&gt; 0 0.4434 karst</span>
+<span class="co">#&gt; 1 0.5256 karoo</span>
+<span class="co">#&gt; 2 0.4756 kaolinise</span>
 <span class="co">#&gt; ...</span>
-<span class="co">#&gt; 97 0.7723 kolnos</span>
-<span class="co">#&gt; 98 0.6292 kyoodle</span>
-<span class="co">#&gt; 99 0.6595 koslo</span></code></pre></div>
+<span class="co">#&gt; 97 0.4196 kelotomies</span>
+<span class="co">#&gt; 98 0.4193 koso</span>
+<span class="co">#&gt; 99 0.3018 kolnos</span></code></pre></div>
 <p>The timing results indicate that sorting <span class="math inline">\(2 \times 10 ^ 5\)</span> tuples is on the order of 1/10th second, whereas the range query returned in less than a millisecond.</p>
 <p>Nearest neighbor searching requires a suitable distance function be defined for all types. There are two specialization points: the templates <code>scalar_diff</code>, which returns a possibly signed difference between to objects, and <code>scalar_dist</code>, which returns the distance along a single dimension. Currently, nearest neighbor distances are hardwired as the L2 norm of the returned scalar differences computed for each dimension. The computation above uses the following definitions.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span>&lt;<span class="kw">class</span> InputIt1, <span class="kw">class</span> InputIt2&gt;</span>
@@ -719,33 +719,33 @@
 <code class="sourceCode R"><span class="fu">sort_pointers</span><span class="op">(</span><span class="va">numbers</span>, <span class="va">strings</span><span class="op">)</span>
 <span class="co">#&gt; Original order</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.7025 solvable</span>
-<span class="co">#&gt; 1 0.3196 hirsling</span>
-<span class="co">#&gt; 2 0.581 unintervolved</span>
+<span class="co">#&gt; 0 0.6216 effortfully</span>
+<span class="co">#&gt; 1 0.4175 clip</span>
+<span class="co">#&gt; 2 0.1034 happiest</span>
 <span class="co">#&gt; ...</span>
-<span class="co">#&gt; 208256 0.56 unposing</span>
-<span class="co">#&gt; 208257 0.8949 nippers</span>
-<span class="co">#&gt; 208258 0.3923 saturnine</span>
+<span class="co">#&gt; 208256 0.2995 phototropism</span>
+<span class="co">#&gt; 208257 0.08819 nosographically</span>
+<span class="co">#&gt; 208258 0.6094 cold-work</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Order by less</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.000894 abbott</span>
-<span class="co">#&gt; 1 0.001192 abmho</span>
-<span class="co">#&gt; 2 0.001486 abenezra</span>
+<span class="co">#&gt; 0 0.0004101 aarhus</span>
+<span class="co">#&gt; 1 0.001013 abbotship</span>
+<span class="co">#&gt; 2 0.005872 ablactate</span>
 <span class="co">#&gt; ...</span>
-<span class="co">#&gt; 208256 0.9965 worser</span>
-<span class="co">#&gt; 208257 0.995 zeph</span>
-<span class="co">#&gt; 208258 0.9986 zitvaa</span>
+<span class="co">#&gt; 208256 0.9963 xanthochroid</span>
+<span class="co">#&gt; 208257 0.997 yamashita</span>
+<span class="co">#&gt; 208258 0.9975 zahedan</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Order by greater</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.9986 zitvaa</span>
-<span class="co">#&gt; 1 0.995 zeph</span>
-<span class="co">#&gt; 2 0.9948 ypsce</span>
+<span class="co">#&gt; 0 0.9975 zahedan</span>
+<span class="co">#&gt; 1 0.997 yamashita</span>
+<span class="co">#&gt; 2 0.9957 xe</span>
 <span class="co">#&gt; ...</span>
-<span class="co">#&gt; 208256 0.001192 abmho</span>
-<span class="co">#&gt; 208257 0.001486 abenezra</span>
-<span class="co">#&gt; 208258 0.000894 abbott</span></code></pre></div>
+<span class="co">#&gt; 208256 0.002942 aboard</span>
+<span class="co">#&gt; 208257 0.001013 abbotship</span>
+<span class="co">#&gt; 208258 0.0004101 aarhus</span></code></pre></div>
 <p>Note that the forward and reverse sorting do not give exactly the same result (in reverse) owing to ties.</p>
 </div>
 </div>

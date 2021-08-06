@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">kdtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.1</span>
       </span>
     </div>
 
@@ -142,24 +142,24 @@
 <span class='fu'>kd_range_query</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>l</span>, <span class='va'>u</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for matrix</span>
-<span class='fu'>kd_range_query</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>l</span>, <span class='va'>u</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'>kd_range_query</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>l</span>, <span class='va'>u</span>, cols <span class='op'>=</span> <span class='cn'>NULL</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for arrayvec</span>
 <span class='fu'>kd_range_query</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>l</span>, <span class='va'>u</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for data.frame</span>
-<span class='fu'>kd_range_query</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>l</span>, <span class='va'>u</span>, cols <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'>kd_range_query</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>l</span>, <span class='va'>u</span>, cols <span class='op'>=</span> <span class='cn'>NULL</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='fu'>kd_rq_indices</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>l</span>, <span class='va'>u</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for matrix</span>
-<span class='fu'>kd_rq_indices</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>l</span>, <span class='va'>u</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'>kd_rq_indices</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>l</span>, <span class='va'>u</span>, cols <span class='op'>=</span> <span class='cn'>NULL</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for arrayvec</span>
 <span class='fu'>kd_rq_indices</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>l</span>, <span class='va'>u</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for data.frame</span>
-<span class='fu'>kd_rq_indices</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>l</span>, <span class='va'>u</span>, cols <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'>kd_rq_indices</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>l</span>, <span class='va'>u</span>, cols <span class='op'>=</span> <span class='cn'>NULL</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='fu'>kd_binary_search</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>v</span><span class='op'>)</span>
 
@@ -212,28 +212,17 @@
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>x</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='fl'>200</span><span class='op'>)</span>, <span class='fl'>100</span><span class='op'>)</span>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='using_circular_lexicographical_compare.html'>has_cxx17</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='va'>x</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='fl'>200</span><span class='op'>)</span>, <span class='fl'>100</span><span class='op'>)</span>
 <span class='va'>y</span> <span class='op'>=</span> <span class='fu'><a href='matrix_to_tuples.html'>matrix_to_tuples</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
 <span class='fu'><a href='kd_sort.html'>kd_sort</a></span><span class='op'>(</span><span class='va'>y</span>, inplace <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;            [,1]       [,2]
-#&gt; [1,] 0.19331267 0.05106245
-#&gt; [2,] 0.06840642 0.22648133
-#&gt; [3,] 0.08183302 0.24046123
-#&gt; [4,] 0.20269896 0.03994066
-#&gt; [5,] 0.22002471 0.08603899
-#&gt; (continues for 95 more rows)</div><div class='input'><span class='va'>y</span><span class='op'>[</span><span class='fu'>kd_lower_bound</span><span class='op'>(</span><span class='va'>y</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>/</span><span class='fl'>2</span>, <span class='fl'>1</span><span class='op'>/</span><span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>,<span class='op'>]</span>
-</div><div class='output co'>#&gt; [1] 0.5147446 0.6273660</div><div class='input'><span class='va'>y</span><span class='op'>[</span><span class='fu'>kd_upper_bound</span><span class='op'>(</span><span class='va'>y</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>/</span><span class='fl'>2</span>, <span class='fl'>1</span><span class='op'>/</span><span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>,<span class='op'>]</span>
-</div><div class='output co'>#&gt; [1] 0.5147446 0.6273660</div><div class='input'><span class='fu'>kd_binary_search</span><span class='op'>(</span><span class='va'>y</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>/</span><span class='fl'>2</span>, <span class='fl'>1</span><span class='op'>/</span><span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] FALSE</div><div class='input'><span class='fu'>kd_range_query</span><span class='op'>(</span><span class='va'>y</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>/</span><span class='fl'>3</span>, <span class='fl'>1</span><span class='op'>/</span><span class='fl'>3</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2</span><span class='op'>/</span><span class='fl'>3</span>, <span class='fl'>2</span><span class='op'>/</span><span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;           [,1]      [,2]
-#&gt; [1,] 0.5147446 0.6273660
-#&gt; [2,] 0.3654865 0.4958347
-#&gt; [3,] 0.4073613 0.3401192
-#&gt; [4,] 0.4525525 0.4194859
-#&gt; [5,] 0.3559015 0.6284502
-#&gt; (continues for 8 more rows)</div><div class='input'><span class='fu'>kd_rq_indices</span><span class='op'>(</span><span class='va'>y</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>/</span><span class='fl'>3</span>, <span class='fl'>1</span><span class='op'>/</span><span class='fl'>3</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2</span><span class='op'>/</span><span class='fl'>3</span>, <span class='fl'>2</span><span class='op'>/</span><span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;  [1] 51 26 23 25 40 41 42 43 44 60 77 78 79</div><div class='input'>
-</div></pre>
+<span class='va'>y</span><span class='op'>[</span><span class='fu'>kd_lower_bound</span><span class='op'>(</span><span class='va'>y</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>/</span><span class='fl'>2</span>, <span class='fl'>1</span><span class='op'>/</span><span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>,<span class='op'>]</span>
+<span class='va'>y</span><span class='op'>[</span><span class='fu'>kd_upper_bound</span><span class='op'>(</span><span class='va'>y</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>/</span><span class='fl'>2</span>, <span class='fl'>1</span><span class='op'>/</span><span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>,<span class='op'>]</span>
+<span class='fu'>kd_binary_search</span><span class='op'>(</span><span class='va'>y</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>/</span><span class='fl'>2</span>, <span class='fl'>1</span><span class='op'>/</span><span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'>kd_range_query</span><span class='op'>(</span><span class='va'>y</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>/</span><span class='fl'>3</span>, <span class='fl'>1</span><span class='op'>/</span><span class='fl'>3</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2</span><span class='op'>/</span><span class='fl'>3</span>, <span class='fl'>2</span><span class='op'>/</span><span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'>kd_rq_indices</span><span class='op'>(</span><span class='va'>y</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>/</span><span class='fl'>3</span>, <span class='fl'>1</span><span class='op'>/</span><span class='fl'>3</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2</span><span class='op'>/</span><span class='fl'>3</span>, <span class='fl'>2</span><span class='op'>/</span><span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
+<span class='op'>}</span>
+</div><div class='output co'>#&gt;  [1] 51 26 23 25 40 41 42 43 44 60 77 78 79</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

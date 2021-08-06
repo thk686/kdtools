@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">kdtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.1</span>
       </span>
     </div>
 
@@ -138,24 +138,27 @@
     <pre class="usage"><span class='fu'>kd_sort</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for matrix</span>
-<span class='fu'>kd_sort</span><span class='op'>(</span><span class='va'>x</span>, parallel <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'>kd_sort</span><span class='op'>(</span><span class='va'>x</span>, cols <span class='op'>=</span> <span class='cn'>NULL</span>, parallel <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for arrayvec</span>
 <span class='fu'>kd_sort</span><span class='op'>(</span><span class='va'>x</span>, inplace <span class='op'>=</span> <span class='cn'>FALSE</span>, parallel <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for data.frame</span>
-<span class='fu'>kd_sort</span><span class='op'>(</span><span class='va'>x</span>, cols <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>, parallel <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'>kd_sort</span><span class='op'>(</span><span class='va'>x</span>, cols <span class='op'>=</span> <span class='cn'>NULL</span>, parallel <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='co'># S3 method for sf</span>
+<span class='fu'>kd_sort</span><span class='op'>(</span><span class='va'>x</span>, cols <span class='op'>=</span> <span class='cn'>NULL</span>, parallel <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='fu'>kd_order</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for matrix</span>
-<span class='fu'>kd_order</span><span class='op'>(</span><span class='va'>x</span>, parallel <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'>kd_order</span><span class='op'>(</span><span class='va'>x</span>, cols <span class='op'>=</span> <span class='cn'>NULL</span>, parallel <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for arrayvec</span>
 <span class='fu'>kd_order</span><span class='op'>(</span><span class='va'>x</span>, inplace <span class='op'>=</span> <span class='cn'>FALSE</span>, parallel <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for data.frame</span>
-<span class='fu'>kd_order</span><span class='op'>(</span><span class='va'>x</span>, cols <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>, parallel <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'>kd_order</span><span class='op'>(</span><span class='va'>x</span>, cols <span class='op'>=</span> <span class='cn'>NULL</span>, parallel <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='fu'>kd_is_sorted</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
@@ -171,16 +174,16 @@
       <td><p>ignored</p></td>
     </tr>
     <tr>
+      <th>cols</th>
+      <td><p>integer vector of column indices</p></td>
+    </tr>
+    <tr>
       <th>parallel</th>
       <td><p>use multiple threads if true</p></td>
     </tr>
     <tr>
       <th>inplace</th>
       <td><p>sort as a side-effect if true</p></td>
-    </tr>
-    <tr>
-      <th>cols</th>
-      <td><p>integer vector of column indices</p></td>
     </tr>
     </table>
 
@@ -219,30 +222,17 @@
     <div class='dont-index'><p><code><a href='print.arrayvec.html'>arrayvec</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>z</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>real <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='fl'>10</span><span class='op'>)</span>, lgl <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='fl'>10</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>0.5</span>,
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='using_circular_lexicographical_compare.html'>has_cxx17</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='va'>z</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>real <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='fl'>10</span><span class='op'>)</span>, lgl <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='fl'>10</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>0.5</span>,
                 int <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Poisson.html'>rpois</a></span><span class='op'>(</span><span class='fl'>10</span>, <span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>, char <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='va'>month.name</span>, <span class='fl'>10</span><span class='op'>)</span>,
                 stringsAsFactors <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 <span class='fu'>kd_sort</span><span class='op'>(</span><span class='va'>z</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;           real   lgl int      char
-#&gt; 8  0.289767245 FALSE   2   January
-#&gt; 5  0.007399441 FALSE   5      June
-#&gt; 4  0.157208442 FALSE   1 September
-#&gt; 1  0.080750138  TRUE   1     April
-#&gt; 6  0.466393497 FALSE   3   October
-#&gt; 7  0.497777389 FALSE   0       May
-#&gt; 3  0.600760886 FALSE   3     March
-#&gt; 9  0.732881987 FALSE   3  November
-#&gt; 2  0.834333037 FALSE   3  February
-#&gt; 10 0.772521511  TRUE   3      July</div><div class='input'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='fl'>200</span><span class='op'>)</span>, <span class='fl'>100</span><span class='op'>)</span>
+<span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='fl'>200</span><span class='op'>)</span>, <span class='fl'>100</span><span class='op'>)</span>
 <span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fu'>kd_sort</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
 <span class='fu'>kd_is_sorted</span><span class='op'>(</span><span class='va'>y</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'><span class='fu'>kd_order</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;   [1]  27  44  67  42  58  50  46  53  13  98  92  11  77  38  57   6  59  63
-#&gt;  [19]  61  26  29  41  81  47   9  18 100  83  30   7  80  16  37  93  95  85
-#&gt;  [37]  84  20  24  71  31  34   5   4  39  25  14  28  70  54  35  89  22   8
-#&gt;  [55]  76  36  62  86  23  32  91  65  12   1  40  10   2  96  69  55  33  75
-#&gt;  [73]  79  88  94  90  97  74  19  43  72  49  73  17  51  60  56  82  15  87
-#&gt;  [91]  52  66  78  21  68  48  64  99   3  45</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>y</span>, type <span class='op'>=</span> <span class='st'>"o"</span>, pch <span class='op'>=</span> <span class='fl'>19</span>, col <span class='op'>=</span> <span class='st'>"steelblue"</span>, asp <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
+<span class='fu'>kd_order</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>y</span>, type <span class='op'>=</span> <span class='st'>"o"</span>, pch <span class='op'>=</span> <span class='fl'>19</span>, col <span class='op'>=</span> <span class='st'>"steelblue"</span>, asp <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
+<span class='op'>}</span>
 </div><div class='img'><img src='kdsort-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

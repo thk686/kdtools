@@ -8,8 +8,6 @@ coverage](https://codecov.io/gh/thk686/kdtools/branch/master/graph/badge.svg)](h
 [![DOI](https://zenodo.org/badge/125262786.svg)](https://zenodo.org/badge/latestdoi/125262786)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/kdtools)](https://CRAN.R-project.org/package=kdtools)
-[![CircleCI build
-status](https://circleci.com/gh/thk686/kdtools.svg?style=svg)](https://circleci.com/gh/thk686/kdtools)
 
 <!-- badges: end -->
 
@@ -30,10 +28,10 @@ The result is this package, which collects several ideas, including:
     library functions for searching sorted lists (e.g., upper\_bound,
     binary\_search) but that operate on sequences of tuples rather than
     scalar values. It uses template metaprogramming to generate code for
-    each dimension at compile time. Sorting multidimensional arrays is
-    fully threaded and very fast. It produces an implicit kd-tree split
-    on medians that supports fast range queries and nearest-neighbor
-    searches.
+    each dimension at compile time at the cost of some binary bloat.
+    Sorting multidimensional arrays is fully threaded and very fast. It
+    produces an implicit kd-tree split on medians that supports fast
+    range queries and nearest-neighbor searches.
 2.  Along the way, I needed to manipulate tuple-like objects to, for
     example, compute the euclidean distance between fixed-length arrays.
     I was curious about variadic templates and wondered if I could
@@ -77,27 +75,30 @@ df <- kd_sort(data.frame(a = runif(12),
                          stringsAsFactors = FALSE))
 print(df)
 #>             a b         c
-#> 11 0.07035400 0  December
-#> 8  0.17601206 1  February
-#> 12 0.32910504 1       May
-#> 5  0.40281805 1 September
-#> 10 0.05568524 2      June
-#> 6  0.40731102 2     March
-#> 7  0.54364982 2      July
-#> 9  0.88907691 0     April
-#> 4  0.57183950 0    August
-#> 3  0.76644501 0   January
-#> 2  0.92866102 0  November
-#> 1  0.91877685 0   October
+#> 8  0.01271206 0      July
+#> 10 0.20984687 0      June
+#> 3  0.12306503 1 September
+#> 11 0.10688313 1  November
+#> 6  0.30972967 2  February
+#> 2  0.12909076 1     March
+#> 5  0.38071652 0       May
+#> 1  0.42951487 0     April
+#> 9  0.87586080 1  December
+#> 12 0.57758359 1    August
+#> 7  0.54902204 2   January
+#> 4  0.71089401 2   October
 lower <- list(0.1, 1L, "August")
 upper <- list(0.9, 4L, "September")
 i <- kd_rq_indices(df, lower, upper)
 print(i)
-#> [1] 2 3 6 7
+#> [1]  4  5  6  9 10 11 12
 df[i, ]
 #>            a b        c
-#> 8  0.1760121 1 February
-#> 12 0.3291050 1      May
-#> 6  0.4073110 2    March
-#> 7  0.5436498 2     July
+#> 11 0.1068831 1 November
+#> 6  0.3097297 2 February
+#> 2  0.1290908 1    March
+#> 9  0.8758608 1 December
+#> 12 0.5775836 1   August
+#> 7  0.5490220 2  January
+#> 4  0.7108940 2  October
 ```

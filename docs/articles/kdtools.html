@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">kdtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.1</span>
       </span>
     </div>
 
@@ -82,13 +82,13 @@
 
       
 
-      </header><script src="kdtools_files/header-attrs-2.8/header-attrs.js"></script><div class="row">
+      </header><script src="kdtools_files/header-attrs-2.9/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Getting started with kdtools</h1>
                         <h4 class="author">Timothy H. Keitt</h4>
             
-            <h4 class="date">2021-07-20</h4>
+            <h4 class="date">2021-08-05</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/thk686/kdtools/blob/master/vignettes/kdtools.Rmd"><code>vignettes/kdtools.Rmd</code></a></small>
       <div class="hidden name"><code>kdtools.Rmd</code></div>
@@ -155,9 +155,9 @@
 <span class="va">y</span> <span class="op">=</span> <span class="fu"><a href="../reference/matrix_to_tuples.html">matrix_to_tuples</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
 <span class="va">y</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">]</span>
 <span class="co">#&gt;           [,1]      [,2]</span>
-<span class="co">#&gt; [1,] 0.3462654 0.5507277</span>
-<span class="co">#&gt; [2,] 0.9882892 0.4166816</span>
-<span class="co">#&gt; [3,] 0.6836554 0.6284542</span></code></pre></div>
+<span class="co">#&gt; [1,] 0.5480358 0.5711746</span>
+<span class="co">#&gt; [2,] 0.2882401 0.9518475</span>
+<span class="co">#&gt; [3,] 0.6901510 0.9401036</span></code></pre></div>
 <p>The arrayvec object can be manipulated as if it were a matrix.</p>
 </div>
 <div id="step-2--sort-the-data" class="section level5">
@@ -165,12 +165,12 @@
 <a href="#step-2--sort-the-data" class="anchor"></a>Step 2. Sort the data</h5>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/kd_sort.html">kd_sort</a></span><span class="op">(</span><span class="va">y</span>, inplace <span class="op">=</span> <span class="cn">TRUE</span>, parallel <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt;            [,1]       [,2]       [,3]</span>
-<span class="co">#&gt; [1,] 0.09718278 0.05224735 0.16677044</span>
-<span class="co">#&gt; [2,] 0.02710335 0.01235264 0.17948554</span>
-<span class="co">#&gt; [3,] 0.13356090 0.02942588 0.20302780</span>
-<span class="co">#&gt; [4,] 0.11449771 0.11609261 0.12310085</span>
-<span class="co">#&gt; [5,] 0.04482738 0.13242799 0.06476277</span>
+<span class="co">#&gt;             [,1]       [,2]       [,3]</span>
+<span class="co">#&gt; [1,] 0.144919157 0.01594060 0.04085223</span>
+<span class="co">#&gt; [2,] 0.075208274 0.02600779 0.06511737</span>
+<span class="co">#&gt; [3,] 0.119023805 0.15165066 0.18930912</span>
+<span class="co">#&gt; [4,] 0.002236085 0.17240400 0.07535075</span>
+<span class="co">#&gt; [5,] 0.063678891 0.24544083 0.07171674</span>
 <span class="co">#&gt; (continues for 995 more rows)</span></code></pre></div>
 </div>
 <div id="step-3--search-the-data" class="section level5">
@@ -178,25 +178,25 @@
 <a href="#step-3--search-the-data" class="anchor"></a>Step 3. Search the data</h5>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">rq</span> <span class="op">=</span> <span class="fu"><a href="../reference/kd_lower_bound.html">kd_range_query</a></span><span class="op">(</span><span class="va">y</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="fl">4</span>, <span class="fl">1</span><span class="op">/</span><span class="fl">4</span>, <span class="fl">1</span><span class="op">/</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span>; <span class="va">rq</span>
-<span class="co">#&gt;            [,1]       [,2]       [,3]</span>
-<span class="co">#&gt; [1,] 0.09718278 0.05224735 0.16677044</span>
-<span class="co">#&gt; [2,] 0.02710335 0.01235264 0.17948554</span>
-<span class="co">#&gt; [3,] 0.13356090 0.02942588 0.20302780</span>
-<span class="co">#&gt; [4,] 0.11449771 0.11609261 0.12310085</span>
-<span class="co">#&gt; [5,] 0.04482738 0.13242799 0.06476277</span>
+<span class="co">#&gt;             [,1]       [,2]       [,3]</span>
+<span class="co">#&gt; [1,] 0.144919157 0.01594060 0.04085223</span>
+<span class="co">#&gt; [2,] 0.075208274 0.02600779 0.06511737</span>
+<span class="co">#&gt; [3,] 0.119023805 0.15165066 0.18930912</span>
+<span class="co">#&gt; [4,] 0.002236085 0.17240400 0.07535075</span>
+<span class="co">#&gt; [5,] 0.063678891 0.24544083 0.07171674</span>
 <span class="co">#&gt; (continues for 11 more rows)</span>
 <span class="va">i</span> <span class="op">=</span> <span class="fu"><a href="../reference/kd_nearest_neighbors.html">kd_nearest_neighbor</a></span><span class="op">(</span><span class="va">y</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span>; <span class="va">y</span><span class="op">[</span><span class="va">i</span>, <span class="op">]</span>
-<span class="co">#&gt; [1] 0.04482738 0.13242799 0.06476277</span>
+<span class="co">#&gt; [1] 0.07520827 0.02600779 0.06511737</span>
 <span class="va">nns</span> <span class="op">=</span> <span class="fu"><a href="../reference/kd_nearest_neighbors.html">kd_nearest_neighbors</a></span><span class="op">(</span><span class="va">y</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>, <span class="fl">100</span><span class="op">)</span>; <span class="va">nns</span>
-<span class="co">#&gt;            [,1]      [,2]       [,3]</span>
-<span class="co">#&gt; [1,] 0.50372166 0.2743915 0.06352348</span>
-<span class="co">#&gt; [2,] 0.09451766 0.5434071 0.16308167</span>
-<span class="co">#&gt; [3,] 0.33389632 0.2651562 0.38446772</span>
-<span class="co">#&gt; [4,] 0.21653028 0.2023241 0.48870266</span>
-<span class="co">#&gt; [5,] 0.06676281 0.2631456 0.50232969</span>
+<span class="co">#&gt;           [,1]      [,2]      [,3]</span>
+<span class="co">#&gt; [1,] 0.3431665 0.2926172 0.3222193</span>
+<span class="co">#&gt; [2,] 0.3684279 0.3683356 0.1886035</span>
+<span class="co">#&gt; [3,] 0.3486034 0.1694306 0.3900136</span>
+<span class="co">#&gt; [4,] 0.3052376 0.4321093 0.1413894</span>
+<span class="co">#&gt; [5,] 0.3705080 0.3083208 0.2569798</span>
 <span class="co">#&gt; (continues for 95 more rows)</span>
 <span class="va">nni</span> <span class="op">=</span> <span class="fu"><a href="../reference/kd_nearest_neighbors.html">kd_nn_indices</a></span><span class="op">(</span><span class="va">y</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>, <span class="fl">10</span><span class="op">)</span>; <span class="va">nni</span>
-<span class="co">#&gt;  [1] 34 14  3 10  4  9  1  2  6  5</span></code></pre></div>
+<span class="co">#&gt;  [1]  3  9  7  5  6 10 11  4  1  2</span></code></pre></div>
 <p>The <code>kd_nearest_neighbor</code> and <code>kd_nn_indices</code> functions return row-indices. The other functions return arrayvec objects.</p>
 </div>
 <div id="step-4--convert-back-to-a-matrix-for-use-in-r" class="section level5">
@@ -204,21 +204,21 @@
 <a href="#step-4--convert-back-to-a-matrix-for-use-in-r" class="anchor"></a>Step 4. Convert back to a matrix for use in R</h5>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/matrix_to_tuples.html">tuples_to_matrix</a></span><span class="op">(</span><span class="va">rq</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt;              [,1]       [,2]       [,3]</span>
-<span class="co">#&gt; [1,] 0.0971827756 0.05224735 0.16677044</span>
-<span class="co">#&gt; [2,] 0.0271033470 0.01235264 0.17948554</span>
-<span class="co">#&gt; [3,] 0.1335608980 0.02942588 0.20302780</span>
-<span class="co">#&gt; [4,] 0.1144977107 0.11609261 0.12310085</span>
-<span class="co">#&gt; [5,] 0.0448273779 0.13242799 0.06476277</span>
-<span class="co">#&gt; [6,] 0.0002133348 0.12000284 0.11742185</span>
+<span class="co">#&gt;             [,1]       [,2]       [,3]</span>
+<span class="co">#&gt; [1,] 0.144919157 0.01594060 0.04085223</span>
+<span class="co">#&gt; [2,] 0.075208274 0.02600779 0.06511737</span>
+<span class="co">#&gt; [3,] 0.119023805 0.15165066 0.18930912</span>
+<span class="co">#&gt; [4,] 0.002236085 0.17240400 0.07535075</span>
+<span class="co">#&gt; [5,] 0.063678891 0.24544083 0.07171674</span>
+<span class="co">#&gt; [6,] 0.014158307 0.19532744 0.12891683</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/matrix_to_tuples.html">tuples_to_matrix</a></span><span class="op">(</span><span class="va">nns</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt;            [,1]      [,2]       [,3]</span>
-<span class="co">#&gt; [1,] 0.50372166 0.2743915 0.06352348</span>
-<span class="co">#&gt; [2,] 0.09451766 0.5434071 0.16308167</span>
-<span class="co">#&gt; [3,] 0.33389632 0.2651562 0.38446772</span>
-<span class="co">#&gt; [4,] 0.21653028 0.2023241 0.48870266</span>
-<span class="co">#&gt; [5,] 0.06676281 0.2631456 0.50232969</span>
-<span class="co">#&gt; [6,] 0.26230133 0.1321862 0.48850728</span></code></pre></div>
+<span class="co">#&gt;           [,1]      [,2]      [,3]</span>
+<span class="co">#&gt; [1,] 0.3431665 0.2926172 0.3222193</span>
+<span class="co">#&gt; [2,] 0.3684279 0.3683356 0.1886035</span>
+<span class="co">#&gt; [3,] 0.3486034 0.1694306 0.3900136</span>
+<span class="co">#&gt; [4,] 0.3052376 0.4321093 0.1413894</span>
+<span class="co">#&gt; [5,] 0.3705080 0.3083208 0.2569798</span>
+<span class="co">#&gt; [6,] 0.2518356 0.4669241 0.1252029</span></code></pre></div>
 <p>If you pass a matrix instead of an arrayvec object to any of the functions, it will be converted to an arrayvec object internally and results will be returned as matrices. This is slower and provided for convenience.</p>
 </div>
 </div>

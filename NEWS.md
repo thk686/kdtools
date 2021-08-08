@@ -1,4 +1,10 @@
-# kdtoools 0.5.0
+# kdtools 0.5.1
+
+* Native R matrix support
+* Will sort spatial sf data frames by location
+* Now passes checks without c++17
+
+# kdtools 0.5.0
 
 * added support for native data frames, distance weights and string distance
 

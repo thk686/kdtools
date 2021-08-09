@@ -11,6 +11,7 @@
 
 ## Release notes
 
-* I have added a configure/configure.win so that the package now should pass checks when CXX17 is not defined
+* I have added a configure/configure.win so that the package now should pass checks when CXX17 is not defined.
 * I have tested this on rhub and winbuilder -- hopefully I got it right this time!
+* My sincere appologies if this is a duplicate submission -- I did not get a receipt and I could not find the package in CRAN incoming after my last attempt.
 

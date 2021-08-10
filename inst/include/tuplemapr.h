@@ -10,6 +10,7 @@
 #include <type_traits>
 
 // #define RUN_TUPLEMAPR_TESTS
+// #define FULL_CTAD_SUPPORT
 
 namespace keittlab {
 namespace tuple {
@@ -139,6 +140,42 @@ constexpr decltype(auto) map2tuple_impl(F&& f, std::index_sequence<Is...>, Ts&&.
  return std::make_tuple(std::apply(_<F>(f), pick<Is>(_<Ts>(ts)...))...);
 }
 
+// The macOS version used by CRAN does not fully support c++17, yet defines CXX17
+// This is a workaround borrowed from https://en.cppreference.com/w/cpp/experimental/make_array
+#ifndef FULL_CTAD_SUPPORT
+
+template<class> struct is_ref_wrapper : std::false_type {};
+template<class T> struct is_ref_wrapper<std::reference_wrapper<T>> : std::true_type {};
+
+template<class T>
+using not_ref_wrapper = std::negation<is_ref_wrapper<std::decay_t<T>>>;
+
+template <class D, class...> struct return_type_helper { using type = D; };
+template <class... Types>
+struct return_type_helper<void, Types...> : std::common_type<Types...> {
+  static_assert(std::conjunction_v<not_ref_wrapper<Types>...>,
+                "Types cannot contain reference_wrappers when D is void");
+};
+
+template <class D, class... Types>
+using return_type = std::array<typename return_type_helper<D, Types...>::type,
+                               sizeof...(Types)>;
+
+template < class D = void, class... Types>
+constexpr return_type<D, Types...> make_array(Types&&... t) {
+  return {std::forward<Types>(t)... };
+}
+
+/*
+ * Applies an invokable and returns an array of results
+ */
+template<typename F, std::size_t... Is, typename... Ts>
+constexpr decltype(auto) map2array_impl(F&& f, std::index_sequence<Is...>, Ts&&... ts) {
+  return make_array(std::apply(_<F>(f), pick<Is>(_<Ts>(ts)...))...);
+}
+
+#else // FULL_CTAD_SUPPORT
+
 /*
 * Applies an invokable and returns an array of results
 */
@@ -146,6 +183,8 @@ template<typename F, std::size_t... Is, typename... Ts>
 constexpr decltype(auto) map2array_impl(F&& f, std::index_sequence<Is...>, Ts&&... ts) {
  return std::array{std::apply(_<F>(f), pick<Is>(_<Ts>(ts)...))...};
 }
+
+#endif // FULL_CTAD_SUPPORT
 
 /*
 * Applies an invokable and returns a pair of results

@@ -17,7 +17,6 @@ can_run = require(kdtools) &&
   require(printr) &&
   require(scales) &&
   kdtools::has_cxx17()
-theme_set(theme_classic())
 bench_ntuples = 1e7
 bench_ntrials = 21
 knitr::opts_chunk$set(
@@ -25,6 +24,7 @@ knitr::opts_chunk$set(
   comment = "#>",
   eval = can_run
 )
+if (can_run) theme_set(theme_classic())
 ```
 
 ```{r eval=!can_run, echo=FALSE}

@@ -67,6 +67,14 @@ kd_nn_df <- function(df, idx, w, key, n) {
     .Call(`_kdtools_kd_nn_df`, df, idx, w, key, n)
 }
 
+kd_nn_dist_df_no_validation <- function(df, idx, w, key, n) {
+    .Call(`_kdtools_kd_nn_dist_df_no_validation`, df, idx, w, key, n)
+}
+
+kd_nn_dist_df <- function(df, idx, w, key, n) {
+    .Call(`_kdtools_kd_nn_dist_df`, df, idx, w, key, n)
+}
+
 #' Check if package was compiled with circular comparisons
 #'
 #' @rdname utils
@@ -139,6 +147,10 @@ kd_nn_indices_ <- function(x, value, n) {
     .Call(`_kdtools_kd_nn_indices_`, x, value, n)
 }
 
+kd_nn_dist_ <- function(x, value, n) {
+    .Call(`_kdtools_kd_nn_dist_`, x, value, n)
+}
+
 kd_order_mat_no_validation <- function(mat, idx, parallel = TRUE) {
     .Call(`_kdtools_kd_order_mat_no_validation`, mat, idx, parallel)
 }
@@ -169,6 +181,14 @@ kd_nn_mat_no_validation <- function(mat, idx, key, n) {
 
 kd_nn_mat <- function(mat, idx, key, n) {
     .Call(`_kdtools_kd_nn_mat`, mat, idx, key, n)
+}
+
+kd_nn_dist_mat_no_validation <- function(mat, idx, key, n) {
+    .Call(`_kdtools_kd_nn_dist_mat_no_validation`, mat, idx, key, n)
+}
+
+kd_nn_dist_mat <- function(mat, idx, key, n) {
+    .Call(`_kdtools_kd_nn_dist_mat`, mat, idx, key, n)
 }
 
 levenshtein <- function(s1, s2) {

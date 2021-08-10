@@ -168,6 +168,25 @@ IntegerVector kd_nn_indices__(List x, NumericVector value, int n)
 }
 
 template <size_t I>
+IntegerVector kd_nn_dist__(List x, NumericVector value, int n)
+{
+  auto p = get_ptr<I>(x);
+  auto q = vector<std::pair<double, av_iter<I>>>();
+  auto oi = back_inserter(q);
+  auto v = vec_to_array<I>(value);
+  q.reserve(n);
+  kd_nn_dist(begin(*p), end(*p), v, n, oi);
+  IntegerVector res(n);
+  NumericVector dist(n);
+  for (int i = 0; i != n; ++i) {
+    res[n - i - 1] = distance(p->begin(), q[i].second) + 1;
+    dist[n - i - 1] = q[i].first;
+  }
+  res.attr("distance") = dist;
+  return res;
+}
+
+template <size_t I>
 IntegerVector kd_order__(List x, bool inplace, bool parallel)
 {
   auto p = get_ptr<I>(x);
@@ -513,6 +532,27 @@ IntegerVector kd_nn_indices_(List x, NumericVector value, int n)
   case 7: return kd_nn_indices__<7>(x, value, n);
   case 8: return kd_nn_indices__<8>(x, value, n);
   case 9: return kd_nn_indices__<9>(x, value, n);
+  default: stop("Invalid dimensions");
+  }
+#endif
+}
+
+// [[Rcpp::export]]
+IntegerVector kd_nn_dist_(List x, NumericVector value, int n)
+{
+#ifdef NO_CXX17
+  return IntegerVector();
+#else
+  switch(arrayvec_dim(x)) {
+  case 1: return kd_nn_dist__<1>(x, value, n);
+  case 2: return kd_nn_dist__<2>(x, value, n);
+  case 3: return kd_nn_dist__<3>(x, value, n);
+  case 4: return kd_nn_dist__<4>(x, value, n);
+  case 5: return kd_nn_dist__<5>(x, value, n);
+  case 6: return kd_nn_dist__<6>(x, value, n);
+  case 7: return kd_nn_dist__<7>(x, value, n);
+  case 8: return kd_nn_dist__<8>(x, value, n);
+  case 9: return kd_nn_dist__<9>(x, value, n);
   default: stop("Invalid dimensions");
   }
 #endif

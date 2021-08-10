@@ -782,3 +782,59 @@ std::vector<int> kd_nn_df(const List& df,
 #endif
 }
 
+// [[Rcpp::export]]
+IntegerVector kd_nn_dist_df_no_validation(const List& df,
+                                          const IntegerVector& idx,
+                                          const NumericVector& w,
+                                          const List& key,
+                                          const int n)
+{
+#ifdef NO_CXX17
+  return std::vector<int>();
+#else
+  std::vector<int> x(nrow(df));
+  iota(begin(x), end(x), 0);
+  auto equal_nth = equal_nth_df(df, idx, key);
+  auto chck_nth = chck_nth_df(df, idx, key, key);
+  auto l2dist = l2dist_df(df, idx, w, key);
+  auto dist_nth = dist_nth_df(df, idx, w, key);
+  n_best<decltype(begin(x))> Q(n);
+  knn_(begin(x), end(x), equal_nth, chck_nth, dist_nth, l2dist, Q);
+  std::vector<std::pair<double, decltype(begin(x))>> out;
+  auto oi = std::back_inserter(out);
+  out.reserve(n);
+  Q.copy_dist_to(oi);
+  IntegerVector res(n);
+  NumericVector dist(n);
+  for (int i = 0; i != n; ++i) {
+    res[n - i - 1] = distance(begin(x), out[i].second) + 1;
+    dist[n - i - 1] = out[i].first;
+  }
+  res.attr("distance") = dist;
+  return res;
+#endif
+}
+
+// [[Rcpp::export]]
+IntegerVector kd_nn_dist_df(const List& df,
+                            const IntegerVector& idx,
+                            const NumericVector& w,
+                            const List& key,
+                            const int n)
+{
+#ifdef NO_CXX17
+  return std::vector<int>();
+#else
+  if (ncol(df) < 1 || nrow(df) < 1)
+    stop("Empty data frame");
+  if (not_in_range(idx, ncol(df)))
+    stop("Index out of range");
+  if (idx.size() != w.size())
+    stop("Incorrect weights dimensions");
+  if (idx.size() != key.size())
+    stop("Incorrect dimension of key");
+  if (type_mismatch(df, idx, key))
+    stop("Mismatched types in key");
+  return kd_nn_dist_df_no_validation(df, idx, w, key, n);
+#endif
+}

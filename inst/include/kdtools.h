@@ -1026,6 +1026,16 @@ void kd_nn_iters(Iter first, Iter last, const TupleType& key, size_t n, OutIter 
   Q.copy_iters_to(outp);
 }
 
+template <typename Iter,
+          typename TupleType,
+          typename OutIter>
+void kd_nn_dist(Iter first, Iter last, const TupleType& key, size_t n, OutIter outp)
+{
+  detail::n_best<Iter> Q(n);
+  detail::knn<0>(first, last, key, Q);
+  Q.copy_dist_to(outp);
+}
+
 } // namespace kdtools
 } // namespace keittlab
 

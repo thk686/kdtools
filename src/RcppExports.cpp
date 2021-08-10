@@ -156,6 +156,36 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// kd_nn_dist_df_no_validation
+IntegerVector kd_nn_dist_df_no_validation(const List& df, const IntegerVector& idx, const NumericVector& w, const List& key, const int n);
+RcppExport SEXP _kdtools_kd_nn_dist_df_no_validation(SEXP dfSEXP, SEXP idxSEXP, SEXP wSEXP, SEXP keySEXP, SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const List& >::type df(dfSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type idx(idxSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type w(wSEXP);
+    Rcpp::traits::input_parameter< const List& >::type key(keySEXP);
+    Rcpp::traits::input_parameter< const int >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(kd_nn_dist_df_no_validation(df, idx, w, key, n));
+    return rcpp_result_gen;
+END_RCPP
+}
+// kd_nn_dist_df
+IntegerVector kd_nn_dist_df(const List& df, const IntegerVector& idx, const NumericVector& w, const List& key, const int n);
+RcppExport SEXP _kdtools_kd_nn_dist_df(SEXP dfSEXP, SEXP idxSEXP, SEXP wSEXP, SEXP keySEXP, SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const List& >::type df(dfSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type idx(idxSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type w(wSEXP);
+    Rcpp::traits::input_parameter< const List& >::type key(keySEXP);
+    Rcpp::traits::input_parameter< const int >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(kd_nn_dist_df(df, idx, w, key, n));
+    return rcpp_result_gen;
+END_RCPP
+}
 // using_circular_lexicographical_compare
 bool using_circular_lexicographical_compare();
 RcppExport SEXP _kdtools_using_circular_lexicographical_compare() {
@@ -352,6 +382,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// kd_nn_dist_
+IntegerVector kd_nn_dist_(List x, NumericVector value, int n);
+RcppExport SEXP _kdtools_kd_nn_dist_(SEXP xSEXP, SEXP valueSEXP, SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type value(valueSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(kd_nn_dist_(x, value, n));
+    return rcpp_result_gen;
+END_RCPP
+}
 // kd_order_mat_no_validation
 IntegerVector kd_order_mat_no_validation(const NumericMatrix& mat, const IntegerVector& idx, bool parallel);
 RcppExport SEXP _kdtools_kd_order_mat_no_validation(SEXP matSEXP, SEXP idxSEXP, SEXP parallelSEXP) {
@@ -460,6 +503,34 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// kd_nn_dist_mat_no_validation
+IntegerVector kd_nn_dist_mat_no_validation(const NumericMatrix& mat, const IntegerVector& idx, const NumericVector& key, const int n);
+RcppExport SEXP _kdtools_kd_nn_dist_mat_no_validation(SEXP matSEXP, SEXP idxSEXP, SEXP keySEXP, SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type idx(idxSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type key(keySEXP);
+    Rcpp::traits::input_parameter< const int >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(kd_nn_dist_mat_no_validation(mat, idx, key, n));
+    return rcpp_result_gen;
+END_RCPP
+}
+// kd_nn_dist_mat
+IntegerVector kd_nn_dist_mat(const NumericMatrix& mat, const IntegerVector& idx, const NumericVector& key, const int n);
+RcppExport SEXP _kdtools_kd_nn_dist_mat(SEXP matSEXP, SEXP idxSEXP, SEXP keySEXP, SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type idx(idxSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type key(keySEXP);
+    Rcpp::traits::input_parameter< const int >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(kd_nn_dist_mat(mat, idx, key, n));
+    return rcpp_result_gen;
+END_RCPP
+}
 // levenshtein
 int levenshtein(const char* s1, const char* s2);
 RcppExport SEXP _kdtools_levenshtein(SEXP s1SEXP, SEXP s2SEXP) {
@@ -485,6 +556,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_kd_rq_df", (DL_FUNC) &_kdtools_kd_rq_df, 4},
     {"_kdtools_kd_nn_df_no_validation", (DL_FUNC) &_kdtools_kd_nn_df_no_validation, 5},
     {"_kdtools_kd_nn_df", (DL_FUNC) &_kdtools_kd_nn_df, 5},
+    {"_kdtools_kd_nn_dist_df_no_validation", (DL_FUNC) &_kdtools_kd_nn_dist_df_no_validation, 5},
+    {"_kdtools_kd_nn_dist_df", (DL_FUNC) &_kdtools_kd_nn_dist_df, 5},
     {"_kdtools_using_circular_lexicographical_compare", (DL_FUNC) &_kdtools_using_circular_lexicographical_compare, 0},
     {"_kdtools_has_cxx17", (DL_FUNC) &_kdtools_has_cxx17, 0},
     {"_kdtools_kd_order_", (DL_FUNC) &_kdtools_kd_order_, 3},
@@ -501,6 +574,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_kd_binary_search_", (DL_FUNC) &_kdtools_kd_binary_search_, 2},
     {"_kdtools_kd_nearest_neighbors_", (DL_FUNC) &_kdtools_kd_nearest_neighbors_, 3},
     {"_kdtools_kd_nn_indices_", (DL_FUNC) &_kdtools_kd_nn_indices_, 3},
+    {"_kdtools_kd_nn_dist_", (DL_FUNC) &_kdtools_kd_nn_dist_, 3},
     {"_kdtools_kd_order_mat_no_validation", (DL_FUNC) &_kdtools_kd_order_mat_no_validation, 3},
     {"_kdtools_kd_order_mat", (DL_FUNC) &_kdtools_kd_order_mat, 3},
     {"_kdtools_kd_is_sorted_mat_no_validation", (DL_FUNC) &_kdtools_kd_is_sorted_mat_no_validation, 3},
@@ -509,6 +583,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_kd_rq_mat", (DL_FUNC) &_kdtools_kd_rq_mat, 4},
     {"_kdtools_kd_nn_mat_no_validation", (DL_FUNC) &_kdtools_kd_nn_mat_no_validation, 4},
     {"_kdtools_kd_nn_mat", (DL_FUNC) &_kdtools_kd_nn_mat, 4},
+    {"_kdtools_kd_nn_dist_mat_no_validation", (DL_FUNC) &_kdtools_kd_nn_dist_mat_no_validation, 4},
+    {"_kdtools_kd_nn_dist_mat", (DL_FUNC) &_kdtools_kd_nn_dist_mat, 4},
     {"_kdtools_levenshtein", (DL_FUNC) &_kdtools_levenshtein, 2},
     {NULL, NULL, 0}
 };

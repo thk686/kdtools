@@ -473,9 +473,9 @@ std::vector<int> kd_rq_mat(const NumericMatrix& mat,
 
 // [[Rcpp::export]]
 std::vector<int> kd_nn_mat_no_validation(const NumericMatrix& mat,
-                                        const IntegerVector& idx,
-                                        const NumericVector& key,
-                                        const int n)
+                                         const IntegerVector& idx,
+                                         const NumericVector& key,
+                                         const int n)
 {
 #ifdef NO_CXX17
   return std::vector<int>();
@@ -512,6 +512,57 @@ std::vector<int> kd_nn_mat(const NumericMatrix& mat,
   if (idx.size() != key.size())
     stop("Incorrect dimension of key");
   return kd_nn_mat_no_validation(mat, idx, key, n);
+#endif
+}
+
+// [[Rcpp::export]]
+IntegerVector kd_nn_dist_mat_no_validation(const NumericMatrix& mat,
+                                           const IntegerVector& idx,
+                                           const NumericVector& key,
+                                           const int n)
+{
+#ifdef NO_CXX17
+  return std::vector<int>();
+#else
+  std::vector<int> x(mat.nrow());
+  iota(begin(x), end(x), 0);
+  auto equal_nth = equal_nth_mat(mat, idx, key);
+  auto chck_nth = chck_nth_mat(mat, idx, key, key);
+  auto l2dist = l2dist_mat(mat, idx, key);
+  auto dist_nth = dist_nth_mat(mat, idx, key);
+  n_best<decltype(begin(x))> Q(n);
+  knn_(begin(x), end(x), equal_nth, chck_nth, dist_nth, l2dist, Q);
+  std::vector<std::pair<double, decltype(begin(x))>> out;
+  auto oi = std::back_inserter(out);
+  out.reserve(n);
+  Q.copy_dist_to(oi);
+  IntegerVector res(n);
+  NumericVector dist(n);
+  for (int i = 0; i != n; ++i) {
+    res[n - i - 1] = distance(begin(x), out[i].second) + 1;
+    dist[n - i - 1] = out[i].first;
+  }
+  res.attr("distance") = dist;
+  return res;
+#endif
+}
+
+// [[Rcpp::export]]
+IntegerVector kd_nn_dist_mat(const NumericMatrix& mat,
+                             const IntegerVector& idx,
+                             const NumericVector& key,
+                             const int n)
+{
+#ifdef NO_CXX17
+  return std::vector<int>();
+#else
+  if (mat.ncol() < 1 || mat.nrow() < 1)
+    stop("Empty matrix");
+  if (not_in_range(idx, mat.ncol()))
+    stop("Index out of range");
+  if (idx.size() != key.size())
+    stop("Incorrect dimension of key");
+  return kd_nn_dist_mat_no_validation(mat, idx, key, n);
 #endif
 }
 

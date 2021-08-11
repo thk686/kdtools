@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">kdtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.2</span>
       </span>
     </div>
 
@@ -148,14 +148,14 @@
 
 <span class='fu'>kd_nn_indices</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>v</span>, <span class='va'>n</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='co'># S3 method for matrix</span>
-<span class='fu'>kd_nn_indices</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>v</span>, <span class='va'>n</span>, <span class='va'>...</span><span class='op'>)</span>
-
 <span class='co'># S3 method for arrayvec</span>
-<span class='fu'>kd_nn_indices</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>v</span>, <span class='va'>n</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'>kd_nn_indices</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>v</span>, <span class='va'>n</span>, distances <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='co'># S3 method for matrix</span>
+<span class='fu'>kd_nn_indices</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>v</span>, <span class='va'>n</span>, cols <span class='op'>=</span> <span class='cn'>NULL</span>, distances <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for data.frame</span>
-<span class='fu'>kd_nn_indices</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>v</span>, <span class='va'>n</span>, cols <span class='op'>=</span> <span class='cn'>NULL</span>, w <span class='op'>=</span> <span class='cn'>NULL</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'>kd_nn_indices</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>v</span>, <span class='va'>n</span>, cols <span class='op'>=</span> <span class='cn'>NULL</span>, w <span class='op'>=</span> <span class='cn'>NULL</span>, distances <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='fu'>kd_nearest_neighbor</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>v</span><span class='op'>)</span>
 
@@ -192,6 +192,10 @@
       <th>w</th>
       <td><p>distance weights</p></td>
     </tr>
+    <tr>
+      <th>distances</th>
+      <td><p>return distances as attribute if true</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -217,9 +221,9 @@
 </div><div class='output co'>#&gt;           [,1]      [,2]
 #&gt; [1,] 0.6227988 0.4511203
 #&gt; [2,] 0.5948192 0.5787815
-#&gt; [3,] 0.3915421 0.5144025
-#&gt; [4,] 0.5494615 0.5447052
-#&gt; [5,] 0.4968253 0.5492207</div></pre>
+#&gt; [3,] 0.5494615 0.5447052
+#&gt; [4,] 0.4968253 0.5492207
+#&gt; [5,] 0.3915421 0.5144025</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

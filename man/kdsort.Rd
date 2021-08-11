@@ -38,7 +38,7 @@ kd_is_sorted(x, ...)
 
 \item{...}{ignored}
 
-\item{cols}{integer vector of column indices}
+\item{cols}{column indices or names}
 
 \item{parallel}{use multiple threads if true}
 
@@ -54,25 +54,22 @@ Sort multidimensional data
 }
 \details{
 The algorithm used is a divide-and-conquer quicksort variant that
-  recursively partitions an range of tuples using the median of each successive
-  dimension. Ties are resolved by cycling over successive dimensions. The
-  result is an ordering of tuples matching their order if they were inserted
-  into a kd-tree.
+  recursively partitions an range of tuples using the median of each
+  successive dimension. Ties are resolved by cycling over successive
+  dimensions. The result is an ordering of tuples matching their order if
+  they were inserted into a kd-tree.
 
   \code{kd_order} returns permutation vector that will order the rows of the
   original matrix, exactly as \code{\link{order}}. If \code{inplace} is true,
   then \code{kd_order} will also sort the arrayvec object as a side effect.
   This can be more efficient when many subsequent queries are required.
 
-  \code{kd_sort} and \code{kd_order} have been extended to work directly on a
-  data frame. All vector column types are supported (even lists of objects as
-  long as equality and comparison operators are defined). Additional, the
-  user can specify a sequence of column indices that will be used for
-  sorting. These can be a subset of columns and given in any order.
-}
-\note{
-The matrix version will be slower because of data structure
-  conversions.
+  \code{kd_sort} and \code{kd_order} have been extended to work directly on R
+  native data.frame and matrix types. All vector column types are supported
+  (even lists of objects as long as equality and comparison operators are
+  defined). Additional, the user can specify a sequence of column indices
+  that will be used for sorting. These can be a subset of columns and given
+  in any order.
 }
 \examples{
 if (has_cxx17()) {

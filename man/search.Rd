@@ -51,7 +51,7 @@ kd_binary_search(x, v)
 
 \item{u}{upper right corner of search region}
 
-\item{...}{additional arguments}
+\item{...}{ignored}
 
 \item{cols}{integer vector of column indices}
 }

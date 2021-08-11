@@ -17,28 +17,30 @@ colspec <- function(x, cols = NULL) {
 
 #' Sort multidimensional data
 #' @param x a matrix or arrayvec object
+#' @param parallel use multiple threads if true
+#' @param inplace sort as a side-effect if true
+#' @param cols column indices or names
 #' @param ... ignored
 #' @details The algorithm used is a divide-and-conquer quicksort variant that
-#'   recursively partitions an range of tuples using the median of each successive
-#'   dimension. Ties are resolved by cycling over successive dimensions. The
-#'   result is an ordering of tuples matching their order if they were inserted
-#'   into a kd-tree.
+#'   recursively partitions an range of tuples using the median of each
+#'   successive dimension. Ties are resolved by cycling over successive
+#'   dimensions. The result is an ordering of tuples matching their order if
+#'   they were inserted into a kd-tree.
 #'
 #'   \code{kd_order} returns permutation vector that will order the rows of the
 #'   original matrix, exactly as \code{\link{order}}. If \code{inplace} is true,
 #'   then \code{kd_order} will also sort the arrayvec object as a side effect.
 #'   This can be more efficient when many subsequent queries are required.
 #'
-#'   \code{kd_sort} and \code{kd_order} have been extended to work directly on a
-#'   data frame. All vector column types are supported (even lists of objects as
-#'   long as equality and comparison operators are defined). Additional, the
-#'   user can specify a sequence of column indices that will be used for
-#'   sorting. These can be a subset of columns and given in any order.
+#'   \code{kd_sort} and \code{kd_order} have been extended to work directly on R
+#'   native data.frame and matrix types. All vector column types are supported
+#'   (even lists of objects as long as equality and comparison operators are
+#'   defined). Additional, the user can specify a sequence of column indices
+#'   that will be used for sorting. These can be a subset of columns and given
+#'   in any order.
 #' @return \tabular{ll}{\code{kd_sort} \tab the table sorted in kd-tree order
 #'   \cr \code{kd_order} \tab a permutation vector \cr \code{kd_is_sorted} \tab
 #'   a boolean \cr}
-#' @note The matrix version will be slower because of data structure
-#'   conversions.
 #' @examples
 #' if (has_cxx17()) {
 #' z <- data.frame(real = runif(10), lgl = runif(10) > 0.5,
@@ -56,14 +58,12 @@ colspec <- function(x, cols = NULL) {
 #' @export
 kd_sort <- function(x, ...) UseMethod("kd_sort")
 
-#' @param parallel use multiple threads if true
 #' @rdname kdsort
 #' @export
 kd_sort.matrix <- function(x, cols = NULL, parallel = TRUE, ...) {
   return(x[kd_order(x, cols = colspec(x, cols), parallel = parallel),, drop = FALSE])
 }
 
-#' @param inplace sort as a side-effect if true
 #' @rdname kdsort
 #' @export
 kd_sort.arrayvec <- function(x, inplace = FALSE, parallel = TRUE, ...) {
@@ -102,7 +102,6 @@ kd_order.arrayvec <- function(x, inplace = FALSE, parallel = TRUE, ...) {
   return(kd_order_(x, inplace = inplace, parallel = parallel))
 }
 
-#' @param cols integer vector of column indices
 #' @rdname kdsort
 #' @export
 kd_order.data.frame <- function(x, cols = NULL, parallel = TRUE, ...) {
@@ -157,7 +156,10 @@ lex_sort.arrayvec <- function(x, inplace = FALSE, ...) {
 #' Search sorted data
 #' @param x an object sorted by \code{\link{kd_sort}}
 #' @param v a vector specifying where to look
-#' @param ... additional arguments
+#' @param l lower left corner of search region
+#' @param u upper right corner of search region
+#' @param cols integer vector of column indices
+#' @param ... ignored
 #' @return \tabular{ll}{\code{kd_lower_bound} \tab a row of values (vector) \cr
 #'   \code{kd_upper_bound} \tab a row of values (vector) \cr
 #'   \code{kd_range_query} \tab a set of rows in the same format as the sorted input \cr
@@ -205,8 +207,6 @@ kd_upper_bound.arrayvec <- function(x, v) {
   return(kd_upper_bound_(x, v))
 }
 
-#' @param l lower left corner of search region
-#' @param u upper right corner of search region
 #' @rdname search
 #' @export
 kd_range_query <- function(x, l, u, ...) UseMethod("kd_range_query")
@@ -246,7 +246,6 @@ kd_rq_indices.arrayvec <- function(x, l, u, ...) {
 }
 
 #' @rdname search
-#' @param cols integer vector of column indices
 #' @export
 kd_rq_indices.data.frame <- function(x, l, u, cols = NULL, ...) {
   return(kd_rq_df(x, colspec(x, cols), l, u))
@@ -273,6 +272,8 @@ kd_binary_search.arrayvec <- function(x, v) {
 #' @param x an object sorted by \code{\link{kd_sort}}
 #' @param v a vector specifying where to look
 #' @param n the number of neighbors to return
+#' @param cols integer indices of columns to use
+#' @param w distance weights
 #' @param ... additional arguments
 #' @return \tabular{ll}{
 #' \code{kd_nearest_neighbors} \tab one or more rows from the sorted input \cr
@@ -305,8 +306,6 @@ kd_nearest_neighbors.arrayvec <- function(x, v, n, ...) {
   return(kd_nearest_neighbors_(x, v, n))
 }
 
-#' @param cols integer indices of columns to use
-#' @param w distance weights
 #' @rdname nneighb
 #' @export
 kd_nearest_neighbors.data.frame <- function(x, v, n, cols = NULL, w = NULL, ...) {

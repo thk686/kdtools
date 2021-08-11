@@ -175,7 +175,7 @@
     </tr>
     <tr>
       <th>cols</th>
-      <td><p>integer vector of column indices</p></td>
+      <td><p>column indices or names</p></td>
     </tr>
     <tr>
       <th>parallel</th>
@@ -200,23 +200,20 @@
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>The algorithm used is a divide-and-conquer quicksort variant that
-  recursively partitions an range of tuples using the median of each successive
-  dimension. Ties are resolved by cycling over successive dimensions. The
-  result is an ordering of tuples matching their order if they were inserted
-  into a kd-tree.</p>
+  recursively partitions an range of tuples using the median of each
+  successive dimension. Ties are resolved by cycling over successive
+  dimensions. The result is an ordering of tuples matching their order if
+  they were inserted into a kd-tree.</p>
 <p><code>kd_order</code> returns permutation vector that will order the rows of the
   original matrix, exactly as <code><a href='https://rdrr.io/r/base/order.html'>order</a></code>. If <code>inplace</code> is true,
   then <code>kd_order</code> will also sort the arrayvec object as a side effect.
   This can be more efficient when many subsequent queries are required.</p>
-<p><code>kd_sort</code> and <code>kd_order</code> have been extended to work directly on a
-  data frame. All vector column types are supported (even lists of objects as
-  long as equality and comparison operators are defined). Additional, the
-  user can specify a sequence of column indices that will be used for
-  sorting. These can be a subset of columns and given in any order.</p>
-    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
-
-    <p>The matrix version will be slower because of data structure
-  conversions.</p>
+<p><code>kd_sort</code> and <code>kd_order</code> have been extended to work directly on R
+  native data.frame and matrix types. All vector column types are supported
+  (even lists of objects as long as equality and comparison operators are
+  defined). Additional, the user can specify a sequence of column indices
+  that will be used for sorting. These can be a subset of columns and given
+  in any order.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='print.arrayvec.html'>arrayvec</a></code></p></div>

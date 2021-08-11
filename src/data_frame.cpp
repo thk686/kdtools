@@ -61,7 +61,7 @@ std::string_view get_string(SEXP x, int i = 0) {
 
 Function Requal("=="), Rless("<"), Rdiff("-");
 
-};
+} // namespace
 
 #ifdef USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
 

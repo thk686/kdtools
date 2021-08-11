@@ -57,7 +57,11 @@ using std::thread;
 using std::vector;
 using std::is_same;
 using std::distance;
+using std::pop_heap;
+using std::push_heap;
+using std::make_heap;
 using std::enable_if;
+using std::transform;
 using std::partition;
 using std::nth_element;
 using std::is_pointer_v;
@@ -757,53 +761,49 @@ template <typename Iter, typename Key = double>
 struct n_best
 {
   using qmem_t = pair<Key, Iter>;
-  using qcont_t = vector<qmem_t>;
   using qcomp_t = less_key<Key, Iter>;
-  using queue_t = priority_queue<qmem_t, qcont_t, qcomp_t>;
+  using qcont_t = vector<qmem_t>;
   size_t m_n;
-  queue_t m_q;
-  n_best(size_t n) : m_n(n), m_q(qcomp_t()) {}
+  qcont_t m_q;
+  n_best(size_t n) : m_n(n), m_q() {
+    m_q.reserve(n);
+  }
   Key max_key() const
   {
-    return m_q.empty() ?
-      numeric_limits<Key>::max() :
-        m_q.top().first;
+    return m_q.size() < m_n ?
+    numeric_limits<Key>::max() :
+    m_q.front().first;
   }
-  void add(Key dist, Iter it)
+  void add(Key dist, Iter iter)
   {
     if (m_q.size() < m_n) {
-      m_q.emplace(dist, it);
-    } else if (dist < m_q.top().first) {
-      m_q.emplace(dist, it);
-      m_q.pop();
+      m_q.emplace_back(dist, iter);
+      if (m_q.size() == m_n)
+        make_heap(begin(m_q), end(m_q), qcomp_t());
+    } else if (dist < m_q.front().first) {
+      pop_heap(begin(m_q), end(m_q), qcomp_t());
+      m_q.back().first = dist; m_q.back().second = iter;
+      push_heap(begin(m_q), end(m_q), qcomp_t());
     }
   }
   template <typename OutIter>
   void copy_to(OutIter outp)
   {
-    while (!m_q.empty())
-    {
-      *outp++ = *m_q.top().second;
-      m_q.pop();
-    }
+    transform(begin(m_q), end(m_q), outp, [](const qmem_t& x){
+      return *x.second;
+    });
   }
   template <typename OutIter>
   void copy_iters_to(OutIter outp)
   {
-    while (!m_q.empty())
-    {
-      *outp++ = m_q.top().second;
-      m_q.pop();
-    }
+    transform(begin(m_q), end(m_q), outp, [](const qmem_t& x){
+      return x.second;
+    });
   }
   template <typename OutIter>
   void copy_dist_to(OutIter outp)
   {
-    while (!m_q.empty())
-    {
-      *outp++ = m_q.top();
-      m_q.pop();
-    }
+    copy(begin(m_q), end(m_q), outp);
   }
 };
 

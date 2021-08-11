@@ -1,4 +1,4 @@
-PKG_CPPFLAGS = -I"../inst/include" -I"../include" @NOCXX17@
+PKG_CPPFLAGS = -I"../inst/include" -I"../include" @NOCXX17@ @NOTUPLEMAPR@
 CXX_STD = @CXXSTD@
 
 

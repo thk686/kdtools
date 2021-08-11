@@ -48,7 +48,7 @@ namespace {
 
 Function Requal("=="), Rless("<"), Rdiff("-");
 
-};
+}
 
 #ifdef USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
 

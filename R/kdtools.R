@@ -317,6 +317,7 @@ kd_nearest_neighbors.data.frame <- function(x, v, n, cols = NULL, w = NULL, ...)
 #' @export
 kd_nn_indices <- function(x, v, n, ...) UseMethod("kd_nn_indices")
 
+#' @param distances return distances as attribute if true
 #' @rdname nneighb
 #' @export
 kd_nn_indices.arrayvec <- function(x, v, n, distances = FALSE, ...) {

@@ -6,12 +6,34 @@ if test -z "${R_HOME}"; then
     exit 1
 fi
 
-CXX17=`${R_HOME}/bin/R CMD config CXX17`
+CXX17=`${R_HOME}/bin${R_ARCH_BIN}/R CMD config CXX17`
 
 if test "x${CXX17}" = "x"; then
-   sed -e 's/@CXXSTD@/CXX11/' -e 's/@NOCXX17@/-DNO_CXX17/' src/Makevars.in > src/Makevars
+
+   sed -e 's/@CXXSTD@/CXX11/' \
+       -e 's/@NOCXX17@/-DNO_CXX17/' \
+       -e 's/@NOTUPLEMAPR@/-DNO_TUPLEMAPR/' \
+       src/Makevars.in > src/Makevars
+
 else
-   sed -e 's/@CXXSTD@/CXX17/' -e 's/@NOCXX17@//' src/Makevars.in > src/Makevars
+
+   CXX17STD=`${R_HOME}/bin${R_ARCH_BIN}/R CMD config CXX17STD`
+   CXX17FLAGS=`${R_HOME}/bin${R_ARCH_BIN}/R CMD config CXX17FLAGS`
+
+   ${CXX17} ${CXX17STD} ${CXX17FLAGS} \
+     -o /dev/null ./inst/test/tuplemapr_test.cpp > /dev/null 2>&1
+
+   if test $? -eq 0; then
+      sed -e 's/@CXXSTD@/CXX17/' \
+          -e 's/@NOCXX17@//' \
+          -e 's/@NOTUPLEMAPR@//' \
+          src/Makevars.in > src/Makevars
+    else
+      sed -e 's/@CXXSTD@/CXX17/' \
+          -e 's/@NOCXX17@//' \
+          -e 's/@NOTUPLEMAPR@/-DNO_TUPLEMAPR/' \
+          src/Makevars.in > src/Makevars
+    fi
 fi
 
 exit 0

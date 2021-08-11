@@ -10,11 +10,10 @@
 #include <type_traits>
 
 // #define RUN_TUPLEMAPR_TESTS
-// #define FULL_CTAD_SUPPORT
 
 namespace keittlab {
 namespace tuple {
-namespace details {
+namespace detail {
 
 /*
  * Get type of first element
@@ -140,42 +139,6 @@ constexpr decltype(auto) map2tuple_impl(F&& f, std::index_sequence<Is...>, Ts&&.
  return std::make_tuple(std::apply(_<F>(f), pick<Is>(_<Ts>(ts)...))...);
 }
 
-// The macOS version used by CRAN does not fully support c++17, yet defines CXX17
-// This is a workaround borrowed from https://en.cppreference.com/w/cpp/experimental/make_array
-#ifndef FULL_CTAD_SUPPORT
-
-template<class> struct is_ref_wrapper : std::false_type {};
-template<class T> struct is_ref_wrapper<std::reference_wrapper<T>> : std::true_type {};
-
-template<class T>
-using not_ref_wrapper = std::negation<is_ref_wrapper<std::decay_t<T>>>;
-
-template <class D, class...> struct return_type_helper { using type = D; };
-template <class... Types>
-struct return_type_helper<void, Types...> : std::common_type<Types...> {
-  static_assert(std::conjunction_v<not_ref_wrapper<Types>...>,
-                "Types cannot contain reference_wrappers when D is void");
-};
-
-template <class D, class... Types>
-using return_type = std::array<typename return_type_helper<D, Types...>::type,
-                               sizeof...(Types)>;
-
-template < class D = void, class... Types>
-constexpr return_type<D, Types...> make_array(Types&&... t) {
-  return {std::forward<Types>(t)... };
-}
-
-/*
- * Applies an invokable and returns an array of results
- */
-template<typename F, std::size_t... Is, typename... Ts>
-constexpr decltype(auto) map2array_impl(F&& f, std::index_sequence<Is...>, Ts&&... ts) {
-  return make_array(std::apply(_<F>(f), pick<Is>(_<Ts>(ts)...))...);
-}
-
-#else // FULL_CTAD_SUPPORT
-
 /*
 * Applies an invokable and returns an array of results
 */
@@ -183,8 +146,6 @@ template<typename F, std::size_t... Is, typename... Ts>
 constexpr decltype(auto) map2array_impl(F&& f, std::index_sequence<Is...>, Ts&&... ts) {
  return std::array{std::apply(_<F>(f), pick<Is>(_<Ts>(ts)...))...};
 }
-
-#endif // FULL_CTAD_SUPPORT
 
 /*
 * Applies an invokable and returns a pair of results
@@ -213,14 +174,14 @@ constexpr decltype(auto) map0(F&& f, Ts&&... ts) {
  return std::apply(_<F>(f), pick<0>(_<Ts>(ts)...));
 }
 
-} // namespace details
+} // namespace detail
 
 /*
  * Map returning a tuple
  */
 template<typename F, typename... Ts>
 constexpr decltype(auto) map2tuple(F&& f, Ts&&... ts) {
-  using namespace details;
+  using namespace detail;
   return map2tuple_impl(_<F>(f), indx_seq_1st_of<Ts...>{}, _<Ts>(ts)...);
 }
 
@@ -229,7 +190,7 @@ constexpr decltype(auto) map2tuple(F&& f, Ts&&... ts) {
  */
 template<typename F, typename... Ts>
 constexpr decltype(auto) map2array(F&& f, Ts&&... ts) {
-  using namespace details;
+  using namespace detail;
   return map2array_impl(_<F>(f), indx_seq_1st_of<Ts...>{}, _<Ts>(ts)...);
 }
 
@@ -238,7 +199,7 @@ constexpr decltype(auto) map2array(F&& f, Ts&&... ts) {
  */
 template<typename F, typename... Ts>
 constexpr decltype(auto) map2pair(F&& f, Ts&&... ts) {
-  using namespace details;
+  using namespace detail;
   return map2pair_impl(_<F>(f), indx_seq_1st_of<Ts...>{}, _<Ts>(ts)...);
 }
 
@@ -247,7 +208,7 @@ constexpr decltype(auto) map2pair(F&& f, Ts&&... ts) {
  */
 template<typename F, typename... Ts>
 constexpr void map2void(F&& f, Ts&&... ts) {
-  using namespace details;
+  using namespace detail;
   map2void_impl(_<F>(f), indx_seq_1st_of<Ts...>{}, _<Ts>(ts)...);
 }
 
@@ -259,7 +220,7 @@ constexpr void map2void(F&& f, Ts&&... ts) {
  */
 template<typename F, typename... Ts>
 constexpr decltype(auto) map(F&& f, Ts&&... ts) {
-  using namespace details;
+  using namespace detail;
   using T = first_of<Ts...>;
   using ret = decltype(map0(_<F>(f), _<Ts>(ts)...));
   if constexpr (is_void<ret>) {
@@ -273,7 +234,7 @@ constexpr decltype(auto) map(F&& f, Ts&&... ts) {
   }
 }
 
-namespace details {
+namespace detail {
 
 /*
  * Since reduction on a single element is
@@ -285,7 +246,7 @@ namespace details {
 template<typename F, typename... Ts>
 constexpr decltype(auto)
 _map(F&& f, Ts&&... ts) {
-  using details::_;
+  using detail::_;
   static_assert(sizeof...(ts) > 0);
   if constexpr (sizeof...(ts) > 1) {
     return map(_<F>(f), _<Ts>(ts)...);
@@ -301,7 +262,7 @@ constexpr double divide(double a, double b) {
   return a / b;
 }
 
-} // namespace details
+} // namespace detail
 
 // Unary operations and reductions
 
@@ -311,7 +272,7 @@ constexpr double divide(double a, double b) {
 template<typename T>
 constexpr decltype(auto)
 _not(T&& t) {
-  using details::_;
+  using detail::_;
   return map([](auto&& x) {
     return !x;
   }, _<T>(t));
@@ -324,7 +285,7 @@ _not(T&& t) {
 template<typename... Ts>
 constexpr decltype(auto)
 sum(Ts&&... ts) {
-  using namespace details;
+  using namespace detail;
   return _map([](auto&&... xs) {
     return (xs + ...);
   }, _<Ts>(ts)...);
@@ -333,7 +294,7 @@ sum(Ts&&... ts) {
 template<typename... Ts>
 constexpr decltype(auto)
 product(Ts&&... ts) {
-  using namespace details;
+  using namespace detail;
   return _map([](auto&&... xs) {
     return (xs * ...);
   }, _<Ts>(ts)...);
@@ -342,7 +303,7 @@ product(Ts&&... ts) {
 template<typename... Ts>
 constexpr decltype(auto)
 mean(Ts&&... ts) {
-  using namespace details;
+  using namespace detail;
   return _map([](auto&&... xs) {
     return divide((xs + ...), sizeof...(xs));
   }, _<Ts>(ts)...);
@@ -351,7 +312,7 @@ mean(Ts&&... ts) {
 template<typename... Ts>
 constexpr decltype(auto)
 all_true(Ts&&... ts) {
-  using namespace details;
+  using namespace detail;
   return _map([](auto&&... xs) {
     return (xs && ...);
   }, _<Ts>(ts)...);
@@ -360,14 +321,14 @@ all_true(Ts&&... ts) {
 template<typename... Ts>
 constexpr decltype(auto)
 all_false(Ts&&... ts) {
-  using namespace details;
+  using namespace detail;
   return all_true(_not(_<Ts>(ts)...));
 }
 
 template<typename... Ts>
 constexpr decltype(auto)
 any_true(Ts&&... ts) {
-  using namespace details;
+  using namespace detail;
   return _map([](auto&&... xs) {
     return (xs || ...);
   }, _<Ts>(ts)...);
@@ -376,7 +337,7 @@ any_true(Ts&&... ts) {
 template<typename... Ts>
 constexpr decltype(auto)
 any_false(Ts&&... ts) {
-  using namespace details;
+  using namespace detail;
   return any_true(_not(_<Ts>(ts)...));
 }
 
@@ -389,7 +350,7 @@ any_false(Ts&&... ts) {
 template<typename T, typename U>
 constexpr decltype(auto)
 is_same(T&& t, U&& u) {
-  using details::_;
+  using detail::_;
   return map([](auto&& a, auto&& b) {
     return std::is_same_v<decltype(a), decltype(b)>;
   }, _<T>(t), _<U>(u));
@@ -398,7 +359,7 @@ is_same(T&& t, U&& u) {
 template<typename T, typename U>
 constexpr decltype(auto)
 equal(T&& t, U&& u) {
-  using details::_;
+  using detail::_;
   return map([](auto&& a, auto&& b) {
     return a == b;
   }, _<T>(t), _<U>(u));
@@ -407,21 +368,21 @@ equal(T&& t, U&& u) {
 template<typename T, typename U>
 constexpr decltype(auto)
 all_equal(T&& t, U&& u) {
-  using details::_;
+  using detail::_;
   return all_true(equal(_<T>(t), _<U>(u)));
 }
 
 template<typename T, typename U>
 constexpr decltype(auto)
 none_equal(T&& t, U&& u) {
-  using details::_;
+  using detail::_;
   return all_false(equal(_<T>(t), _<U>(u)));
 }
 
 template<typename T, typename U>
 constexpr decltype(auto)
 less(T&& t, U&& u) {
-  using details::_;
+  using detail::_;
   return map([](auto&& a, auto&& b) {
     return a < b;
   }, _<T>(t), _<U>(u));
@@ -430,21 +391,21 @@ less(T&& t, U&& u) {
 template<typename T, typename U>
 constexpr decltype(auto)
 all_less(T&& t, U&& u) {
-  using details::_;
+  using detail::_;
   return all_true(less(_<T>(t), _<U>(u)));
 }
 
 template<typename T, typename U>
 constexpr decltype(auto)
 none_less(T&& t, U&& u) {
-  using details::_;
+  using detail::_;
   return all_false(less(_<T>(t), _<U>(u)));
 }
 
 template<typename T, typename U>
 constexpr decltype(auto)
 add(T&& t, U&& u) {
-  using details::_;
+  using detail::_;
   if constexpr (std::is_arithmetic_v<U>) {
     return map([u](auto&& a) {
       return a + u;
@@ -459,7 +420,7 @@ add(T&& t, U&& u) {
 template<typename T, typename U>
 constexpr decltype(auto)
 subtract(T&& t, U&& u) {
-  using details::_;
+  using detail::_;
   if constexpr (std::is_arithmetic_v<U>) {
     return map([u](auto&& a) {
       return a - u;
@@ -474,7 +435,7 @@ subtract(T&& t, U&& u) {
 template<typename T, typename U>
 constexpr decltype(auto)
 multiply(T&& t, U&& u) {
-  using details::_;
+  using detail::_;
   if constexpr (std::is_arithmetic_v<U>) {
     return map([u](auto&& a) {
       return a * u;
@@ -489,7 +450,7 @@ multiply(T&& t, U&& u) {
 template<typename T, typename U>
 constexpr decltype(auto)
 divide(T&& t, U&& u) {
-  using details::_;
+  using detail::_;
   if constexpr (std::is_arithmetic_v<U>) {
     return map([u](auto&& a) {
       return a / u;
@@ -504,21 +465,21 @@ divide(T&& t, U&& u) {
 template<typename T, typename U>
 constexpr decltype(auto)
 dotprod(T&& t, U&& u) {
-  using details::_;
+  using detail::_;
   return sum(multiply(_<T>(t), _<U>(u)));
 }
 
 template<typename T, typename U>
 constexpr decltype(auto)
 hamming(T&& t, U&& u) {
-  using details::_;
+  using detail::_;
   return sum(_not(equal(_<T>(t), _<U>(u))));
 }
 
 template<typename F, typename T, typename U>
 constexpr decltype(auto)
 choose(F&& f, T&& t, U&& u) {
-  using details::_;
+  using detail::_;
   return map([&f](auto&& a, auto&& b){
     return f() ? a : b;
   }, _<T>(t), _<U>(u));
@@ -527,14 +488,14 @@ choose(F&& f, T&& t, U&& u) {
 template<typename T, typename U>
 constexpr decltype(auto)
 wmean(T&& t, U&& u) {
-  using details::_;
+  using detail::_;
   return dotprod(_<T>(t), _<U>(u)) / sum(_<U>(u));
 }
 
 template<typename T, typename U>
 constexpr decltype(auto)
 sum_sq_diff(T&& t, U&& u, double exp) {
-  using details::_;
+  using detail::_;
   return sum(multiply(subtract(_<T>(t), _<U>(u)), subtract(_<T>(t), _<U>(u))));
 }
 
@@ -543,7 +504,7 @@ sum_sq_diff(T&& t, U&& u, double exp) {
 template<typename T>
 constexpr decltype(auto)
 pow(T&& t, double exp) {
-  using details::_;
+  using detail::_;
   return map([exp](double base) {
     return std::pow(base, exp);
   }, _<T>(t));
@@ -552,7 +513,7 @@ pow(T&& t, double exp) {
 template<typename T>
 constexpr decltype(auto)
 abs(T&& t) {
-  using details::_;
+  using detail::_;
   return map([](auto x) {
     return std::abs(x);
   }, _<T>(t));
@@ -561,28 +522,28 @@ abs(T&& t) {
 template<typename T>
 constexpr decltype(auto)
 pnorm(T&& t, double exp) {
-  using details::_;
+  using detail::_;
   return std::pow(sum(abs(pow(_<T>(t), exp))), 1 / exp);
 }
 
 template<typename T, typename U>
 constexpr decltype(auto)
 pdist(T&& t, U&& u, double exp) {
-  using details::_;
+  using detail::_;
   return pnorm(subtract(_<T>(t), _<U>(u)), exp);
 }
 
 template<typename T, typename U>
 constexpr decltype(auto)
 euclidean_distance(T&& t, U&& u) {
-  using details::_;
+  using detail::_;
   return pdist(_<T>(t), _<U>(u), 2);
 }
 
 template<typename T, typename U>
 constexpr decltype(auto)
 manhattan_distance(T&& t, U&& u) {
-  using details::_;
+  using detail::_;
   return pdist(_<T>(t), _<U>(u), 1);
 }
 
@@ -590,7 +551,7 @@ manhattan_distance(T&& t, U&& u) {
 
 #ifdef RUN_TUPLEMAPR_TESTS
 
-namespace details {
+namespace detail {
 namespace tests {
 
 constexpr static std::array<double, 3>
@@ -607,20 +568,20 @@ static_assert(tuple::all_true(tuple::is_same(a1, a2)));
 
 constexpr static auto t3 = tuple::map([](auto&&... xs){ return true; }, t1, t2, a1);
 
-static_assert(tuple::details::is_std_tuple_v<decltype(t3)>);
+static_assert(tuple::detail::is_std_tuple_v<decltype(t3)>);
 
 constexpr static auto p1 = std::make_pair(1, true);
 
 constexpr static auto p2 = tuple::map([](auto&&...){ return true; }, p1, a1, a2, a3, t1, t2);
 
-static_assert(tuple::details::is_std_pair_v<decltype(p2)>);
+static_assert(tuple::detail::is_std_pair_v<decltype(p2)>);
 static_assert(std::get<0>(p2) && std::get<1>(p2));
 
 constexpr static auto a4 = tuple::map([](auto&&... xs)->double{
   return (0 + ... + xs);
 }, a1, a2, a3);
 
-static_assert(tuple::details::is_std_array_v<decltype(a4)>);
+static_assert(tuple::detail::is_std_array_v<decltype(a4)>);
 
 static_assert(tuple::sum(a1) == 6);
 static_assert(std::get<0>(tuple::sum(a1, a2)) == 5 &&
@@ -661,7 +622,7 @@ static_assert(tuple::all_equal(tuple::choose([](auto&&...){ return false; }, a1,
 static_assert(tuple::wmean(a1, a2) - 2.133333 < 1e-5);
 
 } // namespace tests
-} // namespace details
+} // namespace detail
 
 #endif // RUN_TUPLEMAPR_TESTS
 

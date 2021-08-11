@@ -28,8 +28,8 @@ int levenshtein(std::string_view s1, std::string_view s2) {
   return tab[(n - 1) * dim + (m - 1)];
 }
 
-}; // namespace strdist
-}; // namespace keittlab
+} // namespace strdist
+} // namespace keittlab
 
 #endif // NO_CXX17
 

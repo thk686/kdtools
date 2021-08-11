@@ -48,6 +48,8 @@ kd_nearest_neighbor(x, v)
 \item{cols}{integer indices of columns to use}
 
 \item{w}{distance weights}
+
+\item{distances}{return distances as attribute if true}
 }
 \value{
 \tabular{ll}{

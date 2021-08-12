@@ -40,12 +40,6 @@ template<typename... Ts>
 using indx_seq_1st_of = indices_spanning<first_of<Ts...>>;
 
 /*
- * Detect void type
- */
-template<typename T>
-constexpr bool is_void = std::is_same_v<void, T>;
-
-/*
  * Detect array argument
  */
 template<typename>
@@ -109,7 +103,7 @@ constexpr decltype(auto) pick(Ts&&... ts) {
 
 /*
 * Apply a function over the 0th, 1st, 2nd... elements
-* of a set of tupples returning a tuple. The pack Ts...
+* of a set of tuples returning a tuple. The pack Ts...
 * expands over the set of tuples. The pack Is... expands
 * as an integer sequence over the length of the first
 * tuple in the set.
@@ -136,7 +130,7 @@ constexpr decltype(auto) map2pair_impl(F&& f, std::index_sequence<Is...>, Ts&&..
 }
 
 /*
-* Applies an invokable and does not return (fold experssions
+* Applies an invokable and does not return (fold expressions
 * are valid targets for pack expansions)
 */
 template<typename F, std::size_t... Is, typename... Ts>
@@ -168,7 +162,7 @@ constexpr double divide(double a, double b) {
  */
 template<typename F, typename... Ts>
 constexpr decltype(auto) map2tuple(F&& f, Ts&&... ts) {
-  return map2tuple_impl(std::forward<F>(f), detail::indx_seq_1st_of<Ts...>{}, std::forward<Ts>(ts)...);
+  return detail::map2tuple_impl(std::forward<F>(f), detail::indx_seq_1st_of<Ts...>{}, std::forward<Ts>(ts)...);
 }
 
 /*
@@ -176,7 +170,7 @@ constexpr decltype(auto) map2tuple(F&& f, Ts&&... ts) {
  */
 template<typename F, typename... Ts>
 constexpr decltype(auto) map2array(F&& f, Ts&&... ts) {
-  return map2array_impl(std::forward<F>(f), detail::indx_seq_1st_of<Ts...>{}, std::forward<Ts>(ts)...);
+  return detail::map2array_impl(std::forward<F>(f), detail::indx_seq_1st_of<Ts...>{}, std::forward<Ts>(ts)...);
 }
 
 /*
@@ -184,7 +178,7 @@ constexpr decltype(auto) map2array(F&& f, Ts&&... ts) {
  */
 template<typename F, typename... Ts>
 constexpr decltype(auto) map2pair(F&& f, Ts&&... ts) {
-  return map2pair_impl(std::forward<F>(f), detail::indx_seq_1st_of<Ts...>{}, std::forward<Ts>(ts)...);
+  return detail::map2pair_impl(std::forward<F>(f), detail::indx_seq_1st_of<Ts...>{}, std::forward<Ts>(ts)...);
 }
 
 /*
@@ -192,7 +186,7 @@ constexpr decltype(auto) map2pair(F&& f, Ts&&... ts) {
  */
 template<typename F, typename... Ts>
 constexpr void map2void(F&& f, Ts&&... ts) {
-  map2void_impl(std::forward<F>(f), detail::indx_seq_1st_of<Ts...>{}, std::forward<Ts>(ts)...);
+  detail::map2void_impl(std::forward<F>(f), detail::indx_seq_1st_of<Ts...>{}, std::forward<Ts>(ts)...);
 }
 
 /*
@@ -203,14 +197,15 @@ constexpr void map2void(F&& f, Ts&&... ts) {
  */
 template<typename F, typename... Ts>
 constexpr decltype(auto) map(F&& f, Ts&&... ts) {
-  using namespace detail;
-  using T = first_of<Ts...>;
-  using ret = decltype(map0(std::forward<F>(f), std::forward<Ts>(ts)...));
-  if constexpr (is_void<ret>) {
+  using T = detail::first_of<Ts...>;
+  using ret = decltype(detail::map0(
+    std::forward<F>(f), std::forward<Ts>(ts)...
+  ));
+  if constexpr (std::is_void_v<ret>) {
     map2void(std::forward<F>(f), std::forward<Ts>(ts)...);
-  } else if constexpr (is_std_pair_v<T>) {
+  } else if constexpr (detail::is_std_pair_v<T>) {
     return map2pair(std::forward<F>(f), std::forward<Ts>(ts)...);
-  } else if constexpr (is_std_array_v<T>) {
+  } else if constexpr (detail::is_std_array_v<T>) {
     return map2array(std::forward<F>(f), std::forward<Ts>(ts)...);
   } else {
     return map2tuple(std::forward<F>(f), std::forward<Ts>(ts)...);
@@ -272,7 +267,7 @@ template<typename... Ts>
 constexpr decltype(auto)
 mean(Ts&&... ts) {
   return map_reduce([](auto&&... xs) {
-    return divide((xs + ...), sizeof...(xs));
+    return detail::divide((xs + ...), sizeof...(xs));
   }, std::forward<Ts>(ts)...);
 }
 

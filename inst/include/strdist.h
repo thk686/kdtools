@@ -1,5 +1,5 @@
-#ifndef __STRDIST_H__
-#define __STRDIST_H__
+#ifndef STRDIST_H
+#define STRDIST_H
 
 #ifndef NO_CXX17
 
@@ -17,4 +17,4 @@ int levenshtein(std::string_view s1, std::string_view s2);
 
 #endif // NO_CXX17
 
-#endif // __STRDIST_H__
+#endif // STRDIST_H

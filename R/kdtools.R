@@ -320,14 +320,16 @@ kd_nn_indices <- function(x, v, n, ...) UseMethod("kd_nn_indices")
 #' @rdname nneighb
 #' @export
 kd_nn_indices.arrayvec <- function(x, v, n, distances = FALSE, ...) {
-  if (distances) return(kd_nn_dist_(x, v, n))
+  if (distances)
+    return(as.data.frame(kd_nn_dist_(x, v, n)))
   return(kd_nn_indices_(x, v, n))
 }
 
 #' @rdname nneighb
 #' @export
 kd_nn_indices.matrix <- function(x, v, n, cols = NULL, distances = FALSE, ...) {
-  if (distances) return(kd_nn_dist_mat(x, colspec(x, cols), v, n))
+  if (distances)
+    return(as.data.frame(kd_nn_dist_mat(x, colspec(x, cols), v, n)))
   return(kd_nn_mat(x, colspec(x, cols), v, n))
 }
 
@@ -336,7 +338,8 @@ kd_nn_indices.matrix <- function(x, v, n, cols = NULL, distances = FALSE, ...) {
 kd_nn_indices.data.frame <- function(x, v, n, cols = NULL, w = NULL, distances = FALSE, ...) {
   cols <- colspec(x, cols)
   if (is.null(w)) w <- rep_len(1, length(cols))
-  if (distances) return(kd_nn_dist_df(x, cols, w, v, n))
+  if (distances)
+    return(as.data.frame(kd_nn_dist_df(x, cols, w, v, n)))
   return(kd_nn_df(x, cols, w, v, n))
 }
 

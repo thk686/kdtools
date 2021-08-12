@@ -168,7 +168,7 @@ IntegerVector kd_nn_indices__(List x, NumericVector value, int n)
 }
 
 template <size_t I>
-IntegerVector kd_nn_dist__(List x, NumericVector value, int n)
+List kd_nn_dist__(List x, NumericVector value, int n)
 {
   auto p = get_ptr<I>(x);
   auto q = vector<std::pair<double, av_iter<I>>>();
@@ -176,13 +176,15 @@ IntegerVector kd_nn_dist__(List x, NumericVector value, int n)
   auto v = vec_to_array<I>(value);
   q.reserve(n);
   kd_nn_dist(begin(*p), end(*p), v, n, oi);
-  IntegerVector res(n);
+  IntegerVector loc(n);
   NumericVector dist(n);
   for (int i = 0; i != n; ++i) {
-    res[n - i - 1] = distance(p->begin(), q[i].second) + 1;
-    dist[n - i - 1] = q[i].first;
+    loc[i] = distance(p->begin(), q[i].second) + 1;
+    dist[i] = q[i].first;
   }
-  res.attr("distance") = dist;
+  List res;
+  res["index"] = loc;
+  res["distance"] = dist;
   return res;
 }
 
@@ -538,7 +540,7 @@ IntegerVector kd_nn_indices_(List x, NumericVector value, int n)
 }
 
 // [[Rcpp::export]]
-IntegerVector kd_nn_dist_(List x, NumericVector value, int n)
+List kd_nn_dist_(List x, NumericVector value, int n)
 {
 #ifdef NO_CXX17
   return IntegerVector();

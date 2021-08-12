@@ -57,7 +57,7 @@ test_that("nearest neighbors works", {
   {
     for (n in nci)
     {
-      for (m in c(1, 10, 2 * n * 100))
+      for (m in c(1, 10, 50))
       {
         x <- as.data.frame(matrix(runif(n * 100), ncol = n))
         x <- kd_sort(x)
@@ -69,7 +69,7 @@ test_that("nearest neighbors works", {
     }
     for (n in nci)
     {
-      for (m in c(1, 10, 2 * n * 100))
+      for (m in c(1, 10, 50))
       {
         x <- mk_ties(n)
         x <- kd_sort(x)
@@ -96,7 +96,7 @@ test_that("nearest neighbors indices works", {
   {
     for (n in nci)
     {
-      for (m in c(1, 10, 2 * n * 100))
+      for (m in c(1, 10, 50))
       {
         x <- as.data.frame(matrix(runif(n * 100), ncol = n))
         x <- kd_sort(x)
@@ -109,4 +109,31 @@ test_that("nearest neighbors indices works", {
   }
 })
 
+r_nns_i_dist <- function(x, y, n) {
+  i <- vapply(seq_len(nrow(x)),
+              function(i) { dist(rbind(x[i, ], y)) },
+              FUN.VALUE = double(1))
+  j <- which(rank(i, ties.method = "first") <= n)
+  res <- data.frame(index = j, distance = i[j])
+  res <- res[order(res$distance), ]
+  rownames(res) <- 1:nrow(res)
+  return(res)
+}
 
+test_that("nearest neighbors distances works", {
+  for (ignore in 1:reps)
+  {
+    for (n in nci)
+    {
+      for (m in c(1, 10, 50))
+      {
+        x <- as.data.frame(matrix(runif(n * 100), ncol = n))
+        x <- kd_sort(x)
+        y <- runif(n)
+        z1 <- kd_nn_indices(x, y, m, distances = TRUE)
+        z2 <- r_nns_i_dist(x, y, m)
+        expect_equal(z1, z2)
+      }
+    }
+  }
+})

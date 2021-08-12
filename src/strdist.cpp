@@ -10,8 +10,8 @@ namespace strdist {
 
 int levenshtein(std::string_view s1, std::string_view s2) {
   int n = s1.size() + 1, m = s2.size() + 1;
-  static std::vector<int> tab;
-  static int dim = 0;
+  thread_local static std::vector<int> tab;
+  thread_local static int dim = 0;
   if (dim < std::max(n, m)) {
     dim = 2 * std::max(n, m); tab.resize(dim * dim);
     for (int i = 0; i != dim; ++i) tab[i * dim] = i;

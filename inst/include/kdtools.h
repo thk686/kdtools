@@ -1,7 +1,7 @@
 // Copyright Timothy H. Keitt 2020
 
-#ifndef __KDTOOLS_H__
-#define __KDTOOLS_H__
+#ifndef KDTOOLS_H
+#define KDTOOLS_H
 
 #ifndef NO_CXX17 // CRAN
 
@@ -30,19 +30,10 @@ namespace kdtools {
 template <typename T> static constexpr auto
   ndim = std::tuple_size_v<typename std::remove_pointer_t<T>>;
 
-// Specialize for non-numeric types
-// TODO: User defined distance functions
-
-template <typename T>
-double scalar_diff(const T& lhs, const T& rhs)
-{
-  return lhs - rhs;
-}
-
 template <typename T>
 double scalar_dist(const T& lhs, const T& rhs)
 {
-  return std::abs(scalar_diff(lhs, rhs));
+  return std::abs(lhs - rhs);
 }
 
 namespace detail {
@@ -52,6 +43,7 @@ using std::get;
 using std::next;
 using std::prev;
 using std::pair;
+using std::sort;
 using std::size_t;
 using std::thread;
 using std::vector;
@@ -108,17 +100,17 @@ struct less_radius_nth
   bool operator()(const T& lhs, const T& rhs, const U radius)
   {
     if constexpr (is_pointer_v<T>)
-      return scalar_diff(get<I>(*lhs), get<I>(*rhs)) < radius;
+      return scalar_dist(get<I>(*lhs), get<I>(*rhs)) < radius;
     else
-      return scalar_diff(get<I>(lhs), get<I>(rhs)) < radius;
+      return scalar_dist(get<I>(lhs), get<I>(rhs)) < radius;
   }
   template <typename T, typename U, typename V>
   bool operator()(const pair<T, U>& lhs, const pair<T, U>& rhs, const V radius)
   {
     if constexpr (is_pointer_v<T>)
-      return scalar_diff(get<I>(*lhs.first), get<I>(*rhs.first)) < radius;
+      return scalar_dist(get<I>(*lhs.first), get<I>(*rhs.first)) < radius;
     else
-      return scalar_diff(get<I>(lhs.first), get<I>(rhs.first)) < radius;
+      return scalar_dist(get<I>(lhs.first), get<I>(rhs.first)) < radius;
   }
 };
 
@@ -188,24 +180,6 @@ double dist_nth(const pair<T, U>& lhs, const pair<T, U>& rhs)
     return scalar_dist(get<I>(*lhs.first), get<I>(*rhs.first));
   else
     return scalar_dist(get<I>(lhs.first), get<I>(rhs.first));
-}
-
-template <size_t I, typename T>
-double diff_nth(const T& lhs, const T& rhs)
-{
-  if constexpr (is_pointer_v<T>)
-    return scalar_diff(get<I>(*lhs), get<I>(*rhs));
-  else
-    return scalar_diff(get<I>(lhs), get<I>(rhs));
-}
-
-template <size_t I, typename T, typename U>
-double diff_nth(const pair<T, U>& lhs, const pair<T, U>& rhs)
-{
-  if constexpr (is_pointer_v<T>)
-    return scalar_diff(get<I>(*lhs.first), get<I>(*rhs.first));
-  else
-    return scalar_diff(get<I>(lhs.first), get<I>(rhs.first));
 }
 
 template <size_t I, typename T>
@@ -517,10 +491,10 @@ struct sum_of_squares_
   double operator()(const TupleType& lhs, const TupleType& rhs) const
   {
     if constexpr (is_last<I, TupleType>) {
-      return std::pow(diff_nth<I>(rhs, lhs), 2);
+      return std::pow(dist_nth<I>(rhs, lhs), 2);
     } else {
       using next_ = sum_of_squares_<I + 1>;
-      return std::pow(diff_nth<I>(rhs, lhs), 2) + next_()(lhs, rhs);
+      return std::pow(dist_nth<I>(rhs, lhs), 2) + next_()(lhs, rhs);
     }
   }
 };
@@ -537,10 +511,40 @@ double l2dist(const TupleType& lhs, const TupleType& rhs)
   return std::sqrt(sum_of_squares(lhs, rhs));
 }
 
+template <size_t I>
+struct p_sum_
+{
+  template <typename TupleType>
+  double operator()(const TupleType& lhs,
+                  const TupleType& rhs,
+                  double p) const
+  {
+    if constexpr (is_last<I, TupleType>) {
+      return std::pow(dist_nth<I>(rhs, lhs), p);
+    } else {
+      using next_ = p_sum_<I + 1>;
+      return std::pow(dist_nth<I>(rhs, lhs), p) + next_()(lhs, rhs, p);
+    }
+  }
+};
+
+template <typename TupleType>
+double p_sum(const TupleType& lhs, const TupleType& rhs, double p)
+{
+  return p_sum_<0>()(lhs, rhs, p);
+}
+
+template <typename TupleType>
+double pdist(const TupleType& lhs, const TupleType& rhs, double p)
+{
+  return std::pow(p_sum(lhs, rhs, p), 1 / p);
+}
+
 #else // NO_TUPLEMAPR
 
 using tuple::all_less;
 using tuple::none_less;
+using tuple::pdist;
 
 template <typename TupleType>
 double sum_of_squares(const TupleType& lhs, const TupleType& rhs)
@@ -636,6 +640,48 @@ Iter kd_nearest_neighbor(Iter first, Iter last, const TupleType& key)
   return first;
 }
 
+template <size_t I, typename Iter, typename TupleType>
+Iter kd_nearest_neighbor(Iter first, Iter last,
+                         const TupleType& key,
+                         double p)
+{
+  constexpr auto J = next_dim<I, TupleType>;
+  if (distance(first, last) > 1)
+  {
+    auto pivot = middle_of(first, last);
+    if (equal_nth<I>()(*pivot, key)) {
+      auto left_res = kd_nearest_neighbor<J>(first, pivot, key);
+      auto right_res = kd_nearest_neighbor<J>(next(pivot), last, key);
+      if (pdist(*right_res, key, p) < pdist(*left_res, key, p)) {
+        return right_res;
+      } else {
+        return left_res;
+      }
+    } else {
+      auto search_left = less_nth<I>()(key, *pivot);
+      auto search = search_left ?
+      kd_nearest_neighbor<J>(first, pivot, key) :
+        kd_nearest_neighbor<J>(next(pivot), last, key);
+      auto min_dist = pdist(*pivot, key, 2);
+      if (search == last) {
+        search = pivot;
+      } else {
+        auto sdist = pdist(*search, key, p);
+        if (sdist < min_dist) min_dist = sdist;
+        else search = pivot;
+      }
+      if (dist_nth<I>(key, *pivot) < min_dist) {
+        auto s2 = search_left ?
+        kd_nearest_neighbor<J>(next(pivot), last, key) :
+        kd_nearest_neighbor<J>(first, pivot, key);
+        if (s2 != last && pdist(*s2, key, p) < min_dist) search = s2;
+      }
+      return search;
+    }
+  }
+  return first;
+}
+
 template <typename TupleType>
 bool within(const TupleType& key,
             const TupleType& lower,
@@ -703,7 +749,7 @@ template <size_t I,
           typename OutIter>
 void kd_range_query(Iter first, Iter last,
                     const TupleType& center,
-                    const double radius,
+                    double radius,
                     OutIter outp)
 {
   if (distance(first, last) > 32) {
@@ -729,7 +775,7 @@ template <size_t I,
           typename OutIter>
 void kd_rq_iters(Iter first, Iter last,
                  const TupleType& center,
-                 const double radius,
+                 double radius,
                  OutIter outp)
 {
   if (distance(first, last) > 32) {
@@ -765,7 +811,7 @@ struct n_best
   using qcont_t = vector<qmem_t>;
   size_t m_n;
   qcont_t m_q;
-  n_best(size_t n) : m_n(n), m_q() {
+  n_best(size_t n): m_n(n), m_q() {
     m_q.reserve(n);
   }
   Key max_key() const
@@ -789,6 +835,8 @@ struct n_best
   template <typename OutIter>
   void copy_to(OutIter outp)
   {
+    if (m_q.size() < m_n) sort(begin(m_q), end(m_q), qcomp_t());
+    else sort_heap(begin(m_q), end(m_q), qcomp_t());
     transform(begin(m_q), end(m_q), outp, [](const qmem_t& x){
       return *x.second;
     });
@@ -796,6 +844,8 @@ struct n_best
   template <typename OutIter>
   void copy_iters_to(OutIter outp)
   {
+    if (m_q.size() < m_n) sort(begin(m_q), end(m_q), qcomp_t());
+    else sort_heap(begin(m_q), end(m_q), qcomp_t());
     transform(begin(m_q), end(m_q), outp, [](const qmem_t& x){
       return x.second;
     });
@@ -803,6 +853,8 @@ struct n_best
   template <typename OutIter>
   void copy_dist_to(OutIter outp)
   {
+    if (m_q.size() < m_n) sort(begin(m_q), end(m_q), qcomp_t());
+    else sort_heap(begin(m_q), end(m_q), qcomp_t());
     copy(begin(m_q), end(m_q), outp);
   }
 };
@@ -820,6 +872,40 @@ void knn(Iter first, Iter last,
   case 0 : return; } // switch end
   auto pivot = middle_of(first, last);
   Q.add(l2dist(*pivot, key), pivot);
+  constexpr auto J = next_dim<I, TupleType>;
+  if (equal_nth<I>()(*pivot, key)) {
+    knn<J>(first, pivot, key, Q);
+    knn<J>(next(pivot), last, key, Q);
+  } else {
+    auto search_left = less_nth<I>()(key, *pivot);
+    if (search_left)
+      knn<J>(first, pivot, key, Q);
+    else
+      knn<J>(next(pivot), last, key, Q);
+    if (dist_nth<I>(key, *pivot) <= Q.max_key())
+    {
+      if (search_left)
+        knn<J>(next(pivot), last, key, Q);
+      else
+        knn<J>(first, pivot, key, Q);
+    }
+  }
+}
+
+template <size_t I,
+          typename Iter,
+          typename TupleType,
+          typename QType>
+void knn(Iter first, Iter last,
+         const TupleType& key,
+         double p,
+         QType& Q)
+{
+  switch(distance(first, last)) {
+  case 1 : Q.add(pdist(*first, key, p), first);
+  case 0 : return; } // switch end
+  auto pivot = middle_of(first, last);
+  Q.add(pdist(*pivot, key, p), pivot);
   constexpr auto J = next_dim<I, TupleType>;
   if (equal_nth<I>()(*pivot, key)) {
     knn<J>(first, pivot, key, Q);
@@ -863,6 +949,7 @@ using detail::dist_nth;
 using detail::kd_compare;
 using detail::make_kd_compare;
 
+using detail::pdist;
 using detail::l2dist;
 using detail::sum_of_squares;
 
@@ -962,6 +1049,14 @@ Iter kd_nearest_neighbor(Iter first, Iter last, const TupleType& key)
   return detail::kd_nearest_neighbor<0>(first, last, key);
 }
 
+template <typename Iter, typename TupleType>
+Iter kd_nearest_neighbor(Iter first, Iter last,
+                         const TupleType& key,
+                         double p)
+{
+  return detail::kd_nearest_neighbor<0>(first, last, key, p);
+}
+
 template <typename Iter,
           typename TupleType,
           typename OutIter>
@@ -989,8 +1084,7 @@ template <typename Iter,
           typename OutIter>
 void kd_range_query(Iter first, Iter last,
                     const TupleType& center,
-                    const double radius,
-                    OutIter outp)
+                    double radius, OutIter outp)
 {
   detail::kd_range_query<0>(first, last, center, radius, outp);
 }
@@ -1000,8 +1094,7 @@ template <typename Iter,
           typename OutIter>
 void kd_rq_iters(Iter first, Iter last,
                  const TupleType& center,
-                 const double radius,
-                 OutIter outp)
+                 double radius, OutIter outp)
 {
   detail::kd_rq_iters<0>(first, last, center, radius, outp);
 }
@@ -1011,7 +1104,8 @@ template <typename Iter,
           typename OutIter>
 void kd_nearest_neighbors(Iter first, Iter last, const TupleType& key, size_t n, OutIter outp)
 {
-  detail::n_best<Iter> Q(n);
+  size_t m = std::distance(first, last);
+  detail::n_best<Iter> Q(std::min(n, m));
   detail::knn<0>(first, last, key, Q);
   Q.copy_to(outp);
 }
@@ -1021,7 +1115,8 @@ template <typename Iter,
           typename OutIter>
 void kd_nn_iters(Iter first, Iter last, const TupleType& key, size_t n, OutIter outp)
 {
-  detail::n_best<Iter> Q(n);
+  size_t m = std::distance(first, last);
+  detail::n_best<Iter> Q(std::min(n, m));
   detail::knn<0>(first, last, key, Q);
   Q.copy_iters_to(outp);
 }
@@ -1031,8 +1126,51 @@ template <typename Iter,
           typename OutIter>
 void kd_nn_dist(Iter first, Iter last, const TupleType& key, size_t n, OutIter outp)
 {
-  detail::n_best<Iter> Q(n);
+  size_t m = std::distance(first, last);
+  detail::n_best<Iter> Q(std::min(n, m));
   detail::knn<0>(first, last, key, Q);
+  Q.copy_dist_to(outp);
+}
+
+template <typename Iter,
+          typename TupleType,
+          typename OutIter>
+void kd_nearest_neighbors(Iter first, Iter last,
+                          const TupleType& key,
+                          double p, size_t n,
+                          OutIter outp)
+{
+  size_t m = std::distance(first, last);
+  detail::n_best<Iter> Q(std::min(n, m));
+  detail::knn<0>(first, last, key, p, Q);
+  Q.copy_to(outp);
+}
+
+template <typename Iter,
+          typename TupleType,
+          typename OutIter>
+void kd_nn_iters(Iter first, Iter last,
+                 const TupleType& key,
+                 double p, size_t n,
+                 OutIter outp)
+{
+  size_t m = std::distance(first, last);
+  detail::n_best<Iter> Q(std::min(n, m));
+  detail::knn<0>(first, last, key, p, Q);
+  Q.copy_iters_to(outp);
+}
+
+template <typename Iter,
+          typename TupleType,
+          typename OutIter>
+void kd_nn_dist(Iter first, Iter last,
+                const TupleType& key,
+                double p, size_t n,
+                OutIter outp)
+{
+  size_t m = std::distance(first, last);
+  detail::n_best<Iter> Q(std::min(n, m));
+  detail::knn<0>(first, last, key, p, Q);
   Q.copy_dist_to(outp);
 }
 
@@ -1041,4 +1179,4 @@ void kd_nn_dist(Iter first, Iter last, const TupleType& key, size_t n, OutIter o
 
 #endif // NO_CXX17
 
-#endif // __KDTOOLS_H__
+#endif // KDTOOLS_H

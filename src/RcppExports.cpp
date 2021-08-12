@@ -157,7 +157,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // kd_nn_dist_df_no_validation
-IntegerVector kd_nn_dist_df_no_validation(const List& df, const IntegerVector& idx, const NumericVector& w, const List& key, const int n);
+List kd_nn_dist_df_no_validation(const List& df, const IntegerVector& idx, const NumericVector& w, const List& key, const int n);
 RcppExport SEXP _kdtools_kd_nn_dist_df_no_validation(SEXP dfSEXP, SEXP idxSEXP, SEXP wSEXP, SEXP keySEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -172,7 +172,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // kd_nn_dist_df
-IntegerVector kd_nn_dist_df(const List& df, const IntegerVector& idx, const NumericVector& w, const List& key, const int n);
+List kd_nn_dist_df(const List& df, const IntegerVector& idx, const NumericVector& w, const List& key, const int n);
 RcppExport SEXP _kdtools_kd_nn_dist_df(SEXP dfSEXP, SEXP idxSEXP, SEXP wSEXP, SEXP keySEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -383,7 +383,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // kd_nn_dist_
-IntegerVector kd_nn_dist_(List x, NumericVector value, int n);
+List kd_nn_dist_(List x, NumericVector value, int n);
 RcppExport SEXP _kdtools_kd_nn_dist_(SEXP xSEXP, SEXP valueSEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -504,7 +504,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // kd_nn_dist_mat_no_validation
-IntegerVector kd_nn_dist_mat_no_validation(const NumericMatrix& mat, const IntegerVector& idx, const NumericVector& key, const int n);
+List kd_nn_dist_mat_no_validation(const NumericMatrix& mat, const IntegerVector& idx, const NumericVector& key, const int n);
 RcppExport SEXP _kdtools_kd_nn_dist_mat_no_validation(SEXP matSEXP, SEXP idxSEXP, SEXP keySEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -518,7 +518,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // kd_nn_dist_mat
-IntegerVector kd_nn_dist_mat(const NumericMatrix& mat, const IntegerVector& idx, const NumericVector& key, const int n);
+List kd_nn_dist_mat(const NumericMatrix& mat, const IntegerVector& idx, const NumericVector& key, const int n);
 RcppExport SEXP _kdtools_kd_nn_dist_mat(SEXP matSEXP, SEXP idxSEXP, SEXP keySEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;

@@ -862,7 +862,7 @@ namespace keittlab {
 namespace kdtools {
 
 template <>
-double scalar_diff(const std::string& lhs, const std::string& rhs)
+double scalar_dist(const std::string& lhs, const std::string& rhs)
 {
   std::string a(lhs), b(rhs);
   std::sort(begin(a), end(a));
@@ -951,7 +951,7 @@ mixed_query(numbers, strings)
 
 The timing results indicate that sorting $2 \times 10 ^ 5$ tuples is on the order of 1/10th second, whereas the range query returned in less than a millisecond.
 
-Nearest neighbor searching requires a suitable distance function be defined for all types. There are two specialization points: the templates ```scalar_diff```, which returns a possibly signed difference between to objects, and ```scalar_dist```, which returns the distance along a single dimension. Currently, nearest neighbor distances are hardwired as the L2 norm of the returned scalar differences computed for each dimension. The computation above uses the following definitions.
+Nearest neighbor searching requires a suitable distance function be defined for all types. The template ```scalar_dist``` can be specialized for different types. It returns the distance along a single dimension. Currently, nearest neighbor distances are hardwired as the L2 norm of the returned scalar differences computed for each dimension. The computation above uses the following definitions.
 
 ```{Rcpp eval=FALSE}
 template<class InputIt1, class InputIt2>
@@ -976,7 +976,7 @@ double set_similarity(InputIt1 first1, InputIt1 last1,
 namespace kdtools {
 
 template <>
-double scalar_diff(const std::string& lhs, const std::string& rhs)
+double scalar_dist(const std::string& lhs, const std::string& rhs)
 {
   std::string a(lhs), b(rhs);
   std::sort(begin(a), end(a));

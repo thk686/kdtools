@@ -1,5 +1,5 @@
-#ifndef __ARRAYVEC_H__
-#define __ARRAYVEC_H__
+#ifndef ARRAYVEC_H
+#define ARRAYVEC_H
 
 #include <Rcpp.h>
 using Rcpp::NumericVector;
@@ -122,4 +122,4 @@ int arrayvec_dim(const List& x)
 
 #endif // NO_CXX17
 
-#endif // __ARRAYVEC_H__
+#endif // ARRAYVEC_H

@@ -43,9 +43,9 @@ kd_nearest_neighbor(x, v)
 
 \item{n}{the number of neighbors to return}
 
-\item{...}{additional arguments}
+\item{...}{ignored}
 
-\item{cols}{integer indices of columns to use}
+\item{cols}{integer or character vector or formula indicating columns}
 
 \item{w}{distance weights}
 

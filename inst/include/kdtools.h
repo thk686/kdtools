@@ -444,6 +444,9 @@ bool kd_is_sorted_threaded(Iter first, Iter last, const Compare& comp,
 
 #ifdef NO_TUPLEMAPR
 
+// leftover from c++11 version
+// tuplemapr can fail on some older libc++ versions
+
 template <size_t I>
 struct all_less_
 {
@@ -545,18 +548,7 @@ double pdist(const TupleType& lhs, const TupleType& rhs, double p)
 using tuple::all_less;
 using tuple::none_less;
 using tuple::pdist;
-
-template <typename TupleType>
-double sum_of_squares(const TupleType& lhs, const TupleType& rhs)
-{
-  return tuple::sum_sq_diff(lhs, rhs);
-}
-
-template <typename TupleType>
-double l2dist(const TupleType& lhs, const TupleType& rhs)
-{
-  return tuple::euclidean_distance(lhs, rhs);
-}
+using l2dist = tuple::euclidean_distance;
 
 #endif // NO_TUPLEMAPR
 
@@ -662,7 +654,7 @@ Iter kd_nearest_neighbor(Iter first, Iter last,
       auto search = search_left ?
       kd_nearest_neighbor<J>(first, pivot, key) :
         kd_nearest_neighbor<J>(next(pivot), last, key);
-      auto min_dist = pdist(*pivot, key, 2);
+      auto min_dist = pdist(*pivot, key, p);
       if (search == last) {
         search = pivot;
       } else {
@@ -951,7 +943,6 @@ using detail::make_kd_compare;
 
 using detail::pdist;
 using detail::l2dist;
-using detail::sum_of_squares;
 
 using detail::n_best;
 

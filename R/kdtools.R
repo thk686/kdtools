@@ -4,6 +4,7 @@ NULL
 
 colspec <- function(x, cols = NULL) {
   res <- switch(mode(cols),
+         "call" = colspec(x, attr(terms(cols), "term.labels")),
          "character" = match(cols, colnames(x)),
          "numeric" = cols,
          "logical" = (1:ncol(x))[cols],
@@ -19,7 +20,7 @@ colspec <- function(x, cols = NULL) {
 #' @param x a matrix or arrayvec object
 #' @param parallel use multiple threads if true
 #' @param inplace sort as a side-effect if true
-#' @param cols column indices or names
+#' @param cols integer or character vector or formula indicating columns
 #' @param ... ignored
 #' @details The algorithm used is a divide-and-conquer quicksort variant that
 #'   recursively partitions an range of tuples using the median of each
@@ -158,7 +159,7 @@ lex_sort.arrayvec <- function(x, inplace = FALSE, ...) {
 #' @param v a vector specifying where to look
 #' @param l lower left corner of search region
 #' @param u upper right corner of search region
-#' @param cols integer vector of column indices
+#' @param cols integer or character vector or formula indicating columns
 #' @param ... ignored
 #' @return \tabular{ll}{\code{kd_lower_bound} \tab a row of values (vector) \cr
 #'   \code{kd_upper_bound} \tab a row of values (vector) \cr
@@ -272,9 +273,9 @@ kd_binary_search.arrayvec <- function(x, v) {
 #' @param x an object sorted by \code{\link{kd_sort}}
 #' @param v a vector specifying where to look
 #' @param n the number of neighbors to return
-#' @param cols integer indices of columns to use
+#' @param cols integer or character vector or formula indicating columns
 #' @param w distance weights
-#' @param ... additional arguments
+#' @param ... ignored
 #' @return \tabular{ll}{
 #' \code{kd_nearest_neighbors} \tab one or more rows from the sorted input \cr
 #' \code{kd_nn_indices} \tab a vector of row indices indicating the result \cr

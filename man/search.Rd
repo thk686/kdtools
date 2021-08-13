@@ -53,7 +53,7 @@ kd_binary_search(x, v)
 
 \item{...}{ignored}
 
-\item{cols}{integer vector of column indices}
+\item{cols}{integer or character vector or formula indicating columns}
 }
 \value{
 \tabular{ll}{\code{kd_lower_bound} \tab a row of values (vector) \cr

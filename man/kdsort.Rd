@@ -38,7 +38,7 @@ kd_is_sorted(x, ...)
 
 \item{...}{ignored}
 
-\item{cols}{column indices or names}
+\item{cols}{integer or character vector or formula indicating columns}
 
 \item{parallel}{use multiple threads if true}
 

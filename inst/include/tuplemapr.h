@@ -437,8 +437,9 @@ wmean(T&& t, U&& u) {
 
 template<typename T, typename U>
 constexpr decltype(auto)
-sum_sq_diff(T&& t, U&& u, double exp) {
-  return sum(multiply(subtract(std::forward<T>(t), std::forward<U>(u)), subtract(std::forward<T>(t), std::forward<U>(u))));
+sum_sq_diff(T&& t, U&& u) {
+  return sum(multiply(subtract(std::forward<T>(t), std::forward<U>(u)),
+                      subtract(std::forward<T>(t), std::forward<U>(u))));
 }
 
 // not constexpr

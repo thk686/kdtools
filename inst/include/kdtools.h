@@ -444,9 +444,6 @@ bool kd_is_sorted_threaded(Iter first, Iter last, const Compare& comp,
 
 #ifdef NO_TUPLEMAPR
 
-// leftover from c++11 version
-// tuplemapr can fail on some older libc++ versions
-
 template <size_t I>
 struct all_less_
 {
@@ -545,10 +542,102 @@ double pdist(const TupleType& lhs, const TupleType& rhs, double p)
 
 #else // NO_TUPLEMAPR
 
-using tuple::all_less;
-using tuple::none_less;
-using tuple::pdist;
-using l2dist = tuple::euclidean_distance;
+template<typename T, typename U>
+constexpr decltype(auto)
+scalar_dist_(T&& t, U&& u) {
+  return tuple::map([](auto&& a, auto&& b) {
+    return scalar_dist(a, b);
+  }, std::forward<T>(t), std::forward<U>(u));
+}
+
+template<typename T, typename U>
+constexpr decltype(auto)
+pdist_(T&& t, U&& u, double exp) {
+  return tuple::pnorm(scalar_dist_(std::forward<T>(t), std::forward<U>(u)), exp);
+}
+
+template<typename T, typename U>
+constexpr decltype(auto)
+euclidean_distance_(T&& t, U&& u) {
+  return pdist_(std::forward<T>(t), std::forward<U>(u), 2);
+}
+
+template <typename T>
+double l2dist(const T& lhs, const T& rhs)
+{
+  using namespace tuple::detail;
+  if constexpr (is_std_pair_v<T>) {
+    if constexpr (std::is_pointer_v<first_of<T>>) {
+      return euclidean_distance_(*lhs.first, *rhs.first);
+    } else {
+      return euclidean_distance_(lhs.first, rhs.first);
+    }
+  } else {
+    if constexpr (std::is_pointer_v<T>) {
+      return euclidean_distance_(*lhs, *rhs);
+    } else {
+      return euclidean_distance_(lhs, rhs);
+    }
+  }
+}
+
+template <typename T>
+double pdist(const T& lhs, const T& rhs, double p)
+{
+  using namespace tuple::detail;
+  if constexpr (is_std_pair_v<T>) {
+    if constexpr (std::is_pointer_v<first_of<T>>) {
+      return pdist_(*lhs.first, *rhs.first, p);
+    } else {
+      return pdist_(lhs.first, rhs.first, p);
+    }
+  } else {
+    if constexpr (std::is_pointer_v<T>) {
+      return pdist_(*lhs, *rhs, p);
+    } else {
+      return pdist_(lhs, rhs, p);
+    }
+  }
+}
+
+
+template <typename T>
+bool all_less(const T& lhs, const T& rhs)
+{
+  using namespace tuple::detail;
+  if constexpr (is_std_pair_v<T>) {
+    if constexpr (std::is_pointer_v<first_of<T>>) {
+      return tuple::all_less(*lhs.first, *rhs.first);
+    } else {
+      return tuple::all_less(lhs.first, rhs.first);
+    }
+  } else {
+    if constexpr (std::is_pointer_v<T>) {
+      return tuple::all_less(*lhs, *rhs);
+    } else {
+      return tuple::all_less(lhs, rhs);
+    }
+  }
+}
+
+template <typename T>
+bool none_less(const T& lhs, const T& rhs)
+{
+  using namespace tuple::detail;
+  if constexpr (is_std_pair_v<T>) {
+    if constexpr (std::is_pointer_v<first_of<T>>) {
+      return tuple::none_less(*lhs.first, *rhs.first);
+    } else {
+      return tuple::none_less(lhs.first, rhs.first);
+    }
+  } else {
+    if constexpr (std::is_pointer_v<T>) {
+      return tuple::none_less(*lhs, *rhs);
+    } else {
+      return tuple::none_less(lhs, rhs);
+    }
+  }
+}
 
 #endif // NO_TUPLEMAPR
 

@@ -175,20 +175,20 @@ kd_rq_mat <- function(mat, idx, lower, upper) {
     .Call(`_kdtools_kd_rq_mat`, mat, idx, lower, upper)
 }
 
-kd_nn_mat_no_validation <- function(mat, idx, key, n) {
-    .Call(`_kdtools_kd_nn_mat_no_validation`, mat, idx, key, n)
+kd_nn_mat_no_validation <- function(mat, idx, key, epsilon, n) {
+    .Call(`_kdtools_kd_nn_mat_no_validation`, mat, idx, key, epsilon, n)
 }
 
-kd_nn_mat <- function(mat, idx, key, n) {
-    .Call(`_kdtools_kd_nn_mat`, mat, idx, key, n)
+kd_nn_mat <- function(mat, idx, key, epsilon, n) {
+    .Call(`_kdtools_kd_nn_mat`, mat, idx, key, epsilon, n)
 }
 
-kd_nn_dist_mat_no_validation <- function(mat, idx, key, n) {
-    .Call(`_kdtools_kd_nn_dist_mat_no_validation`, mat, idx, key, n)
+kd_nn_dist_mat_no_validation <- function(mat, idx, key, epsilon, n) {
+    .Call(`_kdtools_kd_nn_dist_mat_no_validation`, mat, idx, key, epsilon, n)
 }
 
-kd_nn_dist_mat <- function(mat, idx, key, n) {
-    .Call(`_kdtools_kd_nn_dist_mat`, mat, idx, key, n)
+kd_nn_dist_mat <- function(mat, idx, key, epsilon, n) {
+    .Call(`_kdtools_kd_nn_dist_mat`, mat, idx, key, epsilon, n)
 }
 
 levenshtein <- function(s1, s2) {

@@ -297,8 +297,8 @@ kd_nearest_neighbors <- function(x, v, n, ...) UseMethod("kd_nearest_neighbors")
 
 #' @rdname nneighb
 #' @export
-kd_nearest_neighbors.matrix <- function(x, v, n, cols = NULL, ...) {
-  return(x[kd_nn_indices(x, v, n, colspec(x, cols)),, drop = FALSE])
+kd_nearest_neighbors.matrix <- function(x, v, n, cols = NULL, epsilon = 0, ...) {
+  return(x[kd_nn_indices(x, v, n, colspec(x, cols), epsilon = epsilon),, drop = FALSE])
 }
 
 #' @rdname nneighb
@@ -328,10 +328,10 @@ kd_nn_indices.arrayvec <- function(x, v, n, distances = FALSE, ...) {
 
 #' @rdname nneighb
 #' @export
-kd_nn_indices.matrix <- function(x, v, n, cols = NULL, distances = FALSE, ...) {
+kd_nn_indices.matrix <- function(x, v, n, cols = NULL, distances = FALSE, epsilon = 0, ...) {
   if (distances)
-    return(as.data.frame(kd_nn_dist_mat(x, colspec(x, cols), v, n)))
-  return(kd_nn_mat(x, colspec(x, cols), v, n))
+    return(as.data.frame(kd_nn_dist_mat(x, colspec(x, cols), v, epsilon, n)))
+  return(kd_nn_mat(x, colspec(x, cols), v, epsilon, n))
 }
 
 #' @rdname nneighb

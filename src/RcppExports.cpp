@@ -6,6 +6,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // matrix_to_tuples
 List matrix_to_tuples(const NumericMatrix& x);
 RcppExport SEXP _kdtools_matrix_to_tuples(SEXP xSEXP) {
@@ -471,58 +476,62 @@ BEGIN_RCPP
 END_RCPP
 }
 // kd_nn_mat_no_validation
-std::vector<int> kd_nn_mat_no_validation(const NumericMatrix& mat, const IntegerVector& idx, const NumericVector& key, const int n);
-RcppExport SEXP _kdtools_kd_nn_mat_no_validation(SEXP matSEXP, SEXP idxSEXP, SEXP keySEXP, SEXP nSEXP) {
+std::vector<int> kd_nn_mat_no_validation(const NumericMatrix& mat, const IntegerVector& idx, const NumericVector& key, const double epsilon, const int n);
+RcppExport SEXP _kdtools_kd_nn_mat_no_validation(SEXP matSEXP, SEXP idxSEXP, SEXP keySEXP, SEXP epsilonSEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< const IntegerVector& >::type idx(idxSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type key(keySEXP);
+    Rcpp::traits::input_parameter< const double >::type epsilon(epsilonSEXP);
     Rcpp::traits::input_parameter< const int >::type n(nSEXP);
-    rcpp_result_gen = Rcpp::wrap(kd_nn_mat_no_validation(mat, idx, key, n));
+    rcpp_result_gen = Rcpp::wrap(kd_nn_mat_no_validation(mat, idx, key, epsilon, n));
     return rcpp_result_gen;
 END_RCPP
 }
 // kd_nn_mat
-std::vector<int> kd_nn_mat(const NumericMatrix& mat, const IntegerVector& idx, const NumericVector& key, const int n);
-RcppExport SEXP _kdtools_kd_nn_mat(SEXP matSEXP, SEXP idxSEXP, SEXP keySEXP, SEXP nSEXP) {
+std::vector<int> kd_nn_mat(const NumericMatrix& mat, const IntegerVector& idx, const NumericVector& key, const double epsilon, const int n);
+RcppExport SEXP _kdtools_kd_nn_mat(SEXP matSEXP, SEXP idxSEXP, SEXP keySEXP, SEXP epsilonSEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< const IntegerVector& >::type idx(idxSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type key(keySEXP);
+    Rcpp::traits::input_parameter< const double >::type epsilon(epsilonSEXP);
     Rcpp::traits::input_parameter< const int >::type n(nSEXP);
-    rcpp_result_gen = Rcpp::wrap(kd_nn_mat(mat, idx, key, n));
+    rcpp_result_gen = Rcpp::wrap(kd_nn_mat(mat, idx, key, epsilon, n));
     return rcpp_result_gen;
 END_RCPP
 }
 // kd_nn_dist_mat_no_validation
-List kd_nn_dist_mat_no_validation(const NumericMatrix& mat, const IntegerVector& idx, const NumericVector& key, const int n);
-RcppExport SEXP _kdtools_kd_nn_dist_mat_no_validation(SEXP matSEXP, SEXP idxSEXP, SEXP keySEXP, SEXP nSEXP) {
+List kd_nn_dist_mat_no_validation(const NumericMatrix& mat, const IntegerVector& idx, const NumericVector& key, const double epsilon, const int n);
+RcppExport SEXP _kdtools_kd_nn_dist_mat_no_validation(SEXP matSEXP, SEXP idxSEXP, SEXP keySEXP, SEXP epsilonSEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< const IntegerVector& >::type idx(idxSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type key(keySEXP);
+    Rcpp::traits::input_parameter< const double >::type epsilon(epsilonSEXP);
     Rcpp::traits::input_parameter< const int >::type n(nSEXP);
-    rcpp_result_gen = Rcpp::wrap(kd_nn_dist_mat_no_validation(mat, idx, key, n));
+    rcpp_result_gen = Rcpp::wrap(kd_nn_dist_mat_no_validation(mat, idx, key, epsilon, n));
     return rcpp_result_gen;
 END_RCPP
 }
 // kd_nn_dist_mat
-List kd_nn_dist_mat(const NumericMatrix& mat, const IntegerVector& idx, const NumericVector& key, const int n);
-RcppExport SEXP _kdtools_kd_nn_dist_mat(SEXP matSEXP, SEXP idxSEXP, SEXP keySEXP, SEXP nSEXP) {
+List kd_nn_dist_mat(const NumericMatrix& mat, const IntegerVector& idx, const NumericVector& key, const double epsilon, const int n);
+RcppExport SEXP _kdtools_kd_nn_dist_mat(SEXP matSEXP, SEXP idxSEXP, SEXP keySEXP, SEXP epsilonSEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< const IntegerVector& >::type idx(idxSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type key(keySEXP);
+    Rcpp::traits::input_parameter< const double >::type epsilon(epsilonSEXP);
     Rcpp::traits::input_parameter< const int >::type n(nSEXP);
-    rcpp_result_gen = Rcpp::wrap(kd_nn_dist_mat(mat, idx, key, n));
+    rcpp_result_gen = Rcpp::wrap(kd_nn_dist_mat(mat, idx, key, epsilon, n));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -576,10 +585,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_kd_is_sorted_mat", (DL_FUNC) &_kdtools_kd_is_sorted_mat, 3},
     {"_kdtools_kd_rq_mat_no_validation", (DL_FUNC) &_kdtools_kd_rq_mat_no_validation, 4},
     {"_kdtools_kd_rq_mat", (DL_FUNC) &_kdtools_kd_rq_mat, 4},
-    {"_kdtools_kd_nn_mat_no_validation", (DL_FUNC) &_kdtools_kd_nn_mat_no_validation, 4},
-    {"_kdtools_kd_nn_mat", (DL_FUNC) &_kdtools_kd_nn_mat, 4},
-    {"_kdtools_kd_nn_dist_mat_no_validation", (DL_FUNC) &_kdtools_kd_nn_dist_mat_no_validation, 4},
-    {"_kdtools_kd_nn_dist_mat", (DL_FUNC) &_kdtools_kd_nn_dist_mat, 4},
+    {"_kdtools_kd_nn_mat_no_validation", (DL_FUNC) &_kdtools_kd_nn_mat_no_validation, 5},
+    {"_kdtools_kd_nn_mat", (DL_FUNC) &_kdtools_kd_nn_mat, 5},
+    {"_kdtools_kd_nn_dist_mat_no_validation", (DL_FUNC) &_kdtools_kd_nn_dist_mat_no_validation, 5},
+    {"_kdtools_kd_nn_dist_mat", (DL_FUNC) &_kdtools_kd_nn_dist_mat, 5},
     {"_kdtools_levenshtein", (DL_FUNC) &_kdtools_levenshtein, 2},
     {NULL, NULL, 0}
 };

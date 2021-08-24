@@ -93,7 +93,7 @@ struct is_std_pair<std::pair<T, U>> : std::true_type {};
 template<typename T>
 constexpr bool is_std_pair_v = is_std_pair<std::decay_t<T>>::value;
 
-/**
+/*
 * Form a tuple of the Ith elements of a set of tuples
 */
 template<std::size_t I, typename... Ts>

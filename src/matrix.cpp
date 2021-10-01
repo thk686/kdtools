@@ -566,7 +566,7 @@ List kd_nn_dist_mat_no_validation(const NumericMatrix& mat,
                                   const int n)
 {
 #ifdef NO_CXX17
-  return std::vector<int>();
+  return R_NilValue;
 #else
   auto m = std::min(n, mat.nrow());
   std::vector<int> x(mat.nrow());
@@ -605,7 +605,7 @@ List kd_nn_dist_mat(const NumericMatrix& mat,
                     const int n)
 {
 #ifdef NO_CXX17
-  return std::vector<int>();
+  return R_NilValue;
 #else
   if (mat.ncol() < 1 || mat.nrow() < 1)
     stop("Empty matrix");

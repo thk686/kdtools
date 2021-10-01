@@ -629,7 +629,7 @@ IntegerVector kd_order_df_no_validation(const List& df,
                                         const IntegerVector& idx,
                                         bool parallel = true) {
 #ifdef NO_CXX17
-  return IntegerVector();
+  return R_NilValue;
 #else
   IntegerVector x(nrow(df));
   iota(begin(x), end(x), 0);
@@ -647,7 +647,7 @@ IntegerVector kd_order_df(const List& df,
                           const IntegerVector& idx,
                           bool parallel = true) {
 #ifdef NO_CXX17
-  return IntegerVector();
+  return R_NilValue;
 #else
   if (ncol(df) < 1 || nrow(df) < 1)
     return IntegerVector();
@@ -662,7 +662,7 @@ bool kd_is_sorted_df_no_validation(const List& df,
                                    const IntegerVector& idx,
                                    bool parallel = true) {
 #ifdef NO_CXX17
-  return NA_LOGICAL;
+  return R_NilValue;
 #else
   IntegerVector x(nrow(df));
   iota(begin(x), end(x), 0);
@@ -679,7 +679,7 @@ bool kd_is_sorted_df(const List& df,
                      const IntegerVector& idx,
                      bool parallel = true) {
 #ifdef NO_CXX17
-  return NA_LOGICAL;
+  return R_NilValue;
 #else
   if (ncol(df) < 1 || nrow(df) < 1)
     stop("Invalid data frame");
@@ -790,7 +790,7 @@ List kd_nn_dist_df_no_validation(const List& df,
                                  const int n)
 {
 #ifdef NO_CXX17
-  return std::vector<int>();
+  return R_NilValue;
 #else
   auto m = std::min(n, nrow(df));
   std::vector<int> x(nrow(df));
@@ -826,7 +826,7 @@ List kd_nn_dist_df(const List& df,
                    const int n)
 {
 #ifdef NO_CXX17
-  return std::vector<int>();
+  return R_NilValue;
 #else
   if (ncol(df) < 1 || nrow(df) < 1)
     stop("Empty data frame");

@@ -219,19 +219,6 @@ IntegerVector kd_order__(List x, bool inplace, bool parallel)
 
 #endif // NO_CXX17
 
-//' Check if package was compiled with circular comparisons
-//'
-//' @rdname utils
-//' @export
-// [[Rcpp::export]]
-bool using_circular_lexicographical_compare() {
-#ifdef USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
-  return true;
-#else
-  return false;
-#endif
-}
-
 //' Check if C++ 17 was available when building package
 //'
 //' @rdname utils

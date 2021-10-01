@@ -24,8 +24,6 @@ using std::thread;
 
 #include <cmath>
 
-// #define USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
-
 #ifndef NO_CXX17
 
 #include "kdtools.h"
@@ -49,8 +47,6 @@ namespace {
 Function Requal("=="), Rless("<"), Rdiff("-");
 
 }
-
-#ifdef USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
 
 struct kd_less_mat
 {
@@ -78,33 +74,6 @@ struct kd_less_mat
   const IntegerVector& m_idx;
   int m_dim, m_ndim, m_count;
 };
-
-#else // (don't) USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
-
-struct kd_less_mat
-{
-  kd_less_mat(const NumericMatrix& mat, const IntegerVector& idx, int dim = 0)
-    : m_mat(mat), m_idx(idx), m_dim(dim), m_ndim(m_idx.size()) {}
-
-  kd_less_mat next_dim() const {
-    return kd_less_mat(m_mat, m_idx, (m_dim + 1) % m_ndim);
-  }
-
-  kd_less_mat operator++() const {
-    return next_dim();
-  }
-
-  bool operator()(const int lhs, const int rhs) const {
-    auto k = m_idx(m_dim) - 1;
-    return m_mat(lhs, k) < m_mat(rhs, k);
-  }
-
-  const NumericMatrix& m_mat;
-  const IntegerVector& m_idx;
-  int m_dim, m_ndim;
-};
-
-#endif // USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
 
 struct chck_nth_mat
 {

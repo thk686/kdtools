@@ -75,14 +75,6 @@ kd_nn_dist_df <- function(df, idx, w, key, n) {
     .Call(`_kdtools_kd_nn_dist_df`, df, idx, w, key, n)
 }
 
-#' Check if package was compiled with circular comparisons
-#'
-#' @rdname utils
-#' @export
-using_circular_lexicographical_compare <- function() {
-    .Call(`_kdtools_using_circular_lexicographical_compare`)
-}
-
 #' Check if C++ 17 was available when building package
 #'
 #' @rdname utils

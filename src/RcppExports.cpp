@@ -186,16 +186,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// using_circular_lexicographical_compare
-bool using_circular_lexicographical_compare();
-RcppExport SEXP _kdtools_using_circular_lexicographical_compare() {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(using_circular_lexicographical_compare());
-    return rcpp_result_gen;
-END_RCPP
-}
 // has_cxx17
 bool has_cxx17();
 RcppExport SEXP _kdtools_has_cxx17() {
@@ -562,7 +552,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_kd_nn_df", (DL_FUNC) &_kdtools_kd_nn_df, 5},
     {"_kdtools_kd_nn_dist_df_no_validation", (DL_FUNC) &_kdtools_kd_nn_dist_df_no_validation, 5},
     {"_kdtools_kd_nn_dist_df", (DL_FUNC) &_kdtools_kd_nn_dist_df, 5},
-    {"_kdtools_using_circular_lexicographical_compare", (DL_FUNC) &_kdtools_using_circular_lexicographical_compare, 0},
     {"_kdtools_has_cxx17", (DL_FUNC) &_kdtools_has_cxx17, 0},
     {"_kdtools_kd_order_", (DL_FUNC) &_kdtools_kd_order_, 3},
     {"_kdtools_kd_is_sorted_", (DL_FUNC) &_kdtools_kd_is_sorted_, 2},

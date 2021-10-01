@@ -194,8 +194,6 @@ In the above results, ```lex_sort``` is the Standard Library built-in [```std::s
 
 ### Multidimensional comparisons
 
-Note: In recent versions of kdtools, this behavior is controlled at compile time by defining USE_CIRCULAR_LEXICOGRAPHIC_COMPARE, which is not defined by default, so results in this section may be misleading.
-
 To ensure the correct behavior in the presence of multiple ties, or even when all keys in one dimension are equal, the ```kd_less``` predicate implements circular lexicographic comparison. If elements in one dimension are tied, the next dimension is interrogated to break the tie. The comparisons cycle from trailing dimensions to leading dimensions using modulo arithmetic. It is implemented as a recursive, templated function object with the dimension index incremented at compile-time. The recursion is terminated using [constexpr if](https://en.cppreference.com/w/cpp/language/if).
 
 ```{Rcpp eval=FALSE}

@@ -23,8 +23,6 @@ using std::thread;
 
 #include <cmath>
 
-// #define USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
-
 #ifndef NO_CXX17
 
 #include "kdtools.h"
@@ -62,8 +60,6 @@ std::string_view get_string(SEXP x, int i = 0) {
 Function Requal("=="), Rless("<"), Rdiff("-");
 
 } // namespace
-
-#ifdef USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
 
 struct kd_less_df
 {
@@ -129,57 +125,6 @@ struct kd_less_df
   const IntegerVector& m_idx;
   int m_dim, m_ndim, m_count;
 };
-
-#else // (don't) USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
-
-struct kd_less_df
-{
-  kd_less_df(const List& df, const IntegerVector& idx, int dim = 0)
-    : m_df(df), m_idx(idx), m_dim(dim), m_ndim(m_idx.size()) {}
-
-  kd_less_df next_dim() const {
-    return kd_less_df(m_df, m_idx, (m_dim + 1) % m_ndim);
-  }
-
-  kd_less_df operator++() const {
-    return kd_less_df(m_df, m_idx, (m_dim + 1) % m_ndim);
-  }
-
-  bool operator()(const int lhs, const int rhs) const {
-    auto col = SEXP(m_df[m_idx[m_dim] - 1]);
-    switch(TYPEOF(col)) {
-    case LGLSXP: {
-      return LOGICAL(col)[lhs] < LOGICAL(col)[rhs];
-      break;
-    }
-    case REALSXP: {
-      return REAL(col)[lhs] < REAL(col)[rhs];
-      break;
-    }
-    case INTSXP: {
-      return INTEGER(col)[lhs] < INTEGER(col)[rhs];
-      break;
-    }
-    case STRSXP: {
-      return get_string(col, lhs) < get_string(col, rhs);
-      break;
-    }
-    case VECSXP: {
-      SEXP lhs_ = VECTOR_ELT(col, lhs),
-        rhs_ = VECTOR_ELT(col, rhs);
-      return Rless(lhs_, rhs_);
-      break;
-    }
-    default: stop("Invalid column type");
-    }
-    return false;
-  }
-  const List& m_df;
-  const IntegerVector& m_idx;
-  int m_dim, m_ndim;
-};
-
-#endif // USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
 
 struct chck_nth_df
 {

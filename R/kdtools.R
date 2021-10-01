@@ -4,7 +4,7 @@ NULL
 
 colspec <- function(x, cols = NULL) {
   res <- switch(mode(cols),
-         "call" = colspec(x, attr(terms(cols), "term.labels")),
+         "call" = colspec(x, attr(stats::terms(cols), "term.labels")),
          "character" = match(cols, colnames(x)),
          "numeric" = cols,
          "logical" = (1:ncol(x))[cols],
@@ -275,6 +275,7 @@ kd_binary_search.arrayvec <- function(x, v) {
 #' @param n the number of neighbors to return
 #' @param cols integer or character vector or formula indicating columns
 #' @param w distance weights
+#' @param alpha approximate neighbors within (1 + alpha)
 #' @param ... ignored
 #' @return \tabular{ll}{
 #' \code{kd_nearest_neighbors} \tab one or more rows from the sorted input \cr
@@ -297,8 +298,8 @@ kd_nearest_neighbors <- function(x, v, n, ...) UseMethod("kd_nearest_neighbors")
 
 #' @rdname nneighb
 #' @export
-kd_nearest_neighbors.matrix <- function(x, v, n, cols = NULL, epsilon = 0, ...) {
-  return(x[kd_nn_indices(x, v, n, colspec(x, cols), epsilon = epsilon),, drop = FALSE])
+kd_nearest_neighbors.matrix <- function(x, v, n, cols = NULL, alpha = 0, ...) {
+  return(x[kd_nn_indices(x, v, n, colspec(x, cols), alpha = alpha),, drop = FALSE])
 }
 
 #' @rdname nneighb
@@ -328,10 +329,10 @@ kd_nn_indices.arrayvec <- function(x, v, n, distances = FALSE, ...) {
 
 #' @rdname nneighb
 #' @export
-kd_nn_indices.matrix <- function(x, v, n, cols = NULL, distances = FALSE, epsilon = 0, ...) {
+kd_nn_indices.matrix <- function(x, v, n, cols = NULL, distances = FALSE, alpha = 0, ...) {
   if (distances)
-    return(as.data.frame(kd_nn_dist_mat(x, colspec(x, cols), v, epsilon, n)))
-  return(kd_nn_mat(x, colspec(x, cols), v, epsilon, n))
+    return(as.data.frame(kd_nn_dist_mat(x, colspec(x, cols), v, alpha, n)))
+  return(kd_nn_mat(x, colspec(x, cols), v, alpha, n))
 }
 
 #' @rdname nneighb

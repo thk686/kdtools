@@ -17,7 +17,6 @@
 #include <tuple>
 #include <cmath>
 
-// #define USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
 // #define NO_TUPLEMAPR
 
 #ifndef NO_TUPLEMAPR
@@ -188,8 +187,6 @@ static constexpr auto next_dim = (I + 1) % ndim<T>;
 template<size_t I, typename T>
 static constexpr auto is_last = (I == (ndim<T> - 1));
 
-#ifdef USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
-
 template <size_t I, size_t K = 0>
 struct kd_less
 {
@@ -225,31 +222,6 @@ struct kd_compare
     }
   }
 };
-
-#else // USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
-
-template <size_t I>
-struct kd_less
-{
-  template <typename T>
-  bool operator()(const T& lhs, const T& rhs) const {
-    return less_nth<I>()(lhs, rhs);
-  }
-};
-
-template <typename Pred, size_t I, size_t K = 0>
-struct kd_compare
-{
-  Pred m_pred;
-  kd_compare(const Pred& pred) : m_pred(pred) {}
-  template <typename T>
-  bool operator()(const T& lhs, const T& rhs) const
-  {
-      return make_pred_nth<I>(m_pred)(lhs, rhs);
-  }
-};
-
-#endif // USE_CIRCULAR_LEXICOGRAPHIC_COMPARE
 
 template <size_t I, typename Pred>
 kd_compare<Pred, I> make_kd_compare(const Pred& pred)

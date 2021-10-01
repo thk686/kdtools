@@ -20,16 +20,19 @@ check_median <- function(x, j = 1) {
   return(left_ans & right_ans)
 }
 
-if (using_circular_lexicographical_compare()) {
-  test_that("handles circular tie breaking", {
-    x <- rnorm(10)
-    cbind_df <- function(...) as.data.frame(cbind(...))
-    expect_equal(kd_sort(cbind_df(0, x)), cbind_df(0, sort(x)))
-    expect_equal(kd_sort(cbind_df(0, 1, x)), cbind_df(0, 1, sort(x)))
-    expect_equal(kd_sort(cbind_df(0, 1, 2, x)), cbind_df(0, 1, 2, sort(x)))
-    expect_equal(kd_sort(cbind_df(0, x, 1)), cbind_df(0, sort(x), 1))
-  })
-}
+test_that("handles circular tie breaking", {
+  x <- rnorm(10)
+  cbind_df <- function(...) as.data.frame(cbind(...))
+  f <- function(x) {
+    row.names(x) <- NULL
+    names(x) <- NULL
+    return(x)
+  }
+  expect_equal(f(kd_sort(cbind_df(0, x))),       f(cbind_df(0, sort(x))))
+  expect_equal(f(kd_sort(cbind_df(0, 1, x))),    f(cbind_df(0, 1, sort(x))))
+  expect_equal(f(kd_sort(cbind_df(0, 1, 2, x))), f(cbind_df(0, 1, 2, sort(x))))
+  expect_equal(f(kd_sort(cbind_df(0, x, 1))),    f(cbind_df(0, sort(x), 1)))
+})
 
 test_that("correct sort order", {
   nr <- 1e2

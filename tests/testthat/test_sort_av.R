@@ -27,16 +27,15 @@ test_that("sort works on single point", {
     expect_equal(kd_sort(matrix(i, nc = i)), matrix(i, nc = i))
 })
 
-if (using_circular_lexicographical_compare()) {
-  test_that("handles circular tie breaking", {
-    x <- rnorm(10)
-    cbind_av <- function(...) matrix_to_tuples(cbind(...))
-    expect_equal(kd_sort(cbind_av(0, x)), cbind_av(0, sort(x)))
-    expect_equal(kd_sort(cbind_av(0, 1, x)), cbind_av(0, 1, sort(x)))
-    expect_equal(kd_sort(cbind_av(0, 1, 2, x)), cbind_av(0, 1, 2, sort(x)))
-    expect_equal(kd_sort(cbind_av(0, x, 1)), cbind_av(0, sort(x), 1))
-  })
-}
+test_that("handles circular tie breaking", {
+  x <- rnorm(10)
+  cbind_av <- function(...) matrix_to_tuples(cbind(...))
+  expect_equal(kd_sort(cbind_av(0, x)), cbind_av(0, sort(x)))
+  expect_equal(kd_sort(cbind_av(0, 1, x)), cbind_av(0, 1, sort(x)))
+  expect_equal(kd_sort(cbind_av(0, 1, 2, x)), cbind_av(0, 1, 2, sort(x)))
+  expect_equal(kd_sort(cbind_av(0, x, 1)), cbind_av(0, sort(x), 1))
+})
+
 
 test_that("correct sort order", {
   nr <- 1e2

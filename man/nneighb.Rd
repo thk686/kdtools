@@ -16,7 +16,7 @@
 \usage{
 kd_nearest_neighbors(x, v, n, ...)
 
-\method{kd_nearest_neighbors}{matrix}(x, v, n, cols = NULL, epsilon = 0, ...)
+\method{kd_nearest_neighbors}{matrix}(x, v, n, cols = NULL, alpha = 0, ...)
 
 \method{kd_nearest_neighbors}{arrayvec}(x, v, n, ...)
 
@@ -26,7 +26,7 @@ kd_nn_indices(x, v, n, ...)
 
 \method{kd_nn_indices}{arrayvec}(x, v, n, distances = FALSE, ...)
 
-\method{kd_nn_indices}{matrix}(x, v, n, cols = NULL, distances = FALSE, epsilon = 0, ...)
+\method{kd_nn_indices}{matrix}(x, v, n, cols = NULL, distances = FALSE, alpha = 0, ...)
 
 \method{kd_nn_indices}{data.frame}(x, v, n, cols = NULL, w = NULL, distances = FALSE, ...)
 
@@ -46,6 +46,8 @@ kd_nearest_neighbor(x, v)
 \item{...}{ignored}
 
 \item{cols}{integer or character vector or formula indicating columns}
+
+\item{alpha}{approximate neighbors within (1 + alpha)}
 
 \item{w}{distance weights}
 

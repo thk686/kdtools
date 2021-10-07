@@ -343,7 +343,7 @@ void aknn_(Iter first, Iter last,
            const ChckNth& chck_nth,
            const DistNth& dist_nth,
            const L2Dist& l2dist,
-           double epsilon,
+           double alpha,
            QType& Q)
 {
   switch(distance(first, last)) {
@@ -352,20 +352,20 @@ void aknn_(Iter first, Iter last,
   auto pivot = middle_of(first, last);
   Q.add(l2dist(*pivot), pivot);
   if (equal_nth(*pivot)) {
-    aknn_(first, pivot, ++equal_nth, ++chck_nth, ++dist_nth, l2dist, epsilon, Q);
-    aknn_(next(pivot), last, ++equal_nth, ++chck_nth, ++dist_nth, l2dist, epsilon, Q);
+    aknn_(first, pivot, ++equal_nth, ++chck_nth, ++dist_nth, l2dist, alpha, Q);
+    aknn_(next(pivot), last, ++equal_nth, ++chck_nth, ++dist_nth, l2dist, alpha, Q);
   } else {
     auto search_left = !chck_nth.search_right(*pivot);
     if (search_left)
-      aknn_(first, pivot, ++equal_nth, ++chck_nth, ++dist_nth, l2dist, epsilon, Q);
+      aknn_(first, pivot, ++equal_nth, ++chck_nth, ++dist_nth, l2dist, alpha, Q);
     else
-      aknn_(next(pivot), last, ++equal_nth, ++chck_nth, ++dist_nth, l2dist, epsilon, Q);
-    if ((1 + epsilon) * dist_nth(*pivot) <= Q.max_key())
+      aknn_(next(pivot), last, ++equal_nth, ++chck_nth, ++dist_nth, l2dist, alpha, Q);
+    if ((1 + alpha) * dist_nth(*pivot) <= Q.max_key())
     {
       if (search_left)
-        aknn_(next(pivot), last, ++equal_nth, ++chck_nth, ++dist_nth, l2dist, epsilon, Q);
+        aknn_(next(pivot), last, ++equal_nth, ++chck_nth, ++dist_nth, l2dist, alpha, Q);
       else
-        aknn_(first, pivot, ++equal_nth, ++chck_nth, ++dist_nth, l2dist, epsilon, Q);
+        aknn_(first, pivot, ++equal_nth, ++chck_nth, ++dist_nth, l2dist, alpha, Q);
     }
   }
 }
@@ -482,7 +482,7 @@ std::vector<int> kd_rq_mat(const NumericMatrix& mat,
 std::vector<int> kd_nn_mat_no_validation(const NumericMatrix& mat,
                                          const IntegerVector& idx,
                                          const NumericVector& key,
-                                         const double epsilon,
+                                         const double alpha,
                                          const int n)
 {
 #ifdef NO_CXX17
@@ -495,8 +495,8 @@ std::vector<int> kd_nn_mat_no_validation(const NumericMatrix& mat,
   auto l2dist = l2dist_mat(mat, idx, key);
   auto dist_nth = dist_nth_mat(mat, idx, key);
   n_best<decltype(begin(x))> Q(std::min(n, mat.nrow()));
-  if (epsilon > 0)
-    aknn_(begin(x), end(x), equal_nth, chck_nth, dist_nth, l2dist, epsilon, Q);
+  if (alpha > 0)
+    aknn_(begin(x), end(x), equal_nth, chck_nth, dist_nth, l2dist, alpha, Q);
   else
     knn_(begin(x), end(x), equal_nth, chck_nth, dist_nth, l2dist, Q);
   std::vector<int> res;
@@ -511,7 +511,7 @@ std::vector<int> kd_nn_mat_no_validation(const NumericMatrix& mat,
 std::vector<int> kd_nn_mat(const NumericMatrix& mat,
                            const IntegerVector& idx,
                            const NumericVector& key,
-                           const double epsilon,
+                           const double alpha,
                            const int n)
 {
 #ifdef NO_CXX17
@@ -523,7 +523,7 @@ std::vector<int> kd_nn_mat(const NumericMatrix& mat,
     stop("Index out of range");
   if (idx.size() != key.size())
     stop("Incorrect dimension of key");
-  return kd_nn_mat_no_validation(mat, idx, key, epsilon, n);
+  return kd_nn_mat_no_validation(mat, idx, key, alpha, n);
 #endif
 }
 
@@ -531,7 +531,7 @@ std::vector<int> kd_nn_mat(const NumericMatrix& mat,
 List kd_nn_dist_mat_no_validation(const NumericMatrix& mat,
                                   const IntegerVector& idx,
                                   const NumericVector& key,
-                                  const double epsilon,
+                                  const double alpha,
                                   const int n)
 {
 #ifdef NO_CXX17
@@ -545,8 +545,8 @@ List kd_nn_dist_mat_no_validation(const NumericMatrix& mat,
   auto l2dist = l2dist_mat(mat, idx, key);
   auto dist_nth = dist_nth_mat(mat, idx, key);
   n_best<decltype(begin(x))> Q(m);
-  if (epsilon > 0)
-    aknn_(begin(x), end(x), equal_nth, chck_nth, dist_nth, l2dist, epsilon, Q);
+  if (alpha > 0)
+    aknn_(begin(x), end(x), equal_nth, chck_nth, dist_nth, l2dist, alpha, Q);
   else
     knn_(begin(x), end(x), equal_nth, chck_nth, dist_nth, l2dist, Q);
   std::vector<std::pair<double, decltype(begin(x))>> out;
@@ -570,7 +570,7 @@ List kd_nn_dist_mat_no_validation(const NumericMatrix& mat,
 List kd_nn_dist_mat(const NumericMatrix& mat,
                     const IntegerVector& idx,
                     const NumericVector& key,
-                    const double epsilon,
+                    const double alpha,
                     const int n)
 {
 #ifdef NO_CXX17
@@ -582,7 +582,7 @@ List kd_nn_dist_mat(const NumericMatrix& mat,
     stop("Index out of range");
   if (idx.size() != key.size())
     stop("Incorrect dimension of key");
-  return kd_nn_dist_mat_no_validation(mat, idx, key, epsilon, n);
+  return kd_nn_dist_mat_no_validation(mat, idx, key, alpha, n);
 #endif
 }
 

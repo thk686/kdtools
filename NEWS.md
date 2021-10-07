@@ -1,7 +1,12 @@
+# kdtools 0.6.0
+
+* Mostly fixes for CRAN
+* Initial work on approximate knn
+
 # kdtools 0.5.2
 
 * Returning distances from nearest neighbor search
-* More accomodations for broken compilers
+* More accommodations for broken compilers
 
 # kdtools 0.5.1
 

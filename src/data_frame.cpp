@@ -285,6 +285,9 @@ struct dist_nth_df
       break;
     }
     case INTSXP: {
+      if (Rf_inherits(col, "factor")) {
+        return INTEGER(col)[i] == INTEGER(key)[0] ? 0 : m_w[m_dim];
+      }
       return m_w[m_dim] * std::abs(INTEGER(col)[i] - INTEGER(key)[0]);
       break;
     }
@@ -375,7 +378,11 @@ struct l2dist_df {
         break;
       }
       case INTSXP: {
-        ssq += m_w[j] * std::pow(INTEGER(col)[i] - INTEGER(k)[0], 2);
+        if (Rf_inherits(col, "factor")) {
+          ssq += INTEGER(col)[i] == INTEGER(k)[0] ? 0 : m_w[j];
+        } else {
+          ssq += m_w[j] * std::pow(INTEGER(col)[i] - INTEGER(k)[0], 2);
+        }
         break;
       }
       case STRSXP: {

@@ -330,9 +330,10 @@ kd_nn_indices.arrayvec <- function(x, v, n, distances = FALSE, ...) {
 #' @rdname nneighb
 #' @export
 kd_nn_indices.matrix <- function(x, v, n, cols = NULL, distances = FALSE, alpha = 0, ...) {
+  cols <- colspec(x, cols)
   if (distances)
-    return(as.data.frame(kd_nn_dist_mat(x, colspec(x, cols), v, alpha, n)))
-  return(kd_nn_mat(x, colspec(x, cols), v, alpha, n))
+    return(as.data.frame(kd_nn_dist_mat(x, cols, v, alpha, n)))
+  return(kd_nn_mat(x, cols, v, alpha, n))
 }
 
 #' @rdname nneighb

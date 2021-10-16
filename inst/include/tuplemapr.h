@@ -95,6 +95,8 @@ constexpr bool is_std_pair_v = is_std_pair<std::decay_t<T>>::value;
 
 /*
 * Form a tuple of the Ith elements of a set of tuples
+* Using make_tuple is a design decision -- it will not forward references
+* This allows for copy elision and these should be inlined by the compiler
 */
 template<std::size_t I, typename... Ts>
 constexpr decltype(auto) pick(Ts&&... ts) {
@@ -139,16 +141,6 @@ constexpr void map2void_impl(F&& f, std::index_sequence<Is...>, Ts&&... ts) {
 }
 
 /*
-* Convenience function to obtain the result of applying only
-* to the 0th elements. Used to detect an invokable with a
-* void return type.
-*/
-template<typename F, typename... Ts>
-constexpr decltype(auto) map0(F&& f, Ts&&... ts) {
- return std::apply(std::forward<F>(f), pick<0>(std::forward<Ts>(ts)...));
-}
-
-/*
  * Helper less busy than writing static_cast...
  */
 constexpr double divide(double a, double b) {
@@ -156,6 +148,14 @@ constexpr double divide(double a, double b) {
 }
 
 } // namespace detail
+
+/*
+ * Apply invokable to nth values of tuples
+ */
+template<std::size_t I, typename F, typename... Ts>
+constexpr decltype(auto) map_nth(F&& f, Ts&&... ts) {
+  return std::apply(std::forward<F>(f), detail::pick<I>(std::forward<Ts>(ts)...));
+}
 
 /*
  * Map returning a tuple
@@ -198,10 +198,10 @@ constexpr void map2void(F&& f, Ts&&... ts) {
 template<typename F, typename... Ts>
 constexpr decltype(auto) map(F&& f, Ts&&... ts) {
   using T = detail::first_of<Ts...>;
-  using ret = decltype(detail::map0(
+  using ret0 = decltype(map_nth<0>(
     std::forward<F>(f), std::forward<Ts>(ts)...
   ));
-  if constexpr (std::is_void_v<ret>) {
+  if constexpr (std::is_void_v<ret0>) {
     map2void(std::forward<F>(f), std::forward<Ts>(ts)...);
   } else if constexpr (detail::is_std_pair_v<T>) {
     return map2pair(std::forward<F>(f), std::forward<Ts>(ts)...);

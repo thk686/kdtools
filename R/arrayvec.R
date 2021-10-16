@@ -56,15 +56,11 @@ as.data.frame.arrayvec <- function(x, ...) {
 #' @param drop drop singleton dimensions if true
 #' @rdname arrayvec
 #' @export
-# `[.arrayvec` <- function(x, i, j, drop = TRUE) {
-#   if (missing(i)) i <- seq_len(nrow(x))
-#   rng <- range(i)
-#   tuples_to_matrix_rows(x, rng[1], rng[2])[i - rng[1] + 1, j, drop = drop]
-# }
 `[.arrayvec` <- function(x, i, j, drop = TRUE) {
-  as.matrix(x)[i, j, drop = drop]
+  if (missing(i)) i <- seq_len(nrow(x))
+  rng <- range(i)
+  tuples_to_matrix_rows(x, rng[1], rng[2])[i - rng[1] + 1, j, drop = drop]
 }
-
 
 #' @rdname arrayvec
 #' @export

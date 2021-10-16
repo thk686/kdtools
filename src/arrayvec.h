@@ -92,13 +92,13 @@ NumericMatrix tuples_to_matrix_(List x)
 template <size_t I>
 NumericMatrix tuples_to_matrix_(List x, size_t a, size_t b)
 {
-  auto nr = b - a + 1;
   auto p = get_ptr<I>(x);
   if (a < 1 || b < a || p->size() < b) stop("Invalid range");
+  auto nr = b - a + 1;
   NumericMatrix res(nr, I);
-  for (auto i = a; i != b + 1; ++i)
+  for (auto i = 0; i != nr; ++i)
     for (auto j = 0; j != I; ++j)
-      res(i - 1, j - 1) = (*p)[i - 1][j - 1];
+      res(i, j) = (*p)[i + a - 1][j];
   return res;
 }
 

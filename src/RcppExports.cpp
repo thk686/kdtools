@@ -34,14 +34,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // tuples_to_matrix_rows
-NumericMatrix tuples_to_matrix_rows(List x, int a, int b);
+NumericMatrix tuples_to_matrix_rows(List x, size_t a, size_t b);
 RcppExport SEXP _kdtools_tuples_to_matrix_rows(SEXP xSEXP, SEXP aSEXP, SEXP bSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< List >::type x(xSEXP);
-    Rcpp::traits::input_parameter< int >::type a(aSEXP);
-    Rcpp::traits::input_parameter< int >::type b(bSEXP);
+    Rcpp::traits::input_parameter< size_t >::type a(aSEXP);
+    Rcpp::traits::input_parameter< size_t >::type b(bSEXP);
     rcpp_result_gen = Rcpp::wrap(tuples_to_matrix_rows(x, a, b));
     return rcpp_result_gen;
 END_RCPP

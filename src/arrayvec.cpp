@@ -69,7 +69,7 @@ NumericMatrix tuples_to_matrix(List x)
 }
 
 // [[Rcpp::export]]
-NumericMatrix tuples_to_matrix_rows(List x, int a, int b)
+NumericMatrix tuples_to_matrix_rows(List x, size_t a, size_t b)
 {
 #ifdef NO_CXX17
   return NumericMatrix();

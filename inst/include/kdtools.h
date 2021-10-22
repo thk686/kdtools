@@ -71,68 +71,57 @@ T middle_of(const T first, const T last)
   return next(first, distance(first, last) / 2);
 }
 
-template <size_t I>
-struct less_nth
-{
-  template <typename T>
-  bool operator()(const T& lhs, const T& rhs)
-  {
-    if constexpr (is_pointer_v<T>)
-      return get<I>(*lhs) < get<I>(*rhs);
-    else
-      return get<I>(lhs) < get<I>(rhs);
-  }
-  template <typename T, typename U>
-  bool operator()(const pair<T, U>& lhs, const pair<T, U>& rhs)
-  {
-    if constexpr (is_pointer_v<T>)
-      return get<I>(*lhs.first) < get<I>(*rhs.first);
-    else
-      return get<I>(lhs.first) < get<I>(rhs.first);
-  }
-};
+template <size_t I, typename T>
+bool less_nth(const T& lhs, const T& rhs) {
+  if constexpr (is_pointer_v<T>)
+    return get<I>(*lhs) < get<I>(*rhs);
+  else
+    return get<I>(lhs) < get<I>(rhs);
+}
 
-template <size_t I>
-struct less_radius_nth
-{
-  template <typename T, typename U>
-  bool operator()(const T& lhs, const T& rhs, const U radius)
-  {
-    if constexpr (is_pointer_v<T>)
-      return scalar_dist(get<I>(*lhs), get<I>(*rhs)) < radius;
-    else
-      return scalar_dist(get<I>(lhs), get<I>(rhs)) < radius;
-  }
-  template <typename T, typename U, typename V>
-  bool operator()(const pair<T, U>& lhs, const pair<T, U>& rhs, const V radius)
-  {
-    if constexpr (is_pointer_v<T>)
-      return scalar_dist(get<I>(*lhs.first), get<I>(*rhs.first)) < radius;
-    else
-      return scalar_dist(get<I>(lhs.first), get<I>(rhs.first)) < radius;
-  }
-};
+template <size_t I, typename T, typename U>
+bool less_nth(const pair<T, U>& lhs, const pair<T, U>& rhs) {
+  if constexpr (is_pointer_v<T>)
+    return get<I>(*lhs.first) < get<I>(*rhs.first);
+  else
+    return get<I>(lhs.first) < get<I>(rhs.first);
+}
 
-template <size_t I>
-struct equal_nth
+template <size_t I, typename T, typename U>
+bool less_radius_nth(const T& lhs, const T& rhs, const U radius)
 {
-  template <typename T>
-  bool operator()(const T& lhs, const T& rhs)
-  {
-    if constexpr (is_pointer_v<T>)
-      return get<I>(*lhs) == get<I>(*rhs);
-    else
-      return get<I>(lhs) == get<I>(rhs);
-  }
-  template <typename T, typename U>
-  bool operator()(const pair<T, U>& lhs, const pair<T, U>& rhs)
-  {
-    if constexpr (is_pointer_v<T>)
-      return get<I>(*lhs.first) == get<I>(*rhs.first);
-    else
-      return get<I>(lhs.first) == get<I>(rhs.first);
-  }
-};
+  if constexpr (is_pointer_v<T>)
+    return get<I>(*lhs) < get<I>(*rhs) - radius;
+  else
+    return get<I>(lhs) < get<I>(rhs) - radius;
+}
+
+template <size_t I, typename T, typename U, typename V>
+bool less_radius_nth(const pair<T, U>& lhs, const pair<T, U>& rhs, const V radius)
+{
+  if constexpr (is_pointer_v<T>)
+    return get<I>(*lhs.first) < get<I>(*rhs.first) - radius;
+  else
+    return get<I>(lhs.first) < get<I>(rhs.first) - radius;
+}
+
+template <size_t I, typename T>
+bool equal_nth(const T& lhs, const T& rhs)
+{
+  if constexpr (is_pointer_v<T>)
+    return get<I>(*lhs) == get<I>(*rhs);
+  else
+    return get<I>(lhs) == get<I>(rhs);
+}
+
+template <size_t I, typename T, typename U>
+bool equal_nth(const pair<T, U>& lhs, const pair<T, U>& rhs)
+{
+  if constexpr (is_pointer_v<T>)
+    return get<I>(*lhs.first) == get<I>(*rhs.first);
+  else
+    return get<I>(lhs.first) == get<I>(rhs.first);
+}
 
 template <typename Pred, size_t I>
 struct pred_nth
@@ -194,12 +183,12 @@ struct kd_less
   bool operator()(const T& lhs, const T& rhs) const
   {
     if constexpr (is_last<K, T>) {
-      return less_nth<I>()(lhs, rhs);
+      return less_nth<I>(lhs, rhs);
     } else {
       constexpr auto J = next_dim<I, T>;
-      return equal_nth<I>()(lhs, rhs) ?
+      return equal_nth<I>(lhs, rhs) ?
         kd_less<J, K + 1>()(lhs, rhs) :
-          less_nth<I>()(lhs, rhs);
+          less_nth<I>(lhs, rhs);
     }
   }
 };
@@ -423,9 +412,9 @@ struct all_less_
   bool operator()(const T& lhs, const T& rhs) const
   {
     if constexpr (is_last<I, T>) {
-      return less_nth<I>()(lhs, rhs);
+      return less_nth<I>(lhs, rhs);
     } else {
-      return less_nth<I>()(lhs, rhs) && all_less_<I + 1>()(lhs, rhs);
+      return less_nth<I>(lhs, rhs) && all_less_<I + 1>()(lhs, rhs);
     }
   }
 };
@@ -443,9 +432,9 @@ struct none_less_
   bool operator()(const T& lhs, const T& rhs)
   {
     if constexpr (is_last<I, T>) {
-      return !less_nth<I>()(lhs, rhs);
+      return !less_nth<I>(lhs, rhs);
     } else {
-      return !less_nth<I>()(lhs, rhs) && none_less_<I + 1>()(lhs, rhs);
+      return !less_nth<I>(lhs, rhs) && none_less_<I + 1>()(lhs, rhs);
     }
   }
 };
@@ -660,7 +649,7 @@ Iter kd_nearest_neighbor(Iter first, Iter last, const TupleType& key)
   if (distance(first, last) > 1)
   {
     auto pivot = middle_of(first, last);
-    if (equal_nth<I>()(*pivot, key)) {
+    if (equal_nth<I>(*pivot, key)) {
       auto left_res = kd_nearest_neighbor<J>(first, pivot, key);
       auto right_res = kd_nearest_neighbor<J>(next(pivot), last, key);
       if (l2dist(*right_res, key) < l2dist(*left_res, key)) {
@@ -669,7 +658,7 @@ Iter kd_nearest_neighbor(Iter first, Iter last, const TupleType& key)
         return left_res;
       }
     } else {
-      auto search_left = less_nth<I>()(key, *pivot);
+      auto search_left = less_nth<I>(key, *pivot);
       auto search = search_left ?
         kd_nearest_neighbor<J>(first, pivot, key) :
           kd_nearest_neighbor<J>(next(pivot), last, key);
@@ -702,7 +691,7 @@ Iter kd_nearest_neighbor(Iter first, Iter last,
   if (distance(first, last) > 1)
   {
     auto pivot = middle_of(first, last);
-    if (equal_nth<I>()(*pivot, key)) {
+    if (equal_nth<I>(*pivot, key)) {
       auto left_res = kd_nearest_neighbor<J>(first, pivot, key);
       auto right_res = kd_nearest_neighbor<J>(next(pivot), last, key);
       if (pdist(*right_res, key, p) < pdist(*left_res, key, p)) {
@@ -711,7 +700,7 @@ Iter kd_nearest_neighbor(Iter first, Iter last,
         return left_res;
       }
     } else {
-      auto search_left = less_nth<I>()(key, *pivot);
+      auto search_left = less_nth<I>(key, *pivot);
       auto search = search_left ?
       kd_nearest_neighbor<J>(first, pivot, key) :
         kd_nearest_neighbor<J>(next(pivot), last, key);
@@ -753,13 +742,12 @@ void kd_range_query(Iter first, Iter last,
                     OutIter outp)
 {
   if (distance(first, last) > 32) {
-    auto pred = less_nth<I>();
     auto pivot = middle_of(first, last);
     constexpr auto J = next_dim<I, TupleType>;
     if (within(*pivot, lower, upper)) *outp++ = *pivot;
-    if (!pred(*pivot, lower)) // search left
+    if (!less_nth<I>(*pivot, lower)) // search left
       kd_range_query<J>(first, pivot, lower, upper, outp);
-    if (pred(*pivot, upper)) // search right
+    if (less_nth<I>(*pivot, upper)) // search right
       kd_range_query<J>(next(pivot), last, lower, upper, outp);
   } else {
     copy_if(first, last, outp, [&](const TupleType& x){
@@ -779,13 +767,12 @@ void kd_rq_iters(Iter first, Iter last,
                  OutIter outp)
 {
   if (distance(first, last) > 32) {
-    auto pred = less_nth<I>();
     auto pivot = middle_of(first, last);
     constexpr auto J = next_dim<I, TupleType>;
     if (within(*pivot, lower, upper)) *outp++ = pivot;
-    if (!pred(*pivot, lower)) // search left
+    if (!less_nth<I>(*pivot, lower)) // search left
       kd_rq_iters<J>(first, pivot, lower, upper, outp);
-    if (pred(*pivot, upper)) // search right
+    if (less_nth<I>(*pivot, upper)) // search right
       kd_rq_iters<J>(next(pivot), last, lower, upper, outp);
   } else {
     while (first != last) {
@@ -806,13 +793,12 @@ void kd_range_query(Iter first, Iter last,
                     OutIter outp)
 {
   if (distance(first, last) > 32) {
-    auto pred = less_radius_nth<I>();
     auto pivot = middle_of(first, last);
     constexpr auto J = next_dim<I, TupleType>;
     if (l2dist(*pivot, center) <= radius) *outp++ = *pivot;
-    if (!pred(*pivot, center, -radius)) // search left
+    if (!less_radius_nth<I>(*pivot, center, radius)) // search left
       kd_range_query<J>(first, pivot, center, radius, outp);
-    if (!pred(center, *pivot, -radius)) // search right
+    if (!less_radius_nth<I>(center, *pivot, radius)) // search right
       kd_range_query<J>(next(pivot), last, center, radius, outp);
   } else {
     copy_if(first, last, outp, [&](const TupleType& x){
@@ -832,13 +818,12 @@ void kd_rq_iters(Iter first, Iter last,
                  OutIter outp)
 {
   if (distance(first, last) > 32) {
-    auto pred = less_radius_nth<I>();
     auto pivot = middle_of(first, last);
     constexpr auto J = next_dim<I, TupleType>;
     if (l2dist(*pivot, center) <= radius) *outp++ = pivot;
-    if (!pred(*pivot, center, -radius)) // search left
+    if (!less_radius_nth<I>(*pivot, center, radius)) // search left
       kd_rq_iters<J>(first, pivot, center, radius, outp);
-    if (pred(*pivot, center, radius)) // search right
+    if (less_radius_nth<I>(*pivot, center, radius)) // search right
       kd_rq_iters<J>(next(pivot), last, center, radius, outp);
   } else {
     while (first != last) {
@@ -926,11 +911,11 @@ void knn(Iter first, Iter last,
   auto pivot = middle_of(first, last);
   Q.add(l2dist(*pivot, key), pivot);
   constexpr auto J = next_dim<I, TupleType>;
-  if (equal_nth<I>()(*pivot, key)) {
+  if (equal_nth<I>(*pivot, key)) {
     knn<J>(first, pivot, key, Q);
     knn<J>(next(pivot), last, key, Q);
   } else {
-    auto search_left = less_nth<I>()(key, *pivot);
+    auto search_left = less_nth<I>(key, *pivot);
     if (search_left)
       knn<J>(first, pivot, key, Q);
     else
@@ -960,11 +945,11 @@ void knn(Iter first, Iter last,
   auto pivot = middle_of(first, last);
   Q.add(pdist(*pivot, key, p), pivot);
   constexpr auto J = next_dim<I, TupleType>;
-  if (equal_nth<I>()(*pivot, key)) {
+  if (equal_nth<I>(*pivot, key)) {
     knn<J>(first, pivot, key, Q);
     knn<J>(next(pivot), last, key, Q);
   } else {
-    auto search_left = less_nth<I>()(key, *pivot);
+    auto search_left = less_nth<I>(key, *pivot);
     if (search_left)
       knn<J>(first, pivot, key, Q);
     else

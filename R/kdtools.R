@@ -275,7 +275,8 @@ kd_binary_search.arrayvec <- function(x, v) {
 #' @param n the number of neighbors to return
 #' @param cols integer or character vector or formula indicating columns
 #' @param w distance weights
-#' @param alpha approximate neighbors within (1 + alpha)
+#' @param p exponent of p-norm (Minkowski) distance
+#' @param a approximate neighbors within (1 + a)
 #' @param ... ignored
 #' @return \tabular{ll}{
 #' \code{kd_nearest_neighbors} \tab one or more rows from the sorted input \cr
@@ -298,8 +299,8 @@ kd_nearest_neighbors <- function(x, v, n, ...) UseMethod("kd_nearest_neighbors")
 
 #' @rdname nneighb
 #' @export
-kd_nearest_neighbors.matrix <- function(x, v, n, cols = NULL, alpha = 0, ...) {
-  return(x[kd_nn_indices(x, v, n, colspec(x, cols), alpha = alpha),, drop = FALSE])
+kd_nearest_neighbors.matrix <- function(x, v, n, cols = NULL, p = 2, a = 0, ...) {
+  return(x[kd_nn_indices(x, v, n, colspec(x, cols), p = p, a = a),, drop = FALSE])
 }
 
 #' @rdname nneighb
@@ -329,11 +330,11 @@ kd_nn_indices.arrayvec <- function(x, v, n, distances = FALSE, ...) {
 
 #' @rdname nneighb
 #' @export
-kd_nn_indices.matrix <- function(x, v, n, cols = NULL, distances = FALSE, alpha = 0, ...) {
+kd_nn_indices.matrix <- function(x, v, n, cols = NULL, distances = FALSE, p = 2, a = 0, ...) {
   cols <- colspec(x, cols)
   if (distances)
-    return(as.data.frame(kd_nn_dist_mat(x, cols, v, alpha, n)))
-  return(kd_nn_mat(x, cols, v, alpha, n))
+    return(as.data.frame(kd_nn_dist_mat(x, cols, v, a, p, n)))
+  return(kd_nn_mat(x, cols, v, a, p, n))
 }
 
 #' @rdname nneighb

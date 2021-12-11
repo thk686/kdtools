@@ -18,7 +18,8 @@ the input type sorted
 Sort a matrix into lexicographical order
 }
 \details{
-Sorts a range of tuples into lexicographical order.
+Sorts a range of tuples into lexicographical order. This function
+  only exists for demonstration purposes.
 }
 \examples{
 if (has_cxx17()) {

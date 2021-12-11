@@ -4,12 +4,12 @@
 \alias{kd_lower_bound}
 \alias{kd_upper_bound}
 \alias{kd_range_query}
-\alias{kd_range_query.matrix}
 \alias{kd_range_query.arrayvec}
+\alias{kd_range_query.matrix}
 \alias{kd_range_query.data.frame}
 \alias{kd_rq_indices}
-\alias{kd_rq_indices.matrix}
 \alias{kd_rq_indices.arrayvec}
+\alias{kd_rq_indices.matrix}
 \alias{kd_rq_indices.data.frame}
 \alias{kd_binary_search}
 \alias{kd_binary_search.matrix}
@@ -22,17 +22,17 @@ kd_upper_bound(x, v)
 
 kd_range_query(x, l, u, ...)
 
-\method{kd_range_query}{matrix}(x, l, u, cols = NULL, ...)
-
 \method{kd_range_query}{arrayvec}(x, l, u, ...)
+
+\method{kd_range_query}{matrix}(x, l, u, cols = NULL, ...)
 
 \method{kd_range_query}{data.frame}(x, l, u, cols = NULL, ...)
 
 kd_rq_indices(x, l, u, ...)
 
-\method{kd_rq_indices}{matrix}(x, l, u, cols = NULL, ...)
-
 \method{kd_rq_indices}{arrayvec}(x, l, u, ...)
+
+\method{kd_rq_indices}{matrix}(x, l, u, cols = NULL, ...)
 
 \method{kd_rq_indices}{data.frame}(x, l, u, cols = NULL, ...)
 
@@ -56,7 +56,8 @@ kd_binary_search(x, v)
 \item{cols}{integer or character vector or formula indicating columns}
 }
 \value{
-\tabular{ll}{\code{kd_lower_bound} \tab a row of values (vector) \cr
+\tabular{ll}{
+  \code{kd_lower_bound} \tab a row of values (vector) \cr
   \code{kd_upper_bound} \tab a row of values (vector) \cr
   \code{kd_range_query} \tab a set of rows in the same format as the sorted input \cr
   \code{kd_rq_indices} \tab a vector of integer indices specifying rows in the input \cr

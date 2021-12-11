@@ -127,8 +127,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // kd_nn_df_no_validation
-std::vector<int> kd_nn_df_no_validation(const List& df, const IntegerVector& idx, const NumericVector& w, const List& key, const int n);
-RcppExport SEXP _kdtools_kd_nn_df_no_validation(SEXP dfSEXP, SEXP idxSEXP, SEXP wSEXP, SEXP keySEXP, SEXP nSEXP) {
+std::vector<int> kd_nn_df_no_validation(const List& df, const IntegerVector& idx, const NumericVector& w, const List& key, const double a, const double p, const int n);
+RcppExport SEXP _kdtools_kd_nn_df_no_validation(SEXP dfSEXP, SEXP idxSEXP, SEXP wSEXP, SEXP keySEXP, SEXP aSEXP, SEXP pSEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -136,14 +136,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const IntegerVector& >::type idx(idxSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type w(wSEXP);
     Rcpp::traits::input_parameter< const List& >::type key(keySEXP);
+    Rcpp::traits::input_parameter< const double >::type a(aSEXP);
+    Rcpp::traits::input_parameter< const double >::type p(pSEXP);
     Rcpp::traits::input_parameter< const int >::type n(nSEXP);
-    rcpp_result_gen = Rcpp::wrap(kd_nn_df_no_validation(df, idx, w, key, n));
+    rcpp_result_gen = Rcpp::wrap(kd_nn_df_no_validation(df, idx, w, key, a, p, n));
     return rcpp_result_gen;
 END_RCPP
 }
 // kd_nn_df
-std::vector<int> kd_nn_df(const List& df, const IntegerVector& idx, const NumericVector& w, const List& key, const int n);
-RcppExport SEXP _kdtools_kd_nn_df(SEXP dfSEXP, SEXP idxSEXP, SEXP wSEXP, SEXP keySEXP, SEXP nSEXP) {
+std::vector<int> kd_nn_df(const List& df, const IntegerVector& idx, const NumericVector& w, const List& key, const double a, const double p, const int n);
+RcppExport SEXP _kdtools_kd_nn_df(SEXP dfSEXP, SEXP idxSEXP, SEXP wSEXP, SEXP keySEXP, SEXP aSEXP, SEXP pSEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -151,14 +153,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const IntegerVector& >::type idx(idxSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type w(wSEXP);
     Rcpp::traits::input_parameter< const List& >::type key(keySEXP);
+    Rcpp::traits::input_parameter< const double >::type a(aSEXP);
+    Rcpp::traits::input_parameter< const double >::type p(pSEXP);
     Rcpp::traits::input_parameter< const int >::type n(nSEXP);
-    rcpp_result_gen = Rcpp::wrap(kd_nn_df(df, idx, w, key, n));
+    rcpp_result_gen = Rcpp::wrap(kd_nn_df(df, idx, w, key, a, p, n));
     return rcpp_result_gen;
 END_RCPP
 }
 // kd_nn_dist_df_no_validation
-List kd_nn_dist_df_no_validation(const List& df, const IntegerVector& idx, const NumericVector& w, const List& key, const int n);
-RcppExport SEXP _kdtools_kd_nn_dist_df_no_validation(SEXP dfSEXP, SEXP idxSEXP, SEXP wSEXP, SEXP keySEXP, SEXP nSEXP) {
+List kd_nn_dist_df_no_validation(const List& df, const IntegerVector& idx, const NumericVector& w, const List& key, const double a, const double p, const int n);
+RcppExport SEXP _kdtools_kd_nn_dist_df_no_validation(SEXP dfSEXP, SEXP idxSEXP, SEXP wSEXP, SEXP keySEXP, SEXP aSEXP, SEXP pSEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -166,14 +170,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const IntegerVector& >::type idx(idxSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type w(wSEXP);
     Rcpp::traits::input_parameter< const List& >::type key(keySEXP);
+    Rcpp::traits::input_parameter< const double >::type a(aSEXP);
+    Rcpp::traits::input_parameter< const double >::type p(pSEXP);
     Rcpp::traits::input_parameter< const int >::type n(nSEXP);
-    rcpp_result_gen = Rcpp::wrap(kd_nn_dist_df_no_validation(df, idx, w, key, n));
+    rcpp_result_gen = Rcpp::wrap(kd_nn_dist_df_no_validation(df, idx, w, key, a, p, n));
     return rcpp_result_gen;
 END_RCPP
 }
 // kd_nn_dist_df
-List kd_nn_dist_df(const List& df, const IntegerVector& idx, const NumericVector& w, const List& key, const int n);
-RcppExport SEXP _kdtools_kd_nn_dist_df(SEXP dfSEXP, SEXP idxSEXP, SEXP wSEXP, SEXP keySEXP, SEXP nSEXP) {
+List kd_nn_dist_df(const List& df, const IntegerVector& idx, const NumericVector& w, const List& key, const double a, const double p, const int n);
+RcppExport SEXP _kdtools_kd_nn_dist_df(SEXP dfSEXP, SEXP idxSEXP, SEXP wSEXP, SEXP keySEXP, SEXP aSEXP, SEXP pSEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -181,8 +187,10 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const IntegerVector& >::type idx(idxSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type w(wSEXP);
     Rcpp::traits::input_parameter< const List& >::type key(keySEXP);
+    Rcpp::traits::input_parameter< const double >::type a(aSEXP);
+    Rcpp::traits::input_parameter< const double >::type p(pSEXP);
     Rcpp::traits::input_parameter< const int >::type n(nSEXP);
-    rcpp_result_gen = Rcpp::wrap(kd_nn_dist_df(df, idx, w, key, n));
+    rcpp_result_gen = Rcpp::wrap(kd_nn_dist_df(df, idx, w, key, a, p, n));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -552,10 +560,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_kd_is_sorted_df", (DL_FUNC) &_kdtools_kd_is_sorted_df, 3},
     {"_kdtools_kd_rq_df_no_validation", (DL_FUNC) &_kdtools_kd_rq_df_no_validation, 4},
     {"_kdtools_kd_rq_df", (DL_FUNC) &_kdtools_kd_rq_df, 4},
-    {"_kdtools_kd_nn_df_no_validation", (DL_FUNC) &_kdtools_kd_nn_df_no_validation, 5},
-    {"_kdtools_kd_nn_df", (DL_FUNC) &_kdtools_kd_nn_df, 5},
-    {"_kdtools_kd_nn_dist_df_no_validation", (DL_FUNC) &_kdtools_kd_nn_dist_df_no_validation, 5},
-    {"_kdtools_kd_nn_dist_df", (DL_FUNC) &_kdtools_kd_nn_dist_df, 5},
+    {"_kdtools_kd_nn_df_no_validation", (DL_FUNC) &_kdtools_kd_nn_df_no_validation, 7},
+    {"_kdtools_kd_nn_df", (DL_FUNC) &_kdtools_kd_nn_df, 7},
+    {"_kdtools_kd_nn_dist_df_no_validation", (DL_FUNC) &_kdtools_kd_nn_dist_df_no_validation, 7},
+    {"_kdtools_kd_nn_dist_df", (DL_FUNC) &_kdtools_kd_nn_dist_df, 7},
     {"_kdtools_has_cxx17", (DL_FUNC) &_kdtools_has_cxx17, 0},
     {"_kdtools_kd_order_", (DL_FUNC) &_kdtools_kd_order_, 3},
     {"_kdtools_kd_is_sorted_", (DL_FUNC) &_kdtools_kd_is_sorted_, 2},

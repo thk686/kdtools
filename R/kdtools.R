@@ -61,14 +61,14 @@ kd_sort <- function(x, ...) UseMethod("kd_sort")
 
 #' @rdname kdsort
 #' @export
-kd_sort.matrix <- function(x, cols = NULL, parallel = TRUE, ...) {
-  return(x[kd_order(x, cols = colspec(x, cols), parallel = parallel),, drop = FALSE])
+kd_sort.arrayvec <- function(x, inplace = FALSE, parallel = TRUE, ...) {
+  return(kd_sort_(x, inplace = inplace, parallel = parallel))
 }
 
 #' @rdname kdsort
 #' @export
-kd_sort.arrayvec <- function(x, inplace = FALSE, parallel = TRUE, ...) {
-  return(kd_sort_(x, inplace = inplace, parallel = parallel))
+kd_sort.matrix <- function(x, cols = NULL, parallel = TRUE, ...) {
+  return(x[kd_order(x, cols = colspec(x, cols), parallel = parallel),, drop = FALSE])
 }
 
 #' @rdname kdsort
@@ -93,14 +93,14 @@ kd_order <- function(x, ...) UseMethod("kd_order")
 
 #' @rdname kdsort
 #' @export
-kd_order.matrix <- function(x, cols = NULL, parallel = TRUE, ...) {
-  return(kd_order_mat(x, colspec(x, cols), parallel = parallel))
+kd_order.arrayvec <- function(x, inplace = FALSE, parallel = TRUE, ...) {
+  return(kd_order_(x, inplace = inplace, parallel = parallel))
 }
 
 #' @rdname kdsort
 #' @export
-kd_order.arrayvec <- function(x, inplace = FALSE, parallel = TRUE, ...) {
-  return(kd_order_(x, inplace = inplace, parallel = parallel))
+kd_order.matrix <- function(x, cols = NULL, parallel = TRUE, ...) {
+  return(kd_order_mat(x, colspec(x, cols), parallel = parallel))
 }
 
 #' @rdname kdsort
@@ -114,24 +114,25 @@ kd_order.data.frame <- function(x, cols = NULL, parallel = TRUE, ...) {
 kd_is_sorted <- function(x, ...) UseMethod("kd_is_sorted")
 
 #' @export
-kd_is_sorted.matrix <- function(x, cols = NULL, parallel = FALSE, ...) {
+kd_is_sorted.arrayvec <- function(x, parallel = TRUE, ...) {
+  return(kd_is_sorted_(x, parallel))
+}
+
+#' @export
+kd_is_sorted.matrix <- function(x, cols = NULL, parallel = TRUE, ...) {
   return(kd_is_sorted_mat(x, colspec(x, cols), parallel))
 }
 
 #' @export
-kd_is_sorted.data.frame <- function(x, cols = NULL, parallel = FALSE, ...) {
+kd_is_sorted.data.frame <- function(x, cols = NULL, parallel = TRUE, ...) {
   return(kd_is_sorted_df(x, colspec(x, cols), parallel))
-}
-
-#' @export
-kd_is_sorted.arrayvec <- function(x, parallel = FALSE, ...) {
-  return(kd_is_sorted_(x, parallel))
 }
 
 #' Sort a matrix into lexicographical order
 #' @param x a matrix or arrayvec object
 #' @param ... other parameters
-#' @details Sorts a range of tuples into lexicographical order.
+#' @details Sorts a range of tuples into lexicographical order. This function
+#'   only exists for demonstration purposes.
 #' @return the input type sorted
 #' @examples
 #' if (has_cxx17()) {
@@ -161,7 +162,8 @@ lex_sort.arrayvec <- function(x, inplace = FALSE, ...) {
 #' @param u upper right corner of search region
 #' @param cols integer or character vector or formula indicating columns
 #' @param ... ignored
-#' @return \tabular{ll}{\code{kd_lower_bound} \tab a row of values (vector) \cr
+#' @return \tabular{ll}{
+#'   \code{kd_lower_bound} \tab a row of values (vector) \cr
 #'   \code{kd_upper_bound} \tab a row of values (vector) \cr
 #'   \code{kd_range_query} \tab a set of rows in the same format as the sorted input \cr
 #'   \code{kd_rq_indices} \tab a vector of integer indices specifying rows in the input \cr
@@ -214,14 +216,14 @@ kd_range_query <- function(x, l, u, ...) UseMethod("kd_range_query")
 
 #' @rdname search
 #' @export
-kd_range_query.matrix <- function(x, l, u, cols = NULL, ...) {
-  return(x[kd_rq_indices(x, l, u, colspec(x, cols)),, drop = FALSE])
+kd_range_query.arrayvec <- function(x, l, u, ...) {
+  return(kd_range_query_(x, l, u))
 }
 
 #' @rdname search
 #' @export
-kd_range_query.arrayvec <- function(x, l, u, ...) {
-  return(kd_range_query_(x, l, u))
+kd_range_query.matrix <- function(x, l, u, cols = NULL, ...) {
+  return(x[kd_rq_indices(x, l, u, colspec(x, cols)),, drop = FALSE])
 }
 
 #' @rdname search
@@ -236,14 +238,14 @@ kd_rq_indices <- function(x, l, u, ...) UseMethod("kd_rq_indices")
 
 #' @rdname search
 #' @export
-kd_rq_indices.matrix <- function(x, l, u, cols = NULL, ...) {
-  return(kd_rq_mat(x, colspec(x, cols), l, u))
+kd_rq_indices.arrayvec <- function(x, l, u, ...) {
+  return(kd_rq_indices_(x, l, u))
 }
 
 #' @rdname search
 #' @export
-kd_rq_indices.arrayvec <- function(x, l, u, ...) {
-  return(kd_rq_indices_(x, l, u))
+kd_rq_indices.matrix <- function(x, l, u, cols = NULL, ...) {
+  return(kd_rq_mat(x, colspec(x, cols), l, u))
 }
 
 #' @rdname search
@@ -299,20 +301,20 @@ kd_nearest_neighbors <- function(x, v, n, ...) UseMethod("kd_nearest_neighbors")
 
 #' @rdname nneighb
 #' @export
-kd_nearest_neighbors.matrix <- function(x, v, n, cols = NULL, p = 2, a = 0, ...) {
-  return(x[kd_nn_indices(x, v, n, colspec(x, cols), p = p, a = a),, drop = FALSE])
-}
-
-#' @rdname nneighb
-#' @export
 kd_nearest_neighbors.arrayvec <- function(x, v, n, ...) {
   return(kd_nearest_neighbors_(x, v, n))
 }
 
 #' @rdname nneighb
 #' @export
-kd_nearest_neighbors.data.frame <- function(x, v, n, cols = NULL, w = NULL, ...) {
-  return(x[kd_nn_indices(x, v, n, colspec(x, cols), w),, drop = FALSE])
+kd_nearest_neighbors.matrix <- function(x, v, n, cols = NULL, p = 2, a = 0, ...) {
+  return(x[kd_nn_indices(x, v, n, colspec(x, cols), p = p, a = a),, drop = FALSE])
+}
+
+#' @rdname nneighb
+#' @export
+kd_nearest_neighbors.data.frame <- function(x, v, n, cols = NULL, w = NULL, p = 2, a = 0, ...) {
+  return(x[kd_nn_indices(x, v, n, colspec(x, cols), w, p = p, a = a),, drop = FALSE])
 }
 
 #' @rdname nneighb
@@ -339,12 +341,12 @@ kd_nn_indices.matrix <- function(x, v, n, cols = NULL, distances = FALSE, p = 2,
 
 #' @rdname nneighb
 #' @export
-kd_nn_indices.data.frame <- function(x, v, n, cols = NULL, w = NULL, distances = FALSE, ...) {
+kd_nn_indices.data.frame <- function(x, v, n, cols = NULL, w = NULL, distances = FALSE, p = 2, a = 0, ...) {
   cols <- colspec(x, cols)
   if (is.null(w)) w <- rep_len(1, length(cols))
   if (distances)
-    return(as.data.frame(kd_nn_dist_df(x, cols, w, v, n)))
-  return(kd_nn_df(x, cols, w, v, n))
+    return(as.data.frame(kd_nn_dist_df(x, cols, w, v, a, p, n)))
+  return(kd_nn_df(x, cols, w, v, a, p, n))
 }
 
 #' @rdname nneighb
@@ -353,13 +355,13 @@ kd_nearest_neighbor <- function(x, v) UseMethod("kd_nearest_neighbor")
 
 #' @rdname nneighb
 #' @export
-kd_nearest_neighbor.matrix <- function(x, v) {
-  y <- matrix_to_tuples(x)
-  return(kd_nearest_neighbor_(y, v))
+kd_nearest_neighbor.arrayvec <- function(x, v) {
+  return(kd_nearest_neighbor_(x, v))
 }
 
 #' @rdname nneighb
 #' @export
-kd_nearest_neighbor.arrayvec <- function(x, v) {
-  return(kd_nearest_neighbor_(x, v))
+kd_nearest_neighbor.matrix <- function(x, v) {
+  y <- matrix_to_tuples(x)
+  return(kd_nearest_neighbor_(y, v))
 }

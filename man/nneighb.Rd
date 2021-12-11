@@ -2,23 +2,23 @@
 % Please edit documentation in R/kdtools.R
 \name{kd_nearest_neighbors}
 \alias{kd_nearest_neighbors}
-\alias{kd_nearest_neighbors.matrix}
 \alias{kd_nearest_neighbors.arrayvec}
+\alias{kd_nearest_neighbors.matrix}
 \alias{kd_nearest_neighbors.data.frame}
 \alias{kd_nn_indices}
 \alias{kd_nn_indices.arrayvec}
 \alias{kd_nn_indices.matrix}
 \alias{kd_nn_indices.data.frame}
 \alias{kd_nearest_neighbor}
-\alias{kd_nearest_neighbor.matrix}
 \alias{kd_nearest_neighbor.arrayvec}
+\alias{kd_nearest_neighbor.matrix}
 \title{Find nearest neighbors}
 \usage{
 kd_nearest_neighbors(x, v, n, ...)
 
-\method{kd_nearest_neighbors}{matrix}(x, v, n, cols = NULL, p = 2, a = 0, ...)
-
 \method{kd_nearest_neighbors}{arrayvec}(x, v, n, ...)
+
+\method{kd_nearest_neighbors}{matrix}(x, v, n, cols = NULL, p = 2, a = 0, ...)
 
 \method{kd_nearest_neighbors}{data.frame}(x, v, n, cols = NULL, w = NULL, ...)
 
@@ -28,13 +28,23 @@ kd_nn_indices(x, v, n, ...)
 
 \method{kd_nn_indices}{matrix}(x, v, n, cols = NULL, distances = FALSE, p = 2, a = 0, ...)
 
-\method{kd_nn_indices}{data.frame}(x, v, n, cols = NULL, w = NULL, distances = FALSE, ...)
+\method{kd_nn_indices}{data.frame}(
+  x,
+  v,
+  n,
+  cols = NULL,
+  w = NULL,
+  distances = FALSE,
+  p = 2,
+  a = 0,
+  ...
+)
 
 kd_nearest_neighbor(x, v)
 
-\method{kd_nearest_neighbor}{matrix}(x, v)
-
 \method{kd_nearest_neighbor}{arrayvec}(x, v)
+
+\method{kd_nearest_neighbor}{matrix}(x, v)
 }
 \arguments{
 \item{x}{an object sorted by \code{\link{kd_sort}}}

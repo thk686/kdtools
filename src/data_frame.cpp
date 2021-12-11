@@ -406,6 +406,56 @@ struct l2dist_df {
   int m_ndim;
 };
 
+struct pdist_df {
+  pdist_df(const List& df,
+           const IntegerVector& idx,
+           const NumericVector& w,
+           const List& key, double p)
+    : m_df(df), m_key(key), m_idx(idx), m_w(w), m_ndim(m_idx.size()), m_p(p) {}
+
+  double operator()(const int i) const {
+    double sum = 0;
+    for (int j = 0; j != m_ndim; ++j) {
+      auto col = SEXP(m_df[m_idx[j] - 1]), k = SEXP(m_key[j]);
+      switch(TYPEOF(col)) {
+      case LGLSXP: {
+        sum += LOGICAL(col)[i] == LOGICAL(k)[0] ? 0 : m_w[j];
+        break;
+      }
+      case REALSXP: {
+        sum += m_w[j] * std::pow(REAL(col)[i] - REAL(k)[0], m_p);
+        break;
+      }
+      case INTSXP: {
+        if (Rf_inherits(col, "factor")) {
+          sum += INTEGER(col)[i] == INTEGER(k)[0] ? 0 : m_w[j];
+        } else {
+          sum += m_w[j] * std::pow(INTEGER(col)[i] - INTEGER(k)[0], m_p);
+        }
+        break;
+      }
+      case STRSXP: {
+        double d = strdist::levenshtein(get_string(col, i), get_string(k));
+        sum += m_w[j] * std::pow(d, m_p);
+        break;
+      }
+      case VECSXP: {
+        SEXP lhs_ = VECTOR_ELT(col, i), rhs_ = VECTOR_ELT(k, 0);
+        sum += m_w[j] * std::pow(as<double>(Rdiff(lhs_, rhs_)), m_p);
+        break;
+      }
+      default: stop("Invalid column type");
+      }
+    }
+    return std::pow(sum, 1 / m_p);
+  }
+  const List& m_df, m_key;
+  const IntegerVector& m_idx;
+  const NumericVector& m_w;
+  double m_p;
+  int m_ndim;
+};
+
 bool type_mismatch(const List& df,
                    const IntegerVector& idx,
                    const List& lower,
@@ -541,35 +591,73 @@ template <typename Iter,
           typename EqualNth,
           typename ChckNth,
           typename DistNth,
-          typename L2Dist,
+          typename DistFun,
           typename QType>
 void knn_(Iter first, Iter last,
           const EqualNth& equal_nth,
           const ChckNth& chck_nth,
           const DistNth& dist_nth,
-          const L2Dist& l2dist,
+          const DistFun& distf,
           QType& Q)
 {
   switch(distance(first, last)) {
-  case 1 : Q.add(l2dist(*first), first);
+  case 1 : Q.add(distf(*first), first);
   case 0 : return; } // switch end
   auto pivot = middle_of(first, last);
-  Q.add(l2dist(*pivot), pivot);
+  Q.add(distf(*pivot), pivot);
   if (equal_nth(*pivot)) {
-    knn_(first, pivot, ++equal_nth, ++chck_nth, ++dist_nth, l2dist, Q);
-    knn_(next(pivot), last, ++equal_nth, ++chck_nth, ++dist_nth, l2dist, Q);
+    knn_(first, pivot, ++equal_nth, ++chck_nth, ++dist_nth, distf, Q);
+    knn_(next(pivot), last, ++equal_nth, ++chck_nth, ++dist_nth, distf, Q);
   } else {
     auto search_left = !chck_nth.search_right(*pivot);
     if (search_left)
-      knn_(first, pivot, ++equal_nth, ++chck_nth, ++dist_nth, l2dist, Q);
+      knn_(first, pivot, ++equal_nth, ++chck_nth, ++dist_nth, distf, Q);
     else
-      knn_(next(pivot), last, ++equal_nth, ++chck_nth, ++dist_nth, l2dist, Q);
+      knn_(next(pivot), last, ++equal_nth, ++chck_nth, ++dist_nth, distf, Q);
     if (dist_nth(*pivot) <= Q.max_key())
     {
       if (search_left)
-        knn_(next(pivot), last, ++equal_nth, ++chck_nth, ++dist_nth, l2dist, Q);
+        knn_(next(pivot), last, ++equal_nth, ++chck_nth, ++dist_nth, distf, Q);
       else
-        knn_(first, pivot, ++equal_nth, ++chck_nth, ++dist_nth, l2dist, Q);
+        knn_(first, pivot, ++equal_nth, ++chck_nth, ++dist_nth, distf, Q);
+    }
+  }
+}
+
+template <typename Iter,
+          typename EqualNth,
+          typename ChckNth,
+          typename DistNth,
+          typename DistFun,
+          typename QType>
+void aknn_(Iter first, Iter last,
+           const EqualNth& equal_nth,
+           const ChckNth& chck_nth,
+           const DistNth& dist_nth,
+           const DistFun& distf,
+           const double alpha,
+           QType& Q)
+{
+  switch(distance(first, last)) {
+  case 1 : Q.add(distf(*first), first);
+  case 0 : return; } // switch end
+  auto pivot = middle_of(first, last);
+  Q.add(distf(*pivot), pivot);
+  if (equal_nth(*pivot)) {
+    knn_(first, pivot, ++equal_nth, ++chck_nth, ++dist_nth, distf, Q);
+    knn_(next(pivot), last, ++equal_nth, ++chck_nth, ++dist_nth, distf, Q);
+  } else {
+    auto search_left = !chck_nth.search_right(*pivot);
+    if (search_left)
+      knn_(first, pivot, ++equal_nth, ++chck_nth, ++dist_nth, distf, Q);
+    else
+      knn_(next(pivot), last, ++equal_nth, ++chck_nth, ++dist_nth, distf, Q);
+    if ((1 + alpha) * dist_nth(*pivot) <= Q.max_key())
+    {
+      if (search_left)
+        knn_(next(pivot), last, ++equal_nth, ++chck_nth, ++dist_nth, distf, Q);
+      else
+        knn_(first, pivot, ++equal_nth, ++chck_nth, ++dist_nth, distf, Q);
     }
   }
 }
@@ -689,6 +777,8 @@ std::vector<int> kd_nn_df_no_validation(const List& df,
                                         const IntegerVector& idx,
                                         const NumericVector& w,
                                         const List& key,
+                                        const double a,
+                                        const double p,
                                         const int n)
 {
 #ifdef NO_CXX17
@@ -698,10 +788,13 @@ std::vector<int> kd_nn_df_no_validation(const List& df,
   iota(begin(x), end(x), 0);
   auto equal_nth = equal_nth_df(df, idx, key);
   auto chck_nth = chck_nth_df(df, idx, key, key);
-  auto l2dist = l2dist_df(df, idx, w, key);
+  auto distf = pdist_df(df, idx, w, key, p);
   auto dist_nth = dist_nth_df(df, idx, w, key);
   n_best<decltype(begin(x))> Q(std::min(n, nrow(df)));
-  knn_(begin(x), end(x), equal_nth, chck_nth, dist_nth, l2dist, Q);
+  if (a > 0)
+    aknn_(begin(x), end(x), equal_nth, chck_nth, dist_nth, distf, a, Q);
+  else
+    knn_(begin(x), end(x), equal_nth, chck_nth, dist_nth, distf, Q);
   std::vector<int> res;
   auto oi = std::back_inserter(res);
   Q.copy_to(oi);
@@ -715,6 +808,8 @@ std::vector<int> kd_nn_df(const List& df,
                           const IntegerVector& idx,
                           const NumericVector& w,
                           const List& key,
+                          const double a,
+                          const double p,
                           const int n)
 {
 #ifdef NO_CXX17
@@ -730,7 +825,7 @@ std::vector<int> kd_nn_df(const List& df,
     stop("Incorrect dimension of key");
   if (type_mismatch(df, idx, key))
     stop("Mismatched types in key");
-  return kd_nn_df_no_validation(df, idx, w, key, n);
+  return kd_nn_df_no_validation(df, idx, w, key, a, p, n);
 #endif
 }
 
@@ -739,6 +834,8 @@ List kd_nn_dist_df_no_validation(const List& df,
                                  const IntegerVector& idx,
                                  const NumericVector& w,
                                  const List& key,
+                                 const double a,
+                                 const double p,
                                  const int n)
 {
 #ifdef NO_CXX17
@@ -749,10 +846,13 @@ List kd_nn_dist_df_no_validation(const List& df,
   iota(begin(x), end(x), 0);
   auto equal_nth = equal_nth_df(df, idx, key);
   auto chck_nth = chck_nth_df(df, idx, key, key);
-  auto l2dist = l2dist_df(df, idx, w, key);
+  auto distf = pdist_df(df, idx, w, key, p);
   auto dist_nth = dist_nth_df(df, idx, w, key);
   n_best<decltype(begin(x))> Q(m);
-  knn_(begin(x), end(x), equal_nth, chck_nth, dist_nth, l2dist, Q);
+  if (a > 0)
+    aknn_(begin(x), end(x), equal_nth, chck_nth, dist_nth, distf, a, Q);
+  else
+    knn_(begin(x), end(x), equal_nth, chck_nth, dist_nth, distf, Q);
   std::vector<std::pair<double, decltype(begin(x))>> out;
   auto oi = std::back_inserter(out);
   out.reserve(n);
@@ -775,6 +875,8 @@ List kd_nn_dist_df(const List& df,
                    const IntegerVector& idx,
                    const NumericVector& w,
                    const List& key,
+                   const double a,
+                   const double p,
                    const int n)
 {
 #ifdef NO_CXX17
@@ -790,6 +892,6 @@ List kd_nn_dist_df(const List& df,
     stop("Incorrect dimension of key");
   if (type_mismatch(df, idx, key))
     stop("Mismatched types in key");
-  return kd_nn_dist_df_no_validation(df, idx, w, key, n);
+  return kd_nn_dist_df_no_validation(df, idx, w, key, a, p, n);
 #endif
 }

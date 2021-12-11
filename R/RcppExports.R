@@ -59,20 +59,20 @@ kd_rq_df <- function(df, idx, lower, upper) {
     .Call(`_kdtools_kd_rq_df`, df, idx, lower, upper)
 }
 
-kd_nn_df_no_validation <- function(df, idx, w, key, n) {
-    .Call(`_kdtools_kd_nn_df_no_validation`, df, idx, w, key, n)
+kd_nn_df_no_validation <- function(df, idx, w, key, a, p, n) {
+    .Call(`_kdtools_kd_nn_df_no_validation`, df, idx, w, key, a, p, n)
 }
 
-kd_nn_df <- function(df, idx, w, key, n) {
-    .Call(`_kdtools_kd_nn_df`, df, idx, w, key, n)
+kd_nn_df <- function(df, idx, w, key, a, p, n) {
+    .Call(`_kdtools_kd_nn_df`, df, idx, w, key, a, p, n)
 }
 
-kd_nn_dist_df_no_validation <- function(df, idx, w, key, n) {
-    .Call(`_kdtools_kd_nn_dist_df_no_validation`, df, idx, w, key, n)
+kd_nn_dist_df_no_validation <- function(df, idx, w, key, a, p, n) {
+    .Call(`_kdtools_kd_nn_dist_df_no_validation`, df, idx, w, key, a, p, n)
 }
 
-kd_nn_dist_df <- function(df, idx, w, key, n) {
-    .Call(`_kdtools_kd_nn_dist_df`, df, idx, w, key, n)
+kd_nn_dist_df <- function(df, idx, w, key, a, p, n) {
+    .Call(`_kdtools_kd_nn_dist_df`, df, idx, w, key, a, p, n)
 }
 
 #' Check if C++ 17 was available when building package

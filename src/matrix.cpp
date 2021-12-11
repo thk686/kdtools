@@ -196,12 +196,12 @@ struct pdist_mat {
       m_p(p), m_ndim(m_idx.size()) {}
 
   double operator()(const int i) const {
-    double ssq = 0;
+    double sum = 0;
     for (int j = 0; j != m_ndim; ++j) {
       auto k = m_idx(j) - 1;
-      ssq += std::pow(m_mat(i, k) - m_key(k), m_p);
+      sum += std::pow(m_mat(i, k) - m_key(k), m_p);
     }
-    return std::pow(ssq, 1 / m_p);
+    return std::pow(sum, 1 / m_p);
   }
 
   const NumericMatrix& m_mat;

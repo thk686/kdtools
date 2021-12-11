@@ -2,22 +2,22 @@
 % Please edit documentation in R/kdtools.R
 \name{kd_sort}
 \alias{kd_sort}
-\alias{kd_sort.matrix}
 \alias{kd_sort.arrayvec}
+\alias{kd_sort.matrix}
 \alias{kd_sort.data.frame}
 \alias{kd_sort.sf}
 \alias{kd_order}
-\alias{kd_order.matrix}
 \alias{kd_order.arrayvec}
+\alias{kd_order.matrix}
 \alias{kd_order.data.frame}
 \alias{kd_is_sorted}
 \title{Sort multidimensional data}
 \usage{
 kd_sort(x, ...)
 
-\method{kd_sort}{matrix}(x, cols = NULL, parallel = TRUE, ...)
-
 \method{kd_sort}{arrayvec}(x, inplace = FALSE, parallel = TRUE, ...)
+
+\method{kd_sort}{matrix}(x, cols = NULL, parallel = TRUE, ...)
 
 \method{kd_sort}{data.frame}(x, cols = NULL, parallel = TRUE, ...)
 
@@ -25,9 +25,9 @@ kd_sort(x, ...)
 
 kd_order(x, ...)
 
-\method{kd_order}{matrix}(x, cols = NULL, parallel = TRUE, ...)
-
 \method{kd_order}{arrayvec}(x, inplace = FALSE, parallel = TRUE, ...)
+
+\method{kd_order}{matrix}(x, cols = NULL, parallel = TRUE, ...)
 
 \method{kd_order}{data.frame}(x, cols = NULL, parallel = TRUE, ...)
 
@@ -38,11 +38,11 @@ kd_is_sorted(x, ...)
 
 \item{...}{ignored}
 
-\item{cols}{integer or character vector or formula indicating columns}
+\item{inplace}{sort as a side-effect if true}
 
 \item{parallel}{use multiple threads if true}
 
-\item{inplace}{sort as a side-effect if true}
+\item{cols}{integer or character vector or formula indicating columns}
 }
 \value{
 \tabular{ll}{\code{kd_sort} \tab the table sorted in kd-tree order

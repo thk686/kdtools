@@ -72,9 +72,7 @@ struct kd_less_df
                       inc_count ? m_count + 1 : 0);
   }
 
-  kd_less_df operator++() const {
-    return kd_less_df(m_df, m_idx, (m_dim + 1) % m_ndim, 0);
-  }
+  kd_less_df operator++() const { return next_dim(); }
 
   bool operator()(const int lhs, const int rhs) const {
     if (m_count == m_ndim) return false;
@@ -137,9 +135,7 @@ struct chck_nth_df
     return chck_nth_df(m_df, m_idx, m_lower, m_upper, (m_dim + 1) % m_idx.size());
   }
 
-  chck_nth_df operator++() const {
-    return chck_nth_df(m_df, m_idx, m_lower, m_upper, (m_dim + 1) % m_idx.size());
-  }
+  chck_nth_df operator++() const { return next_dim(); }
 
   bool search_left(const int i) const {
     auto col = SEXP(m_df[m_idx[m_dim] - 1]),
@@ -218,9 +214,7 @@ struct equal_nth_df
     return equal_nth_df(m_df, m_idx, m_key, (m_dim + 1) % m_idx.size());
   }
 
-  equal_nth_df operator++() const {
-    return equal_nth_df(m_df, m_idx, m_key, (m_dim + 1) % m_idx.size());
-  }
+  equal_nth_df operator++() const { return next_dim(); }
 
   bool operator()(const int i) const {
     auto col = SEXP(m_df[m_idx[m_dim] - 1]),
@@ -268,9 +262,7 @@ struct dist_nth_df
     return dist_nth_df(m_df, m_idx, m_w, m_key, (m_dim + 1) % m_idx.size());
   }
 
-  dist_nth_df operator++() const {
-    return dist_nth_df(m_df, m_idx, m_w, m_key, (m_dim + 1) % m_idx.size());
-  }
+  dist_nth_df operator++() const { return next_dim(); }
 
   double operator()(const int i) const {
     auto col = SEXP(m_df[m_idx[m_dim] - 1]),
@@ -411,7 +403,7 @@ struct pdist_df {
            const IntegerVector& idx,
            const NumericVector& w,
            const List& key, double p)
-    : m_df(df), m_key(key), m_idx(idx), m_w(w), m_ndim(m_idx.size()), m_p(p) {}
+    : m_df(df), m_key(key), m_idx(idx), m_w(w), m_p(p), m_ndim(m_idx.size()) {}
 
   double operator()(const int i) const {
     double sum = 0;
@@ -423,14 +415,14 @@ struct pdist_df {
         break;
       }
       case REALSXP: {
-        sum += m_w[j] * std::pow(REAL(col)[i] - REAL(k)[0], m_p);
+        sum += m_w[j] * std::pow(std::abs(REAL(col)[i] - REAL(k)[0]), m_p);
         break;
       }
       case INTSXP: {
         if (Rf_inherits(col, "factor")) {
           sum += INTEGER(col)[i] == INTEGER(k)[0] ? 0 : m_w[j];
         } else {
-          sum += m_w[j] * std::pow(INTEGER(col)[i] - INTEGER(k)[0], m_p);
+          sum += m_w[j] * std::pow(std::abs(INTEGER(col)[i] - INTEGER(k)[0]), m_p);
         }
         break;
       }
@@ -441,7 +433,7 @@ struct pdist_df {
       }
       case VECSXP: {
         SEXP lhs_ = VECTOR_ELT(col, i), rhs_ = VECTOR_ELT(k, 0);
-        sum += m_w[j] * std::pow(as<double>(Rdiff(lhs_, rhs_)), m_p);
+        sum += m_w[j] * std::pow(std::abs(as<double>(Rdiff(lhs_, rhs_))), m_p);
         break;
       }
       default: stop("Invalid column type");
@@ -644,20 +636,20 @@ void aknn_(Iter first, Iter last,
   auto pivot = middle_of(first, last);
   Q.add(distf(*pivot), pivot);
   if (equal_nth(*pivot)) {
-    knn_(first, pivot, ++equal_nth, ++chck_nth, ++dist_nth, distf, Q);
-    knn_(next(pivot), last, ++equal_nth, ++chck_nth, ++dist_nth, distf, Q);
+    aknn_(first, pivot, ++equal_nth, ++chck_nth, ++dist_nth, distf, alpha, Q);
+    aknn_(next(pivot), last, ++equal_nth, ++chck_nth, ++dist_nth, distf, alpha, Q);
   } else {
     auto search_left = !chck_nth.search_right(*pivot);
     if (search_left)
-      knn_(first, pivot, ++equal_nth, ++chck_nth, ++dist_nth, distf, Q);
+      aknn_(first, pivot, ++equal_nth, ++chck_nth, ++dist_nth, distf, alpha, Q);
     else
-      knn_(next(pivot), last, ++equal_nth, ++chck_nth, ++dist_nth, distf, Q);
+      aknn_(next(pivot), last, ++equal_nth, ++chck_nth, ++dist_nth, distf, alpha, Q);
     if ((1 + alpha) * dist_nth(*pivot) <= Q.max_key())
     {
       if (search_left)
-        knn_(next(pivot), last, ++equal_nth, ++chck_nth, ++dist_nth, distf, Q);
+        aknn_(next(pivot), last, ++equal_nth, ++chck_nth, ++dist_nth, distf, alpha, Q);
       else
-        knn_(first, pivot, ++equal_nth, ++chck_nth, ++dist_nth, distf, Q);
+        aknn_(first, pivot, ++equal_nth, ++chck_nth, ++dist_nth, distf, alpha, Q);
     }
   }
 }
@@ -773,70 +765,13 @@ std::vector<int> kd_rq_df(const List& df,
 }
 
 // [[Rcpp::export]]
-std::vector<int> kd_nn_df_no_validation(const List& df,
-                                        const IntegerVector& idx,
-                                        const NumericVector& w,
-                                        const List& key,
-                                        const double a,
-                                        const double p,
-                                        const int n)
-{
-#ifdef NO_CXX17
-  return std::vector<int>();
-#else
-  std::vector<int> x(nrow(df));
-  iota(begin(x), end(x), 0);
-  auto equal_nth = equal_nth_df(df, idx, key);
-  auto chck_nth = chck_nth_df(df, idx, key, key);
-  auto distf = pdist_df(df, idx, w, key, p);
-  auto dist_nth = dist_nth_df(df, idx, w, key);
-  n_best<decltype(begin(x))> Q(std::min(n, nrow(df)));
-  if (a > 0)
-    aknn_(begin(x), end(x), equal_nth, chck_nth, dist_nth, distf, a, Q);
-  else
-    knn_(begin(x), end(x), equal_nth, chck_nth, dist_nth, distf, Q);
-  std::vector<int> res;
-  auto oi = std::back_inserter(res);
-  Q.copy_to(oi);
-  for (auto& e : res) ++e;
-  return res;
-#endif
-}
-
-// [[Rcpp::export]]
-std::vector<int> kd_nn_df(const List& df,
-                          const IntegerVector& idx,
-                          const NumericVector& w,
-                          const List& key,
-                          const double a,
-                          const double p,
-                          const int n)
-{
-#ifdef NO_CXX17
-  return std::vector<int>();
-#else
-  if (ncol(df) < 1 || nrow(df) < 1)
-    stop("Empty data frame");
-  if (not_in_range(idx, ncol(df)))
-    stop("Index out of range");
-  if (idx.size() != w.size())
-    stop("Incorrect weights dimensions");
-  if (idx.size() != key.size())
-    stop("Incorrect dimension of key");
-  if (type_mismatch(df, idx, key))
-    stop("Mismatched types in key");
-  return kd_nn_df_no_validation(df, idx, w, key, a, p, n);
-#endif
-}
-
-// [[Rcpp::export]]
-List kd_nn_dist_df_no_validation(const List& df,
-                                 const IntegerVector& idx,
-                                 const NumericVector& w,
-                                 const List& key,
-                                 const double a,
-                                 const double p,
-                                 const int n)
+List kd_nn_df_no_validation(const List& df,
+                            const IntegerVector& idx,
+                            const NumericVector& w,
+                            const List& key,
+                            const double a,
+                            const double p,
+                            const int n)
 {
 #ifdef NO_CXX17
   return R_NilValue;
@@ -856,7 +791,7 @@ List kd_nn_dist_df_no_validation(const List& df,
   std::vector<std::pair<double, decltype(begin(x))>> out;
   auto oi = std::back_inserter(out);
   out.reserve(n);
-  Q.copy_dist_to(oi);
+  Q.copy_to(oi);
   IntegerVector loc(m);
   NumericVector dist(m);
   for (int i = 0; i != m; ++i) {
@@ -871,13 +806,13 @@ List kd_nn_dist_df_no_validation(const List& df,
 }
 
 // [[Rcpp::export]]
-List kd_nn_dist_df(const List& df,
-                   const IntegerVector& idx,
-                   const NumericVector& w,
-                   const List& key,
-                   const double a,
-                   const double p,
-                   const int n)
+List kd_nn_df(const List& df,
+              const IntegerVector& idx,
+              const NumericVector& w,
+              const List& key,
+              const double a,
+              const double p,
+              const int n)
 {
 #ifdef NO_CXX17
   return R_NilValue;
@@ -892,6 +827,6 @@ List kd_nn_dist_df(const List& df,
     stop("Incorrect dimension of key");
   if (type_mismatch(df, idx, key))
     stop("Mismatched types in key");
-  return kd_nn_dist_df_no_validation(df, idx, w, key, a, p, n);
+  return kd_nn_df_no_validation(df, idx, w, key, a, p, n);
 #endif
 }

@@ -80,9 +80,9 @@ kd_sort.data.frame <- function(x, cols = NULL, parallel = TRUE, ...) {
 #' @rdname kdsort
 #' @export
 kd_sort.sf <- function(x, cols = NULL, parallel = TRUE, ...) {
-  if (is.null(cols))
+  if (is.null(cols)) {
     return(x[kd_order(sf::st_coordinates(x), parallel = parallel),, drop = FALSE])
-  else {
+  } else {
     return(x[kd_order(sf::st_drop_geometry(x), colspec(x, cols), parallel = parallel),, drop = FALSE])
   }
 }
@@ -144,15 +144,15 @@ kd_is_sorted.data.frame <- function(x, cols = NULL, parallel = TRUE, ...) {
 lex_sort <- function(x, ...) UseMethod("lex_sort")
 
 #' @export
+lex_sort.arrayvec <- function(x, inplace = FALSE, ...) {
+  return(lex_sort_(x, inplace = inplace))
+}
+
+#' @export
 lex_sort.matrix <- function(x, ...) {
   y <- matrix_to_tuples(x)
   lex_sort_(y, inplace = TRUE)
   return(tuples_to_matrix(y))
-}
-
-#' @export
-lex_sort.arrayvec <- function(x, inplace = FALSE, ...) {
-  return(lex_sort_(x, inplace = inplace))
 }
 
 #' Search sorted data
@@ -185,14 +185,14 @@ lex_sort.arrayvec <- function(x, inplace = FALSE, ...) {
 kd_lower_bound <- function(x, v) UseMethod("kd_lower_bound")
 
 #' @export
-kd_lower_bound.matrix <- function(x, v) {
-  y <- matrix_to_tuples(x)
-  return(kd_lower_bound_(y, v))
+kd_lower_bound.arrayvec <- function(x, v) {
+  return(kd_lower_bound_(x, v))
 }
 
 #' @export
-kd_lower_bound.arrayvec <- function(x, v) {
-  return(kd_lower_bound_(x, v))
+kd_lower_bound.matrix <- function(x, v) {
+  y <- matrix_to_tuples(x)
+  return(kd_lower_bound_(y, v))
 }
 
 #' @rdname search
@@ -200,14 +200,14 @@ kd_lower_bound.arrayvec <- function(x, v) {
 kd_upper_bound <- function(x, v) UseMethod("kd_upper_bound")
 
 #' @export
-kd_upper_bound.matrix <- function(x, v) {
-  y <- matrix_to_tuples(x)
-  return(kd_upper_bound_(y, v))
+kd_upper_bound.arrayvec <- function(x, v) {
+  return(kd_upper_bound_(x, v))
 }
 
 #' @export
-kd_upper_bound.arrayvec <- function(x, v) {
-  return(kd_upper_bound_(x, v))
+kd_upper_bound.matrix <- function(x, v) {
+  y <- matrix_to_tuples(x)
+  return(kd_upper_bound_(y, v))
 }
 
 #' @rdname search
@@ -260,15 +260,15 @@ kd_binary_search <- function(x, v) UseMethod("kd_binary_search")
 
 #' @rdname search
 #' @export
-kd_binary_search.matrix <- function(x, v) {
-  y <- matrix_to_tuples(x)
-  return(kd_binary_search_(y, v))
+kd_binary_search.arrayvec <- function(x, v) {
+  return(kd_binary_search_(x, v))
 }
 
 #' @rdname search
 #' @export
-kd_binary_search.arrayvec <- function(x, v) {
-  return(kd_binary_search_(x, v))
+kd_binary_search.matrix <- function(x, v) {
+  y <- matrix_to_tuples(x)
+  return(kd_binary_search_(y, v))
 }
 
 #' Find nearest neighbors
@@ -279,6 +279,7 @@ kd_binary_search.arrayvec <- function(x, v) {
 #' @param w distance weights
 #' @param p exponent of p-norm (Minkowski) distance
 #' @param a approximate neighbors within (1 + a)
+#' @oaran validate if FALSE, no input validation is performed
 #' @param ... ignored
 #' @return \tabular{ll}{
 #' \code{kd_nearest_neighbors} \tab one or more rows from the sorted input \cr
@@ -301,8 +302,8 @@ kd_nearest_neighbors <- function(x, v, n, ...) UseMethod("kd_nearest_neighbors")
 
 #' @rdname nneighb
 #' @export
-kd_nearest_neighbors.arrayvec <- function(x, v, n, ...) {
-  return(kd_nearest_neighbors_(x, v, n))
+kd_nearest_neighbors.arrayvec <- function(x, v, n, p = 2, a = 0, ...) {
+  return(kd_nearest_neighbors_(x, v, n, p = p, a = a))
 }
 
 #' @rdname nneighb
@@ -324,29 +325,41 @@ kd_nn_indices <- function(x, v, n, ...) UseMethod("kd_nn_indices")
 #' @param distances return distances as attribute if true
 #' @rdname nneighb
 #' @export
-kd_nn_indices.arrayvec <- function(x, v, n, distances = FALSE, ...) {
+kd_nn_indices.arrayvec <- function(x, v, n, distances = FALSE, p = 2, a = 0, ...) {
   if (distances)
-    return(as.data.frame(kd_nn_dist_(x, v, n)))
-  return(kd_nn_indices_(x, v, n))
+    return(as.data.frame(kd_nn_dist_(x, v, n, p, a)))
+  return(kd_nn_indices_(x, v, n, p, a))
 }
 
 #' @rdname nneighb
 #' @export
-kd_nn_indices.matrix <- function(x, v, n, cols = NULL, distances = FALSE, p = 2, a = 0, ...) {
+kd_nn_indices.matrix <- function(x, v, n, cols = NULL,
+                                 distances = FALSE, p = 2, a = 0,
+                                 validate = TRUE, ...) {
   cols <- colspec(x, cols)
-  if (distances)
-    return(as.data.frame(kd_nn_dist_mat(x, cols, v, a, p, n)))
-  return(kd_nn_mat(x, cols, v, a, p, n))
+  res <- if (validate) {
+    kd_nn_mat(x, cols, v, a, p, n)
+  } else {
+    kd_nn_mat_no_validation(x, cols, v, a, p, n)
+  }
+  if (distances) return(as.data.frame(res))
+  return(res[[1]])
 }
 
 #' @rdname nneighb
 #' @export
-kd_nn_indices.data.frame <- function(x, v, n, cols = NULL, w = NULL, distances = FALSE, p = 2, a = 0, ...) {
+kd_nn_indices.data.frame <- function(x, v, n, cols = NULL, w = NULL,
+                                     distances = FALSE, p = 2, a = 0,
+                                     validate = TRUE, ...) {
   cols <- colspec(x, cols)
   if (is.null(w)) w <- rep_len(1, length(cols))
-  if (distances)
-    return(as.data.frame(kd_nn_dist_df(x, cols, w, v, a, p, n)))
-  return(kd_nn_df(x, cols, w, v, a, p, n))
+  res <- if (validate) {
+    kd_nn_df(x, cols, w, v, a, p, n)
+  } else {
+    kd_nn_df_no_validation(x, cols, w, v, a, p, n)
+  }
+  if (distances) return(as.data.frame(res))
+  return(res[[1]])
 }
 
 #' @rdname nneighb

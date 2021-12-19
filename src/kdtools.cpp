@@ -141,45 +141,47 @@ bool kd_binary_search__(List x, NumericVector v)
 }
 
 template <size_t I>
-List kd_nearest_neighbors__(List x, NumericVector value, int n)
+List kd_nearest_neighbors__(List x, NumericVector value, int n, double p, double a)
 {
-  auto p = get_ptr<I>(x);
+  auto p_ = get_ptr<I>(x);
   auto q = make_xptr(new arrayvec<I>);
   auto oi = back_inserter(*q);
   auto v = vec_to_array<I>(value);
-  kd_nearest_neighbors(begin(*p), end(*p), v, n, oi);
+  kd_nearest_neighbors(begin(*p_), end(*p_), v, a, p, n, oi);
   return wrap_ptr(q);
 }
 
 template <size_t I>
-IntegerVector kd_nn_indices__(List x, NumericVector value, int n)
+IntegerVector kd_nn_indices__(List x, NumericVector value, int n, double p, double a)
 {
-  auto p = get_ptr<I>(x);
+  auto p_ = get_ptr<I>(x);
   auto q = vector<av_iter<I>>();
   auto oi = back_inserter(q);
   auto v = vec_to_array<I>(value);
-  kd_nn_iters(begin(*p), end(*p), v, n, oi);
+  kd_nearest_neighbors(begin(*p_), end(*p_), v, a, p, n, oi,
+                       [](auto&& x){ return x.second; });
   IntegerVector res(q.size());
   std::transform(begin(q), end(q), begin(res),
                  [&](av_iter<I> x){
-                   return distance(p->begin(), x) + 1;
+                   return distance(p_->begin(), x) + 1;
                  });
   return res;
 }
 
 template <size_t I>
-List kd_nn_dist__(List x, NumericVector value, int n)
+List kd_nn_dist__(List x, NumericVector value, int n, double p, double a)
 {
-  auto p = get_ptr<I>(x);
+  auto p_ = get_ptr<I>(x);
   auto q = vector<std::pair<double, av_iter<I>>>();
   auto oi = back_inserter(q);
   auto v = vec_to_array<I>(value);
   q.reserve(n);
-  kd_nn_dist(begin(*p), end(*p), v, n, oi);
+  kd_nearest_neighbors(begin(*p_), end(*p_), v, a, p, n, oi,
+                       [](auto&& x){ return x; });
   IntegerVector loc(n);
   NumericVector dist(n);
   for (int i = 0; i != n; ++i) {
-    loc[i] = distance(p->begin(), q[i].second) + 1;
+    loc[i] = distance(p_->begin(), q[i].second) + 1;
     dist[i] = q[i].first;
   }
   List res;
@@ -485,66 +487,64 @@ bool kd_binary_search_(List x, NumericVector value)
 }
 
 // [[Rcpp::export]]
-List kd_nearest_neighbors_(List x, NumericVector value, int n)
+List kd_nearest_neighbors_(List x, NumericVector value, int n, double p, double a)
 {
 #ifdef NO_CXX17
   return R_NilValue;
 #else
   switch(arrayvec_dim(x)) {
-  case 1: return kd_nearest_neighbors__<1>(x, value, n);
-  case 2: return kd_nearest_neighbors__<2>(x, value, n);
-  case 3: return kd_nearest_neighbors__<3>(x, value, n);
-  case 4: return kd_nearest_neighbors__<4>(x, value, n);
-  case 5: return kd_nearest_neighbors__<5>(x, value, n);
-  case 6: return kd_nearest_neighbors__<6>(x, value, n);
-  case 7: return kd_nearest_neighbors__<7>(x, value, n);
-  case 8: return kd_nearest_neighbors__<8>(x, value, n);
-  case 9: return kd_nearest_neighbors__<9>(x, value, n);
+  case 1: return kd_nearest_neighbors__<1>(x, value, n, p, a);
+  case 2: return kd_nearest_neighbors__<2>(x, value, n, p, a);
+  case 3: return kd_nearest_neighbors__<3>(x, value, n, p, a);
+  case 4: return kd_nearest_neighbors__<4>(x, value, n, p, a);
+  case 5: return kd_nearest_neighbors__<5>(x, value, n, p, a);
+  case 6: return kd_nearest_neighbors__<6>(x, value, n, p, a);
+  case 7: return kd_nearest_neighbors__<7>(x, value, n, p, a);
+  case 8: return kd_nearest_neighbors__<8>(x, value, n, p, a);
+  case 9: return kd_nearest_neighbors__<9>(x, value, n, p, a);
   default: stop("Invalid dimensions");
   }
 #endif
 }
 
 // [[Rcpp::export]]
-IntegerVector kd_nn_indices_(List x, NumericVector value, int n)
+IntegerVector kd_nn_indices_(List x, NumericVector value, int n, double p, double a)
 {
 #ifdef NO_CXX17
   return R_NilValue;
 #else
   switch(arrayvec_dim(x)) {
-  case 1: return kd_nn_indices__<1>(x, value, n);
-  case 2: return kd_nn_indices__<2>(x, value, n);
-  case 3: return kd_nn_indices__<3>(x, value, n);
-  case 4: return kd_nn_indices__<4>(x, value, n);
-  case 5: return kd_nn_indices__<5>(x, value, n);
-  case 6: return kd_nn_indices__<6>(x, value, n);
-  case 7: return kd_nn_indices__<7>(x, value, n);
-  case 8: return kd_nn_indices__<8>(x, value, n);
-  case 9: return kd_nn_indices__<9>(x, value, n);
+  case 1: return kd_nn_indices__<1>(x, value, n, p, a);
+  case 2: return kd_nn_indices__<2>(x, value, n, p, a);
+  case 3: return kd_nn_indices__<3>(x, value, n, p, a);
+  case 4: return kd_nn_indices__<4>(x, value, n, p, a);
+  case 5: return kd_nn_indices__<5>(x, value, n, p, a);
+  case 6: return kd_nn_indices__<6>(x, value, n, p, a);
+  case 7: return kd_nn_indices__<7>(x, value, n, p, a);
+  case 8: return kd_nn_indices__<8>(x, value, n, p, a);
+  case 9: return kd_nn_indices__<9>(x, value, n, p, a);
   default: stop("Invalid dimensions");
   }
 #endif
 }
 
 // [[Rcpp::export]]
-List kd_nn_dist_(List x, NumericVector value, int n)
+List kd_nn_dist_(List x, NumericVector value, int n, double p, double a)
 {
 #ifdef NO_CXX17
   return R_NilValue;
 #else
   switch(arrayvec_dim(x)) {
-  case 1: return kd_nn_dist__<1>(x, value, n);
-  case 2: return kd_nn_dist__<2>(x, value, n);
-  case 3: return kd_nn_dist__<3>(x, value, n);
-  case 4: return kd_nn_dist__<4>(x, value, n);
-  case 5: return kd_nn_dist__<5>(x, value, n);
-  case 6: return kd_nn_dist__<6>(x, value, n);
-  case 7: return kd_nn_dist__<7>(x, value, n);
-  case 8: return kd_nn_dist__<8>(x, value, n);
-  case 9: return kd_nn_dist__<9>(x, value, n);
+  case 1: return kd_nn_dist__<1>(x, value, n, p, a);
+  case 2: return kd_nn_dist__<2>(x, value, n, p, a);
+  case 3: return kd_nn_dist__<3>(x, value, n, p, a);
+  case 4: return kd_nn_dist__<4>(x, value, n, p, a);
+  case 5: return kd_nn_dist__<5>(x, value, n, p, a);
+  case 6: return kd_nn_dist__<6>(x, value, n, p, a);
+  case 7: return kd_nn_dist__<7>(x, value, n, p, a);
+  case 8: return kd_nn_dist__<8>(x, value, n, p, a);
+  case 9: return kd_nn_dist__<9>(x, value, n, p, a);
   default: stop("Invalid dimensions");
   }
 #endif
 }
-
-

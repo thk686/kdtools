@@ -127,7 +127,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // kd_nn_df_no_validation
-std::vector<int> kd_nn_df_no_validation(const List& df, const IntegerVector& idx, const NumericVector& w, const List& key, const double a, const double p, const int n);
+List kd_nn_df_no_validation(const List& df, const IntegerVector& idx, const NumericVector& w, const List& key, const double a, const double p, const int n);
 RcppExport SEXP _kdtools_kd_nn_df_no_validation(SEXP dfSEXP, SEXP idxSEXP, SEXP wSEXP, SEXP keySEXP, SEXP aSEXP, SEXP pSEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -144,7 +144,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // kd_nn_df
-std::vector<int> kd_nn_df(const List& df, const IntegerVector& idx, const NumericVector& w, const List& key, const double a, const double p, const int n);
+List kd_nn_df(const List& df, const IntegerVector& idx, const NumericVector& w, const List& key, const double a, const double p, const int n);
 RcppExport SEXP _kdtools_kd_nn_df(SEXP dfSEXP, SEXP idxSEXP, SEXP wSEXP, SEXP keySEXP, SEXP aSEXP, SEXP pSEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -157,40 +157,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const double >::type p(pSEXP);
     Rcpp::traits::input_parameter< const int >::type n(nSEXP);
     rcpp_result_gen = Rcpp::wrap(kd_nn_df(df, idx, w, key, a, p, n));
-    return rcpp_result_gen;
-END_RCPP
-}
-// kd_nn_dist_df_no_validation
-List kd_nn_dist_df_no_validation(const List& df, const IntegerVector& idx, const NumericVector& w, const List& key, const double a, const double p, const int n);
-RcppExport SEXP _kdtools_kd_nn_dist_df_no_validation(SEXP dfSEXP, SEXP idxSEXP, SEXP wSEXP, SEXP keySEXP, SEXP aSEXP, SEXP pSEXP, SEXP nSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const List& >::type df(dfSEXP);
-    Rcpp::traits::input_parameter< const IntegerVector& >::type idx(idxSEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type w(wSEXP);
-    Rcpp::traits::input_parameter< const List& >::type key(keySEXP);
-    Rcpp::traits::input_parameter< const double >::type a(aSEXP);
-    Rcpp::traits::input_parameter< const double >::type p(pSEXP);
-    Rcpp::traits::input_parameter< const int >::type n(nSEXP);
-    rcpp_result_gen = Rcpp::wrap(kd_nn_dist_df_no_validation(df, idx, w, key, a, p, n));
-    return rcpp_result_gen;
-END_RCPP
-}
-// kd_nn_dist_df
-List kd_nn_dist_df(const List& df, const IntegerVector& idx, const NumericVector& w, const List& key, const double a, const double p, const int n);
-RcppExport SEXP _kdtools_kd_nn_dist_df(SEXP dfSEXP, SEXP idxSEXP, SEXP wSEXP, SEXP keySEXP, SEXP aSEXP, SEXP pSEXP, SEXP nSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const List& >::type df(dfSEXP);
-    Rcpp::traits::input_parameter< const IntegerVector& >::type idx(idxSEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type w(wSEXP);
-    Rcpp::traits::input_parameter< const List& >::type key(keySEXP);
-    Rcpp::traits::input_parameter< const double >::type a(aSEXP);
-    Rcpp::traits::input_parameter< const double >::type p(pSEXP);
-    Rcpp::traits::input_parameter< const int >::type n(nSEXP);
-    rcpp_result_gen = Rcpp::wrap(kd_nn_dist_df(df, idx, w, key, a, p, n));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -355,41 +321,47 @@ BEGIN_RCPP
 END_RCPP
 }
 // kd_nearest_neighbors_
-List kd_nearest_neighbors_(List x, NumericVector value, int n);
-RcppExport SEXP _kdtools_kd_nearest_neighbors_(SEXP xSEXP, SEXP valueSEXP, SEXP nSEXP) {
+List kd_nearest_neighbors_(List x, NumericVector value, int n, double p, double a);
+RcppExport SEXP _kdtools_kd_nearest_neighbors_(SEXP xSEXP, SEXP valueSEXP, SEXP nSEXP, SEXP pSEXP, SEXP aSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< List >::type x(xSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type value(valueSEXP);
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    rcpp_result_gen = Rcpp::wrap(kd_nearest_neighbors_(x, value, n));
+    Rcpp::traits::input_parameter< double >::type p(pSEXP);
+    Rcpp::traits::input_parameter< double >::type a(aSEXP);
+    rcpp_result_gen = Rcpp::wrap(kd_nearest_neighbors_(x, value, n, p, a));
     return rcpp_result_gen;
 END_RCPP
 }
 // kd_nn_indices_
-IntegerVector kd_nn_indices_(List x, NumericVector value, int n);
-RcppExport SEXP _kdtools_kd_nn_indices_(SEXP xSEXP, SEXP valueSEXP, SEXP nSEXP) {
+IntegerVector kd_nn_indices_(List x, NumericVector value, int n, double p, double a);
+RcppExport SEXP _kdtools_kd_nn_indices_(SEXP xSEXP, SEXP valueSEXP, SEXP nSEXP, SEXP pSEXP, SEXP aSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< List >::type x(xSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type value(valueSEXP);
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    rcpp_result_gen = Rcpp::wrap(kd_nn_indices_(x, value, n));
+    Rcpp::traits::input_parameter< double >::type p(pSEXP);
+    Rcpp::traits::input_parameter< double >::type a(aSEXP);
+    rcpp_result_gen = Rcpp::wrap(kd_nn_indices_(x, value, n, p, a));
     return rcpp_result_gen;
 END_RCPP
 }
 // kd_nn_dist_
-List kd_nn_dist_(List x, NumericVector value, int n);
-RcppExport SEXP _kdtools_kd_nn_dist_(SEXP xSEXP, SEXP valueSEXP, SEXP nSEXP) {
+List kd_nn_dist_(List x, NumericVector value, int n, double p, double a);
+RcppExport SEXP _kdtools_kd_nn_dist_(SEXP xSEXP, SEXP valueSEXP, SEXP nSEXP, SEXP pSEXP, SEXP aSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< List >::type x(xSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type value(valueSEXP);
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    rcpp_result_gen = Rcpp::wrap(kd_nn_dist_(x, value, n));
+    Rcpp::traits::input_parameter< double >::type p(pSEXP);
+    Rcpp::traits::input_parameter< double >::type a(aSEXP);
+    rcpp_result_gen = Rcpp::wrap(kd_nn_dist_(x, value, n, p, a));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -474,7 +446,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // kd_nn_mat_no_validation
-std::vector<int> kd_nn_mat_no_validation(const NumericMatrix& mat, const IntegerVector& idx, const NumericVector& key, const double alpha, const double p, const int n);
+List kd_nn_mat_no_validation(const NumericMatrix& mat, const IntegerVector& idx, const NumericVector& key, const double alpha, const double p, const int n);
 RcppExport SEXP _kdtools_kd_nn_mat_no_validation(SEXP matSEXP, SEXP idxSEXP, SEXP keySEXP, SEXP alphaSEXP, SEXP pSEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -490,7 +462,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // kd_nn_mat
-std::vector<int> kd_nn_mat(const NumericMatrix& mat, const IntegerVector& idx, const NumericVector& key, const double alpha, const double p, const int n);
+List kd_nn_mat(const NumericMatrix& mat, const IntegerVector& idx, const NumericVector& key, const double alpha, const double p, const int n);
 RcppExport SEXP _kdtools_kd_nn_mat(SEXP matSEXP, SEXP idxSEXP, SEXP keySEXP, SEXP alphaSEXP, SEXP pSEXP, SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -502,38 +474,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const double >::type p(pSEXP);
     Rcpp::traits::input_parameter< const int >::type n(nSEXP);
     rcpp_result_gen = Rcpp::wrap(kd_nn_mat(mat, idx, key, alpha, p, n));
-    return rcpp_result_gen;
-END_RCPP
-}
-// kd_nn_dist_mat_no_validation
-List kd_nn_dist_mat_no_validation(const NumericMatrix& mat, const IntegerVector& idx, const NumericVector& key, const double alpha, const double p, const int n);
-RcppExport SEXP _kdtools_kd_nn_dist_mat_no_validation(SEXP matSEXP, SEXP idxSEXP, SEXP keySEXP, SEXP alphaSEXP, SEXP pSEXP, SEXP nSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const NumericMatrix& >::type mat(matSEXP);
-    Rcpp::traits::input_parameter< const IntegerVector& >::type idx(idxSEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type key(keySEXP);
-    Rcpp::traits::input_parameter< const double >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< const double >::type p(pSEXP);
-    Rcpp::traits::input_parameter< const int >::type n(nSEXP);
-    rcpp_result_gen = Rcpp::wrap(kd_nn_dist_mat_no_validation(mat, idx, key, alpha, p, n));
-    return rcpp_result_gen;
-END_RCPP
-}
-// kd_nn_dist_mat
-List kd_nn_dist_mat(const NumericMatrix& mat, const IntegerVector& idx, const NumericVector& key, const double alpha, const double p, const int n);
-RcppExport SEXP _kdtools_kd_nn_dist_mat(SEXP matSEXP, SEXP idxSEXP, SEXP keySEXP, SEXP alphaSEXP, SEXP pSEXP, SEXP nSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const NumericMatrix& >::type mat(matSEXP);
-    Rcpp::traits::input_parameter< const IntegerVector& >::type idx(idxSEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type key(keySEXP);
-    Rcpp::traits::input_parameter< const double >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< const double >::type p(pSEXP);
-    Rcpp::traits::input_parameter< const int >::type n(nSEXP);
-    rcpp_result_gen = Rcpp::wrap(kd_nn_dist_mat(mat, idx, key, alpha, p, n));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -550,6 +490,8 @@ BEGIN_RCPP
 END_RCPP
 }
 
+RcppExport SEXP run_testthat_tests(SEXP);
+
 static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_matrix_to_tuples", (DL_FUNC) &_kdtools_matrix_to_tuples, 1},
     {"_kdtools_tuples_to_matrix", (DL_FUNC) &_kdtools_tuples_to_matrix, 1},
@@ -562,8 +504,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_kd_rq_df", (DL_FUNC) &_kdtools_kd_rq_df, 4},
     {"_kdtools_kd_nn_df_no_validation", (DL_FUNC) &_kdtools_kd_nn_df_no_validation, 7},
     {"_kdtools_kd_nn_df", (DL_FUNC) &_kdtools_kd_nn_df, 7},
-    {"_kdtools_kd_nn_dist_df_no_validation", (DL_FUNC) &_kdtools_kd_nn_dist_df_no_validation, 7},
-    {"_kdtools_kd_nn_dist_df", (DL_FUNC) &_kdtools_kd_nn_dist_df, 7},
     {"_kdtools_has_cxx17", (DL_FUNC) &_kdtools_has_cxx17, 0},
     {"_kdtools_kd_order_", (DL_FUNC) &_kdtools_kd_order_, 3},
     {"_kdtools_kd_is_sorted_", (DL_FUNC) &_kdtools_kd_is_sorted_, 2},
@@ -577,9 +517,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_kd_rqi_circular_", (DL_FUNC) &_kdtools_kd_rqi_circular_, 3},
     {"_kdtools_kd_nearest_neighbor_", (DL_FUNC) &_kdtools_kd_nearest_neighbor_, 2},
     {"_kdtools_kd_binary_search_", (DL_FUNC) &_kdtools_kd_binary_search_, 2},
-    {"_kdtools_kd_nearest_neighbors_", (DL_FUNC) &_kdtools_kd_nearest_neighbors_, 3},
-    {"_kdtools_kd_nn_indices_", (DL_FUNC) &_kdtools_kd_nn_indices_, 3},
-    {"_kdtools_kd_nn_dist_", (DL_FUNC) &_kdtools_kd_nn_dist_, 3},
+    {"_kdtools_kd_nearest_neighbors_", (DL_FUNC) &_kdtools_kd_nearest_neighbors_, 5},
+    {"_kdtools_kd_nn_indices_", (DL_FUNC) &_kdtools_kd_nn_indices_, 5},
+    {"_kdtools_kd_nn_dist_", (DL_FUNC) &_kdtools_kd_nn_dist_, 5},
     {"_kdtools_kd_order_mat_no_validation", (DL_FUNC) &_kdtools_kd_order_mat_no_validation, 3},
     {"_kdtools_kd_order_mat", (DL_FUNC) &_kdtools_kd_order_mat, 3},
     {"_kdtools_kd_is_sorted_mat_no_validation", (DL_FUNC) &_kdtools_kd_is_sorted_mat_no_validation, 3},
@@ -588,9 +528,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_kd_rq_mat", (DL_FUNC) &_kdtools_kd_rq_mat, 4},
     {"_kdtools_kd_nn_mat_no_validation", (DL_FUNC) &_kdtools_kd_nn_mat_no_validation, 6},
     {"_kdtools_kd_nn_mat", (DL_FUNC) &_kdtools_kd_nn_mat, 6},
-    {"_kdtools_kd_nn_dist_mat_no_validation", (DL_FUNC) &_kdtools_kd_nn_dist_mat_no_validation, 6},
-    {"_kdtools_kd_nn_dist_mat", (DL_FUNC) &_kdtools_kd_nn_dist_mat, 6},
     {"_kdtools_levenshtein", (DL_FUNC) &_kdtools_levenshtein, 2},
+    {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}
 };
 

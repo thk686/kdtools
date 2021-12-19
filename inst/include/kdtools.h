@@ -875,25 +875,14 @@ struct n_best
   {
     if (m_q.size() < m_n) sort(begin(m_q), end(m_q), qcomp_t());
     else sort_heap(begin(m_q), end(m_q), qcomp_t());
-    transform(begin(m_q), end(m_q), outp, [](const qmem_t& x){
-      return *x.second;
-    });
-  }
-  template <typename OutIter>
-  void copy_iters_to(OutIter outp)
-  {
-    if (m_q.size() < m_n) sort(begin(m_q), end(m_q), qcomp_t());
-    else sort_heap(begin(m_q), end(m_q), qcomp_t());
-    transform(begin(m_q), end(m_q), outp, [](const qmem_t& x){
-      return x.second;
-    });
-  }
-  template <typename OutIter>
-  void copy_dist_to(OutIter outp)
-  {
-    if (m_q.size() < m_n) sort(begin(m_q), end(m_q), qcomp_t());
-    else sort_heap(begin(m_q), end(m_q), qcomp_t());
     copy(begin(m_q), end(m_q), outp);
+  }
+  template <typename OutIter, typename Proj>
+  void copy_to(OutIter outp, Proj&& proj)
+  {
+    if (m_q.size() < m_n) sort(begin(m_q), end(m_q), qcomp_t());
+    else sort_heap(begin(m_q), end(m_q), qcomp_t());
+    transform(begin(m_q), end(m_q), outp, std::forward<Proj>(proj));
   }
 };
 
@@ -936,8 +925,7 @@ template <size_t I,
           typename QType>
 void knn(Iter first, Iter last,
          const TupleType& key,
-         double p,
-         QType& Q)
+         double p, QType& Q)
 {
   switch(distance(first, last)) {
   case 1 : Q.add(pdist(*first, key, p), first);
@@ -946,20 +934,54 @@ void knn(Iter first, Iter last,
   Q.add(pdist(*pivot, key, p), pivot);
   constexpr auto J = next_dim<I, TupleType>;
   if (equal_nth<I>(*pivot, key)) {
-    knn<J>(first, pivot, key, Q);
-    knn<J>(next(pivot), last, key, Q);
+    knn<J>(first, pivot, key, p, Q);
+    knn<J>(next(pivot), last, key, p, Q);
   } else {
     auto search_left = less_nth<I>(key, *pivot);
     if (search_left)
-      knn<J>(first, pivot, key, Q);
+      knn<J>(first, pivot, key, p, Q);
     else
-      knn<J>(next(pivot), last, key, Q);
+      knn<J>(next(pivot), last, key, p, Q);
     if (dist_nth<I>(key, *pivot) <= Q.max_key())
     {
       if (search_left)
-        knn<J>(next(pivot), last, key, Q);
+        knn<J>(next(pivot), last, key, p, Q);
       else
-        knn<J>(first, pivot, key, Q);
+        knn<J>(first, pivot, key, p, Q);
+    }
+  }
+}
+
+template <size_t I,
+          typename Iter,
+          typename TupleType,
+          typename QType>
+void aknn(Iter first, Iter last,
+          const TupleType& key,
+          double alpha, double p,
+          QType& Q)
+{
+  switch(distance(first, last)) {
+  case 1 : Q.add(pdist(*first, key, p), first);
+  case 0 : return; } // switch end
+  auto pivot = middle_of(first, last);
+  Q.add(pdist(*pivot, key, p), pivot);
+  constexpr auto J = next_dim<I, TupleType>;
+  if (equal_nth<I>(*pivot, key)) {
+    aknn<J>(first, pivot, key, alpha, p, Q);
+    aknn<J>(next(pivot), last, key, alpha, p, Q);
+  } else {
+    auto search_left = less_nth<I>(key, *pivot);
+    if (search_left)
+      aknn<J>(first, pivot, key, alpha, p, Q);
+    else
+      aknn<J>(next(pivot), last, key, alpha, p, Q);
+    if ((1 + alpha) * dist_nth<I>(key, *pivot) <= Q.max_key())
+    {
+      if (search_left)
+        aknn<J>(next(pivot), last, key, alpha, p, Q);
+      else
+        aknn<J>(first, pivot, key, alpha, p, Q);
     }
   }
 }
@@ -1144,71 +1166,44 @@ void kd_nearest_neighbors(Iter first, Iter last, const TupleType& key, size_t n,
   size_t m = std::distance(first, last);
   detail::n_best<Iter> Q(std::min(n, m));
   detail::knn<0>(first, last, key, Q);
-  Q.copy_to(outp);
+  Q.copy_to(outp, [](auto&& x){ return *x.second; });
 }
 
-template <typename Iter,
-          typename TupleType,
-          typename OutIter>
-void kd_nn_iters(Iter first, Iter last, const TupleType& key, size_t n, OutIter outp)
-{
-  size_t m = std::distance(first, last);
-  detail::n_best<Iter> Q(std::min(n, m));
-  detail::knn<0>(first, last, key, Q);
-  Q.copy_iters_to(outp);
-}
-
-template <typename Iter,
-          typename TupleType,
-          typename OutIter>
-void kd_nn_dist(Iter first, Iter last, const TupleType& key, size_t n, OutIter outp)
-{
-  size_t m = std::distance(first, last);
-  detail::n_best<Iter> Q(std::min(n, m));
-  detail::knn<0>(first, last, key, Q);
-  Q.copy_dist_to(outp);
-}
 
 template <typename Iter,
           typename TupleType,
           typename OutIter>
 void kd_nearest_neighbors(Iter first, Iter last,
                           const TupleType& key,
-                          double p, size_t n,
-                          OutIter outp)
+                          double alpha, double p,
+                          size_t n, OutIter outp)
 {
   size_t m = std::distance(first, last);
   detail::n_best<Iter> Q(std::min(n, m));
-  detail::knn<0>(first, last, key, p, Q);
-  Q.copy_to(outp);
+  if (alpha > 0)
+    detail::aknn<0>(first, last, key, alpha, p, Q);
+  else
+    detail::knn<0>(first, last, key, p, Q);
+  Q.copy_to(outp, [](auto&& x){ return *x.second; });
 }
 
 template <typename Iter,
           typename TupleType,
-          typename OutIter>
-void kd_nn_iters(Iter first, Iter last,
-                 const TupleType& key,
-                 double p, size_t n,
-                 OutIter outp)
+          typename OutIter,
+          typename Projection>
+void kd_nearest_neighbors(Iter first, Iter last,
+                          const TupleType& key,
+                          double alpha, double p,
+                          size_t n, OutIter outp,
+                          Projection&& proj)
 {
   size_t m = std::distance(first, last);
   detail::n_best<Iter> Q(std::min(n, m));
-  detail::knn<0>(first, last, key, p, Q);
-  Q.copy_iters_to(outp);
-}
-
-template <typename Iter,
-          typename TupleType,
-          typename OutIter>
-void kd_nn_dist(Iter first, Iter last,
-                const TupleType& key,
-                double p, size_t n,
-                OutIter outp)
-{
-  size_t m = std::distance(first, last);
-  detail::n_best<Iter> Q(std::min(n, m));
-  detail::knn<0>(first, last, key, p, Q);
-  Q.copy_dist_to(outp);
+  if (alpha > 0)
+    detail::aknn<0>(first, last, key, alpha, p, Q);
+  else
+    detail::knn<0>(first, last, key, p, Q);
+  Q.copy_to(outp, std::forward<Projection>(proj));
 }
 
 } // namespace kdtools

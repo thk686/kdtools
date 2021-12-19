@@ -5,10 +5,11 @@
 #'
 #' @param x object to be converted
 #'
-#' @details The algorithms in kdtools can accept either matrices or an
-#' \link{arrayvec} object. When a matrix is passed, it is converted to
-#' an arrayvec object internally and the results are converted back to
-#' a matrix. For optimal performance, pre-convert matrices.
+#' @details Most of the R functions exposed by \code{kdtools} can operate
+#' natively on a data.frame, matrix or an \code{\link{arrayvec}} object.
+#' An \code{arrayvec} object is a pointer to a native C++ vector of arrays
+#' and will be the fastest option. Only doubles are supported by \code{arrayvec}.
+#' Use this function to convert your data before processing for optimal speed.
 #'
 #' @examples
 #' if (has_cxx17()) {
@@ -67,14 +68,6 @@ kd_nn_df <- function(df, idx, w, key, a, p, n) {
     .Call(`_kdtools_kd_nn_df`, df, idx, w, key, a, p, n)
 }
 
-kd_nn_dist_df_no_validation <- function(df, idx, w, key, a, p, n) {
-    .Call(`_kdtools_kd_nn_dist_df_no_validation`, df, idx, w, key, a, p, n)
-}
-
-kd_nn_dist_df <- function(df, idx, w, key, a, p, n) {
-    .Call(`_kdtools_kd_nn_dist_df`, df, idx, w, key, a, p, n)
-}
-
 #' Check if C++ 17 was available when building package
 #'
 #' @rdname utils
@@ -131,16 +124,16 @@ kd_binary_search_ <- function(x, value) {
     .Call(`_kdtools_kd_binary_search_`, x, value)
 }
 
-kd_nearest_neighbors_ <- function(x, value, n) {
-    .Call(`_kdtools_kd_nearest_neighbors_`, x, value, n)
+kd_nearest_neighbors_ <- function(x, value, n, p, a) {
+    .Call(`_kdtools_kd_nearest_neighbors_`, x, value, n, p, a)
 }
 
-kd_nn_indices_ <- function(x, value, n) {
-    .Call(`_kdtools_kd_nn_indices_`, x, value, n)
+kd_nn_indices_ <- function(x, value, n, p, a) {
+    .Call(`_kdtools_kd_nn_indices_`, x, value, n, p, a)
 }
 
-kd_nn_dist_ <- function(x, value, n) {
-    .Call(`_kdtools_kd_nn_dist_`, x, value, n)
+kd_nn_dist_ <- function(x, value, n, p, a) {
+    .Call(`_kdtools_kd_nn_dist_`, x, value, n, p, a)
 }
 
 kd_order_mat_no_validation <- function(mat, idx, parallel = TRUE) {
@@ -175,14 +168,16 @@ kd_nn_mat <- function(mat, idx, key, alpha, p, n) {
     .Call(`_kdtools_kd_nn_mat`, mat, idx, key, alpha, p, n)
 }
 
-kd_nn_dist_mat_no_validation <- function(mat, idx, key, alpha, p, n) {
-    .Call(`_kdtools_kd_nn_dist_mat_no_validation`, mat, idx, key, alpha, p, n)
-}
-
-kd_nn_dist_mat <- function(mat, idx, key, alpha, p, n) {
-    .Call(`_kdtools_kd_nn_dist_mat`, mat, idx, key, alpha, p, n)
-}
-
+#' Compute edit distance
+#'
+#' @param s1 first character vector
+#' @param s2 second character vector
+#'
+#' @details If neither string is greater than ten characters, there is
+#' no allocation. Otherwise, allocation is amortized constant.
+#'
+#' @return the integer number of edits between strings
+#' @export
 levenshtein <- function(s1, s2) {
     .Call(`_kdtools_levenshtein`, s1, s2)
 }

@@ -80,9 +80,7 @@ struct chck_nth_mat
     return chck_nth_mat(m_mat, m_idx, m_lower, m_upper, (m_dim + 1) % m_idx.size());
   }
 
-  chck_nth_mat operator++() const {
-    return next_dim();
-  }
+  chck_nth_mat operator++() const { return next_dim(); }
 
   bool search_left(const int i) const {
     auto k = m_idx(m_dim) - 1;
@@ -199,7 +197,7 @@ struct pdist_mat {
     double sum = 0;
     for (int j = 0; j != m_ndim; ++j) {
       auto k = m_idx(j) - 1;
-      sum += std::pow(m_mat(i, k) - m_key(k), m_p);
+      sum += std::pow(std::abs(m_mat(i, k) - m_key(k)), m_p);
     }
     return std::pow(sum, 1 / m_p);
   }
@@ -224,8 +222,8 @@ void kd_order_mat_(Iter first, Iter last, const Pred& pred)
 
 template <typename Iter, typename Pred>
 void kd_order_mat_threaded(Iter first, Iter last, const Pred& pred,
-                          int max_threads = std::thread::hardware_concurrency(),
-                          int thread_depth = 1)
+                           int max_threads = std::thread::hardware_concurrency(),
+                           int thread_depth = 1)
 {
   if (distance(first, last) > 1)
   {
@@ -392,8 +390,8 @@ void aknn_(Iter first, Iter last,
 
 // [[Rcpp::export]]
 IntegerVector kd_order_mat_no_validation(const NumericMatrix& mat,
-                                        const IntegerVector& idx,
-                                        bool parallel = true) {
+                                         const IntegerVector& idx,
+                                         bool parallel = true) {
 #ifdef NO_CXX17
   return IntegerVector();
 #else
@@ -497,64 +495,12 @@ std::vector<int> kd_rq_mat(const NumericMatrix& mat,
 }
 
 // [[Rcpp::export]]
-std::vector<int> kd_nn_mat_no_validation(const NumericMatrix& mat,
-                                         const IntegerVector& idx,
-                                         const NumericVector& key,
-                                         const double alpha,
-                                         const double p,
-                                         const int n)
-{
-#ifdef NO_CXX17
-  return std::vector<int>();
-#else
-  std::vector<int> x(mat.nrow());
-  iota(begin(x), end(x), 0);
-  auto equal_nth = equal_nth_mat(mat, idx, key);
-  auto chck_nth = chck_nth_mat(mat, idx, key, key);
-  auto distf = pdist_mat(mat, idx, key, p);
-  auto dist_nth = dist_nth_mat(mat, idx, key);
-  n_best<decltype(begin(x))> Q(std::min(n, mat.nrow()));
-  if (alpha > 0)
-    aknn_(begin(x), end(x), equal_nth, chck_nth, dist_nth, distf, alpha, Q);
-  else
-    knn_(begin(x), end(x), equal_nth, chck_nth, dist_nth, distf, Q);
-  std::vector<int> res;
-  auto oi = std::back_inserter(res);
-  Q.copy_to(oi);
-  for (auto& e : res) ++e;
-  return res;
-#endif
-}
-
-// [[Rcpp::export]]
-std::vector<int> kd_nn_mat(const NumericMatrix& mat,
-                           const IntegerVector& idx,
-                           const NumericVector& key,
-                           const double alpha,
-                           const double p,
-                           const int n)
-{
-#ifdef NO_CXX17
-  return std::vector<int>();
-#else
-  if (mat.ncol() < 1 || mat.nrow() < 1)
-    stop("Empty matrix");
-  if (not_in_range(idx, mat.ncol()))
-    stop("Index out of range");
-  if (idx.size() != key.size())
-    stop("Incorrect dimension of key");
-  if (p < 0) stop("p must be positive");
-  return kd_nn_mat_no_validation(mat, idx, key, alpha, p, n);
-#endif
-}
-
-// [[Rcpp::export]]
-List kd_nn_dist_mat_no_validation(const NumericMatrix& mat,
-                                  const IntegerVector& idx,
-                                  const NumericVector& key,
-                                  const double alpha,
-                                  const double p,
-                                  const int n)
+List kd_nn_mat_no_validation(const NumericMatrix& mat,
+                             const IntegerVector& idx,
+                             const NumericVector& key,
+                             const double alpha,
+                             const double p,
+                             const int n)
 {
 #ifdef NO_CXX17
   return R_NilValue;
@@ -574,7 +520,7 @@ List kd_nn_dist_mat_no_validation(const NumericMatrix& mat,
   std::vector<std::pair<double, decltype(begin(x))>> out;
   auto oi = std::back_inserter(out);
   out.reserve(n);
-  Q.copy_dist_to(oi);
+  Q.copy_to(oi, [](auto&& x){ return x; });
   IntegerVector loc(m);
   NumericVector dist(m);
   for (int i = 0; i != m; ++i) {
@@ -589,12 +535,12 @@ List kd_nn_dist_mat_no_validation(const NumericMatrix& mat,
 }
 
 // [[Rcpp::export]]
-List kd_nn_dist_mat(const NumericMatrix& mat,
-                    const IntegerVector& idx,
-                    const NumericVector& key,
-                    const double alpha,
-                    const double p,
-                    const int n)
+List kd_nn_mat(const NumericMatrix& mat,
+               const IntegerVector& idx,
+               const NumericVector& key,
+               const double alpha,
+               const double p,
+               const int n)
 {
 #ifdef NO_CXX17
   return R_NilValue;
@@ -606,7 +552,7 @@ List kd_nn_dist_mat(const NumericMatrix& mat,
   if (idx.size() != key.size())
     stop("Incorrect dimension of key");
   if (p < 0) stop("p must be positive");
-  return kd_nn_dist_mat_no_validation(mat, idx, key, alpha, p, n);
+  return kd_nn_mat_no_validation(mat, idx, key, alpha, p, n);
 #endif
 }
 

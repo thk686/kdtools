@@ -20,7 +20,7 @@ kd_nearest_neighbors(x, v, n, ...)
 
 \method{kd_nearest_neighbors}{matrix}(x, v, n, cols = NULL, p = 2, a = 0, ...)
 
-\method{kd_nearest_neighbors}{data.frame}(x, v, n, cols = NULL, w = NULL, ...)
+\method{kd_nearest_neighbors}{data.frame}(x, v, n, cols = NULL, w = NULL, p = 2, a = 0, ...)
 
 kd_nn_indices(x, v, n, ...)
 
@@ -37,6 +37,7 @@ kd_nn_indices(x, v, n, ...)
   distances = FALSE,
   p = 2,
   a = 0,
+  validate = TRUE,
   ...
 )
 

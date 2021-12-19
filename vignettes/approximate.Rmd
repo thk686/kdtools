@@ -1,0 +1,43 @@
+---
+title: "Approximate search"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{approximate}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+can_run = require(kdtools) &&
+  require(ggplot2) &&
+  require(microbenchmark) &&
+  kdtools::has_cxx17()
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = can_run
+)
+```
+
+```{r eval=!can_run, echo=FALSE}
+if (has_cxx17()) {
+  message("Required packages missing -- code will not be evaluated")
+} else {
+  message("kdtools needs C++17 for full functionality, code will not be evaluated")
+}
+```
+
+```{r}
+f <- function(ndim, nsamp, a, p, reps = 3) {
+  for (ignore in 1:3) {
+    x <- kd_sort(matrix_to_tuples(
+      matrix(runif(ndim * nsamp), nr = nsamp, nc = ndim)
+    ))
+    y <- kd_near
+  }
+  t <- summary(microbenchmark({
+    
+  }, times = 3, setup = {
+  }))$median
+}
+```

@@ -16,10 +16,11 @@ tuples_to_matrix(x)
 Convert a matrix to a vector of arrays
 }
 \details{
-The algorithms in kdtools can accept either matrices or an
-\link{arrayvec} object. When a matrix is passed, it is converted to
-an arrayvec object internally and the results are converted back to
-a matrix. For optimal performance, pre-convert matrices.
+Most of the R functions exposed by \code{kdtools} can operate
+natively on a data.frame, matrix or an \code{\link{arrayvec}} object.
+An \code{arrayvec} object is a pointer to a native C++ vector of arrays
+and will be the fastest option. Only doubles are supported by \code{arrayvec}.
+Use this function to convert your data before processing for optimal speed.
 }
 \examples{
 if (has_cxx17()) {

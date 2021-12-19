@@ -6,9 +6,7 @@
 \alias{kdtools-package}
 \title{kdtools: Tools for Working with Multidimensional Data}
 \description{
-Provides various tools for working with multidimensional
-  data in R and C++, including extremely fast nearest-neighbor- and range-
-  queries without the overhead of linked tree nodes.
+Provides various tools for working with multidimensional data in R and C++, including extremely fast nearest-neighbor- and range- queries without the overhead of linked tree nodes.
 }
 \seealso{
 Useful links:

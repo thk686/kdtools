@@ -10,7 +10,9 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports: Rcpp (>= 0.12.14)
-LinkingTo: Rcpp
+LinkingTo: 
+    testthat,
+    Rcpp
 Suggests: 
     testthat,
     knitr,
@@ -22,7 +24,8 @@ Suggests:
     printr,
     scales,
     BH,
-    sf
+    sf,
+    xml2
 VignetteBuilder: knitr
 SystemRequirements: A compiler that conforms to the C++17 standard
 RoxygenNote: 7.1.1

@@ -8,3 +8,4 @@ src/*.dll
 .DS_Store
 cran-comments.md
 CRAN-RELEASE
+inst/doc

@@ -2,24 +2,27 @@
 title: "Approximate search"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{approximate}
+  %\VignetteIndexEntry{Approximate search}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
+use_cached_data = TRUE
 can_run = require(kdtools) &&
   require(ggplot2) &&
+  require(tidyr) &&
   require(microbenchmark) &&
   kdtools::has_cxx17()
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  eval = can_run
+  eval = can_run,
+  echo = FALSE
 )
 ```
 
-```{r eval=!can_run, echo=FALSE}
+```{r eval=!can_run}
 if (has_cxx17()) {
   message("Required packages missing -- code will not be evaluated")
 } else {
@@ -28,16 +31,88 @@ if (has_cxx17()) {
 ```
 
 ```{r}
-f <- function(ndim, nsamp, a, p, reps = 3) {
-  for (ignore in 1:3) {
-    x <- kd_sort(matrix_to_tuples(
-      matrix(runif(ndim * nsamp), nr = nsamp, nc = ndim)
-    ))
-    y <- kd_near
+nsamp <- 1e5
+reps <- 33
+```
+
+```{r}
+cache_file = "../inst/extdata/approx_benchmark_data"
+
+if (!file.exists(cache_file))
+  cache_file = system.file("extdata/approx_benchmark_data", package = "kdtools")
+
+if (use_cached_data && file.exists(cache_file)) {
+  
+  load(cache_file)
+  
+} else {
+
+  ndim <- round(seq(2, 50, length = 10))
+  a <- c(0, 1, 5, 10, 50, 100)
+  experiment <- tidyr::expand_grid(ndim, a)
+
+  f <- function(ndim, a) {
+    summary(microbenchmark({
+      kd_nearest_neighbors(x, runif(ndim), 7, a = a)
+    }, times = reps, setup = {
+      x <- kd_sort(matrix(runif(ndim * nsamp), nr = nsamp, nc = ndim))
+    }), unit = "eps")$median
   }
-  t <- summary(microbenchmark({
-    
-  }, times = 3, setup = {
-  }))$median
+  
+  experiment$eps <- vapply(1:nrow(experiment),
+                           function(i) do.call("f", experiment[i, ]),
+                           numeric(1))
+
+  g <- function(ndim, a) {
+    res <- numeric(reps)
+    for (i in 1:reps) {
+      x <- kd_sort(matrix(runif(ndim * nsamp), nr = nsamp, nc = ndim))
+      key <- runif(ndim)
+      y1 <- kd_nn_indices(x, key, 1, distances = TRUE)
+      y2 <- kd_nn_indices(x, key, 1, a = a, distances = TRUE)
+      res[i] <- (y2$distance - y1$distance) / y1$distance
+    }
+    return(median(res))
+  
+  }  
+  
+  experiment$delta <- vapply(1:nrow(experiment),
+                             function(i) do.call("g", experiment[i, ]),
+                             numeric(1))
+
+  save(experiment, file = cache_file)
 }
+```
+
+The `kdtools` package implements approximate nearest neighbors. This is done in the standard way by shrinking the search radius by a factor of $1 / (1 + \alpha)$. Once the greedy descent phase is completed and candidate nearest neighbors are queued, the algorithm interrogates adjacent half-planes while backtracking if the search key is sufficiently close to the half-plane boundary. The factor $\alpha$ reduces the definition of sufficiently close. Given a sufficiently large $\alpha$, the algorithm is entirely greedy and ignores any points not in the nearest half-plane.
+
+Approximate search is accomplished by setting the `a` argument to a value grater than zero.
+
+```{r echo=TRUE}
+key <- runif(13)
+x <- kd_sort(matrix(runif(13 * 1e5), nr = 1e5, nc = 13))
+cbind(kd_nn_indices(x, key, 3, distances = TRUE),
+      kd_nn_indices(x, key, 3, distances = TRUE, a = 10))
+```
+
+The results below show number of searches completed per second with different number of dimensions (length of the search key) and different values of $\alpha$. Number of evaluations is the median of `r toString(reps)` trials searching among `r toString(nsamp)` vectors containing uniform random deviates. 
+
+```{r fig.height=4, fig.width=6}
+ggplot(experiment) +
+  geom_point(aes(x = ndim, y = eps,
+                 color = as.factor(a))) +
+  ylab("Evaluations per second") +
+  xlab("Number of dimensions") +
+  scale_color_discrete(name = "alpha")
+```
+
+The following shows the relative error $(d_2 - d_1) / d_1$ where $d_2$ is the approximate nearest neighbor and $d_1$ is the exact nearest neighbor distance. Notice these results suggest that greedy search is optimal for 2-dimensions, at least for uniform random vectors. The results will depend on the details of the input data.
+
+```{r fig.height=4, fig.width=6}
+ggplot(experiment) +
+  geom_point(aes(x = ndim, y = delta,
+                 color = as.factor(a))) +
+  ylab("Median proportional error") +
+  xlab("Number of dimensions") +
+  scale_color_discrete(name = "alpha")
 ```

@@ -142,6 +142,24 @@ test_that("nearest neighbors distances works", {
   }
 })
 
+test_that("approximate nearest neighbors distances works", {
+  for (ignore in 1:reps)
+  {
+    for (n in nci)
+    {
+      for (a in c(0.05, 0.5, 2))
+      {
+        x <- mk_av(runif(n * 100), ncol = n)
+        x <- kd_sort(x)
+        y <- runif(n)
+        z1 <- kd_nn_indices(x, y, 5, a = a, distances = TRUE)
+        z2 <- r_nns_i_dist(x, y, 5)
+        expect_true(all(!(z1$distance > (1 + a) * z2$distance)))
+      }
+    }
+  }
+})
+
 r_nns_i_dist_1 <- function(x, y, n, p) {
   i <- vapply(seq_len(nrow(x)),
               function(i) { dist(rbind(x[i, ], y), method = "minkowski", p = 1) },
@@ -153,7 +171,7 @@ r_nns_i_dist_1 <- function(x, y, n, p) {
   return(res)
 }
 
-test_that("nearest neighbors distances works", {
+test_that("nearest neighbors manhattan distance works", {
   for (ignore in 1:reps)
   {
     for (n in nci)

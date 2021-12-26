@@ -4,14 +4,13 @@ NULL
 
 colspec <- function(x, cols = NULL) {
   res <- switch(mode(cols),
-         "call" = colspec(x, attr(stats::terms(cols), "term.labels")),
+         "call" = colspec(x, labels(stats::terms(cols, data = x))),
          "character" = match(cols, colnames(x)),
          "numeric" = cols,
          "logical" = (1:ncol(x))[cols],
          "NULL" = 1:ncol(x),
          stop("Invalid column specificaiton"))
-  if (length(res) == 0 ||
-      !all(res %in% 1:ncol(x)))
+  if (length(res) == 0 || !all(res %in% 1:ncol(x)))
     stop("Invalid column specificaiton")
   return(res)
 }

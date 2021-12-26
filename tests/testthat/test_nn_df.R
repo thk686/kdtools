@@ -137,3 +137,53 @@ test_that("nearest neighbors distances works", {
     }
   }
 })
+
+test_that("approximate nearest neighbors distances works", {
+  for (ignore in 1:reps)
+  {
+    for (n in nci)
+    {
+      for (a in c(0.05, 0.5, 2))
+      {
+        x <- as.data.frame(matrix(runif(n * 100), ncol = n))
+        x <- kd_sort(x)
+        y <- runif(n)
+        z1 <- kd_nn_indices(x, y, 5, a = a, distances = TRUE)
+        z2 <- r_nns_i_dist(x, y, 5)
+        expect_true(all(!(z1$distance > (1 + a) * z2$distance)))
+      }
+    }
+  }
+})
+
+r_nns_i_dist_1 <- function(x, y, n, p) {
+  i <- vapply(seq_len(nrow(x)),
+              function(i) { dist(rbind(x[i, ], y), method = "minkowski", p = 1) },
+              FUN.VALUE = double(1))
+  j <- which(rank(i, ties.method = "first") <= n)
+  res <- data.frame(index = j, distance = i[j])
+  res <- res[order(res$distance), ]
+  rownames(res) <- 1:nrow(res)
+  return(res)
+}
+
+test_that("nearest neighbors manhattan distance works", {
+  for (ignore in 1:reps)
+  {
+    for (n in nci)
+    {
+      for (m in c(1, 10, 50))
+      {
+        x <- as.data.frame(matrix(runif(n * 100), ncol = n))
+        x <- kd_sort(x)
+        y <- runif(n)
+        z1 <- kd_nn_indices(x, y, m, p = 1, distances = TRUE)
+        z2 <- r_nns_i_dist_1(x, y, m)
+        expect_equal(z1, z2)
+      }
+    }
+  }
+})
+
+
+

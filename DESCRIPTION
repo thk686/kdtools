@@ -25,7 +25,9 @@ Suggests:
     scales,
     BH,
     sf,
-    xml2
+    xml2,
+    tidyr,
+    microbenchmark
 VignetteBuilder: knitr
 SystemRequirements: A compiler that conforms to the C++17 standard
 RoxygenNote: 7.1.1

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Articles • kdtools</title>
+<title>Compute edit distance — levenshtein • kdtools</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,8 @@
 
 
 
-<meta property="og:title" content="Articles" />
+<meta property="og:title" content="Compute edit distance — levenshtein" />
+<meta property="og:description" content="Compute edit distance" />
 
 
 
@@ -58,7 +59,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-article-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -128,22 +129,43 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Articles</h1>
+    <h1>Compute edit distance</h1>
+    <small class="dont-index">Source: <a href='https://github.com/thk686/kdtools/blob/master/R/RcppExports.R'><code>R/RcppExports.R</code></a></small>
+    <div class="hidden name"><code>levenshtein.Rd</code></div>
     </div>
 
-    <div class="section ">
-      <h3>All vignettes</h3>
-      <p class="section-desc"></p>
-
-      <dl>
-        <dt><a href="approximate.html">Approximate search</a></dt>
-        <dd></dt>
-        <dt><a href="kdtools.html">Getting started with kdtools</a></dt>
-        <dd></dt>
-        <dt><a href="methods.html">Compact multidimensional sorting and searching with kdtools</a></dt>
-        <dd></dt>
-      </dl>
+    <div class="ref-description">
+    <p>Compute edit distance</p>
     </div>
+
+    <pre class="usage"><span class='fu'>levenshtein</span><span class='op'>(</span><span class='va'>s1</span>, <span class='va'>s2</span><span class='op'>)</span></pre>
+
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>s1</th>
+      <td><p>first character vector</p></td>
+    </tr>
+    <tr>
+      <th>s2</th>
+      <td><p>second character vector</p></td>
+    </tr>
+    </table>
+
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>the integer number of edits between strings</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>If neither string is greater than ten characters, there is
+no allocation. Otherwise, allocation is amortized constant.</p>
+
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 

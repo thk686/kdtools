@@ -98,6 +98,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/approximate.html">Approximate search</a>
+    </li>
+    <li>
       <a href="../articles/methods.html">Compact multidimensional sorting and searching with kdtools</a>
     </li>
   </ul>
@@ -137,14 +140,14 @@
 
     <pre class="usage"><span class='fu'>kd_nearest_neighbors</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>v</span>, <span class='va'>n</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='co'># S3 method for matrix</span>
-<span class='fu'>kd_nearest_neighbors</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>v</span>, <span class='va'>n</span>, cols <span class='op'>=</span> <span class='cn'>NULL</span>, alpha <span class='op'>=</span> <span class='fl'>0</span>, <span class='va'>...</span><span class='op'>)</span>
-
 <span class='co'># S3 method for arrayvec</span>
 <span class='fu'>kd_nearest_neighbors</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>v</span>, <span class='va'>n</span>, <span class='va'>...</span><span class='op'>)</span>
 
+<span class='co'># S3 method for matrix</span>
+<span class='fu'>kd_nearest_neighbors</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>v</span>, <span class='va'>n</span>, cols <span class='op'>=</span> <span class='cn'>NULL</span>, p <span class='op'>=</span> <span class='fl'>2</span>, a <span class='op'>=</span> <span class='fl'>0</span>, <span class='va'>...</span><span class='op'>)</span>
+
 <span class='co'># S3 method for data.frame</span>
-<span class='fu'>kd_nearest_neighbors</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>v</span>, <span class='va'>n</span>, cols <span class='op'>=</span> <span class='cn'>NULL</span>, w <span class='op'>=</span> <span class='cn'>NULL</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'>kd_nearest_neighbors</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>v</span>, <span class='va'>n</span>, cols <span class='op'>=</span> <span class='cn'>NULL</span>, w <span class='op'>=</span> <span class='cn'>NULL</span>, p <span class='op'>=</span> <span class='fl'>2</span>, a <span class='op'>=</span> <span class='fl'>0</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='fu'>kd_nn_indices</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>v</span>, <span class='va'>n</span>, <span class='va'>...</span><span class='op'>)</span>
 
@@ -152,17 +155,28 @@
 <span class='fu'>kd_nn_indices</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>v</span>, <span class='va'>n</span>, distances <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for matrix</span>
-<span class='fu'>kd_nn_indices</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>v</span>, <span class='va'>n</span>, cols <span class='op'>=</span> <span class='cn'>NULL</span>, distances <span class='op'>=</span> <span class='cn'>FALSE</span>, alpha <span class='op'>=</span> <span class='fl'>0</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'>kd_nn_indices</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>v</span>, <span class='va'>n</span>, cols <span class='op'>=</span> <span class='cn'>NULL</span>, distances <span class='op'>=</span> <span class='cn'>FALSE</span>, p <span class='op'>=</span> <span class='fl'>2</span>, a <span class='op'>=</span> <span class='fl'>0</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for data.frame</span>
-<span class='fu'>kd_nn_indices</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>v</span>, <span class='va'>n</span>, cols <span class='op'>=</span> <span class='cn'>NULL</span>, w <span class='op'>=</span> <span class='cn'>NULL</span>, distances <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'>kd_nn_indices</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  <span class='va'>v</span>,
+  <span class='va'>n</span>,
+  cols <span class='op'>=</span> <span class='cn'>NULL</span>,
+  w <span class='op'>=</span> <span class='cn'>NULL</span>,
+  distances <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  p <span class='op'>=</span> <span class='fl'>2</span>,
+  a <span class='op'>=</span> <span class='fl'>0</span>,
+  validate <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span>
 
-<span class='fu'>kd_nearest_neighbor</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>v</span><span class='op'>)</span>
-
-<span class='co'># S3 method for matrix</span>
 <span class='fu'>kd_nearest_neighbor</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>v</span><span class='op'>)</span>
 
 <span class='co'># S3 method for arrayvec</span>
+<span class='fu'>kd_nearest_neighbor</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>v</span><span class='op'>)</span>
+
+<span class='co'># S3 method for matrix</span>
 <span class='fu'>kd_nearest_neighbor</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>v</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -189,8 +203,12 @@
       <td><p>integer or character vector or formula indicating columns</p></td>
     </tr>
     <tr>
-      <th>alpha</th>
-      <td><p>approximate neighbors within (1 + alpha)</p></td>
+      <th>p</th>
+      <td><p>exponent of p-norm (Minkowski) distance</p></td>
+    </tr>
+    <tr>
+      <th>a</th>
+      <td><p>approximate neighbors within (1 + a)</p></td>
     </tr>
     <tr>
       <th>w</th>

@@ -98,6 +98,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/approximate.html">Approximate search</a>
+    </li>
+    <li>
       <a href="../articles/methods.html">Compact multidimensional sorting and searching with kdtools</a>
     </li>
   </ul>
@@ -150,10 +153,11 @@
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The algorithms in kdtools can accept either matrices or an
-<a href='print.arrayvec.html'>arrayvec</a> object. When a matrix is passed, it is converted to
-an arrayvec object internally and the results are converted back to
-a matrix. For optimal performance, pre-convert matrices.</p>
+    <p>Most of the R functions exposed by <code>kdtools</code> can operate
+natively on a data.frame, matrix or an <code><a href='print.arrayvec.html'>arrayvec</a></code> object.
+An <code>arrayvec</code> object is a pointer to a native C++ vector of arrays
+and will be the fastest option. Only doubles are supported by <code>arrayvec</code>.
+Use this function to convert your data before processing for optimal speed.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='has_cxx17.html'>has_cxx17</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>

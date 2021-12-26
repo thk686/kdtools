@@ -98,6 +98,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/approximate.html">Approximate search</a>
+    </li>
+    <li>
       <a href="../articles/methods.html">Compact multidimensional sorting and searching with kdtools</a>
     </li>
   </ul>
@@ -137,11 +140,11 @@
 
     <pre class="usage"><span class='fu'>kd_sort</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='co'># S3 method for matrix</span>
-<span class='fu'>kd_sort</span><span class='op'>(</span><span class='va'>x</span>, cols <span class='op'>=</span> <span class='cn'>NULL</span>, parallel <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
-
 <span class='co'># S3 method for arrayvec</span>
 <span class='fu'>kd_sort</span><span class='op'>(</span><span class='va'>x</span>, inplace <span class='op'>=</span> <span class='cn'>FALSE</span>, parallel <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='co'># S3 method for matrix</span>
+<span class='fu'>kd_sort</span><span class='op'>(</span><span class='va'>x</span>, cols <span class='op'>=</span> <span class='cn'>NULL</span>, parallel <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for data.frame</span>
 <span class='fu'>kd_sort</span><span class='op'>(</span><span class='va'>x</span>, cols <span class='op'>=</span> <span class='cn'>NULL</span>, parallel <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
@@ -151,11 +154,11 @@
 
 <span class='fu'>kd_order</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='co'># S3 method for matrix</span>
-<span class='fu'>kd_order</span><span class='op'>(</span><span class='va'>x</span>, cols <span class='op'>=</span> <span class='cn'>NULL</span>, parallel <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
-
 <span class='co'># S3 method for arrayvec</span>
 <span class='fu'>kd_order</span><span class='op'>(</span><span class='va'>x</span>, inplace <span class='op'>=</span> <span class='cn'>FALSE</span>, parallel <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='co'># S3 method for matrix</span>
+<span class='fu'>kd_order</span><span class='op'>(</span><span class='va'>x</span>, cols <span class='op'>=</span> <span class='cn'>NULL</span>, parallel <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for data.frame</span>
 <span class='fu'>kd_order</span><span class='op'>(</span><span class='va'>x</span>, cols <span class='op'>=</span> <span class='cn'>NULL</span>, parallel <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span>
@@ -174,16 +177,16 @@
       <td><p>ignored</p></td>
     </tr>
     <tr>
-      <th>cols</th>
-      <td><p>integer or character vector or formula indicating columns</p></td>
+      <th>inplace</th>
+      <td><p>sort as a side-effect if true</p></td>
     </tr>
     <tr>
       <th>parallel</th>
       <td><p>use multiple threads if true</p></td>
     </tr>
     <tr>
-      <th>inplace</th>
-      <td><p>sort as a side-effect if true</p></td>
+      <th>cols</th>
+      <td><p>integer or character vector or formula indicating columns</p></td>
     </tr>
     </table>
 

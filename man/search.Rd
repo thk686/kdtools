@@ -12,8 +12,8 @@
 \alias{kd_rq_indices.matrix}
 \alias{kd_rq_indices.data.frame}
 \alias{kd_binary_search}
-\alias{kd_binary_search.matrix}
 \alias{kd_binary_search.arrayvec}
+\alias{kd_binary_search.matrix}
 \title{Search sorted data}
 \usage{
 kd_lower_bound(x, v)
@@ -38,9 +38,9 @@ kd_rq_indices(x, l, u, ...)
 
 kd_binary_search(x, v)
 
-\method{kd_binary_search}{matrix}(x, v)
-
 \method{kd_binary_search}{arrayvec}(x, v)
+
+\method{kd_binary_search}{matrix}(x, v)
 }
 \arguments{
 \item{x}{an object sorted by \code{\link{kd_sort}}}

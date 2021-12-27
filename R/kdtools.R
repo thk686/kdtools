@@ -2,6 +2,25 @@
 #' @useDynLib kdtools, .registration = TRUE
 NULL
 
+#' Generate column indices
+#'
+#' @param x a data frame
+#' @param cols a column specification
+#'
+#' @details \code{cols} can be a logical, numeric, or character vector
+#' indicating which columns to extract. Or \code{cols} can be a formula
+#' with the right-hand-side variable specifying the columns.
+#'
+#' @return A vector of integers
+#'
+#' @examples
+#' colspec(mtcars, c(1, 3, 6))
+#' colspec(mtcars, c("mpg", "disp", "wt"))
+#' colspec(mtcars, ~mpg + disp + wt)
+#' colspec(mtcars, c(TRUE, FALSE, TRUE, FALSE, FALSE, TRUE,
+#'                   FALSE, FALSE, FALSE, FALSE, FALSE))
+#'
+#' @export
 colspec <- function(x, cols = NULL) {
   res <- switch(mode(cols),
          "call" = colspec(x, labels(stats::terms(cols, data = x))),
@@ -278,7 +297,7 @@ kd_binary_search.matrix <- function(x, v) {
 #' @param w distance weights
 #' @param p exponent of p-norm (Minkowski) distance
 #' @param a approximate neighbors within (1 + a)
-#' @oaran validate if FALSE, no input validation is performed
+#' @param validate if FALSE, no input validation is performed
 #' @param ... ignored
 #' @return \tabular{ll}{
 #' \code{kd_nearest_neighbors} \tab one or more rows from the sorted input \cr

@@ -238,10 +238,10 @@
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="fu"><a href="../reference/kd_sort.html">kd_sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">j</span>, <span class="va">k</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <table class="table"><tbody>
 <tr class="odd">
+<td align="right">1</td>
 <td align="right">3</td>
 <td align="right">4</td>
 <td align="right">2</td>
-<td align="right">1</td>
 <td align="right">5</td>
 <td align="right">8</td>
 <td align="right">9</td>
@@ -250,14 +250,14 @@
 </tr>
 <tr class="even">
 <td align="right">4</td>
-<td align="right">7</td>
-<td align="right">8</td>
-<td align="right">9</td>
-<td align="right">1</td>
-<td align="right">3</td>
 <td align="right">2</td>
 <td align="right">5</td>
+<td align="right">9</td>
+<td align="right">1</td>
 <td align="right">6</td>
+<td align="right">3</td>
+<td align="right">7</td>
+<td align="right">8</td>
 </tr>
 </tbody></table>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -275,8 +275,8 @@
 <td align="right">0</td>
 </tr>
 <tr class="even">
-<td align="right">2</td>
 <td align="right">1</td>
+<td align="right">2</td>
 <td align="right">3</td>
 <td align="right">4</td>
 <td align="right">5</td>
@@ -286,25 +286,25 @@
 <td align="right">9</td>
 </tr>
 <tr class="odd">
-<td align="right">8</td>
-<td align="right">9</td>
 <td align="right">4</td>
-<td align="right">7</td>
-<td align="right">1</td>
+<td align="right">9</td>
+<td align="right">2</td>
 <td align="right">5</td>
+<td align="right">1</td>
+<td align="right">7</td>
+<td align="right">8</td>
 <td align="right">6</td>
 <td align="right">3</td>
-<td align="right">2</td>
 </tr>
 </tbody></table>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="fu"><a href="../reference/kd_sort.html">kd_sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">j</span>, <span class="va">k</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <table class="table"><tbody>
 <tr class="odd">
+<td align="right">1</td>
 <td align="right">3</td>
 <td align="right">4</td>
 <td align="right">2</td>
-<td align="right">1</td>
 <td align="right">5</td>
 <td align="right">8</td>
 <td align="right">9</td>
@@ -313,14 +313,14 @@
 </tr>
 <tr class="even">
 <td align="right">4</td>
-<td align="right">7</td>
-<td align="right">8</td>
-<td align="right">9</td>
-<td align="right">1</td>
-<td align="right">3</td>
 <td align="right">2</td>
 <td align="right">5</td>
+<td align="right">9</td>
+<td align="right">1</td>
 <td align="right">6</td>
+<td align="right">3</td>
+<td align="right">7</td>
+<td align="right">8</td>
 </tr>
 <tr class="odd">
 <td align="right">0</td>
@@ -611,41 +611,41 @@
 <span class="va">strings</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/chartr.html">tolower</a></span><span class="op">(</span><span class="va">parts_of_speech</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
 <span class="fu">mixed_query</span><span class="op">(</span><span class="va">numbers</span>, <span class="va">strings</span><span class="op">)</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Sort time: 0.0675881 seconds</span>
+<span class="co">#&gt; Sort time: 0.0674771 seconds</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; First and last 3 elements of sorted data:</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.0003121 abecedaries</span>
-<span class="co">#&gt; 1 0.001876 abruptly</span>
-<span class="co">#&gt; 2 0.002098 abran</span>
+<span class="co">#&gt; 0 0.001418 abridgment</span>
+<span class="co">#&gt; 1 0.001573 aaron</span>
+<span class="co">#&gt; 2 0.002189 abreaction</span>
 <span class="co">#&gt; ...</span>
-<span class="co">#&gt; 208256 0.9977 yamauchi</span>
-<span class="co">#&gt; 208257 0.9978 zakuski</span>
-<span class="co">#&gt; 208258 0.9983 yeasty</span>
+<span class="co">#&gt; 208256 0.996 wrapped</span>
+<span class="co">#&gt; 208257 0.9964 wurst</span>
+<span class="co">#&gt; 208258 0.9993 x-line</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Query time: 2.8583e-05 seconds</span>
+<span class="co">#&gt; Query time: 4.0709e-05 seconds</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; First and last 3 elements of query return:</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.4035 wage</span>
-<span class="co">#&gt; 1 0.4061 wabblingly</span>
-<span class="co">#&gt; 2 0.4084 waldensian</span>
+<span class="co">#&gt; 0 0.4039 waker</span>
+<span class="co">#&gt; 1 0.401 walcott</span>
+<span class="co">#&gt; 2 0.4047 wadsworth</span>
 <span class="co">#&gt; ...</span>
-<span class="co">#&gt; 1017 0.5973 xyloid</span>
-<span class="co">#&gt; 1018 0.5942 yoicks</span>
-<span class="co">#&gt; 1019 0.5959 yorker</span>
+<span class="co">#&gt; 1070 0.5858 yokkaichi</span>
+<span class="co">#&gt; 1071 0.5887 yesternight</span>
+<span class="co">#&gt; 1072 0.5969 yelper</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Neighbors query time: 0.000325083 seconds</span>
+<span class="co">#&gt; Neighbors query time: 0.000384042 seconds</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; First and last 3 elements of neighbors query return:</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.4703 kotos</span>
-<span class="co">#&gt; 1 0.4703 koslo</span>
-<span class="co">#&gt; 2 0.3862 kolos</span>
+<span class="co">#&gt; 0 0.214 kolos</span>
+<span class="co">#&gt; 1 0.4143 lots</span>
+<span class="co">#&gt; 2 0.4072 lost</span>
 <span class="co">#&gt; ...</span>
-<span class="co">#&gt; 97 0.01238 kilo-oersted</span>
-<span class="co">#&gt; 98 0.2069 kaleidoscopic</span>
-<span class="co">#&gt; 99 0.4102 kenhorst</span></code></pre></div>
+<span class="co">#&gt; 97 0.4857 leukocyte</span>
+<span class="co">#&gt; 98 0.4852 lowse</span>
+<span class="co">#&gt; 99 0.4836 lotic</span></code></pre></div>
 <p>The timing results indicate that sorting <span class="math inline">\(2 \times 10 ^ 5\)</span> tuples is on the order of 1/10th second, whereas the range query returned in less than a millisecond.</p>
 <p>Nearest neighbor searching requires a suitable distance function be defined for all types. The template <code>scalar_dist</code> can be specialized for different types. It returns the distance along a single dimension. Currently, nearest neighbor distances are hardwired as the L2 norm of the returned scalar differences computed for each dimension. The computation above uses the following definitions.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span>&lt;<span class="kw">class</span> InputIt1, <span class="kw">class</span> InputIt2&gt;</span>
@@ -721,33 +721,33 @@
 <code class="sourceCode R"><span class="fu">sort_pointers</span><span class="op">(</span><span class="va">numbers</span>, <span class="va">strings</span><span class="op">)</span>
 <span class="co">#&gt; Original order</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.261 avenged</span>
-<span class="co">#&gt; 1 0.8167 obelised</span>
-<span class="co">#&gt; 2 0.6473 kettledrum</span>
+<span class="co">#&gt; 0 0.4725 crystallose</span>
+<span class="co">#&gt; 1 0.7887 zoller</span>
+<span class="co">#&gt; 2 0.6206 croute</span>
 <span class="co">#&gt; ...</span>
-<span class="co">#&gt; 208256 0.2469 shiai</span>
-<span class="co">#&gt; 208257 0.02634 pharaonic</span>
-<span class="co">#&gt; 208258 0.4593 tyrannicide</span>
+<span class="co">#&gt; 208256 0.3485 tubulating</span>
+<span class="co">#&gt; 208257 0.2655 nonblasphemy</span>
+<span class="co">#&gt; 208258 0.2034 loads</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Order by less</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.0003121 abecedaries</span>
-<span class="co">#&gt; 1 0.001876 abruptly</span>
-<span class="co">#&gt; 2 0.002098 abran</span>
+<span class="co">#&gt; 0 0.001418 abridgment</span>
+<span class="co">#&gt; 1 0.001573 aaron</span>
+<span class="co">#&gt; 2 0.002189 abreaction</span>
 <span class="co">#&gt; ...</span>
-<span class="co">#&gt; 208256 0.9977 yamauchi</span>
-<span class="co">#&gt; 208257 0.9978 zakuski</span>
-<span class="co">#&gt; 208258 0.9983 yeasty</span>
+<span class="co">#&gt; 208256 0.996 wrapped</span>
+<span class="co">#&gt; 208257 0.9964 wurst</span>
+<span class="co">#&gt; 208258 0.9993 x-line</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Order by greater</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.9983 yeasty</span>
-<span class="co">#&gt; 1 0.9978 zakuski</span>
-<span class="co">#&gt; 2 0.9977 yamauchi</span>
+<span class="co">#&gt; 0 0.9993 x-line</span>
+<span class="co">#&gt; 1 0.9964 wurst</span>
+<span class="co">#&gt; 2 0.996 wrapped</span>
 <span class="co">#&gt; ...</span>
-<span class="co">#&gt; 208256 0.001876 abruptly</span>
-<span class="co">#&gt; 208257 0.002098 abran</span>
-<span class="co">#&gt; 208258 0.0003121 abecedaries</span></code></pre></div>
+<span class="co">#&gt; 208256 0.001418 abridgment</span>
+<span class="co">#&gt; 208257 0.002189 abreaction</span>
+<span class="co">#&gt; 208258 0.001573 aaron</span></code></pre></div>
 <p>Note that the forward and reverse sorting do not give exactly the same result (in reverse) owing to ties.</p>
 </div>
 </div>

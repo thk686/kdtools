@@ -44,10 +44,15 @@ tail(mtcars_sorted, 3)
 ##### Step 2. Search sorted data frame
 
 ```{r}
+cols <- colspec(mtcars, ~wt + mpg + disp)
+
 lower <- c(2.5, 17, 120)
 upper <- c(3.6, 22, 330)
-kd_range_query(mtcars_sorted, lower, upper, cols = ~ wt + mpg + disp)
-kd_nearest_neighbors(mtcars_sorted, lower, 2, cols = ~ wt + mpg + disp)
+
+kd_range_query(mtcars_sorted, lower, upper, cols = cols)
+
+weights <- 1 / diag(var(mtcars[, cols]))
+kd_nearest_neighbors(mtcars_sorted, lower, 2, cols = cols, w = weights)
 ```
 
 ### Arrayvec Interface

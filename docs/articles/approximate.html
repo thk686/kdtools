@@ -106,9 +106,9 @@
 <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="fu"><a href="../reference/kd_nearest_neighbors.html">kd_nn_indices</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">key</span>, <span class="fl">3</span>, distances <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,
       <span class="fu"><a href="../reference/kd_nearest_neighbors.html">kd_nn_indices</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">key</span>, <span class="fl">3</span>, distances <span class="op">=</span> <span class="cn">TRUE</span>, a <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;   index  distance index  distance</span>
-<span class="co">#&gt; 1 19503 0.4575806 24190 0.5371272</span>
-<span class="co">#&gt; 2 46061 0.4655500 24189 0.6080241</span>
-<span class="co">#&gt; 3 23993 0.5230704 24123 0.6410267</span></code></pre></div>
+<span class="co">#&gt; 1 75714 0.4487527 77276 0.5165679</span>
+<span class="co">#&gt; 2 88220 0.4959026 75728 0.5379692</span>
+<span class="co">#&gt; 3 27292 0.4986780 77285 0.5680585</span></code></pre></div>
 <p>The results below show number of searches completed per second with different number of dimensions (length of the search key) and different values of <span class="math inline">\(\alpha\)</span>. Number of evaluations is the median of 33 trials searching among 1e+05 vectors containing uniform random deviates.</p>
 <p><img src="approximate_files/figure-html/unnamed-chunk-6-1.png" width="576"></p>
 <p>The following shows the relative error <span class="math inline">\((d_2 - d_1) / d_1\)</span> where <span class="math inline">\(d_2\)</span> is the approximate nearest neighbor and <span class="math inline">\(d_1\)</span> is the exact nearest neighbor distance. Notice these results suggest that greedy search is optimal for 2-dimensions, at least for uniform random vectors. The results will depend on the details of the input data.</p>

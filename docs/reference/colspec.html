@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • kdtools</title>
+<title>Generate column indices — colspec • kdtools</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,8 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="Generate column indices — colspec" />
+<meta property="og:description" content="Generate column indices" />
 
 
 
@@ -58,7 +59,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -126,90 +127,50 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>Generate column indices</h1>
+    <small class="dont-index">Source: <a href='https://github.com/thk686/kdtools/blob/master/R/kdtools.R'><code>R/kdtools.R</code></a></small>
+    <div class="hidden name"><code>colspec.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    <p>Generate column indices</p>
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
+    <pre class="usage"><span class='fu'>colspec</span><span class='op'>(</span><span class='va'>x</span>, cols <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="arrayvec.html">print(<i>&lt;arrayvec&gt;</i>)</a></code> <code><a href="arrayvec.html">dim(<i>&lt;arrayvec&gt;</i>)</a></code> <code><a href="arrayvec.html">as.matrix(<i>&lt;arrayvec&gt;</i>)</a></code> <code><a href="arrayvec.html">as.data.frame(<i>&lt;arrayvec&gt;</i>)</a></code> <code><a href="arrayvec.html">`[`(<i>&lt;arrayvec&gt;</i>)</a></code> <code><a href="arrayvec.html">`[[`(<i>&lt;arrayvec&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Support for C++ vector of arrays</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="colspec.html">colspec()</a></code> </p>
-        </td>
-        <td><p>Generate column indices</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="convert.html">matrix_to_tuples()</a></code> <code><a href="convert.html">tuples_to_matrix()</a></code> </p>
-        </td>
-        <td><p>Convert a matrix to a vector of arrays</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="kdsort.html">kd_sort()</a></code> <code><a href="kdsort.html">kd_order()</a></code> <code><a href="kdsort.html">kd_is_sorted()</a></code> </p>
-        </td>
-        <td><p>Sort multidimensional data</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="levenshtein.html">levenshtein()</a></code> </p>
-        </td>
-        <td><p>Compute edit distance</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="lexsort.html">lex_sort()</a></code> </p>
-        </td>
-        <td><p>Sort a matrix into lexicographical order</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="nneighb.html">kd_nearest_neighbors()</a></code> <code><a href="nneighb.html">kd_nn_indices()</a></code> <code><a href="nneighb.html">kd_nearest_neighbor()</a></code> </p>
-        </td>
-        <td><p>Find nearest neighbors</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="search.html">kd_lower_bound()</a></code> <code><a href="search.html">kd_upper_bound()</a></code> <code><a href="search.html">kd_range_query()</a></code> <code><a href="search.html">kd_rq_indices()</a></code> <code><a href="search.html">kd_binary_search()</a></code> </p>
-        </td>
-        <td><p>Search sorted data</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="utils.html">has_cxx17()</a></code> </p>
-        </td>
-        <td><p>Check if C++ 17 was available when building package</p></td>
-      </tr>
-    </tbody>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>x</th>
+      <td><p>a data frame</p></td>
+    </tr>
+    <tr>
+      <th>cols</th>
+      <td><p>a column specification</p></td>
+    </tr>
     </table>
-  </div>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>A vector of integers</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p><code>cols</code> can be a logical, numeric, or character vector
+indicating which columns to extract. Or <code>cols</code> can be a formula
+with the right-hand-side variable specifying the columns.</p>
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'>colspec</span><span class='op'>(</span><span class='va'>mtcars</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>3</span>, <span class='fl'>6</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] 1 3 6</div><div class='input'><span class='fu'>colspec</span><span class='op'>(</span><span class='va'>mtcars</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"mpg"</span>, <span class='st'>"disp"</span>, <span class='st'>"wt"</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] 1 3 6</div><div class='input'><span class='fu'>colspec</span><span class='op'>(</span><span class='va'>mtcars</span>, <span class='op'>~</span><span class='va'>mpg</span> <span class='op'>+</span> <span class='va'>disp</span> <span class='op'>+</span> <span class='va'>wt</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] 1 3 6</div><div class='input'><span class='fu'>colspec</span><span class='op'>(</span><span class='va'>mtcars</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='cn'>TRUE</span>, <span class='cn'>FALSE</span>, <span class='cn'>TRUE</span>, <span class='cn'>FALSE</span>, <span class='cn'>FALSE</span>, <span class='cn'>TRUE</span>,
+                  <span class='cn'>FALSE</span>, <span class='cn'>FALSE</span>, <span class='cn'>FALSE</span>, <span class='cn'>FALSE</span>, <span class='cn'>FALSE</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] 1 3 6</div><div class='input'>
+</div></pre>
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>

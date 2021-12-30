@@ -20,7 +20,8 @@ Generate column indices
 \details{
 \code{cols} can be a logical, numeric, or character vector
 indicating which columns to extract. Or \code{cols} can be a formula
-with the right-hand-side variable specifying the columns.
+with the right-hand-side variable specifying the columns. This function
+is used where ever a \code{cols} option is present throughout \code{kdtools}.
 }
 \examples{
 colspec(mtcars, c(1, 3, 6))

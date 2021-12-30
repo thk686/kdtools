@@ -5,11 +5,11 @@
 \alias{kd_sort.arrayvec}
 \alias{kd_sort.matrix}
 \alias{kd_sort.data.frame}
-\alias{kd_sort.sf}
 \alias{kd_order}
 \alias{kd_order.arrayvec}
 \alias{kd_order.matrix}
 \alias{kd_order.data.frame}
+\alias{kd_order.sf}
 \alias{kd_is_sorted}
 \title{Sort multidimensional data}
 \usage{
@@ -21,8 +21,6 @@ kd_sort(x, ...)
 
 \method{kd_sort}{data.frame}(x, cols = NULL, parallel = TRUE, ...)
 
-\method{kd_sort}{sf}(x, cols = NULL, parallel = TRUE, ...)
-
 kd_order(x, ...)
 
 \method{kd_order}{arrayvec}(x, inplace = FALSE, parallel = TRUE, ...)
@@ -30,6 +28,8 @@ kd_order(x, ...)
 \method{kd_order}{matrix}(x, cols = NULL, parallel = TRUE, ...)
 
 \method{kd_order}{data.frame}(x, cols = NULL, parallel = TRUE, ...)
+
+\method{kd_order}{sf}(x, cols = NULL, parallel = TRUE, ...)
 
 kd_is_sorted(x, ...)
 }
@@ -70,6 +70,10 @@ The algorithm used is a divide-and-conquer quicksort variant that
   defined). Additional, the user can specify a sequence of column indices
   that will be used for sorting. These can be a subset of columns and given
   in any order.
+
+  \code{kd_sort} and \code{kd_order} work differently on spatial \link{\code{sf}}
+  types. If no sort columns are specified, then the spatial coordinates are sorted.
+  Otherwise, the coordinates are ignored and the specified columns are used.
 }
 \examples{
 if (has_cxx17()) {

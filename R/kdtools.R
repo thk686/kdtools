@@ -9,7 +9,8 @@ NULL
 #'
 #' @details \code{cols} can be a logical, numeric, or character vector
 #' indicating which columns to extract. Or \code{cols} can be a formula
-#' with the right-hand-side variable specifying the columns.
+#' with the right-hand-side variable specifying the columns. This function
+#' is used where ever a \code{cols} option is present throughout \code{kdtools}.
 #'
 #' @return A vector of integers
 #'
@@ -57,6 +58,11 @@ colspec <- function(x, cols = NULL) {
 #'   defined). Additional, the user can specify a sequence of column indices
 #'   that will be used for sorting. These can be a subset of columns and given
 #'   in any order.
+#'
+#'   \code{kd_sort} and \code{kd_order} work differently on spatial \link{\code{sf}}
+#'   types. If no sort columns are specified, then the spatial coordinates are sorted.
+#'   Otherwise, the coordinates are ignored and the specified columns are used.
+#'
 #' @return \tabular{ll}{\code{kd_sort} \tab the table sorted in kd-tree order
 #'   \cr \code{kd_order} \tab a permutation vector \cr \code{kd_is_sorted} \tab
 #'   a boolean \cr}
@@ -86,23 +92,13 @@ kd_sort.arrayvec <- function(x, inplace = FALSE, parallel = TRUE, ...) {
 #' @rdname kdsort
 #' @export
 kd_sort.matrix <- function(x, cols = NULL, parallel = TRUE, ...) {
-  return(x[kd_order(x, cols = colspec(x, cols), parallel = parallel),, drop = FALSE])
+  return(x[kd_order(x, cols = cols, parallel = parallel),, drop = FALSE])
 }
 
 #' @rdname kdsort
 #' @export
 kd_sort.data.frame <- function(x, cols = NULL, parallel = TRUE, ...) {
-  return(x[kd_order(x, cols = colspec(x, cols), parallel = parallel),, drop = FALSE])
-}
-
-#' @rdname kdsort
-#' @export
-kd_sort.sf <- function(x, cols = NULL, parallel = TRUE, ...) {
-  if (is.null(cols)) {
-    return(x[kd_order(sf::st_coordinates(x), parallel = parallel),, drop = FALSE])
-  } else {
-    return(x[kd_order(sf::st_drop_geometry(x), colspec(x, cols), parallel = parallel),, drop = FALSE])
-  }
+  return(x[kd_order(x, cols = cols, parallel = parallel),, drop = FALSE])
 }
 
 #' @rdname kdsort
@@ -125,6 +121,13 @@ kd_order.matrix <- function(x, cols = NULL, parallel = TRUE, ...) {
 #' @export
 kd_order.data.frame <- function(x, cols = NULL, parallel = TRUE, ...) {
   return(kd_order_df(x, colspec(x, cols), parallel = parallel))
+}
+
+#' @rdname kdsort
+#' @export
+kd_order.sf <- function(x, cols = NULL, parallel = TRUE, ...) {
+  if (is.null(cols)) return(kd_order(sf::st_coordinates(x), parallel = parallel))
+  return(kd_order(sf::st_drop_geometry(x), colspec(x, cols), parallel = parallel))
 }
 
 #' @rdname kdsort

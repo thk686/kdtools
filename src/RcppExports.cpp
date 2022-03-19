@@ -477,6 +477,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// kd_loo_xval
+List kd_loo_xval(const NumericMatrix& mat, const IntegerVector& idx, const IntegerVector& lhs, const double alpha, const double p, const int n);
+RcppExport SEXP _kdtools_kd_loo_xval(SEXP matSEXP, SEXP idxSEXP, SEXP lhsSEXP, SEXP alphaSEXP, SEXP pSEXP, SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type idx(idxSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type lhs(lhsSEXP);
+    Rcpp::traits::input_parameter< const double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< const double >::type p(pSEXP);
+    Rcpp::traits::input_parameter< const int >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(kd_loo_xval(mat, idx, lhs, alpha, p, n));
+    return rcpp_result_gen;
+END_RCPP
+}
 // levenshtein
 int levenshtein(const char* s1, const char* s2);
 RcppExport SEXP _kdtools_levenshtein(SEXP s1SEXP, SEXP s2SEXP) {
@@ -528,6 +544,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_kd_rq_mat", (DL_FUNC) &_kdtools_kd_rq_mat, 4},
     {"_kdtools_kd_nn_mat_no_validation", (DL_FUNC) &_kdtools_kd_nn_mat_no_validation, 6},
     {"_kdtools_kd_nn_mat", (DL_FUNC) &_kdtools_kd_nn_mat, 6},
+    {"_kdtools_kd_loo_xval", (DL_FUNC) &_kdtools_kd_loo_xval, 6},
     {"_kdtools_levenshtein", (DL_FUNC) &_kdtools_levenshtein, 2},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}

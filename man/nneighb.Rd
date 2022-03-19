@@ -88,6 +88,26 @@ kd_nearest_neighbor(x, v)
 \description{
 Find nearest neighbors
 }
+\details{
+Distance is calculated as
+\deqn{D_{ij} = [\sum_k w_k G(x_{ik}, x_{jk}) ^ p] ^ {1 / p}}
+where \eqn{i} and \eqn{j} are records, \eqn{k} is the \eqn{k}th field or
+tuple element, and \eqn{w_k} is the weight in the \eqn{k}th dimension. Here,
+\eqn{G} depends on the type. For reals, \eqn{G(a, b) = |a - b|}.
+For logicals and integers, \eqn{G(a, b)} is one if \eqn{a = b}
+and zero otherwise. For strings, \eqn{G(a, b)} is Levenshtein or edit distance.
+Convert strings to factors unless edit distance makes sense for your application.
+
+When using the \code{cols} argument, the search key \code{v} is handled specially. If
+the length of \code{v} is equal to the number of columns of \code{x}, then it is
+assumed that the key is given in the same order as the columns of \code{x}. In that case,
+the key \code{v} is mapped through the \code{cols} argument. This will possibly
+change the order of the elements and length of the search key. The reason for this
+is that it allows one to use a row of \code{x} as the key and it will respect the
+\code{cols} argument. Otherwise, or if \code{validate} is \code{FALSE}, the search
+key \code{v} is passed unchanged and must be given with the correct length and order
+to match the \code{cols} argument. The same is true of the \code{w} parameter.
+}
 \examples{
 if (has_cxx17()) {
 x = matrix(runif(200), 100)

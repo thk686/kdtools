@@ -112,7 +112,7 @@ struct equal_nth_mat
 
   bool operator()(const int i) const {
     auto k = m_idx(m_dim) - 1;
-    return(m_mat(i, k) == m_key(k));
+    return(m_mat(i, k) == m_key(m_dim));
   }
 
   const NumericMatrix& m_mat;
@@ -135,7 +135,7 @@ struct dist_nth_mat
 
   double operator()(const int i) const {
     auto k = m_idx(m_dim) - 1;
-    return std::abs(m_mat(i, k) - m_key(k));
+    return std::abs(m_mat(i, k) - m_key(m_dim));
   }
 
   const NumericMatrix& m_mat;
@@ -174,7 +174,7 @@ struct l2dist_mat {
     double ssq = 0;
     for (int j = 0; j != m_ndim; ++j) {
       auto k = m_idx(j) - 1;
-      ssq += std::pow(m_mat(i, k) - m_key(k), 2);
+      ssq += std::pow(m_mat(i, k) - m_key(j), 2);
     }
     return std::sqrt(ssq);
   }
@@ -197,7 +197,7 @@ struct pdist_mat {
     double sum = 0;
     for (int j = 0; j != m_ndim; ++j) {
       auto k = m_idx(j) - 1;
-      sum += std::pow(std::abs(m_mat(i, k) - m_key(k)), m_p);
+      sum += std::pow(std::abs(m_mat(i, k) - m_key(j)), m_p);
     }
     return std::pow(sum, 1 / m_p);
   }
@@ -556,3 +556,61 @@ List kd_nn_mat(const NumericMatrix& mat,
 #endif
 }
 
+// [[Rcpp::export]]
+List kd_loo_xval(const NumericMatrix& mat,
+                 const IntegerVector& idx,
+                 const IntegerVector& lhs,
+                 const double alpha,
+                 const double p,
+                 const int n)
+{
+#ifdef NO_CXX17
+  return R_NilValue;
+#else
+  if (mat.ncol() < 1 || mat.nrow() < 1)
+    stop("Empty matrix");
+  if (not_in_range(idx, mat.ncol()))
+    stop("Index out of range");
+  if (not_in_range(lhs, mat.ncol()))
+    stop("Index out of range");
+  if (p < 0) stop("p must be positive");
+  auto m = std::min(n, mat.nrow());
+  if (m < 2) stop("Maximum number of neighbors is too small");
+  std::vector<int> x(mat.nrow());
+  iota(begin(x), end(x), 0);
+  n_best<decltype(begin(x))> Q(m);
+  NumericMatrix rmse(m - 1, lhs.size());
+  for (int i = 0; i != mat.nrow(); ++i) {
+    NumericVector key = mat.row(i);
+    auto equal_nth = equal_nth_mat(mat, idx, key);
+    auto chck_nth = chck_nth_mat(mat, idx, key, key);
+    auto distf = pdist_mat(mat, idx, key, p);
+    auto dist_nth = dist_nth_mat(mat, idx, key);
+    if (alpha > 0)
+      aknn_(begin(x), end(x), equal_nth, chck_nth, dist_nth, distf, alpha, Q);
+    else
+      knn_(begin(x), end(x), equal_nth, chck_nth, dist_nth, distf, Q);
+    NumericMatrix pred(m - 1, lhs.size());
+    for (int k = 0; k != lhs.size(); ++k)
+      pred(0, k) = mat(Q.m_q[1].first, k);
+    for (int j = 1; j != m - 1; ++j)
+      for (int k = 0; k != lhs.size(); ++k)
+        pred(j, k) = (pred(j - 1, k) + mat(Q.m_q[j].first, k)) / (j + 1);
+    Q.m_q.clear();
+  }
+  // std::vector<std::pair<double, decltype(begin(x))>> out;
+  // auto oi = std::back_inserter(out);
+  // out.reserve(n);
+  // Q.copy_to(oi, [](auto&& x){ return x; });
+  // IntegerVector loc(m);
+  // NumericVector dist(m);
+  // for (int i = 0; i != m; ++i) {
+  //   loc[i] = distance(begin(x), out[i].second) + 1;
+  //   dist[i] = out[i].first;
+  // }
+  List res;
+  // res["index"] = loc;
+  // res["distance"] = dist;
+  return res;
+#endif
+}

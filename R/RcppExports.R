@@ -168,6 +168,10 @@ kd_nn_mat <- function(mat, idx, key, alpha, p, n) {
     .Call(`_kdtools_kd_nn_mat`, mat, idx, key, alpha, p, n)
 }
 
+kd_loo_xval <- function(mat, idx, lhs, alpha, p, n) {
+    .Call(`_kdtools_kd_loo_xval`, mat, idx, lhs, alpha, p, n)
+}
+
 #' Compute edit distance
 #'
 #' @param s1 first character vector

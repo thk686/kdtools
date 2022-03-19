@@ -1,0 +1,32 @@
+---
+title: "Nearest Neighbors Models"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Nearest Neighbors Models}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(kdtools)
+library(tidyverse)
+```
+
+Nearest neighbors is a commonly used machine learning method. The logic is that if records are similar in some fields, they will also be similar in other fields. The complexity involves deciding on how many neighbors to consider. Typically, this is decided through multiple trials using different number of neighbors and assessing prediction error. The $k$ that gives the smallest error is chosen. 
+
+```{r}
+nycflights13::flights %>%
+  mutate(carrier = as.factor(carrier),
+         origin = as.factor(origin),
+         dest = as.factor(dest),
+         flight = as.factor(flight),
+         
+         )
+```

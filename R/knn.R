@@ -31,3 +31,6 @@ predict.kdtools_knn <- function(object, newdata, k = 5, ...) {
   }
   return(newdata)
 }
+
+my_new_function <- function(x) return(x)
+

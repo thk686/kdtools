@@ -313,6 +313,8 @@ The [Boost Geometry library](https://www.boost.org/doc/libs/release/libs/geometr
 
 #define NO_TUPLEMAPR
 
+#define _HAS_AUTO_PTR_ETC false
+
 #include <Rcpp.h>
 #include <vector>
 #include <kdtools.h>
@@ -321,6 +323,8 @@ The [Boost Geometry library](https://www.boost.org/doc/libs/release/libs/geometr
 #include <boost/geometry/geometries/box.hpp>
 #include <boost/geometry/geometries/register/box.hpp>
 #include <boost/geometry/geometries/adapted/std_array.hpp>
+
+#undefine _HAS_AUTO_PTR_ETC
 
 using namespace keittlab;
 

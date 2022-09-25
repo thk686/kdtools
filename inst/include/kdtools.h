@@ -844,12 +844,14 @@ struct less_key {
 template <typename Iter, typename Key = double>
 struct n_best
 {
+  using key_t = Key;
+  using iter_t = Iter;
   using qmem_t = pair<Key, Iter>;
   using qcomp_t = less_key<Key, Iter>;
   using qcont_t = vector<qmem_t>;
-  size_t m_n;
   qcont_t m_q;
-  n_best(size_t n): m_n(n), m_q() {
+  size_t m_n;
+  n_best(size_t n): m_q(), m_n(n) {
     m_q.reserve(n);
   }
   Key max_key() const
@@ -886,6 +888,22 @@ struct n_best
   }
 };
 
+template <typename Qtype>
+struct thread_safe_queue_adaptor
+{
+  Qtype& m_q;
+  std::mutex m_mtx;
+  thread_safe_queue_adaptor(Qtype& q) : m_q(q) {}
+  typename Qtype::key_t max_key() const {
+    std::lock_guard lock(m_mtx);
+    return m_q.max_key();
+  }
+  void add(typename Qtype::key_t dist, typename Qtype::iter_t iter) {
+    std::lock_guard lock(m_mtx);
+    m_q.add(dist, iter);
+  }
+};
+
 template <size_t I,
           typename Iter,
           typename TupleType,
@@ -916,6 +934,33 @@ void knn(Iter first, Iter last,
       else
         knn<J>(first, pivot, key, Q);
     }
+  }
+}
+
+template <size_t I,
+          typename Iter,
+          typename TupleType,
+          typename QType>
+void knn_threaded(Iter first, Iter last, const TupleType& key, QType& Q,
+                  int max_threads = std::thread::hardware_concurrency(),
+                  int min_division = 1024)
+{
+  auto divide = [](double a, double b) -> int { return a / b; };
+  auto dist = distance(first, last);
+  if (dist < 2 * min_division || max_threads < 2) {
+    knn(first, last, key, Q);
+  } else {
+    auto tsq = thread_safe_queue_adaptor<QType>(Q);
+    auto n_div = std::min(max_threads, divide(dist, min_division));
+    auto stride = divide(dist, n_div);
+    std::vector<std::thread> threads;
+    auto it = first;
+    while (--n_div) {
+      threads.emplace_back(knn<I, Iter, TupleType, decltype(tsq)>, it, it + stride, key, tsq);
+      it += stride;
+    }
+    if (it < last) knn(it, last, key, tsq);
+    for (auto& t : threads) t.join();
   }
 }
 
@@ -1161,7 +1206,9 @@ void kd_rq_iters(Iter first, Iter last,
 template <typename Iter,
           typename TupleType,
           typename OutIter>
-void kd_nearest_neighbors(Iter first, Iter last, const TupleType& key, size_t n, OutIter outp)
+void kd_nearest_neighbors(Iter first, Iter last,
+                          const TupleType& key,
+                          size_t n, OutIter outp)
 {
   size_t m = std::distance(first, last);
   detail::n_best<Iter> Q(std::min(n, m));
@@ -1204,6 +1251,18 @@ void kd_nearest_neighbors(Iter first, Iter last,
   else
     detail::knn<0>(first, last, key, p, Q);
   Q.copy_to(outp, std::forward<Projection>(proj));
+}
+
+template <typename Iter,
+          typename TupleType,
+          typename OutIter>
+void kd_nn_threaded(Iter first, Iter last, const TupleType& key, size_t n, OutIter outp,
+                    int max_threads = std::thread::hardware_concurrency(), int min_division = 1024)
+{
+  size_t m = std::distance(first, last);
+  detail::n_best<Iter> Q(std::min(n, m));
+  detail::knn_threaded<0>(first, last, key, Q, max_threads, min_division);
+  Q.copy_to(outp, [](auto&& x){ return *x.second; });
 }
 
 } // namespace kdtools

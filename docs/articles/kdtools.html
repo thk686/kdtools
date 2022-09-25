@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,18 +33,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">kdtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../articles/kdtools.html">Get started</a>
 </li>
@@ -50,7 +46,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -62,6 +58,9 @@
     <li>
       <a href="../articles/methods.html">Compact multidimensional sorting and searching with kdtools</a>
     </li>
+    <li>
+      <a href="../articles/nearest_neighbors.html">Nearest Neighbors Models</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -70,7 +69,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/thk686/kdtools/">
+  <a href="https://github.com/thk686/kdtools/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -85,149 +84,167 @@
 
       
 
-      </header><script src="kdtools_files/header-attrs-2.10/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Getting started with kdtools</h1>
-                        <h4 class="author">Timothy H. Keitt</h4>
+                        <h4 data-toc-skip class="author">Timothy H.
+Keitt</h4>
             
-            <h4 class="date">2021-12-26</h4>
+            <h4 data-toc-skip class="date">2022-09-25</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/thk686/kdtools/blob/master/vignettes/kdtools.Rmd"><code>vignettes/kdtools.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/thk686/kdtools/blob/HEAD/vignettes/kdtools.Rmd" class="external-link"><code>vignettes/kdtools.Rmd</code></a></small>
       <div class="hidden name"><code>kdtools.Rmd</code></div>
 
     </div>
 
     
     
-<p>There are now two options for using kdtools, either on a C++ vector of arrays (arrayvec object) or natively on a data frame. Sorting on arrayvec objects is fast. Passing a data frame is slower, but automatically supports mixed types.</p>
-<div id="data-frame-interface" class="section level3">
-<h3 class="hasAnchor">
-<a href="#data-frame-interface" class="anchor"></a>Data Frame Interface</h3>
-<div id="step-1--sort-data-frame" class="section level5">
-<h5 class="hasAnchor">
-<a href="#step-1--sort-data-frame" class="anchor"></a>Step 1. Sort data frame</h5>
-<p>When working with a data frame, you can specify which columns to use and the order of inclusion using the <code>cols</code> argument. Omitting the <code>cols</code> argument uses all columns in order.</p>
+<p>There are now two options for using kdtools, either on a C++ vector
+of arrays (arrayvec object) or natively on a data frame. Sorting on
+arrayvec objects is fast. Passing a data frame is slower, but
+automatically supports mixed types.</p>
+<p>Please see <a href="https://thk686.github.io/kdtools/" class="external-link">the pkgdown
+site for more articles on kdtools</a></p>
+<div class="section level3">
+<h3 id="data-frame-interface">Data Frame Interface<a class="anchor" aria-label="anchor" href="#data-frame-interface"></a>
+</h3>
+<div class="section level5">
+<h5 id="step-1--sort-data-frame">Step 1. Sort data frame<a class="anchor" aria-label="anchor" href="#step-1--sort-data-frame"></a>
+</h5>
+<p>When working with a data frame, you can specify which columns to use
+and the order of inclusion using the <code>cols</code> argument.
+Omitting the <code>cols</code> argument uses all columns in order.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># sort by weight, miles-per-gallon and displacement</span>
-<span class="va">mtcars_sorted</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/kd_sort.html">kd_sort</a></span><span class="op">(</span><span class="va">mtcars</span>, cols <span class="op">=</span> <span class="op">~</span> <span class="va">wt</span> <span class="op">+</span> <span class="va">mpg</span> <span class="op">+</span> <span class="va">disp</span><span class="op">)</span>;
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">mtcars_sorted</span>, <span class="fl">3</span><span class="op">)</span>
-<span class="co">#&gt;                mpg cyl  disp  hp drat    wt  qsec vs am gear carb</span>
-<span class="co">#&gt; Toyota Corona 21.5   4 120.1  97 3.70 2.465 20.01  1  0    3    1</span>
-<span class="co">#&gt; Datsun 710    22.8   4 108.0  93 3.85 2.320 18.61  1  1    4    1</span>
-<span class="co">#&gt; Ferrari Dino  19.7   6 145.0 175 3.62 2.770 15.50  0  1    5    6</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">tail</a></span><span class="op">(</span><span class="va">mtcars_sorted</span>, <span class="fl">3</span><span class="op">)</span>
-<span class="co">#&gt;                    mpg cyl  disp  hp drat    wt  qsec vs am gear carb</span>
-<span class="co">#&gt; Hornet Sportabout 18.7   8 360.0 175 3.15 3.440 17.02  0  0    3    2</span>
-<span class="co">#&gt; Pontiac Firebird  19.2   8 400.0 175 3.08 3.845 17.05  0  0    3    2</span>
-<span class="co">#&gt; Merc 450SE        16.4   8 275.8 180 3.07 4.070 17.40  0  0    3    3</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># sort by weight, miles-per-gallon and displacement</span></span>
+<span><span class="va">mtcars_sorted</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/kdsort.html">kd_sort</a></span><span class="op">(</span><span class="va">mtcars</span>, cols <span class="op">=</span> <span class="op">~</span> <span class="va">wt</span> <span class="op">+</span> <span class="va">mpg</span> <span class="op">+</span> <span class="va">disp</span><span class="op">)</span>;</span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mtcars_sorted</span>, <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                mpg cyl  disp  hp drat    wt  qsec vs am gear carb</span></span>
+<span><span class="co">#&gt; Toyota Corona 21.5   4 120.1  97 3.70 2.465 20.01  1  0    3    1</span></span>
+<span><span class="co">#&gt; Datsun 710    22.8   4 108.0  93 3.85 2.320 18.61  1  1    4    1</span></span>
+<span><span class="co">#&gt; Ferrari Dino  19.7   6 145.0 175 3.62 2.770 15.50  0  1    5    6</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">mtcars_sorted</span>, <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                    mpg cyl  disp  hp drat    wt  qsec vs am gear carb</span></span>
+<span><span class="co">#&gt; Hornet Sportabout 18.7   8 360.0 175 3.15 3.440 17.02  0  0    3    2</span></span>
+<span><span class="co">#&gt; Pontiac Firebird  19.2   8 400.0 175 3.08 3.845 17.05  0  0    3    2</span></span>
+<span><span class="co">#&gt; Merc 450SE        16.4   8 275.8 180 3.07 4.070 17.40  0  0    3    3</span></span></code></pre></div>
 </div>
-<div id="step-2--search-sorted-data-frame" class="section level5">
-<h5 class="hasAnchor">
-<a href="#step-2--search-sorted-data-frame" class="anchor"></a>Step 2. Search sorted data frame</h5>
+<div class="section level5">
+<h5 id="step-2--search-sorted-data-frame">Step 2. Search sorted data frame<a class="anchor" aria-label="anchor" href="#step-2--search-sorted-data-frame"></a>
+</h5>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/colspec.html">colspec</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="op">~</span><span class="va">wt</span> <span class="op">+</span> <span class="va">mpg</span> <span class="op">+</span> <span class="va">disp</span><span class="op">)</span>
-
-<span class="va">lower</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2.5</span>, <span class="fl">17</span>, <span class="fl">120</span><span class="op">)</span>
-<span class="va">upper</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3.6</span>, <span class="fl">22</span>, <span class="fl">330</span><span class="op">)</span>
-
-<span class="fu"><a href="../reference/kd_lower_bound.html">kd_range_query</a></span><span class="op">(</span><span class="va">mtcars_sorted</span>, <span class="va">lower</span>, <span class="va">upper</span>, cols <span class="op">=</span> <span class="va">cols</span><span class="op">)</span>
-<span class="co">#&gt;                 mpg cyl  disp  hp drat    wt  qsec vs am gear carb</span>
-<span class="co">#&gt; Ferrari Dino   19.7   6 145.0 175 3.62 2.770 15.50  0  1    5    6</span>
-<span class="co">#&gt; Volvo 142E     21.4   4 121.0 109 4.11 2.780 18.60  1  1    4    2</span>
-<span class="co">#&gt; Mazda RX4      21.0   6 160.0 110 3.90 2.620 16.46  0  1    4    4</span>
-<span class="co">#&gt; Mazda RX4 Wag  21.0   6 160.0 110 3.90 2.875 17.02  0  1    4    4</span>
-<span class="co">#&gt; Hornet 4 Drive 21.4   6 258.0 110 3.08 3.215 19.44  1  0    3    1</span>
-<span class="co">#&gt; Merc 280C      17.8   6 167.6 123 3.92 3.440 18.90  1  0    4    4</span>
-<span class="co">#&gt; Merc 280       19.2   6 167.6 123 3.92 3.440 18.30  1  0    4    4</span>
-<span class="co">#&gt; Valiant        18.1   6 225.0 105 2.76 3.460 20.22  1  0    3    1</span>
-
-<span class="va">weights</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/diag.html">diag</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html">var</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span>, <span class="va">cols</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="../reference/kd_nearest_neighbors.html">kd_nearest_neighbors</a></span><span class="op">(</span><span class="va">mtcars_sorted</span>, <span class="va">lower</span>, <span class="fl">2</span>, cols <span class="op">=</span> <span class="va">cols</span>, w <span class="op">=</span> <span class="va">weights</span><span class="op">)</span>
-<span class="co">#&gt;                mpg cyl  disp  hp drat    wt  qsec vs am gear carb</span>
-<span class="co">#&gt; Ferrari Dino  19.7   6 145.0 175 3.62 2.770 15.50  0  1    5    6</span>
-<span class="co">#&gt; Toyota Corona 21.5   4 120.1  97 3.70 2.465 20.01  1  0    3    1</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/colspec.html">colspec</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="op">~</span><span class="va">wt</span> <span class="op">+</span> <span class="va">mpg</span> <span class="op">+</span> <span class="va">disp</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">lower</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2.5</span>, <span class="fl">17</span>, <span class="fl">120</span><span class="op">)</span></span>
+<span><span class="va">upper</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3.6</span>, <span class="fl">22</span>, <span class="fl">330</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/search.html">kd_range_query</a></span><span class="op">(</span><span class="va">mtcars_sorted</span>, <span class="va">lower</span>, <span class="va">upper</span>, cols <span class="op">=</span> <span class="va">cols</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                 mpg cyl  disp  hp drat    wt  qsec vs am gear carb</span></span>
+<span><span class="co">#&gt; Ferrari Dino   19.7   6 145.0 175 3.62 2.770 15.50  0  1    5    6</span></span>
+<span><span class="co">#&gt; Volvo 142E     21.4   4 121.0 109 4.11 2.780 18.60  1  1    4    2</span></span>
+<span><span class="co">#&gt; Mazda RX4      21.0   6 160.0 110 3.90 2.620 16.46  0  1    4    4</span></span>
+<span><span class="co">#&gt; Mazda RX4 Wag  21.0   6 160.0 110 3.90 2.875 17.02  0  1    4    4</span></span>
+<span><span class="co">#&gt; Hornet 4 Drive 21.4   6 258.0 110 3.08 3.215 19.44  1  0    3    1</span></span>
+<span><span class="co">#&gt; Merc 280C      17.8   6 167.6 123 3.92 3.440 18.90  1  0    4    4</span></span>
+<span><span class="co">#&gt; Merc 280       19.2   6 167.6 123 3.92 3.440 18.30  1  0    4    4</span></span>
+<span><span class="co">#&gt; Valiant        18.1   6 225.0 105 2.76 3.460 20.22  1  0    3    1</span></span>
+<span></span>
+<span><span class="va">weights</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">var</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">[</span>, <span class="va">cols</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/nneighb.html">kd_nearest_neighbors</a></span><span class="op">(</span><span class="va">mtcars_sorted</span>, <span class="va">lower</span>, <span class="fl">2</span>, cols <span class="op">=</span> <span class="va">cols</span>, w <span class="op">=</span> <span class="va">weights</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                mpg cyl  disp  hp drat    wt  qsec vs am gear carb</span></span>
+<span><span class="co">#&gt; Ferrari Dino  19.7   6 145.0 175 3.62 2.770 15.50  0  1    5    6</span></span>
+<span><span class="co">#&gt; Toyota Corona 21.5   4 120.1  97 3.70 2.465 20.01  1  0    3    1</span></span></code></pre></div>
 </div>
 </div>
-<div id="arrayvec-interface" class="section level3">
-<h3 class="hasAnchor">
-<a href="#arrayvec-interface" class="anchor"></a>Arrayvec Interface</h3>
-<p>The kdtools package can be used to search for multidimensional points in a boxed region and find nearest neighbors in 1 to 9 dimensions. The package uses binary search on a sorted sequence of values. The current package is limited to matrices of real values. If you are interested in using string or mixed types in different dimensions, see the methods vignette.</p>
+<div class="section level3">
+<h3 id="arrayvec-interface">Arrayvec Interface<a class="anchor" aria-label="anchor" href="#arrayvec-interface"></a>
+</h3>
+<p>The kdtools package can be used to search for multidimensional points
+in a boxed region and find nearest neighbors in 1 to 9 dimensions. The
+package uses binary search on a sorted sequence of values. The current
+package is limited to matrices of real values. If you are interested in
+using string or mixed types in different dimensions, see the methods
+vignette.</p>
 <p>Using kdtools is straightforward. There are four steps:</p>
-<div id="step-1--convert-your-matrix-of-values-into-a-arrayvec-object" class="section level5">
-<h5 class="hasAnchor">
-<a href="#step-1--convert-your-matrix-of-values-into-a-arrayvec-object" class="anchor"></a>Step 1. Convert your matrix of values into a arrayvec object</h5>
+<div class="section level5">
+<h5 id="step-1--convert-your-matrix-of-values-into-a-arrayvec-object">Step 1. Convert your matrix of values into a arrayvec object<a class="anchor" aria-label="anchor" href="#step-1--convert-your-matrix-of-values-into-a-arrayvec-object"></a>
+</h5>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/thk686/kdtools">kdtools</a></span><span class="op">)</span>
-<span class="va">x</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">3e3</span><span class="op">)</span>, nc <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>
-<span class="va">y</span> <span class="op">=</span> <span class="fu"><a href="../reference/matrix_to_tuples.html">matrix_to_tuples</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
-<span class="va">y</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">]</span>
-<span class="co">#&gt;           [,1]       [,2]</span>
-<span class="co">#&gt; [1,] 0.8210631 0.89434862</span>
-<span class="co">#&gt; [2,] 0.7255435 0.03762316</span>
-<span class="co">#&gt; [3,] 0.8037333 0.49708381</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/thk686/kdtools" class="external-link">kdtools</a></span><span class="op">)</span></span>
+<span><span class="va">x</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">3e3</span><span class="op">)</span>, nc <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="va">y</span> <span class="op">=</span> <span class="fu"><a href="../reference/convert.html">matrix_to_tuples</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span><span class="va">y</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#&gt;           [,1]      [,2]</span></span>
+<span><span class="co">#&gt; [1,] 0.9063688 0.3226261</span></span>
+<span><span class="co">#&gt; [2,] 0.4677785 0.6382602</span></span>
+<span><span class="co">#&gt; [3,] 0.5900272 0.7796014</span></span></code></pre></div>
 <p>The arrayvec object can be manipulated as if it were a matrix.</p>
 </div>
-<div id="step-2--sort-the-data" class="section level5">
-<h5 class="hasAnchor">
-<a href="#step-2--sort-the-data" class="anchor"></a>Step 2. Sort the data</h5>
+<div class="section level5">
+<h5 id="step-2--sort-the-data">Step 2. Sort the data<a class="anchor" aria-label="anchor" href="#step-2--sort-the-data"></a>
+</h5>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/kd_sort.html">kd_sort</a></span><span class="op">(</span><span class="va">y</span>, inplace <span class="op">=</span> <span class="cn">TRUE</span>, parallel <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt;             [,1]       [,2]       [,3]</span>
-<span class="co">#&gt; [1,] 0.052343789 0.03342679 0.14752816</span>
-<span class="co">#&gt; [2,] 0.025051656 0.07426555 0.23791483</span>
-<span class="co">#&gt; [3,] 0.052370632 0.01187365 0.26615066</span>
-<span class="co">#&gt; [4,] 0.051934327 0.09247300 0.03729445</span>
-<span class="co">#&gt; [5,] 0.009576583 0.16712492 0.15290128</span>
-<span class="co">#&gt; (continues for 995 more rows)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/kdsort.html">kd_sort</a></span><span class="op">(</span><span class="va">y</span>, inplace <span class="op">=</span> <span class="cn">TRUE</span>, parallel <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt;            [,1]       [,2]       [,3]</span></span>
+<span><span class="co">#&gt; [1,] 0.09239822 0.11579286 0.01748684</span></span>
+<span><span class="co">#&gt; [2,] 0.02096311 0.07102602 0.09382227</span></span>
+<span><span class="co">#&gt; [3,] 0.08320526 0.01440299 0.19734563</span></span>
+<span><span class="co">#&gt; [4,] 0.04734198 0.12577159 0.12383529</span></span>
+<span><span class="co">#&gt; [5,] 0.06199959 0.20603226 0.01682205</span></span>
+<span><span class="co">#&gt; (continues for 995 more rows)</span></span></code></pre></div>
 </div>
-<div id="step-3--search-the-data" class="section level5">
-<h5 class="hasAnchor">
-<a href="#step-3--search-the-data" class="anchor"></a>Step 3. Search the data</h5>
+<div class="section level5">
+<h5 id="step-3--search-the-data">Step 3. Search the data<a class="anchor" aria-label="anchor" href="#step-3--search-the-data"></a>
+</h5>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">rq</span> <span class="op">=</span> <span class="fu"><a href="../reference/kd_lower_bound.html">kd_range_query</a></span><span class="op">(</span><span class="va">y</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="fl">4</span>, <span class="fl">1</span><span class="op">/</span><span class="fl">4</span>, <span class="fl">1</span><span class="op">/</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span>; <span class="va">rq</span>
-<span class="co">#&gt;             [,1]       [,2]       [,3]</span>
-<span class="co">#&gt; [1,] 0.227594969 0.21525701 0.22366870</span>
-<span class="co">#&gt; [2,] 0.052343789 0.03342679 0.14752816</span>
-<span class="co">#&gt; [3,] 0.025051656 0.07426555 0.23791483</span>
-<span class="co">#&gt; [4,] 0.051934327 0.09247300 0.03729445</span>
-<span class="co">#&gt; [5,] 0.009576583 0.16712492 0.15290128</span>
-<span class="co">#&gt; (continues for 10 more rows)</span>
-<span class="va">i</span> <span class="op">=</span> <span class="fu"><a href="../reference/kd_nearest_neighbors.html">kd_nearest_neighbor</a></span><span class="op">(</span><span class="va">y</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span>; <span class="va">y</span><span class="op">[</span><span class="va">i</span>, <span class="op">]</span>
-<span class="co">#&gt; [1] 0.06351627 0.06699241 0.05255689</span>
-<span class="va">nns</span> <span class="op">=</span> <span class="fu"><a href="../reference/kd_nearest_neighbors.html">kd_nearest_neighbors</a></span><span class="op">(</span><span class="va">y</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>, <span class="fl">100</span><span class="op">)</span>; <span class="va">nns</span>
-<span class="co">#&gt;            [,1]       [,2]       [,3]</span>
-<span class="co">#&gt; [1,] 0.06351627 0.06699241 0.05255689</span>
-<span class="co">#&gt; [2,] 0.05193433 0.09247300 0.03729445</span>
-<span class="co">#&gt; [3,] 0.08079601 0.04969766 0.06901275</span>
-<span class="co">#&gt; [4,] 0.05234379 0.03342679 0.14752816</span>
-<span class="co">#&gt; [5,] 0.13737035 0.08068866 0.03335582</span>
-<span class="co">#&gt; (continues for 95 more rows)</span>
-<span class="va">nni</span> <span class="op">=</span> <span class="fu"><a href="../reference/kd_nearest_neighbors.html">kd_nn_indices</a></span><span class="op">(</span><span class="va">y</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>, <span class="fl">10</span><span class="op">)</span>; <span class="va">nni</span>
-<span class="co">#&gt;  [1]  8  4  9  1 12  6 10  5  2 13</span></code></pre></div>
-<p>The <code>kd_nearest_neighbor</code> and <code>kd_nn_indices</code> functions return row-indices. The other functions return arrayvec objects.</p>
+<code class="sourceCode R"><span><span class="va">rq</span> <span class="op">=</span> <span class="fu"><a href="../reference/search.html">kd_range_query</a></span><span class="op">(</span><span class="va">y</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="fl">4</span>, <span class="fl">1</span><span class="op">/</span><span class="fl">4</span>, <span class="fl">1</span><span class="op">/</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span>; <span class="va">rq</span></span>
+<span><span class="co">#&gt;            [,1]       [,2]       [,3]</span></span>
+<span><span class="co">#&gt; [1,] 0.09239822 0.11579286 0.01748684</span></span>
+<span><span class="co">#&gt; [2,] 0.02096311 0.07102602 0.09382227</span></span>
+<span><span class="co">#&gt; [3,] 0.08320526 0.01440299 0.19734563</span></span>
+<span><span class="co">#&gt; [4,] 0.04734198 0.12577159 0.12383529</span></span>
+<span><span class="co">#&gt; [5,] 0.06199959 0.20603226 0.01682205</span></span>
+<span><span class="co">#&gt; (continues for 9 more rows)</span></span>
+<span><span class="va">i</span> <span class="op">=</span> <span class="fu"><a href="../reference/nneighb.html">kd_nearest_neighbor</a></span><span class="op">(</span><span class="va">y</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span>; <span class="va">y</span><span class="op">[</span><span class="va">i</span>, <span class="op">]</span></span>
+<span><span class="co">#&gt; [1] 0.02096311 0.07102602 0.09382227</span></span>
+<span><span class="va">nns</span> <span class="op">=</span> <span class="fu"><a href="../reference/nneighb.html">kd_nearest_neighbors</a></span><span class="op">(</span><span class="va">y</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>, <span class="fl">100</span><span class="op">)</span>; <span class="va">nns</span></span>
+<span><span class="co">#&gt;            [,1]       [,2]       [,3]</span></span>
+<span><span class="co">#&gt; [1,] 0.02096311 0.07102602 0.09382227</span></span>
+<span><span class="co">#&gt; [2,] 0.09239822 0.11579286 0.01748684</span></span>
+<span><span class="co">#&gt; [3,] 0.04734198 0.12577159 0.12383529</span></span>
+<span><span class="co">#&gt; [4,] 0.08320526 0.01440299 0.19734563</span></span>
+<span><span class="co">#&gt; [5,] 0.06199959 0.20603226 0.01682205</span></span>
+<span><span class="co">#&gt; (continues for 95 more rows)</span></span>
+<span><span class="va">nni</span> <span class="op">=</span> <span class="fu"><a href="../reference/nneighb.html">kd_nn_indices</a></span><span class="op">(</span><span class="va">y</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>, <span class="fl">10</span><span class="op">)</span>; <span class="va">nni</span></span>
+<span><span class="co">#&gt;  [1]  2  1  4  3  5 10 12  9 14 16</span></span></code></pre></div>
+<p>The <code>kd_nearest_neighbor</code> and <code>kd_nn_indices</code>
+functions return row-indices. The other functions return arrayvec
+objects.</p>
 </div>
-<div id="step-4--convert-back-to-a-matrix-for-use-in-r" class="section level5">
-<h5 class="hasAnchor">
-<a href="#step-4--convert-back-to-a-matrix-for-use-in-r" class="anchor"></a>Step 4. Convert back to a matrix for use in R</h5>
+<div class="section level5">
+<h5 id="step-4--convert-back-to-a-matrix-for-use-in-r">Step 4. Convert back to a matrix for use in R<a class="anchor" aria-label="anchor" href="#step-4--convert-back-to-a-matrix-for-use-in-r"></a>
+</h5>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/matrix_to_tuples.html">tuples_to_matrix</a></span><span class="op">(</span><span class="va">rq</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt;             [,1]       [,2]       [,3]</span>
-<span class="co">#&gt; [1,] 0.227594969 0.21525701 0.22366870</span>
-<span class="co">#&gt; [2,] 0.052343789 0.03342679 0.14752816</span>
-<span class="co">#&gt; [3,] 0.025051656 0.07426555 0.23791483</span>
-<span class="co">#&gt; [4,] 0.051934327 0.09247300 0.03729445</span>
-<span class="co">#&gt; [5,] 0.009576583 0.16712492 0.15290128</span>
-<span class="co">#&gt; [6,] 0.027758140 0.10715282 0.15596316</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/matrix_to_tuples.html">tuples_to_matrix</a></span><span class="op">(</span><span class="va">nns</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt;            [,1]       [,2]       [,3]</span>
-<span class="co">#&gt; [1,] 0.06351627 0.06699241 0.05255689</span>
-<span class="co">#&gt; [2,] 0.05193433 0.09247300 0.03729445</span>
-<span class="co">#&gt; [3,] 0.08079601 0.04969766 0.06901275</span>
-<span class="co">#&gt; [4,] 0.05234379 0.03342679 0.14752816</span>
-<span class="co">#&gt; [5,] 0.13737035 0.08068866 0.03335582</span>
-<span class="co">#&gt; [6,] 0.02775814 0.10715282 0.15596316</span></code></pre></div>
-<p>If you pass a matrix instead of an arrayvec object to any of the functions, it will be converted to an arrayvec object internally and results will be returned as matrices. This is slower and provided for convenience.</p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/convert.html">tuples_to_matrix</a></span><span class="op">(</span><span class="va">rq</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;            [,1]       [,2]       [,3]</span></span>
+<span><span class="co">#&gt; [1,] 0.09239822 0.11579286 0.01748684</span></span>
+<span><span class="co">#&gt; [2,] 0.02096311 0.07102602 0.09382227</span></span>
+<span><span class="co">#&gt; [3,] 0.08320526 0.01440299 0.19734563</span></span>
+<span><span class="co">#&gt; [4,] 0.04734198 0.12577159 0.12383529</span></span>
+<span><span class="co">#&gt; [5,] 0.06199959 0.20603226 0.01682205</span></span>
+<span><span class="co">#&gt; [6,] 0.02192858 0.15486310 0.24297762</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/convert.html">tuples_to_matrix</a></span><span class="op">(</span><span class="va">nns</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;            [,1]       [,2]       [,3]</span></span>
+<span><span class="co">#&gt; [1,] 0.02096311 0.07102602 0.09382227</span></span>
+<span><span class="co">#&gt; [2,] 0.09239822 0.11579286 0.01748684</span></span>
+<span><span class="co">#&gt; [3,] 0.04734198 0.12577159 0.12383529</span></span>
+<span><span class="co">#&gt; [4,] 0.08320526 0.01440299 0.19734563</span></span>
+<span><span class="co">#&gt; [5,] 0.06199959 0.20603226 0.01682205</span></span>
+<span><span class="co">#&gt; [6,] 0.13167283 0.02859779 0.17847762</span></span></code></pre></div>
+<p>If you pass a matrix instead of an arrayvec object to any of the
+functions, it will be converted to an arrayvec object internally and
+results will be returned as matrices. This is slower and provided for
+convenience.</p>
 </div>
 </div>
   </div>
@@ -241,11 +258,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Timothy Keitt.</p>
+  <p></p>
+<p>Developed by Timothy Keitt.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>
@@ -253,6 +272,8 @@
 
   
 
+
+  
 
   </body>
 </html>

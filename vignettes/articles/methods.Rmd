@@ -131,7 +131,7 @@ double get_timing()
 ```
 
 ```{r include=FALSE}
-cache_file = "../inst/extdata/sort_benchmark_data"
+cache_file = "../../inst/extdata/sort_benchmark_data"
 if (!file.exists(cache_file))
   cache_file = system.file("extdata/sort_benchmark_data", package = "kdtools")
 if (use_cached_data && file.exists(cache_file)) {
@@ -313,18 +313,19 @@ The [Boost Geometry library](https://www.boost.org/doc/libs/release/libs/geometr
 
 #define NO_TUPLEMAPR
 
-#define _HAS_AUTO_PTR_ETC false
-
 #include <Rcpp.h>
 #include <vector>
 #include <kdtools.h>
+
+#define _HAS_AUTO_PTR_ETC false
+
 #include <boost/geometry.hpp>
 #include <boost/geometry/index/rtree.hpp>
 #include <boost/geometry/geometries/box.hpp>
 #include <boost/geometry/geometries/register/box.hpp>
 #include <boost/geometry/geometries/adapted/std_array.hpp>
 
-#undefine _HAS_AUTO_PTR_ETC
+#undef _HAS_AUTO_PTR_ETC
 
 using namespace keittlab;
 
@@ -523,7 +524,7 @@ Rcpp::List time_query(int n, int m)
 ```
 
 ```{r, echo=FALSE}
-cache_file = "../inst/extdata/query_benchmark_data"
+cache_file = "../../inst/extdata/query_benchmark_data"
 if (!file.exists(cache_file))
   cache_file = system.file("extdata/query_benchmark_data", package = "kdtools")
 if (use_cached_data && file.exists(cache_file)) {
@@ -557,11 +558,16 @@ The kdtools package also provides routines for nearest- and k-nearest- neighbor 
 #include <Rcpp.h>
 #include <vector>
 #include <kdtools.h>
+
+#define _HAS_AUTO_PTR_ETC false
+
 #include <boost/geometry.hpp>
 #include <boost/geometry/index/rtree.hpp>
 #include <boost/geometry/geometries/box.hpp>
 #include <boost/geometry/geometries/register/box.hpp>
 #include <boost/geometry/geometries/adapted/std_array.hpp>
+
+#undef _HAS_AUTO_PTR_ETC
 
 using namespace keittlab;
 
@@ -724,7 +730,7 @@ Rcpp::List time_nn(int n, int m)
 ```
 
 ```{r, echo=FALSE}
-cache_file = "../inst/extdata/nn_benchmark_data"
+cache_file = "../../inst/extdata/nn_benchmark_data"
 if (!file.exists(cache_file))
   cache_file = system.file("extdata/nn_benchmark_data", package = "kdtools")
 if (use_cached_data && file.exists(cache_file)) {

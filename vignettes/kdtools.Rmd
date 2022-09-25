@@ -28,6 +28,8 @@ if (has_cxx17()) {
 
 There are now two options for using kdtools, either on a C++ vector of arrays (arrayvec object) or natively on a data frame. Sorting on arrayvec objects is fast. Passing a data frame is slower, but automatically supports mixed types.
 
+Please see [the pkgdown site for more articles on kdtools](https://thk686.github.io/kdtools/)
+
 ### Data Frame Interface
 
 ##### Step 1. Sort data frame

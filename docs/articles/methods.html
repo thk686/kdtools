@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,18 +33,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">kdtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../articles/kdtools.html">Get started</a>
 </li>
@@ -50,7 +46,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -62,6 +58,9 @@
     <li>
       <a href="../articles/methods.html">Compact multidimensional sorting and searching with kdtools</a>
     </li>
+    <li>
+      <a href="../articles/nearest_neighbors.html">Nearest Neighbors Models</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -70,7 +69,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/thk686/kdtools/">
+  <a href="https://github.com/thk686/kdtools/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -85,30 +84,78 @@
 
       
 
-      </header><script src="methods_files/header-attrs-2.10/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Compact multidimensional sorting and searching with kdtools</h1>
-                        <h4 class="author">Timothy H. Keitt</h4>
+      <h1 data-toc-skip>Compact multidimensional sorting and searching
+with kdtools</h1>
+                        <h4 data-toc-skip class="author">Timothy H.
+Keitt</h4>
             
-            <h4 class="date">2021-12-26</h4>
+            <h4 data-toc-skip class="date">2022-09-25</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/thk686/kdtools/blob/master/vignettes/methods.Rmd"><code>vignettes/methods.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/thk686/kdtools/blob/HEAD/vignettes/articles/methods.Rmd" class="external-link"><code>vignettes/articles/methods.Rmd</code></a></small>
       <div class="hidden name"><code>methods.Rmd</code></div>
 
     </div>
 
     
     
-<div id="introduction" class="section level2">
-<h2 class="hasAnchor">
-<a href="#introduction" class="anchor"></a>Introduction</h2>
-<p>Sorting and searching are fundamental operations in computer and data science. The objective of the <code>kdtools</code> is to expose a C++ header file implementing efficient sorting and searching methods for multidimensional tuple-like data. The interface mirrors that of the <a href="http://en.cppreference.com/w/">C++ Standard Library</a> sorting and searching functions. It is a single header-only library with no external dependencies other than <code>std</code>.</p>
-<p>A common approach to improving search performance is to place data into an ordered tree structure, the most common being a binary tree and its variants. Computer textbooks and introductory courses are littered with examples of tree structures, however it <a href="http://scottmeyers.blogspot.com/2015/09/should-you-be-using-something-instead.html">has been pointed out by practitioners</a> that many tree-type data structures have considerable storage overhead and poor memory locality. This results from using linked-list-like pointers to connect nodes. In many cases, a fully or partially sorted sequence combined with binary search will outperform pointer-based trees. Indeed, <a href="http://en.cppreference.com/w/cpp/algorithm">the Standard Library contains a set of algorithms</a> for sorting or partitioning a data sequence and searching within partitioned sequences.</p>
-<p>A limitation of the Standard Library algorithms and data structures is that they can only be ordered in a single dimension. Sort keys can possess higher cardinality however comparison operators and ordering are unidimensional. This is suboptimal for data that are intrinsically multidimensional, such as geographical coordinates or other multivariate data. In multiple dimensions, it is preferred to order a sequence of keys such the average distance between neighboring pairs in the sequence is small. There exist a vast array of techniques to accomplish sequence localization; however I will only discuss one known as the <a href="https://en.wikipedia.org/wiki/K-d_tree">kd-tree</a>.</p>
-<p>A kd-tree is a type of binary tree that cycles among the dimensions of its stored objects at each level of the tree hierarchy. In the case of spatial data, the root node will contain the median key in the x-direction and each of its daughter nodes will contain the median in the y-direction of their respective partitions. Subsequent daughter nodes will again contain medians in the x-direction, and so on until there are no additional keys to the left or right. Searching a kd-tree involves recursive comparisons, cycling among the dimensions, until a leaf-node is encountered. Most searching operations can be accomplished in logarithmic time complexity yielding an efficient method.</p>
-<p>Precisely as an ordinary binary tree can be replaced by a sorted range, a sequence of multidimensional elements can be sorted, in-place if desired, via recursive partitioning following the kd-tree scheme. Divide-and-conquer recursive partitioning is a well-known sorting algorithm and is the basis of the <a href="https://en.wikipedia.org/wiki/Quicksort">quicksort algorithm</a>. Partitioning a sequence places all elements less than (or more generally meeting some predicate) to the left of a selected key, while all elements greater-than-or-equal-to follow to the right. The kd-sort algorithm presented here simply modifies quicksort to cycle among the dimensions of the stored elements. Searching follows exactly as the kd-tree except that nodes correspond to pivot-elements in the linear array.</p>
-<p>Implementation of <code>kd_sort</code> enables a set of additional algorithms for searching and nearest neighbor queries. The following table gives the exposed functions and corresponding Standard Library routines.</p>
+<div class="section level2">
+<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h2>
+<p>Sorting and searching are fundamental operations in computer and data
+science. The objective of the <code>kdtools</code> is to expose a C++
+header file implementing efficient sorting and searching methods for
+multidimensional tuple-like data. The interface mirrors that of the <a href="http://en.cppreference.com/w/" class="external-link">C++ Standard Library</a> sorting
+and searching functions. It is a single header-only library with no
+external dependencies other than <code>std</code>.</p>
+<p>A common approach to improving search performance is to place data
+into an ordered tree structure, the most common being a binary tree and
+its variants. Computer textbooks and introductory courses are littered
+with examples of tree structures, however it <a href="http://scottmeyers.blogspot.com/2015/09/should-you-be-using-something-instead.html" class="external-link">has
+been pointed out by practitioners</a> that many tree-type data
+structures have considerable storage overhead and poor memory locality.
+This results from using linked-list-like pointers to connect nodes. In
+many cases, a fully or partially sorted sequence combined with binary
+search will outperform pointer-based trees. Indeed, <a href="http://en.cppreference.com/w/cpp/algorithm" class="external-link">the Standard Library
+contains a set of algorithms</a> for sorting or partitioning a data
+sequence and searching within partitioned sequences.</p>
+<p>A limitation of the Standard Library algorithms and data structures
+is that they can only be ordered in a single dimension. Sort keys can
+possess higher cardinality however comparison operators and ordering are
+unidimensional. This is suboptimal for data that are intrinsically
+multidimensional, such as geographical coordinates or other multivariate
+data. In multiple dimensions, it is preferred to order a sequence of
+keys such the average distance between neighboring pairs in the sequence
+is small. There exist a vast array of techniques to accomplish sequence
+localization; however I will only discuss one known as the <a href="https://en.wikipedia.org/wiki/K-d_tree" class="external-link">kd-tree</a>.</p>
+<p>A kd-tree is a type of binary tree that cycles among the dimensions
+of its stored objects at each level of the tree hierarchy. In the case
+of spatial data, the root node will contain the median key in the
+x-direction and each of its daughter nodes will contain the median in
+the y-direction of their respective partitions. Subsequent daughter
+nodes will again contain medians in the x-direction, and so on until
+there are no additional keys to the left or right. Searching a kd-tree
+involves recursive comparisons, cycling among the dimensions, until a
+leaf-node is encountered. Most searching operations can be accomplished
+in logarithmic time complexity yielding an efficient method.</p>
+<p>Precisely as an ordinary binary tree can be replaced by a sorted
+range, a sequence of multidimensional elements can be sorted, in-place
+if desired, via recursive partitioning following the kd-tree scheme.
+Divide-and-conquer recursive partitioning is a well-known sorting
+algorithm and is the basis of the <a href="https://en.wikipedia.org/wiki/Quicksort" class="external-link">quicksort algorithm</a>.
+Partitioning a sequence places all elements less than (or more generally
+meeting some predicate) to the left of a selected key, while all
+elements greater-than-or-equal-to follow to the right. The kd-sort
+algorithm presented here simply modifies quicksort to cycle among the
+dimensions of the stored elements. Searching follows exactly as the
+kd-tree except that nodes correspond to pivot-elements in the linear
+array.</p>
+<p>Implementation of <code>kd_sort</code> enables a set of additional
+algorithms for searching and nearest neighbor queries. The following
+table gives the exposed functions and corresponding Standard Library
+routines.</p>
 <table class="table">
 <colgroup>
 <col width="25%">
@@ -174,55 +221,102 @@
 </tbody>
 </table>
 </div>
-<div id="sorting" class="section level2">
-<h2 class="hasAnchor">
-<a href="#sorting" class="anchor"></a>Sorting</h2>
-<p>The kd-sort algorithm in the kdtools package is implemented as a C++ function template parameterized by the starting dimension (usually 0) and the iterator type, which will be auto-deduced by the compiler.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt;<span class="dt">size_t</span> I, <span class="kw">typename</span> Iter&gt;</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> kd_sort(Iter first, Iter last)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">using</span> TupleType = <span class="dt">iter_value_t</span>&lt;Iter&gt;;</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">constexpr</span> <span class="kw">auto</span> J = next_dim&lt;I, TupleType&gt;;</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (distance(first, last) &gt; <span class="dv">1</span>)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  {</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">auto</span> pred = kd_less&lt;I&gt;();</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">auto</span> pivot = median_part(first, last, pred);</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    kd_sort&lt;J&gt;(next(pivot), last);</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    kd_sort&lt;J&gt;(first, pivot);</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>The <code>median_part</code> function is a thin wrapper around the <a href="http://en.cppreference.com/w/cpp/algorithm/nth_element"><code>nth_element</code></a> function from the standard library, which is used to find the median value in the current dimension. Elements to the left of the nth element are not greater than the nth element and elements to the right are not less than the nth element. This allows searching left or right depending on whether the sought value is not greater than the median or not less than the median (ties must search both directions).</p>
-<p>Once the first dimension is partitioned, the ranges right and left of the pivot are partitioned, and so on until first and last span a single or no value. The dimension index <code>I</code> is incremented at compile-time using template metaprogramming. The <code>value</code> member of the templated struct <code>next_dim</code> holds the incremented value of <code>I</code> that has been wrapped to cycle through successive dimensions of <code>TupleType</code>. The result of <code>kd_sort</code> is a sequence ordered as if it were inserted into a kd-tree data structure. The following figure illustrates the resulting order in 2-dimensions.</p>
+<div class="section level2">
+<h2 id="sorting">Sorting<a class="anchor" aria-label="anchor" href="#sorting"></a>
+</h2>
+<p>The kd-sort algorithm in the kdtools package is implemented as a C++
+function template parameterized by the starting dimension (usually 0)
+and the iterator type, which will be auto-deduced by the compiler.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> <span class="op">&lt;</span><span class="dt">size_t</span> I<span class="op">,</span> <span class="kw">typename</span> Iter<span class="op">&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> kd_sort<span class="op">(</span>Iter first<span class="op">,</span> Iter last<span class="op">)</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">using</span> TupleType <span class="op">=</span> <span class="dt">iter_value_t</span><span class="op">&lt;</span>Iter<span class="op">&gt;;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">constexpr</span> <span class="kw">auto</span> J <span class="op">=</span> next_dim<span class="op">&lt;</span>I<span class="op">,</span> TupleType<span class="op">&gt;;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>distance<span class="op">(</span>first<span class="op">,</span> last<span class="op">)</span> <span class="op">&gt;</span> <span class="dv">1</span><span class="op">)</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">{</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">auto</span> pred <span class="op">=</span> kd_less<span class="op">&lt;</span>I<span class="op">&gt;();</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">auto</span> pivot <span class="op">=</span> median_part<span class="op">(</span>first<span class="op">,</span> last<span class="op">,</span> pred<span class="op">);</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    kd_sort<span class="op">&lt;</span>J<span class="op">&gt;(</span>next<span class="op">(</span>pivot<span class="op">),</span> last<span class="op">);</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    kd_sort<span class="op">&lt;</span>J<span class="op">&gt;(</span>first<span class="op">,</span> pivot<span class="op">);</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>The <code>median_part</code> function is a thin wrapper around the <a href="http://en.cppreference.com/w/cpp/algorithm/nth_element" class="external-link"><code>nth_element</code></a>
+function from the standard library, which is used to find the median
+value in the current dimension. Elements to the left of the nth element
+are not greater than the nth element and elements to the right are not
+less than the nth element. This allows searching left or right depending
+on whether the sought value is not greater than the median or not less
+than the median (ties must search both directions).</p>
+<p>Once the first dimension is partitioned, the ranges right and left of
+the pivot are partitioned, and so on until first and last span a single
+or no value. The dimension index <code>I</code> is incremented at
+compile-time using template metaprogramming. The <code>value</code>
+member of the templated struct <code>next_dim</code> holds the
+incremented value of <code>I</code> that has been wrapped to cycle
+through successive dimensions of <code>TupleType</code>. The result of
+<code>kd_sort</code> is a sequence ordered as if it were inserted into a
+kd-tree data structure. The following figure illustrates the resulting
+order in 2-dimensions.</p>
 <p><img src="methods_files/figure-html/unnamed-chunk-3-1.png" width="576"></p>
-<p>Here the sequence order is shown with a continuous color gradient. The resulting patchiness indicates a hierarchical tree-like partitioning of the space providing the desired locality. Placing nearby points in proximity is what allows for efficient searches once the data are sorted. Sort times for vectors of tuple-like objects are relatively efficient, taking roughly twice the time of an ordinary lexicographical sort.</p>
+<p>Here the sequence order is shown with a continuous color gradient.
+The resulting patchiness indicates a hierarchical tree-like partitioning
+of the space providing the desired locality. Placing nearby points in
+proximity is what allows for efficient searches once the data are
+sorted. Sort times for vectors of tuple-like objects are relatively
+efficient, taking roughly twice the time of an ordinary lexicographical
+sort.</p>
 <p><img src="methods_files/figure-html/unnamed-chunk-6-1.png" width="672"></p>
-<p>In the above results, <code>lex_sort</code> is the Standard Library built-in <a href="http://en.cppreference.com/w/cpp/algorithm/sort"><code>std::sort</code></a> algorithm using <code>kd_less</code> as the predicate. The results indicate that <code>kd_sort</code> is reasonably fast, requiring roughly twice the time as the Standard Library built-in sorting algorithm. Because of the divide-and-conquer nature of <code>kd_sort</code>, it is trivially parallelizable. The threaded version is equal to or faster than the regular sort. Performance comparable to the build-in Standard Library <code>sort</code> function indicates that this reference implementation is reasonable.</p>
-<div id="multidimensional-comparisons" class="section level3">
-<h3 class="hasAnchor">
-<a href="#multidimensional-comparisons" class="anchor"></a>Multidimensional comparisons</h3>
-<p>To ensure the correct behavior in the presence of multiple ties, or even when all keys in one dimension are equal, the <code>kd_less</code> predicate implements circular lexicographic comparison. If elements in one dimension are tied, the next dimension is interrogated to break the tie. The comparisons cycle from trailing dimensions to leading dimensions using modulo arithmetic. It is implemented as a recursive, templated function object with the dimension index incremented at compile-time. The recursion is terminated using <a href="https://en.cppreference.com/w/cpp/language/if">constexpr if</a>.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt;<span class="dt">size_t</span> I, <span class="dt">size_t</span> K = <span class="dv">0</span>&gt;</span>
+<p>In the above results, <code>lex_sort</code> is the Standard Library
+built-in <a href="http://en.cppreference.com/w/cpp/algorithm/sort" class="external-link"><code>std::sort</code></a>
+algorithm using <code>kd_less</code> as the predicate. The results
+indicate that <code>kd_sort</code> is reasonably fast, requiring roughly
+twice the time as the Standard Library built-in sorting algorithm.
+Because of the divide-and-conquer nature of <code>kd_sort</code>, it is
+trivially parallelizable. The threaded version is equal to or faster
+than the regular sort. Performance comparable to the build-in Standard
+Library <code>sort</code> function indicates that this reference
+implementation is reasonable.</p>
+<div class="section level3">
+<h3 id="multidimensional-comparisons">Multidimensional comparisons<a class="anchor" aria-label="anchor" href="#multidimensional-comparisons"></a>
+</h3>
+<p>To ensure the correct behavior in the presence of multiple ties, or
+even when all keys in one dimension are equal, the <code>kd_less</code>
+predicate implements circular lexicographic comparison. If elements in
+one dimension are tied, the next dimension is interrogated to break the
+tie. The comparisons cycle from trailing dimensions to leading
+dimensions using modulo arithmetic. It is implemented as a recursive,
+templated function object with the dimension index incremented at
+compile-time. The recursion is terminated using <a href="https://en.cppreference.com/w/cpp/language/if" class="external-link">constexpr
+if</a>.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> <span class="op">&lt;</span><span class="dt">size_t</span> I<span class="op">,</span> <span class="dt">size_t</span> K <span class="op">=</span> <span class="dv">0</span><span class="op">&gt;</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> kd_less</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">template</span> &lt;<span class="kw">typename</span> T&gt;</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">bool</span> <span class="kw">operator</span>()(<span class="at">const</span> T&amp; lhs, <span class="at">const</span> T&amp; rhs) <span class="at">const</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  {</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">constexpr</span> (is_last&lt;K, T&gt;) {</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> less_nth&lt;I&gt;()(lhs, rhs);</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>      <span class="kw">constexpr</span> <span class="kw">auto</span> J = next_dim&lt;I, T&gt;;</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> equal_nth&lt;I&gt;()(lhs, rhs) ?</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        kd_less&lt;J, K + <span class="dv">1</span>&gt;()(lhs, rhs) :</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>          less_nth&lt;I&gt;()(lhs, rhs);</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>};</span></code></pre></div>
-<p>The predicates <code>equal_nth</code> and <code>less_nth</code> compare the <span class="math inline">\(I^{th}\)</span> element of the tuple. They have specializations for handling pointers to tuple-like object, so all functions can operate on a range over pointers to tuples, allowing arbitrary indexing into the original data.</p>
-<p>A more general function object template <code>kd_compare</code> that takes an arbitrary binary predicate is also provided by <code>kdtools</code>. Some examples applying <code>kd_less</code>, including degenerate, all-ties cases, are shown here.</p>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">template</span> <span class="op">&lt;</span><span class="kw">typename</span> T<span class="op">&gt;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">bool</span> <span class="kw">operator</span><span class="op">()(</span><span class="at">const</span> T<span class="op">&amp;</span> lhs<span class="op">,</span> <span class="at">const</span> T<span class="op">&amp;</span> rhs<span class="op">)</span> <span class="at">const</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="op">{</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">constexpr</span> <span class="op">(</span>is_last<span class="op">&lt;</span>K<span class="op">,</span> T<span class="op">&gt;)</span> <span class="op">{</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> less_nth<span class="op">&lt;</span>I<span class="op">&gt;()(</span>lhs<span class="op">,</span> rhs<span class="op">);</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>      <span class="kw">constexpr</span> <span class="kw">auto</span> J <span class="op">=</span> next_dim<span class="op">&lt;</span>I<span class="op">,</span> T<span class="op">&gt;;</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> equal_nth<span class="op">&lt;</span>I<span class="op">&gt;()(</span>lhs<span class="op">,</span> rhs<span class="op">)</span> <span class="op">?</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        kd_less<span class="op">&lt;</span>J<span class="op">,</span> K <span class="op">+</span> <span class="dv">1</span><span class="op">&gt;()(</span>lhs<span class="op">,</span> rhs<span class="op">)</span> <span class="op">:</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>          less_nth<span class="op">&lt;</span>I<span class="op">&gt;()(</span>lhs<span class="op">,</span> rhs<span class="op">);</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<p>The predicates <code>equal_nth</code> and <code>less_nth</code>
+compare the <span class="math inline">\(I^{th}\)</span> element of the
+tuple. They have specializations for handling pointers to tuple-like
+object, so all functions can operate on a range over pointers to tuples,
+allowing arbitrary indexing into the original data.</p>
+<p>A more general function object template <code>kd_compare</code> that
+takes an arbitrary binary predicate is also provided by
+<code>kdtools</code>. Some examples applying <code>kd_less</code>,
+including degenerate, all-ties cases, are shown here.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">j</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">9</span><span class="op">)</span><span class="op">)</span>
-<span class="va">k</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">9</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="fu"><a href="../reference/kd_sort.html">kd_sort</a></span><span class="op">(</span><span class="va">j</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">j</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">9</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">k</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">9</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fu"><a href="../reference/kdsort.html">kd_sort</a></span><span class="op">(</span><span class="va">j</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <table class="table"><tbody><tr class="odd">
 <td align="right">1</td>
 <td align="right">2</td>
@@ -235,12 +329,12 @@
 <td align="right">9</td>
 </tr></tbody></table>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="fu"><a href="../reference/kd_sort.html">kd_sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">j</span>, <span class="va">k</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fu"><a href="../reference/kdsort.html">kd_sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">j</span>, <span class="va">k</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <table class="table"><tbody>
 <tr class="odd">
 <td align="right">1</td>
-<td align="right">3</td>
 <td align="right">4</td>
+<td align="right">3</td>
 <td align="right">2</td>
 <td align="right">5</td>
 <td align="right">8</td>
@@ -249,19 +343,19 @@
 <td align="right">7</td>
 </tr>
 <tr class="even">
-<td align="right">4</td>
 <td align="right">2</td>
+<td align="right">1</td>
+<td align="right">4</td>
 <td align="right">5</td>
 <td align="right">9</td>
-<td align="right">1</td>
-<td align="right">6</td>
 <td align="right">3</td>
+<td align="right">6</td>
 <td align="right">7</td>
 <td align="right">8</td>
 </tr>
 </tbody></table>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="fu"><a href="../reference/kd_sort.html">kd_sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">j</span>, <span class="va">k</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fu"><a href="../reference/kdsort.html">kd_sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">j</span>, <span class="va">k</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <table class="table"><tbody>
 <tr class="odd">
 <td align="right">0</td>
@@ -286,24 +380,24 @@
 <td align="right">9</td>
 </tr>
 <tr class="odd">
-<td align="right">4</td>
-<td align="right">9</td>
 <td align="right">2</td>
 <td align="right">5</td>
+<td align="right">4</td>
 <td align="right">1</td>
+<td align="right">9</td>
 <td align="right">7</td>
 <td align="right">8</td>
-<td align="right">6</td>
 <td align="right">3</td>
+<td align="right">6</td>
 </tr>
 </tbody></table>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="fu"><a href="../reference/kd_sort.html">kd_sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">j</span>, <span class="va">k</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fu"><a href="../reference/kdsort.html">kd_sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">j</span>, <span class="va">k</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <table class="table"><tbody>
 <tr class="odd">
 <td align="right">1</td>
-<td align="right">3</td>
 <td align="right">4</td>
+<td align="right">3</td>
 <td align="right">2</td>
 <td align="right">5</td>
 <td align="right">8</td>
@@ -312,13 +406,13 @@
 <td align="right">7</td>
 </tr>
 <tr class="even">
-<td align="right">4</td>
 <td align="right">2</td>
+<td align="right">1</td>
+<td align="right">4</td>
 <td align="right">5</td>
 <td align="right">9</td>
-<td align="right">1</td>
-<td align="right">6</td>
 <td align="right">3</td>
+<td align="right">6</td>
 <td align="right">7</td>
 <td align="right">8</td>
 </tr>
@@ -335,7 +429,7 @@
 </tr>
 </tbody></table>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="fu"><a href="../reference/kd_sort.html">kd_sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">j</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fu"><a href="../reference/kdsort.html">kd_sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">j</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <table class="table"><tbody>
 <tr class="odd">
 <td align="right">0</td>
@@ -371,46 +465,92 @@
 <td align="right">0</td>
 </tr>
 </tbody></table>
-<p>Notice that <code>kd_sort</code> is a variant of the quicksort algorithm in one dimension. It also is not effected by all-ties. The order of subsequent dimensions can be changed when the leading dimension contains all ties, however the sequence is still sorted and can be used for searching.</p>
+<p>Notice that <code>kd_sort</code> is a variant of the quicksort
+algorithm in one dimension. It also is not effected by all-ties. The
+order of subsequent dimensions can be changed when the leading dimension
+contains all ties, however the sequence is still sorted and can be used
+for searching.</p>
 </div>
-<div id="searching" class="section level3">
-<h3 class="hasAnchor">
-<a href="#searching" class="anchor"></a>Searching</h3>
-<p>Once data are ordered appropriately, searching can be achieved efficiently. The <code>kdtools</code> package provides analogs of the Standard Library <a href="http://en.cppreference.com/w/cpp/algorithm/lower_bound"><code>lower_bound</code></a>, <a href="http://en.cppreference.com/w/cpp/algorithm/upper_bound"><code>upper_bound</code></a>, <a href="http://en.cppreference.com/w/cpp/algorithm/equal_range"><code>equal_range</code></a> and <a href="http://en.cppreference.com/w/cpp/algorithm/binary_search"><code>binary_search</code></a> functions for querying sorted ranges. An additional function, <code>kd_range_query</code>, does efficient searching within a boxed region.</p>
-<p>The <code>kd_lower_bound</code>, <code>kd_upper_bound</code> and <code>kd_equal_range</code> algorithms behave differently than their unidimensional analogs. This is because the only reasonable definition of multidimensional less is to require less in all dimensions simultaneously. As illustrated below, this leads to cases where some, but not all, elements are less to be included in the interval spanned by <code>kd_lower_bound</code>, <code>kd_upper_bound</code> and <code>kd_equal_range</code>. In other words, in a single dimension, these routines are both necessary and sufficient, whereas in multiple-dimensions, they are necessary, but not sufficient to uniquely identify elements in a boxed region.</p>
-<p>In other schemes, such as <a href="https://en.wikipedia.org/wiki/Z-order_curve">Morton codes</a>, elaborate subroutines are required to prune the extra elements falling outside the region of interest (see lower-left panel below). This is a result of using a fundamentally unidimensional search on multidimensional data. Instead <code>kd_sort</code> implements direct binary search for points falling within a boxed region.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt;<span class="dt">size_t</span> I,</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>          <span class="kw">typename</span> Iter,</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>          <span class="kw">typename</span> TupleType,</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>          <span class="kw">typename</span> OutIter&gt;</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> kd_range_query(Iter first, Iter last,</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">const</span> TupleType&amp; lower,</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">const</span> TupleType&amp; upper,</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>                    OutIter outp)</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (distance(first, last) &gt; <span class="dv">32</span>) {</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">auto</span> pred = less_nth&lt;I&gt;();</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">auto</span> pivot = find_pivot&lt;I&gt;(first, last);</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">constexpr</span> <span class="kw">auto</span> J = next_dim&lt;I, TupleType&gt;;</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (within(*pivot, lower, upper)) *outp++ = *pivot;</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (!pred(*pivot, lower)) <span class="co">// search left</span></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>      kd_range_query&lt;J&gt;(first, pivot, lower, upper, outp);</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (pred(*pivot, upper)) <span class="co">// search right</span></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>      kd_range_query&lt;J&gt;(next(pivot), last, lower, upper, outp);</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    copy_if(first, last, outp, [&amp;](<span class="at">const</span> TupleType&amp; x){</span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> within(x, lower, upper);</span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    });</span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span>;</span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>Here, each pivot element is tested to see whether it falls within the boxed region, in which case, it is assigned to the output iterator. The template <code>find_pivot</code> searches for the partition point whose position may or may not be the middle of the sequence. Leaf tuples are also tested and copied to the output iterator. We check in each dimension whether there might be additional points in the region of interest to the left or right in the array. These are searched recursively until reaching the span falls below a threshold and is more profitably searched via sequential scan. In the following plot, the blue points indicate those not meeting the predicate and the aquamarine points are those where the predicate returns true.</p>
+<div class="section level3">
+<h3 id="searching">Searching<a class="anchor" aria-label="anchor" href="#searching"></a>
+</h3>
+<p>Once data are ordered appropriately, searching can be achieved
+efficiently. The <code>kdtools</code> package provides analogs of the
+Standard Library <a href="http://en.cppreference.com/w/cpp/algorithm/lower_bound" class="external-link"><code>lower_bound</code></a>,
+<a href="http://en.cppreference.com/w/cpp/algorithm/upper_bound" class="external-link"><code>upper_bound</code></a>,
+<a href="http://en.cppreference.com/w/cpp/algorithm/equal_range" class="external-link"><code>equal_range</code></a>
+and <a href="http://en.cppreference.com/w/cpp/algorithm/binary_search" class="external-link"><code>binary_search</code></a>
+functions for querying sorted ranges. An additional function,
+<code>kd_range_query</code>, does efficient searching within a boxed
+region.</p>
+<p>The <code>kd_lower_bound</code>, <code>kd_upper_bound</code> and
+<code>kd_equal_range</code> algorithms behave differently than their
+unidimensional analogs. This is because the only reasonable definition
+of multidimensional less is to require less in all dimensions
+simultaneously. As illustrated below, this leads to cases where some,
+but not all, elements are less to be included in the interval spanned by
+<code>kd_lower_bound</code>, <code>kd_upper_bound</code> and
+<code>kd_equal_range</code>. In other words, in a single dimension,
+these routines are both necessary and sufficient, whereas in
+multiple-dimensions, they are necessary, but not sufficient to uniquely
+identify elements in a boxed region.</p>
+<p>In other schemes, such as <a href="https://en.wikipedia.org/wiki/Z-order_curve" class="external-link">Morton codes</a>,
+elaborate subroutines are required to prune the extra elements falling
+outside the region of interest (see lower-left panel below). This is a
+result of using a fundamentally unidimensional search on
+multidimensional data. Instead <code>kd_sort</code> implements direct
+binary search for points falling within a boxed region.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> <span class="op">&lt;</span><span class="dt">size_t</span> I<span class="op">,</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>          <span class="kw">typename</span> Iter<span class="op">,</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>          <span class="kw">typename</span> TupleType<span class="op">,</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>          <span class="kw">typename</span> OutIter<span class="op">&gt;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> kd_range_query<span class="op">(</span>Iter first<span class="op">,</span> Iter last<span class="op">,</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">const</span> TupleType<span class="op">&amp;</span> lower<span class="op">,</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">const</span> TupleType<span class="op">&amp;</span> upper<span class="op">,</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>                    OutIter outp<span class="op">)</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(</span>distance<span class="op">(</span>first<span class="op">,</span> last<span class="op">)</span> <span class="op">&gt;</span> <span class="dv">32</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">auto</span> pred <span class="op">=</span> less_nth<span class="op">&lt;</span>I<span class="op">&gt;();</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">auto</span> pivot <span class="op">=</span> find_pivot<span class="op">&lt;</span>I<span class="op">&gt;(</span>first<span class="op">,</span> last<span class="op">);</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">constexpr</span> <span class="kw">auto</span> J <span class="op">=</span> next_dim<span class="op">&lt;</span>I<span class="op">,</span> TupleType<span class="op">&gt;;</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>within<span class="op">(*</span>pivot<span class="op">,</span> lower<span class="op">,</span> upper<span class="op">))</span> <span class="op">*</span>outp<span class="op">++</span> <span class="op">=</span> <span class="op">*</span>pivot<span class="op">;</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(!</span>pred<span class="op">(*</span>pivot<span class="op">,</span> lower<span class="op">))</span> <span class="co">// search left</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>      kd_range_query<span class="op">&lt;</span>J<span class="op">&gt;(</span>first<span class="op">,</span> pivot<span class="op">,</span> lower<span class="op">,</span> upper<span class="op">,</span> outp<span class="op">);</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>pred<span class="op">(*</span>pivot<span class="op">,</span> upper<span class="op">))</span> <span class="co">// search right</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>      kd_range_query<span class="op">&lt;</span>J<span class="op">&gt;(</span>next<span class="op">(</span>pivot<span class="op">),</span> last<span class="op">,</span> lower<span class="op">,</span> upper<span class="op">,</span> outp<span class="op">);</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    copy_if<span class="op">(</span>first<span class="op">,</span> last<span class="op">,</span> outp<span class="op">,</span> <span class="op">[&amp;](</span><span class="at">const</span> TupleType<span class="op">&amp;</span> x<span class="op">){</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> within<span class="op">(</span>x<span class="op">,</span> lower<span class="op">,</span> upper<span class="op">);</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    <span class="op">});</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span><span class="op">;</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Here, each pivot element is tested to see whether it falls within the
+boxed region, in which case, it is assigned to the output iterator. The
+template <code>find_pivot</code> searches for the partition point whose
+position may or may not be the middle of the sequence. Leaf tuples are
+also tested and copied to the output iterator. We check in each
+dimension whether there might be additional points in the region of
+interest to the left or right in the array. These are searched
+recursively until reaching the span falls below a threshold and is more
+profitably searched via sequential scan. In the following plot, the blue
+points indicate those not meeting the predicate and the aquamarine
+points are those where the predicate returns true.</p>
 <p><img src="methods_files/figure-html/unnamed-chunk-10-1.png" width="480"></p>
 </div>
-<div id="performance-comparison-to-boost-geometry" class="section level3">
-<h3 class="hasAnchor">
-<a href="#performance-comparison-to-boost-geometry" class="anchor"></a>Performance comparison to Boost Geometry</h3>
-<p>The <a href="https://www.boost.org/doc/libs/release/libs/geometry/">Boost Geometry library</a> is a highly sophisticated and performant framework for working with geometric features. It includes an <a href="https://en.wikipedia.org/wiki/R-tree">R-Tree index</a> that allows access to objects within a bounding region in logarithmic time. Here I compare the speed of building and querying a collection of points. The only purpose of this comparison is to look for large (i.e., 5 to 10 fold) differences, which would indicate a problem in the implementation. Small differences in measured times are probably not meaningful and will likely change on different systems. Reported results are the median of 21 trials using 10^{7} tuples.</p>
+<div class="section level3">
+<h3 id="performance-comparison-to-boost-geometry">Performance comparison to Boost Geometry<a class="anchor" aria-label="anchor" href="#performance-comparison-to-boost-geometry"></a>
+</h3>
+<p>The <a href="https://www.boost.org/doc/libs/release/libs/geometry/" class="external-link">Boost
+Geometry library</a> is a highly sophisticated and performant framework
+for working with geometric features. It includes an <a href="https://en.wikipedia.org/wiki/R-tree" class="external-link">R-Tree index</a> that allows
+access to objects within a bounding region in logarithmic time. Here I
+compare the speed of building and querying a collection of points. The
+only purpose of this comparison is to look for large (i.e., 5 to 10
+fold) differences, which would indicate a problem in the implementation.
+Small differences in measured times are probably not meaningful and will
+likely change on different systems. Reported results are the median of
+21 trials using 10^{7} tuples.</p>
 <table class="table">
 <thead><tr class="header">
 <th align="left">Test</th>
@@ -479,11 +619,16 @@
 </tr>
 </tbody>
 </table>
-<p>The results indicate that sorting and searching with kdtools is at least as performant as using Boost Geometry. Generally, an R-Tree will have an advantage with many individual insertions and deletions, whereas a sorted range will be more compact and show equal, if not better, query performance.</p>
-<div id="nearest-neighbor-search" class="section level4">
-<h4 class="hasAnchor">
-<a href="#nearest-neighbor-search" class="anchor"></a>Nearest-neighbor search</h4>
-<p>The kdtools package also provides routines for nearest- and k-nearest- neighbor search.</p>
+<p>The results indicate that sorting and searching with kdtools is at
+least as performant as using Boost Geometry. Generally, an R-Tree will
+have an advantage with many individual insertions and deletions, whereas
+a sorted range will be more compact and show equal, if not better, query
+performance.</p>
+<div class="section level4">
+<h4 id="nearest-neighbor-search">Nearest-neighbor search<a class="anchor" aria-label="anchor" href="#nearest-neighbor-search"></a>
+</h4>
+<p>The kdtools package also provides routines for nearest- and
+k-nearest- neighbor search.</p>
 <table class="table">
 <thead><tr class="header">
 <th align="left">Test</th>
@@ -542,219 +687,276 @@
 </tr>
 </tbody>
 </table>
-<p>As before, the results show kdtools to be as fast or faster than Boost Geometry search. This is not surprising as the R-Tree data structure is optimized for indexing boxed regions, not points. The exception is rstar search for 100 nearest neighbors, which is faster. This might have to do with differences in the priority queue implementation or it could be that the rtree buckets allow rapid retrieval of groups of nearby points all at once. The main conclusion here is that the current implementation of kdtools is reasonably efficient.</p>
+<p>As before, the results show kdtools to be as fast or faster than
+Boost Geometry search. This is not surprising as the R-Tree data
+structure is optimized for indexing boxed regions, not points. The
+exception is rstar search for 100 nearest neighbors, which is faster.
+This might have to do with differences in the priority queue
+implementation or it could be that the rtree buckets allow rapid
+retrieval of groups of nearby points all at once. The main conclusion
+here is that the current implementation of kdtools is reasonably
+efficient.</p>
 </div>
 </div>
-<div id="mixed-type-searches" class="section level3">
-<h3 class="hasAnchor">
-<a href="#mixed-type-searches" class="anchor"></a>Mixed-type searches</h3>
-<p>Notice that the only requirement of the algorithms is that the <code>get&lt;I&gt;</code> function return a type meeting the <a href="https://en.cppreference.com/w/cpp/named_req/EqualityComparable">EqualityComparable</a> and <a href="https://en.cppreference.com/w/cpp/named_req/LessThanComparable">LessThanComparable</a> C++ concepts. This means that different dimensions can contain different data types, including strings, for example. The current implementation uses <code>std::get</code> and so is restricted to <code>std::pair</code>, <code>std::tuple</code> and <code>std::array</code>, unless one chooses to specializes in the <code>std</code> namespace, which is generally not recommended. A suitable mechanism for providing type-specific specializations is to-be-implemented. The following example demonstrates sorting and searching a container holding keys of type <code>std::tuple&lt;double, std::string&gt;</code>.</p>
+<div class="section level3">
+<h3 id="mixed-type-searches">Mixed-type searches<a class="anchor" aria-label="anchor" href="#mixed-type-searches"></a>
+</h3>
+<p>Notice that the only requirement of the algorithms is that the
+<code>get&lt;I&gt;</code> function return a type meeting the <a href="https://en.cppreference.com/w/cpp/named_req/EqualityComparable" class="external-link">EqualityComparable</a>
+and <a href="https://en.cppreference.com/w/cpp/named_req/LessThanComparable" class="external-link">LessThanComparable</a>
+C++ concepts. This means that different dimensions can contain different
+data types, including strings, for example. The current implementation
+uses <code>std::get</code> and so is restricted to
+<code>std::pair</code>, <code>std::tuple</code> and
+<code>std::array</code>, unless one chooses to specializes in the
+<code>std</code> namespace, which is generally not recommended. A
+suitable mechanism for providing type-specific specializations is
+to-be-implemented. The following example demonstrates sorting and
+searching a container holding keys of type
+<code>std::tuple&lt;double, std::string&gt;</code>.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::depends(kdtools)]]</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::plugins(cpp17)]]</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"mixed_query.h"</span></span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> mixed_query(NumericVector c1, CharacterVector c2)</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">auto</span> n = c1.size();</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> mixed_query<span class="op">(</span>NumericVector c1<span class="op">,</span> CharacterVector c2<span class="op">)</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">auto</span> n <span class="op">=</span> c1<span class="op">.</span>size<span class="op">();</span></span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">range_type</span> data;</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  data.reserve(n);</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">range_type</span> data<span class="op">;</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  data<span class="op">.</span>reserve<span class="op">(</span>n<span class="op">);</span></span>
 <span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  transform(begin(c1), end(c1), begin(c2), back_inserter(data), make_key());</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  transform<span class="op">(</span>begin<span class="op">(</span>c1<span class="op">),</span> end<span class="op">(</span>c1<span class="op">),</span> begin<span class="op">(</span>c2<span class="op">),</span> back_inserter<span class="op">(</span>data<span class="op">),</span> make_key<span class="op">());</span></span>
 <span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="kw">auto</span> t = time_it([&amp;]{</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="kw">auto</span> t <span class="op">=</span> time_it<span class="op">([&amp;]{</span></span>
 <span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    kd_sort(begin(data), end(data));</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    kd_sort<span class="op">(</span>begin<span class="op">(</span>data<span class="op">),</span> end<span class="op">(</span>data<span class="op">));</span></span>
 <span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>  });</span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>  Rcout &lt;&lt; <span class="st">"</span><span class="sc">\n</span><span class="st">Sort time: "</span> &lt;&lt; t.count() &lt;&lt; <span class="st">" seconds"</span> &lt;&lt; <span class="bu">std::</span>endl;</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>  <span class="op">});</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>  Rcout <span class="op">&lt;&lt;</span> <span class="st">"</span><span class="sc">\n</span><span class="st">Sort time: "</span> <span class="op">&lt;&lt;</span> t<span class="op">.</span>count<span class="op">()</span> <span class="op">&lt;&lt;</span> <span class="st">" seconds"</span> <span class="op">&lt;&lt;</span> <span class="bu">std::</span>endl<span class="op">;</span></span>
 <span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>  Rcout &lt;&lt; <span class="st">"</span><span class="sc">\n</span><span class="st">First and last "</span> &lt;&lt; N &lt;&lt; <span class="st">" elements of sorted data:</span><span class="sc">\n</span><span class="st">"</span> &lt;&lt; <span class="bu">std::</span>endl;</span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>  print_range(data);</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>  Rcout <span class="op">&lt;&lt;</span> <span class="st">"</span><span class="sc">\n</span><span class="st">First and last "</span> <span class="op">&lt;&lt;</span> N <span class="op">&lt;&lt;</span> <span class="st">" elements of sorted data:</span><span class="sc">\n</span><span class="st">"</span> <span class="op">&lt;&lt;</span> <span class="bu">std::</span>endl<span class="op">;</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>  print_range<span class="op">(</span>data<span class="op">);</span></span>
 <span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>  <span class="dt">range_type</span> result;</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>  <span class="dt">range_type</span> result<span class="op">;</span></span>
 <span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>  <span class="kw">auto</span> u = time_it([&amp;]{</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>  <span class="kw">auto</span> u <span class="op">=</span> time_it<span class="op">([&amp;]{</span></span>
 <span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>    kd_range_query(begin(data), end(data),</span>
-<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>                   <span class="dt">key_type</span>(<span class="fl">0.4</span>, <span class="st">"w"</span>), <span class="dt">key_type</span>(<span class="fl">0.6</span>, <span class="st">"z"</span>),</span>
-<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>                   back_inserter(result));</span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>    kd_range_query<span class="op">(</span>begin<span class="op">(</span>data<span class="op">),</span> end<span class="op">(</span>data<span class="op">),</span></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>                   <span class="dt">key_type</span><span class="op">(</span><span class="fl">0.4</span><span class="op">,</span> <span class="st">"w"</span><span class="op">),</span> <span class="dt">key_type</span><span class="op">(</span><span class="fl">0.6</span><span class="op">,</span> <span class="st">"z"</span><span class="op">),</span></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>                   back_inserter<span class="op">(</span>result<span class="op">));</span></span>
 <span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>  });</span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>  <span class="op">});</span></span>
 <span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>  Rcout &lt;&lt; <span class="st">"</span><span class="sc">\n</span><span class="st">Query time: "</span> &lt;&lt; u.count() &lt;&lt; <span class="st">" seconds"</span> &lt;&lt; <span class="bu">std::</span>endl;</span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>  Rcout <span class="op">&lt;&lt;</span> <span class="st">"</span><span class="sc">\n</span><span class="st">Query time: "</span> <span class="op">&lt;&lt;</span> u<span class="op">.</span>count<span class="op">()</span> <span class="op">&lt;&lt;</span> <span class="st">" seconds"</span> <span class="op">&lt;&lt;</span> <span class="bu">std::</span>endl<span class="op">;</span></span>
 <span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>  Rcout &lt;&lt; <span class="st">"</span><span class="sc">\n</span><span class="st">First and last "</span> &lt;&lt; N &lt;&lt; <span class="st">" elements of query return:</span><span class="sc">\n</span><span class="st">"</span> &lt;&lt; <span class="bu">std::</span>endl;</span>
-<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>  kd_sort(begin(result), end(result)); print_range(result);</span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>  Rcout <span class="op">&lt;&lt;</span> <span class="st">"</span><span class="sc">\n</span><span class="st">First and last "</span> <span class="op">&lt;&lt;</span> N <span class="op">&lt;&lt;</span> <span class="st">" elements of query return:</span><span class="sc">\n</span><span class="st">"</span> <span class="op">&lt;&lt;</span> <span class="bu">std::</span>endl<span class="op">;</span></span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>  kd_sort<span class="op">(</span>begin<span class="op">(</span>result<span class="op">),</span> end<span class="op">(</span>result<span class="op">));</span> print_range<span class="op">(</span>result<span class="op">);</span></span>
 <span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>  result.clear();</span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>  result<span class="op">.</span>clear<span class="op">();</span></span>
 <span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>  <span class="kw">auto</span> v = time_it([&amp;]{</span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>  <span class="kw">auto</span> v <span class="op">=</span> time_it<span class="op">([&amp;]{</span></span>
 <span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>    kd_nearest_neighbors(begin(data), end(data),</span>
-<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>                         <span class="dt">key_type</span>(<span class="fl">0.5</span>, <span class="st">"kdtools"</span>), <span class="dv">100</span>,</span>
-<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>                         back_inserter(result));</span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>    kd_nearest_neighbors<span class="op">(</span>begin<span class="op">(</span>data<span class="op">),</span> end<span class="op">(</span>data<span class="op">),</span></span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>                         <span class="dt">key_type</span><span class="op">(</span><span class="fl">0.5</span><span class="op">,</span> <span class="st">"kdtools"</span><span class="op">),</span> <span class="dv">100</span><span class="op">,</span></span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>                         back_inserter<span class="op">(</span>result<span class="op">));</span></span>
 <span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a>  });</span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a>  <span class="op">});</span></span>
 <span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a>  Rcout &lt;&lt; <span class="st">"</span><span class="sc">\n</span><span class="st">Neighbors query time: "</span> &lt;&lt; v.count() &lt;&lt; <span class="st">" seconds"</span> &lt;&lt; <span class="bu">std::</span>endl;</span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a>  Rcout <span class="op">&lt;&lt;</span> <span class="st">"</span><span class="sc">\n</span><span class="st">Neighbors query time: "</span> <span class="op">&lt;&lt;</span> v<span class="op">.</span>count<span class="op">()</span> <span class="op">&lt;&lt;</span> <span class="st">" seconds"</span> <span class="op">&lt;&lt;</span> <span class="bu">std::</span>endl<span class="op">;</span></span>
 <span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a>  Rcout &lt;&lt; <span class="st">"</span><span class="sc">\n</span><span class="st">First and last "</span> &lt;&lt; N &lt;&lt; <span class="st">" elements of neighbors query return:</span><span class="sc">\n</span><span class="st">"</span> &lt;&lt; <span class="bu">std::</span>endl;</span>
-<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a>  print_range(result);</span>
-<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>First the data are sorted and then a range query is conducted. The range query selects tuples where the first element ranges from <code>0.4</code> to <code>0.6</code> and the second element begins with letters <code>w</code> through <code>y</code>. For the test, we borrow the words from the <code>parts_of_speech</code> dataset from the <code>tidytext</code> package. It contains more than <span class="math inline">\(10^5\)</span> words.</p>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a>  Rcout <span class="op">&lt;&lt;</span> <span class="st">"</span><span class="sc">\n</span><span class="st">First and last "</span> <span class="op">&lt;&lt;</span> N <span class="op">&lt;&lt;</span> <span class="st">" elements of neighbors query return:</span><span class="sc">\n</span><span class="st">"</span> <span class="op">&lt;&lt;</span> <span class="bu">std::</span>endl<span class="op">;</span></span>
+<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a>  print_range<span class="op">(</span>result<span class="op">);</span></span>
+<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>First the data are sorted and then a range query is conducted. The
+range query selects tuples where the first element ranges from
+<code>0.4</code> to <code>0.6</code> and the second element begins with
+letters <code>w</code> through <code>y</code>. For the test, we borrow
+the words from the <code>parts_of_speech</code> dataset from the
+<code>tidytext</code> package. It contains more than <span class="math inline">\(10^5\)</span> words.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"parts_of_speech"</span><span class="op">)</span>
-<span class="va">numbers</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">signif</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">parts_of_speech</span><span class="op">)</span><span class="op">)</span>, <span class="fl">4</span><span class="op">)</span>
-<span class="va">strings</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/chartr.html">tolower</a></span><span class="op">(</span><span class="va">parts_of_speech</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
-<span class="fu">mixed_query</span><span class="op">(</span><span class="va">numbers</span>, <span class="va">strings</span><span class="op">)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Sort time: 0.0674771 seconds</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; First and last 3 elements of sorted data:</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.001418 abridgment</span>
-<span class="co">#&gt; 1 0.001573 aaron</span>
-<span class="co">#&gt; 2 0.002189 abreaction</span>
-<span class="co">#&gt; ...</span>
-<span class="co">#&gt; 208256 0.996 wrapped</span>
-<span class="co">#&gt; 208257 0.9964 wurst</span>
-<span class="co">#&gt; 208258 0.9993 x-line</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Query time: 4.0709e-05 seconds</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; First and last 3 elements of query return:</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.4039 waker</span>
-<span class="co">#&gt; 1 0.401 walcott</span>
-<span class="co">#&gt; 2 0.4047 wadsworth</span>
-<span class="co">#&gt; ...</span>
-<span class="co">#&gt; 1070 0.5858 yokkaichi</span>
-<span class="co">#&gt; 1071 0.5887 yesternight</span>
-<span class="co">#&gt; 1072 0.5969 yelper</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Neighbors query time: 0.000384042 seconds</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; First and last 3 elements of neighbors query return:</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.214 kolos</span>
-<span class="co">#&gt; 1 0.4143 lots</span>
-<span class="co">#&gt; 2 0.4072 lost</span>
-<span class="co">#&gt; ...</span>
-<span class="co">#&gt; 97 0.4857 leukocyte</span>
-<span class="co">#&gt; 98 0.4852 lowse</span>
-<span class="co">#&gt; 99 0.4836 lotic</span></code></pre></div>
-<p>The timing results indicate that sorting <span class="math inline">\(2 \times 10 ^ 5\)</span> tuples is on the order of 1/10th second, whereas the range query returned in less than a millisecond.</p>
-<p>Nearest neighbor searching requires a suitable distance function be defined for all types. The template <code>scalar_dist</code> can be specialized for different types. It returns the distance along a single dimension. Currently, nearest neighbor distances are hardwired as the L2 norm of the returned scalar differences computed for each dimension. The computation above uses the following definitions.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span>&lt;<span class="kw">class</span> InputIt1, <span class="kw">class</span> InputIt2&gt;</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> set_similarity(InputIt1 first1, InputIt1 last1,</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                      InputIt2 first2, InputIt2 last2)</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> num = <span class="dv">0</span>, denom = <span class="dv">0</span>;</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">while</span> (first1 != last1 &amp;&amp; first2 != last2) {</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (*first1 &lt; *first2) {</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>      ++first1; ++denom;</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (!(*first2 &lt; *first1)) {</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>        ++first1; ++num;</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>      }</span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>      ++first2; ++denom;</span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>  denom += <span class="bu">std::</span>distance(first1, last1) + <span class="bu">std::</span>distance(first2, last2);</span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> num / denom;</span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>}</span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"parts_of_speech"</span><span class="op">)</span></span>
+<span><span class="va">numbers</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">signif</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">parts_of_speech</span><span class="op">)</span><span class="op">)</span>, <span class="fl">4</span><span class="op">)</span></span>
+<span><span class="va">strings</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/chartr.html" class="external-link">tolower</a></span><span class="op">(</span><span class="va">parts_of_speech</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu">mixed_query</span><span class="op">(</span><span class="va">numbers</span>, <span class="va">strings</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Sort time: 0.0675884 seconds</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; First and last 3 elements of sorted data:</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; 0 0.0001333 abdul</span></span>
+<span><span class="co">#&gt; 1 0.0008761 abominator</span></span>
+<span><span class="co">#&gt; 2 0.001739 abranchiate</span></span>
+<span><span class="co">#&gt; ...</span></span>
+<span><span class="co">#&gt; 208256 0.9975 year-round</span></span>
+<span><span class="co">#&gt; 208257 0.9989 zedekiah</span></span>
+<span><span class="co">#&gt; 208258 0.9995 zibet</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Query time: 3.6292e-05 seconds</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; First and last 3 elements of query return:</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; 0 0.4091 waffle</span></span>
+<span><span class="co">#&gt; 1 0.4084 walls</span></span>
+<span><span class="co">#&gt; 2 0.4102 wallydrag</span></span>
+<span><span class="co">#&gt; ...</span></span>
+<span><span class="co">#&gt; 1069 0.5879 yumuk</span></span>
+<span><span class="co">#&gt; 1070 0.5928 yordan</span></span>
+<span><span class="co">#&gt; 1071 0.5993 you'd</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Neighbors query time: 0.000375708 seconds</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; First and last 3 elements of neighbors query return:</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; 0 0.4432 koslo</span></span>
+<span><span class="co">#&gt; 1 0.4882 kolnos</span></span>
+<span><span class="co">#&gt; 2 0.4816 kobold</span></span>
+<span><span class="co">#&gt; ...</span></span>
+<span><span class="co">#&gt; 97 0.3718 laparotomies</span></span>
+<span><span class="co">#&gt; 98 0.3328 kimonoed</span></span>
+<span><span class="co">#&gt; 99 0.324 kingston</span></span></code></pre></div>
+<p>The timing results indicate that sorting <span class="math inline">\(2 \times 10 ^ 5\)</span> tuples is on the order of
+1/10th second, whereas the range query returned in less than a
+millisecond.</p>
+<p>Nearest neighbor searching requires a suitable distance function be
+defined for all types. The template <code>scalar_dist</code> can be
+specialized for different types. It returns the distance along a single
+dimension. Currently, nearest neighbor distances are hardwired as the L2
+norm of the returned scalar differences computed for each dimension. The
+computation above uses the following definitions.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span><span class="op">&lt;</span><span class="kw">class</span> InputIt1<span class="op">,</span> <span class="kw">class</span> InputIt2<span class="op">&gt;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> set_similarity<span class="op">(</span>InputIt1 first1<span class="op">,</span> InputIt1 last1<span class="op">,</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                      InputIt2 first2<span class="op">,</span> InputIt2 last2<span class="op">)</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">double</span> num <span class="op">=</span> <span class="dv">0</span><span class="op">,</span> denom <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">while</span> <span class="op">(</span>first1 <span class="op">!=</span> last1 <span class="op">&amp;&amp;</span> first2 <span class="op">!=</span> last2<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(*</span>first1 <span class="op">&lt;</span> <span class="op">*</span>first2<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>      <span class="op">++</span>first1<span class="op">;</span> <span class="op">++</span>denom<span class="op">;</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> <span class="op">(!(*</span>first2 <span class="op">&lt;</span> <span class="op">*</span>first1<span class="op">))</span> <span class="op">{</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>        <span class="op">++</span>first1<span class="op">;</span> <span class="op">++</span>num<span class="op">;</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>      <span class="op">}</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>      <span class="op">++</span>first2<span class="op">;</span> <span class="op">++</span>denom<span class="op">;</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>  denom <span class="op">+=</span> <span class="bu">std::</span>distance<span class="op">(</span>first1<span class="op">,</span> last1<span class="op">)</span> <span class="op">+</span> <span class="bu">std::</span>distance<span class="op">(</span>first2<span class="op">,</span> last2<span class="op">);</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> num <span class="op">/</span> denom<span class="op">;</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
 <span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> kdtools {</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> kdtools <span class="op">{</span></span>
 <span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> &lt;&gt;</span>
-<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> scalar_dist(<span class="at">const</span> <span class="bu">std::</span>string&amp; lhs, <span class="at">const</span> <span class="bu">std::</span>string&amp; rhs)</span>
-<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>string a(lhs), b(rhs);</span>
-<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>sort(begin(a), end(a));</span>
-<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>sort(begin(b), end(b));</span>
-<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="dv">1</span> - set_similarity(begin(a), end(a),</span>
-<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>                            begin(b), end(b));</span>
-<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> <span class="op">&lt;&gt;</span></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> scalar_dist<span class="op">(</span><span class="at">const</span> <span class="bu">std::</span>string<span class="op">&amp;</span> lhs<span class="op">,</span> <span class="at">const</span> <span class="bu">std::</span>string<span class="op">&amp;</span> rhs<span class="op">)</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>string<span class="op"> </span>a<span class="op">(</span>lhs<span class="op">),</span> b<span class="op">(</span>rhs<span class="op">);</span></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>sort<span class="op">(</span>begin<span class="op">(</span>a<span class="op">),</span> end<span class="op">(</span>a<span class="op">));</span></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>  <span class="bu">std::</span>sort<span class="op">(</span>begin<span class="op">(</span>b<span class="op">),</span> end<span class="op">(</span>b<span class="op">));</span></span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="dv">1</span> <span class="op">-</span> set_similarity<span class="op">(</span>begin<span class="op">(</span>a<span class="op">),</span> end<span class="op">(</span>a<span class="op">),</span></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>                            begin<span class="op">(</span>b<span class="op">),</span> end<span class="op">(</span>b<span class="op">));</span></span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
 <span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>} <span class="co">// namespace kdtools</span></span></code></pre></div>
-<p>The <code>set_similarity</code> template is adapted from the Standard Library <code>set_intersection</code> template and produces a number between 0 and 1. I have not attempted to prove this distance is metric, so the results may not be entirely correct. Also, there is no facility currently available to weight distances in different dimensions or override the default root-sum-of-squares algorithm for the multivariate distance.</p>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="co">// namespace kdtools</span></span></code></pre></div>
+<p>The <code>set_similarity</code> template is adapted from the Standard
+Library <code>set_intersection</code> template and produces a number
+between 0 and 1. I have not attempted to prove this distance is metric,
+so the results may not be entirely correct. Also, there is no facility
+currently available to weight distances in different dimensions or
+override the default root-sum-of-squares algorithm for the multivariate
+distance.</p>
 </div>
-<div id="indexing-with-pointer-arrays" class="section level3">
-<h3 class="hasAnchor">
-<a href="#indexing-with-pointer-arrays" class="anchor"></a>Indexing with pointer arrays</h3>
-<p>Since version 0.4.0, <code>kd_tools</code> all predicates and distance functions have specializations or overloads to handle pointers to tuple-like objects. Hence, any of the routines can sort or search a vector of pointers to tuples, which act as indices into the original data.</p>
+<div class="section level3">
+<h3 id="indexing-with-pointer-arrays">Indexing with pointer arrays<a class="anchor" aria-label="anchor" href="#indexing-with-pointer-arrays"></a>
+</h3>
+<p>Since version 0.4.0, <code>kd_tools</code> all predicates and
+distance functions have specializations or overloads to handle pointers
+to tuple-like objects. Hence, any of the routines can sort or search a
+vector of pointers to tuples, which act as indices into the original
+data.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::depends(kdtools)]]</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::plugins(cpp17)]]</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"mixed_query.h"</span></span>
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> sort_pointers(NumericVector c1, CharacterVector c2)</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">auto</span> n = c1.size();</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> sort_pointers<span class="op">(</span>NumericVector c1<span class="op">,</span> CharacterVector c2<span class="op">)</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">auto</span> n <span class="op">=</span> c1<span class="op">.</span>size<span class="op">();</span></span>
 <span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">range_type</span> data;</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  data.reserve(n);</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">range_type</span> data<span class="op">;</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  data<span class="op">.</span>reserve<span class="op">(</span>n<span class="op">);</span></span>
 <span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  transform(begin(c1), end(c1), begin(c2), back_inserter(data), make_key());</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  transform<span class="op">(</span>begin<span class="op">(</span>c1<span class="op">),</span> end<span class="op">(</span>c1<span class="op">),</span> begin<span class="op">(</span>c2<span class="op">),</span> back_inserter<span class="op">(</span>data<span class="op">),</span> make_key<span class="op">());</span></span>
 <span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  <span class="dt">pointers_type</span> idx1, idx2;</span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>  idx1.reserve(n); idx2.reserve(n);</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  <span class="dt">pointers_type</span> idx1<span class="op">,</span> idx2<span class="op">;</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>  idx1<span class="op">.</span>reserve<span class="op">(</span>n<span class="op">);</span> idx2<span class="op">.</span>reserve<span class="op">(</span>n<span class="op">);</span></span>
 <span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (<span class="kw">auto</span>&amp; x : data) {</span>
-<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>    idx1.push_back(&amp;x);</span>
-<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>    idx2.push_back(&amp;x);</span>
-<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="kw">auto</span><span class="op">&amp;</span> x <span class="op">:</span> data<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>    idx1<span class="op">.</span>push_back<span class="op">(&amp;</span>x<span class="op">);</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>    idx2<span class="op">.</span>push_back<span class="op">(&amp;</span>x<span class="op">);</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
 <span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>  kd_sort(begin(idx1), end(idx1));</span>
-<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>  kd_sort(begin(idx2), end(idx2), greater_key());</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>  kd_sort<span class="op">(</span>begin<span class="op">(</span>idx1<span class="op">),</span> end<span class="op">(</span>idx1<span class="op">));</span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>  kd_sort<span class="op">(</span>begin<span class="op">(</span>idx2<span class="op">),</span> end<span class="op">(</span>idx2<span class="op">),</span> greater_key<span class="op">());</span></span>
 <span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>  Rcout &lt;&lt; <span class="st">"Original order</span><span class="sc">\n\n</span><span class="st">"</span>; print_range(data);</span>
-<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>  Rcout &lt;&lt; <span class="st">"</span><span class="sc">\n</span><span class="st">Order by less</span><span class="sc">\n\n</span><span class="st">"</span>; print_range(idx1);</span>
-<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>  Rcout &lt;&lt; <span class="st">"</span><span class="sc">\n</span><span class="st">Order by greater</span><span class="sc">\n\n</span><span class="st">"</span>; print_range(idx2);</span>
-<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>Here, <code>greater_key</code> has overloads for both string and double types.</p>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>  Rcout <span class="op">&lt;&lt;</span> <span class="st">"Original order</span><span class="sc">\n\n</span><span class="st">"</span><span class="op">;</span> print_range<span class="op">(</span>data<span class="op">);</span></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>  Rcout <span class="op">&lt;&lt;</span> <span class="st">"</span><span class="sc">\n</span><span class="st">Order by less</span><span class="sc">\n\n</span><span class="st">"</span><span class="op">;</span> print_range<span class="op">(</span>idx1<span class="op">);</span></span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>  Rcout <span class="op">&lt;&lt;</span> <span class="st">"</span><span class="sc">\n</span><span class="st">Order by greater</span><span class="sc">\n\n</span><span class="st">"</span><span class="op">;</span> print_range<span class="op">(</span>idx2<span class="op">);</span></span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Here, <code>greater_key</code> has overloads for both string and
+double types.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">sort_pointers</span><span class="op">(</span><span class="va">numbers</span>, <span class="va">strings</span><span class="op">)</span>
-<span class="co">#&gt; Original order</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.4725 crystallose</span>
-<span class="co">#&gt; 1 0.7887 zoller</span>
-<span class="co">#&gt; 2 0.6206 croute</span>
-<span class="co">#&gt; ...</span>
-<span class="co">#&gt; 208256 0.3485 tubulating</span>
-<span class="co">#&gt; 208257 0.2655 nonblasphemy</span>
-<span class="co">#&gt; 208258 0.2034 loads</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Order by less</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.001418 abridgment</span>
-<span class="co">#&gt; 1 0.001573 aaron</span>
-<span class="co">#&gt; 2 0.002189 abreaction</span>
-<span class="co">#&gt; ...</span>
-<span class="co">#&gt; 208256 0.996 wrapped</span>
-<span class="co">#&gt; 208257 0.9964 wurst</span>
-<span class="co">#&gt; 208258 0.9993 x-line</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Order by greater</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; 0 0.9993 x-line</span>
-<span class="co">#&gt; 1 0.9964 wurst</span>
-<span class="co">#&gt; 2 0.996 wrapped</span>
-<span class="co">#&gt; ...</span>
-<span class="co">#&gt; 208256 0.001418 abridgment</span>
-<span class="co">#&gt; 208257 0.002189 abreaction</span>
-<span class="co">#&gt; 208258 0.001573 aaron</span></code></pre></div>
-<p>Note that the forward and reverse sorting do not give exactly the same result (in reverse) owing to ties.</p>
+<code class="sourceCode R"><span><span class="fu">sort_pointers</span><span class="op">(</span><span class="va">numbers</span>, <span class="va">strings</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Original order</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; 0 0.006704 unself-centered</span></span>
+<span><span class="co">#&gt; 1 0.4771 pectinatella</span></span>
+<span><span class="co">#&gt; 2 0.3967 dominga</span></span>
+<span><span class="co">#&gt; ...</span></span>
+<span><span class="co">#&gt; 208256 0.8289 educate</span></span>
+<span><span class="co">#&gt; 208257 0.7698 cnida</span></span>
+<span><span class="co">#&gt; 208258 0.7565 coprophobia</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Order by less</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; 0 0.0001333 abdul</span></span>
+<span><span class="co">#&gt; 1 0.0008761 abominator</span></span>
+<span><span class="co">#&gt; 2 0.001739 abranchiate</span></span>
+<span><span class="co">#&gt; ...</span></span>
+<span><span class="co">#&gt; 208256 0.9975 year-round</span></span>
+<span><span class="co">#&gt; 208257 0.9989 zedekiah</span></span>
+<span><span class="co">#&gt; 208258 0.9995 zibet</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Order by greater</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; 0 0.9995 zibet</span></span>
+<span><span class="co">#&gt; 1 0.9989 zedekiah</span></span>
+<span><span class="co">#&gt; 2 0.9973 zooplankton</span></span>
+<span><span class="co">#&gt; ...</span></span>
+<span><span class="co">#&gt; 208256 0.001739 abranchiate</span></span>
+<span><span class="co">#&gt; 208257 0.0008761 abominator</span></span>
+<span><span class="co">#&gt; 208258 0.0001333 abdul</span></span></code></pre></div>
+<p>Note that the forward and reverse sorting do not give exactly the
+same result (in reverse) owing to ties.</p>
 </div>
 </div>
-<div id="conclusions" class="section level2">
-<h2 class="hasAnchor">
-<a href="#conclusions" class="anchor"></a>Conclusions</h2>
-<p>The kdtools package implements efficient sorting and searching of arbitrary tuple-like object in C++. One of the major design decisions was to make the number of dimensions fixed at compile time. This is a reasonable tradeoff as these methods break down in high dimensions where search times will be no better than that of brute-force random searching. Nonetheless, a runtime-dimensioned extension would be easy to add and could allow working with runtime-determined types as is common in R. The current implementation is a demonstration, however it does illustrate the value of the Standard Library as the algorithms are constructed from Standard Library components. The generic nature of the kdtools implementation is an attractive feature as it permits flexibility and can be adapted to arbitrary tuple-like data as needed. Modern development of C++ has emphasized tuple-style data and algorithms and kdtools extends these developments.</p>
+<div class="section level2">
+<h2 id="conclusions">Conclusions<a class="anchor" aria-label="anchor" href="#conclusions"></a>
+</h2>
+<p>The kdtools package implements efficient sorting and searching of
+arbitrary tuple-like object in C++. One of the major design decisions
+was to make the number of dimensions fixed at compile time. This is a
+reasonable tradeoff as these methods break down in high dimensions where
+search times will be no better than that of brute-force random
+searching. Nonetheless, a runtime-dimensioned extension would be easy to
+add and could allow working with runtime-determined types as is common
+in R. The current implementation is a demonstration, however it does
+illustrate the value of the Standard Library as the algorithms are
+constructed from Standard Library components. The generic nature of the
+kdtools implementation is an attractive feature as it permits
+flexibility and can be adapted to arbitrary tuple-like data as needed.
+Modern development of C++ has emphasized tuple-style data and algorithms
+and kdtools extends these developments.</p>
 </div>
   </div>
 
@@ -769,11 +971,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Timothy Keitt.</p>
+  <p></p>
+<p>Developed by Timothy Keitt.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>
@@ -781,6 +985,8 @@
 
   
 
+
+  
 
   </body>
 </html>

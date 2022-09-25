@@ -36,7 +36,7 @@ reps <- 33
 ```
 
 ```{r}
-cache_file = "../inst/extdata/approx_benchmark_data"
+cache_file = "../../inst/extdata/approx_benchmark_data"
 
 if (!file.exists(cache_file))
   cache_file = system.file("extdata/approx_benchmark_data", package = "kdtools")

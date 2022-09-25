@@ -21,6 +21,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -33,18 +35,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">kdtools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="articles/kdtools.html">Get started</a>
 </li>
@@ -52,7 +48,7 @@
   <a href="reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -64,6 +60,9 @@
     <li>
       <a href="articles/methods.html">Compact multidimensional sorting and searching with kdtools</a>
     </li>
+    <li>
+      <a href="articles/nearest_neighbors.html">Nearest Neighbors Models</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -72,7 +71,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/thk686/kdtools/">
+  <a href="https://github.com/thk686/kdtools/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -92,109 +91,119 @@
 
 
 <!-- badges: end -->
-<div id="kdtools" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#kdtools" class="anchor"></a>kdtools</h1></div>
+<div class="section level1">
+<div class="page-header"><h1 id="kdtools">kdtools<a class="anchor" aria-label="anchor" href="#kdtools"></a>
+</h1></div>
 <p>This package emerged from a fascination with spatial partitioning algorithms. I was curious if there was a simple and fast way to move multidimensional data elements near to each other in memory so that they could be retrieved quickly. I also admire the structure of the C++ standard library and was curious if the search functions for sorted sequences could be extended to higher dimensions. At the same time, I was interested to learn some of the newer feature of C++17.</p>
 <p>The result is this package, which collects several ideas, including:</p>
-<ol>
+<ol style="list-style-type: decimal">
 <li>A C++17 header file (<code>kdtools.h</code>) that can be used separately from this package. It has multidimensional analogs to the C++ standard library functions for searching sorted lists (e.g., upper_bound, binary_search) but that operate on sequences of tuples rather than scalar values. It uses template metaprogramming to generate code for each dimension at compile time at the cost of some binary bloat. Sorting multidimensional arrays is fully threaded and very fast. It produces an implicit kd-tree split on medians that supports fast range queries and nearest-neighbor searches.</li>
 <li>Along the way, I needed to manipulate tuple-like objects to, for example, compute the euclidean distance between fixed-length arrays. I was curious about variadic templates and wondered if I could figure out nested variadic templates. The result is the included <code>tuplemapr.h</code> header, which allows one to apply an arbitrary callable over the dimensions of a collection of tuple-like objects. It is entirely <code>constexpr</code> (except when calling certain standard library functions) and employs fold-expressions where convenient.</li>
 <li>I generalized the code to work natively on data frames. This is slower, but still pretty fast (approx. 0.18 seconds to sort the nycflights13 flights data with 337k rows on an older macbook air). This code works on any R data type that supports comparison operators, including strings. Range and nearest-neighbors queries also support mixed types with different weights in each dimension.</li>
 <li>To support nearest-neighbor searches on strings, I coded a fast implementation of Levenshtein- or edit- distance. Allocating scratch space for the tableau is amortized constant. Most implementations allocate on every call, which is dramatically slower.</li>
 </ol>
-<p>More details are <a href="https://thk686.github.io/kdtools/">here</a>. Methods and benchmarks are <a href="https://thk686.github.io/kdtools/articles/methods.html">here</a>.</p>
+<p>More details are <a href="https://thk686.github.io/kdtools/" class="external-link">here</a>. Methods and benchmarks are <a href="https://thk686.github.io/kdtools/articles/methods.html" class="external-link">here</a>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/thk686/kdtools">kdtools</a></span><span class="op">)</span>
-<span class="va">x</span> <span class="op">=</span> <span class="fu"><a href="reference/kd_sort.html">kd_sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">400</span><span class="op">)</span>, <span class="fl">200</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">x</span>, type  <span class="op">=</span> <span class="st">'l'</span>, asp <span class="op">=</span> <span class="fl">1</span>, axes <span class="op">=</span> <span class="cn">FALSE</span>, xlab <span class="op">=</span> <span class="cn">NA</span>, ylab <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="va">x</span>, pch <span class="op">=</span> <span class="fl">19</span>, col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html">rainbow</a></span><span class="op">(</span><span class="fl">200</span>, alpha <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span>, cex <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
-<span class="va">y</span> <span class="op">=</span> <span class="fu"><a href="reference/kd_lower_bound.html">kd_range_query</a></span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="fl">4</span>, <span class="fl">1</span><span class="op">/</span><span class="fl">4</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span><span class="op">/</span><span class="fl">4</span>, <span class="fl">3</span><span class="op">/</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="va">y</span>, pch <span class="op">=</span> <span class="fl">19</span>, cex <span class="op">=</span> <span class="fl">0.5</span>, col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/thk686/kdtools" class="external-link">kdtools</a></span><span class="op">)</span></span>
+<span><span class="va">x</span> <span class="op">=</span> <span class="fu"><a href="reference/kdsort.html">kd_sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">400</span><span class="op">)</span>, <span class="fl">200</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, type  <span class="op">=</span> <span class="st">'l'</span>, asp <span class="op">=</span> <span class="fl">1</span>, axes <span class="op">=</span> <span class="cn">FALSE</span>, xlab <span class="op">=</span> <span class="cn">NA</span>, ylab <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">x</span>, pch <span class="op">=</span> <span class="fl">19</span>, col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">rainbow</a></span><span class="op">(</span><span class="fl">200</span>, alpha <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span>, cex <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="va">y</span> <span class="op">=</span> <span class="fu"><a href="reference/search.html">kd_range_query</a></span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="fl">4</span>, <span class="fl">1</span><span class="op">/</span><span class="fl">4</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span><span class="op">/</span><span class="fl">4</span>, <span class="fl">3</span><span class="op">/</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">y</span>, pch <span class="op">=</span> <span class="fl">19</span>, cex <span class="op">=</span> <span class="fl">0.5</span>, col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-1-1.png" width="100%"></p>
 <p>The following demonstrates a mixed-type range query on a data frame.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/kd_sort.html">kd_sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">12</span><span class="op">)</span>,
-                         b <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html">rpois</a></span><span class="op">(</span><span class="fl">12</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,
-                         c <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="va">month.name</span><span class="op">)</span>,
-                         stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span>
-<span class="co">#&gt;             a b         c</span>
-<span class="co">#&gt; 8  0.01271206 0      July</span>
-<span class="co">#&gt; 10 0.20984687 0      June</span>
-<span class="co">#&gt; 3  0.12306503 1 September</span>
-<span class="co">#&gt; 11 0.10688313 1  November</span>
-<span class="co">#&gt; 6  0.30972967 2  February</span>
-<span class="co">#&gt; 2  0.12909076 1     March</span>
-<span class="co">#&gt; 5  0.38071652 0       May</span>
-<span class="co">#&gt; 1  0.42951487 0     April</span>
-<span class="co">#&gt; 9  0.87586080 1  December</span>
-<span class="co">#&gt; 12 0.57758359 1    August</span>
-<span class="co">#&gt; 7  0.54902204 2   January</span>
-<span class="co">#&gt; 4  0.71089401 2   October</span>
-<span class="va">lower</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">1L</span>, <span class="st">"August"</span><span class="op">)</span>
-<span class="va">upper</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fl">0.9</span>, <span class="fl">4L</span>, <span class="st">"September"</span><span class="op">)</span>
-<span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/kd_lower_bound.html">kd_rq_indices</a></span><span class="op">(</span><span class="va">df</span>, <span class="va">lower</span>, <span class="va">upper</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span>
-<span class="co">#&gt; [1]  4  5  6  9 10 11 12</span>
-<span class="va">df</span><span class="op">[</span><span class="va">i</span>, <span class="op">]</span>
-<span class="co">#&gt;            a b        c</span>
-<span class="co">#&gt; 11 0.1068831 1 November</span>
-<span class="co">#&gt; 6  0.3097297 2 February</span>
-<span class="co">#&gt; 2  0.1290908 1    March</span>
-<span class="co">#&gt; 9  0.8758608 1 December</span>
-<span class="co">#&gt; 12 0.5775836 1   August</span>
-<span class="co">#&gt; 7  0.5490220 2  January</span>
-<span class="co">#&gt; 4  0.7108940 2  October</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/kdsort.html">kd_sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">12</span><span class="op">)</span>,</span>
+<span>                         b <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html" class="external-link">rpois</a></span><span class="op">(</span><span class="fl">12</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                         c <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">month.name</span><span class="op">)</span>,</span>
+<span>                         stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span>
+<span><span class="co">#&gt;             a b         c</span></span>
+<span><span class="co">#&gt; 8  0.01271206 0      July</span></span>
+<span><span class="co">#&gt; 10 0.20984687 0      June</span></span>
+<span><span class="co">#&gt; 3  0.12306503 1 September</span></span>
+<span><span class="co">#&gt; 11 0.10688313 1  November</span></span>
+<span><span class="co">#&gt; 6  0.30972967 2  February</span></span>
+<span><span class="co">#&gt; 2  0.12909076 1     March</span></span>
+<span><span class="co">#&gt; 5  0.38071652 0       May</span></span>
+<span><span class="co">#&gt; 1  0.42951487 0     April</span></span>
+<span><span class="co">#&gt; 9  0.87586080 1  December</span></span>
+<span><span class="co">#&gt; 12 0.57758359 1    August</span></span>
+<span><span class="co">#&gt; 7  0.54902204 2   January</span></span>
+<span><span class="co">#&gt; 4  0.71089401 2   October</span></span>
+<span><span class="va">lower</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">1L</span>, <span class="st">"August"</span><span class="op">)</span></span>
+<span><span class="va">upper</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">0.9</span>, <span class="fl">4L</span>, <span class="st">"September"</span><span class="op">)</span></span>
+<span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/search.html">kd_rq_indices</a></span><span class="op">(</span><span class="va">df</span>, <span class="va">lower</span>, <span class="va">upper</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1]  4  5  6  9 10 11 12</span></span>
+<span><span class="va">df</span><span class="op">[</span><span class="va">i</span>, <span class="op">]</span></span>
+<span><span class="co">#&gt;            a b        c</span></span>
+<span><span class="co">#&gt; 11 0.1068831 1 November</span></span>
+<span><span class="co">#&gt; 6  0.3097297 2 February</span></span>
+<span><span class="co">#&gt; 2  0.1290908 1    March</span></span>
+<span><span class="co">#&gt; 9  0.8758608 1 December</span></span>
+<span><span class="co">#&gt; 12 0.5775836 1   August</span></span>
+<span><span class="co">#&gt; 7  0.5490220 2  January</span></span>
+<span><span class="co">#&gt; 4  0.7108940 2  October</span></span></code></pre></div>
 </div>
 
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=kdtools">https://​cloud.r-project.org/​package=kdtools</a>
-</li>
-<li>Browse source code at <br><a href="https://github.com/thk686/kdtools/">https://​github.com/​thk686/​kdtools/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/thk686/kdtools/issues">https://​github.com/​thk686/​kdtools/​issues</a>
-</li>
+<li><a href="https://cloud.r-project.org/package=kdtools" class="external-link">View on CRAN</a></li>
+<li><a href="https://github.com/thk686/kdtools/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/thk686/kdtools/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
+
 <div class="license">
-<h2>License</h2>
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
-<li><small><a href="https://opensource.org/licenses/mit-license.php">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a></small></li>
+<li><small><a href="https://opensource.org/licenses/mit-license.php" class="external-link">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a></small></li>
 </ul>
 </div>
+
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
+<ul class="list-unstyled">
+<li><a href="authors.html#citation">Citing kdtools</a></li>
+</ul>
+</div>
+
 <div class="developers">
-<h2>Developers</h2>
+<h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>Timothy Keitt <br><small class="roles"> Author, maintainer </small>  </li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/thk686/kdtools/actions"><img src="https://github.com/thk686/kdtools/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
-<li><a href="https://codecov.io/gh/thk686/kdtools?branch=master"><img src="https://codecov.io/gh/thk686/kdtools/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
-<li><a href="https://zenodo.org/badge/latestdoi/125262786"><img src="https://zenodo.org/badge/125262786.svg" alt="DOI"></a></li>
-<li><a href="https://CRAN.R-project.org/package=kdtools"><img src="https://www.r-pkg.org/badges/version/kdtools" alt="CRAN status"></a></li>
+<li><a href="https://github.com/thk686/kdtools/actions" class="external-link"><img src="https://github.com/thk686/kdtools/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://codecov.io/gh/thk686/kdtools?branch=master" class="external-link"><img src="https://codecov.io/gh/thk686/kdtools/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
+<li><a href="https://zenodo.org/badge/latestdoi/125262786" class="external-link"><img src="https://zenodo.org/badge/125262786.svg" alt="DOI"></a></li>
+<li><a href="https://CRAN.R-project.org/package=kdtools" class="external-link"><img src="https://www.r-pkg.org/badges/version/kdtools" alt="CRAN status"></a></li>
 </ul>
 </div>
-</div>
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Timothy Keitt.</p>
+  <p></p>
+<p>Developed by Timothy Keitt.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>
@@ -202,6 +211,8 @@
 
   
 
+
+  
 
   </body>
 </html>

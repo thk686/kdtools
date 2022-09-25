@@ -71,7 +71,7 @@ The algorithm used is a divide-and-conquer quicksort variant that
   that will be used for sorting. These can be a subset of columns and given
   in any order.
 
-  \code{kd_sort} and \code{kd_order} work differently on spatial \link{\code{sf}}
+  \code{kd_sort} and \code{kd_order} work differently on spatial \code{sf}
   types. If no sort columns are specified, then the spatial coordinates are sorted.
   Otherwise, the coordinates are ignored and the specified columns are used.
 }

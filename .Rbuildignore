@@ -11,3 +11,5 @@
 ^\.github$
 ^CRAN-RELEASE$
 ^\.circleci/config\.yml$
+^vignettes/articles$
+^R/knn\.R$

@@ -150,10 +150,9 @@ kd_is_sorted.data.frame <- function(x, cols = NULL, parallel = TRUE, ...) {
 }
 
 #' Sort a matrix into lexicographical order
-#' @param x a matrix or arrayvec object
+#' @param x a matrix, data frame, or arrayvec object
 #' @param ... other parameters
-#' @details Sorts a range of tuples into lexicographical order. This function
-#'   only exists for demonstration purposes.
+#' @details Sorts a range of tuples into lexicographical order
 #' @return the input type sorted
 #' @examples
 #' if (has_cxx17()) {
@@ -170,10 +169,15 @@ lex_sort.arrayvec <- function(x, inplace = FALSE, ...) {
 }
 
 #' @export
-lex_sort.matrix <- function(x, ...) {
-  y <- matrix_to_tuples(x)
-  lex_sort_(y, inplace = TRUE)
-  return(tuples_to_matrix(y))
+lex_sort.matrix <- function(x, cols = NULL, ...) {
+  i <- kd_lex_order_mat(x, colspec(x, cols))
+  return(x[i, ])
+}
+
+#' @export
+lex_sort.data.frame <- function(x, cols = NULL, ...) {
+  i <- kd_lex_order_df(x, colspec(x, cols))
+  return(x[i, ])
 }
 
 #' Search sorted data

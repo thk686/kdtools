@@ -7,7 +7,7 @@
 lex_sort(x, ...)
 }
 \arguments{
-\item{x}{a matrix or arrayvec object}
+\item{x}{a matrix, data frame, or arrayvec object}
 
 \item{...}{other parameters}
 }
@@ -18,8 +18,7 @@ the input type sorted
 Sort a matrix into lexicographical order
 }
 \details{
-Sorts a range of tuples into lexicographical order. This function
-  only exists for demonstration purposes.
+Sorts a range of tuples into lexicographical order
 }
 \examples{
 if (has_cxx17()) {

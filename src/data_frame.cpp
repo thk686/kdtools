@@ -679,6 +679,34 @@ IntegerVector kd_order_df(const List& df,
 }
 
 // [[Rcpp::export]]
+IntegerVector kd_lex_order_df_no_validation(const List& df,
+                                            const IntegerVector& idx) {
+#ifdef NO_CXX17
+  return R_NilValue;
+#else
+  IntegerVector x(nrow(df));
+  iota(begin(x), end(x), 0);
+  auto pred = kd_less_df(df, idx);
+  std::sort(begin(x), end(x), pred);
+  return x + 1;
+#endif
+}
+
+// [[Rcpp::export]]
+IntegerVector kd_lex_order_df(const List& df,
+                              const IntegerVector& idx) {
+#ifdef NO_CXX17
+  return R_NilValue;
+#else
+  if (ncol(df) < 1 || nrow(df) < 1)
+    return IntegerVector();
+  if (not_in_range(idx, ncol(df)))
+    stop("Index out of range");
+  return kd_lex_order_df_no_validation(df, idx);
+#endif
+}
+
+// [[Rcpp::export]]
 bool kd_is_sorted_df_no_validation(const List& df,
                                    const IntegerVector& idx,
                                    bool parallel = true) {

@@ -389,6 +389,34 @@ void aknn_(Iter first, Iter last,
 #endif // NO_CXX17
 
 // [[Rcpp::export]]
+IntegerVector kd_lex_order_mat_no_validation(const NumericMatrix& mat,
+                                             const IntegerVector& idx) {
+#ifdef NO_CXX17
+  return IntegerVector();
+#else
+  IntegerVector x(mat.nrow());
+  iota(begin(x), end(x), 0);
+  auto pred = kd_less_mat(mat, idx);
+  std::sort(begin(x), end(x), pred);
+  return x + 1;
+#endif
+}
+
+// [[Rcpp::export]]
+IntegerVector kd_lex_order_mat(const NumericMatrix& mat,
+                               const IntegerVector& idx) {
+#ifdef NO_CXX17
+  return IntegerVector();
+#else
+  if (mat.ncol() < 1 || mat.nrow() < 1)
+    return IntegerVector();
+  if (not_in_range(idx, mat.ncol()))
+    stop("Index out of range");
+  return kd_lex_order_mat_no_validation(mat, idx);
+#endif
+}
+
+// [[Rcpp::export]]
 IntegerVector kd_order_mat_no_validation(const NumericMatrix& mat,
                                          const IntegerVector& idx,
                                          bool parallel = true) {

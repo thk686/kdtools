@@ -72,6 +72,30 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// kd_lex_order_df_no_validation
+IntegerVector kd_lex_order_df_no_validation(const List& df, const IntegerVector& idx);
+RcppExport SEXP _kdtools_kd_lex_order_df_no_validation(SEXP dfSEXP, SEXP idxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const List& >::type df(dfSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type idx(idxSEXP);
+    rcpp_result_gen = Rcpp::wrap(kd_lex_order_df_no_validation(df, idx));
+    return rcpp_result_gen;
+END_RCPP
+}
+// kd_lex_order_df
+IntegerVector kd_lex_order_df(const List& df, const IntegerVector& idx);
+RcppExport SEXP _kdtools_kd_lex_order_df(SEXP dfSEXP, SEXP idxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const List& >::type df(dfSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type idx(idxSEXP);
+    rcpp_result_gen = Rcpp::wrap(kd_lex_order_df(df, idx));
+    return rcpp_result_gen;
+END_RCPP
+}
 // kd_is_sorted_df_no_validation
 bool kd_is_sorted_df_no_validation(const List& df, const IntegerVector& idx, bool parallel);
 RcppExport SEXP _kdtools_kd_is_sorted_df_no_validation(SEXP dfSEXP, SEXP idxSEXP, SEXP parallelSEXP) {
@@ -365,6 +389,30 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// kd_lex_order_mat_no_validation
+IntegerVector kd_lex_order_mat_no_validation(const NumericMatrix& mat, const IntegerVector& idx);
+RcppExport SEXP _kdtools_kd_lex_order_mat_no_validation(SEXP matSEXP, SEXP idxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type idx(idxSEXP);
+    rcpp_result_gen = Rcpp::wrap(kd_lex_order_mat_no_validation(mat, idx));
+    return rcpp_result_gen;
+END_RCPP
+}
+// kd_lex_order_mat
+IntegerVector kd_lex_order_mat(const NumericMatrix& mat, const IntegerVector& idx);
+RcppExport SEXP _kdtools_kd_lex_order_mat(SEXP matSEXP, SEXP idxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type idx(idxSEXP);
+    rcpp_result_gen = Rcpp::wrap(kd_lex_order_mat(mat, idx));
+    return rcpp_result_gen;
+END_RCPP
+}
 // kd_order_mat_no_validation
 IntegerVector kd_order_mat_no_validation(const NumericMatrix& mat, const IntegerVector& idx, bool parallel);
 RcppExport SEXP _kdtools_kd_order_mat_no_validation(SEXP matSEXP, SEXP idxSEXP, SEXP parallelSEXP) {
@@ -514,6 +562,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_tuples_to_matrix_rows", (DL_FUNC) &_kdtools_tuples_to_matrix_rows, 3},
     {"_kdtools_kd_order_df_no_validation", (DL_FUNC) &_kdtools_kd_order_df_no_validation, 3},
     {"_kdtools_kd_order_df", (DL_FUNC) &_kdtools_kd_order_df, 3},
+    {"_kdtools_kd_lex_order_df_no_validation", (DL_FUNC) &_kdtools_kd_lex_order_df_no_validation, 2},
+    {"_kdtools_kd_lex_order_df", (DL_FUNC) &_kdtools_kd_lex_order_df, 2},
     {"_kdtools_kd_is_sorted_df_no_validation", (DL_FUNC) &_kdtools_kd_is_sorted_df_no_validation, 3},
     {"_kdtools_kd_is_sorted_df", (DL_FUNC) &_kdtools_kd_is_sorted_df, 3},
     {"_kdtools_kd_rq_df_no_validation", (DL_FUNC) &_kdtools_kd_rq_df_no_validation, 4},
@@ -536,6 +586,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kdtools_kd_nearest_neighbors_", (DL_FUNC) &_kdtools_kd_nearest_neighbors_, 5},
     {"_kdtools_kd_nn_indices_", (DL_FUNC) &_kdtools_kd_nn_indices_, 5},
     {"_kdtools_kd_nn_dist_", (DL_FUNC) &_kdtools_kd_nn_dist_, 5},
+    {"_kdtools_kd_lex_order_mat_no_validation", (DL_FUNC) &_kdtools_kd_lex_order_mat_no_validation, 2},
+    {"_kdtools_kd_lex_order_mat", (DL_FUNC) &_kdtools_kd_lex_order_mat, 2},
     {"_kdtools_kd_order_mat_no_validation", (DL_FUNC) &_kdtools_kd_order_mat_no_validation, 3},
     {"_kdtools_kd_order_mat", (DL_FUNC) &_kdtools_kd_order_mat, 3},
     {"_kdtools_kd_is_sorted_mat_no_validation", (DL_FUNC) &_kdtools_kd_is_sorted_mat_no_validation, 3},

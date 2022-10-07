@@ -1,3 +1,8 @@
+# kdtools 0.7.0
+
+* Approximate nearest neighbors
+* More work on parallelism
+
 # kdtools 0.6.0
 
 * Mostly fixes for CRAN

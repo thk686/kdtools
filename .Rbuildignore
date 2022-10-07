@@ -13,3 +13,4 @@
 ^\.circleci/config\.yml$
 ^vignettes/articles$
 ^R/knn\.R$
+^CRAN-SUBMISSION$

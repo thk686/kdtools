@@ -44,6 +44,14 @@ kd_order_df <- function(df, idx, parallel = TRUE) {
     .Call(`_kdtools_kd_order_df`, df, idx, parallel)
 }
 
+kd_lex_order_df_no_validation <- function(df, idx) {
+    .Call(`_kdtools_kd_lex_order_df_no_validation`, df, idx)
+}
+
+kd_lex_order_df <- function(df, idx) {
+    .Call(`_kdtools_kd_lex_order_df`, df, idx)
+}
+
 kd_is_sorted_df_no_validation <- function(df, idx, parallel = TRUE) {
     .Call(`_kdtools_kd_is_sorted_df_no_validation`, df, idx, parallel)
 }
@@ -134,6 +142,14 @@ kd_nn_indices_ <- function(x, value, n, p, a) {
 
 kd_nn_dist_ <- function(x, value, n, p, a) {
     .Call(`_kdtools_kd_nn_dist_`, x, value, n, p, a)
+}
+
+kd_lex_order_mat_no_validation <- function(mat, idx) {
+    .Call(`_kdtools_kd_lex_order_mat_no_validation`, mat, idx)
+}
+
+kd_lex_order_mat <- function(mat, idx) {
+    .Call(`_kdtools_kd_lex_order_mat`, mat, idx)
 }
 
 kd_order_mat_no_validation <- function(mat, idx, parallel = TRUE) {

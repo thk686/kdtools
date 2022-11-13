@@ -131,7 +131,7 @@ double get_timing()
 ```
 
 ```{r include=FALSE}
-cache_file = "../inst/extdata/sort_benchmark_data"
+cache_file = "../../inst/extdata/sort_benchmark_data"
 if (!file.exists(cache_file))
   cache_file = system.file("extdata/sort_benchmark_data", package = "kdtools")
 if (use_cached_data && file.exists(cache_file)) {
@@ -519,7 +519,7 @@ Rcpp::List time_query(int n, int m)
 ```
 
 ```{r, echo=FALSE}
-cache_file = "../inst/extdata/query_benchmark_data"
+cache_file = "../../inst/extdata/query_benchmark_data"
 if (!file.exists(cache_file))
   cache_file = system.file("extdata/query_benchmark_data", package = "kdtools")
 if (use_cached_data && file.exists(cache_file)) {
@@ -720,7 +720,7 @@ Rcpp::List time_nn(int n, int m)
 ```
 
 ```{r, echo=FALSE}
-cache_file = "../inst/extdata/nn_benchmark_data"
+cache_file = "../../inst/extdata/nn_benchmark_data"
 if (!file.exists(cache_file))
   cache_file = system.file("extdata/nn_benchmark_data", package = "kdtools")
 if (use_cached_data && file.exists(cache_file)) {

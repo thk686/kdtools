@@ -1,3 +1,7 @@
+# kdtools 0.6.1
+
+* Methods vignette now in 'articles' subdir
+
 # kdtools 0.6.0
 
 * Mostly fixes for CRAN

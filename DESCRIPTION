@@ -1,7 +1,7 @@
 Package: kdtools
 Type: Package
 Title: Tools for Working with Multidimensional Data
-Version: 0.6.0
+Version: 0.6.1
 Authors@R: person("Timothy", "Keitt", email = "tkeitt@gmail.com", role = c("aut", "cre"))
 Description: Provides various tools for working with multidimensional
   data in R and C++, including extremely fast nearest-neighbor- and range-

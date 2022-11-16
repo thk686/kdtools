@@ -66,27 +66,27 @@ df <- kd_sort(data.frame(a = runif(12),
                          c = sample(month.name),
                          stringsAsFactors = FALSE))
 print(df)
-#>            a b         c
-#> 9  0.3958621 0      July
-#> 4  0.2823962 0       May
-#> 3  0.5700275 0 September
-#> 10 0.3420624 1     April
-#> 7  0.2514446 1  February
-#> 5  0.5407698 3      June
-#> 8  0.5898558 0   October
-#> 6  0.8562382 0   January
-#> 11 0.8751834 0     March
-#> 12 0.9086955 1    August
-#> 1  0.7749514 1  December
-#> 2  0.9731244 1  November
+#>             a b         c
+#> 6  0.04642749 1    August
+#> 8  0.39526134 0      June
+#> 11 0.39037419 0   October
+#> 4  0.17537370 1  December
+#> 9  0.54834594 2     April
+#> 1  0.28198708 2  February
+#> 10 0.61222304 0       May
+#> 5  0.82161958 0   January
+#> 12 0.73781758 0      July
+#> 7  0.96697341 0     March
+#> 2  0.78209858 2  November
+#> 3  0.83427726 1 September
 lower <- list(0.1, 1L, "August")
 upper <- list(0.9, 4L, "September")
 i <- kd_rq_indices(df, lower, upper)
 print(i)
-#> [1]  5  6 11
+#> [1]  4  6 11
 df[i, ]
 #>           a b        c
-#> 7 0.2514446 1 February
-#> 5 0.5407698 3     June
-#> 1 0.7749514 1 December
+#> 4 0.1753737 1 December
+#> 1 0.2819871 2 February
+#> 2 0.7820986 2 November
 ```

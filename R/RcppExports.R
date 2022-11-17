@@ -10,6 +10,10 @@
 #' an arrayvec object internally and the results are converted back to
 #' a matrix. For optimal performance, pre-convert matrices.
 #'
+#' @return \tabular{ll}{
+#' \code{matrix_to_tuples} \tab An external pointer to a C++ vector containing the rows of the matrix as array (tuple) objects. \cr
+#' \code{tuples_to_matrix} \tab A matrix with the tuples bound together as rows \cr}
+#'
 #' @examples
 #' if (has_cxx17()) {
 #' x = matrix(1:10, 5)
@@ -75,8 +79,9 @@ kd_nn_dist_df <- function(df, idx, w, key, n) {
     .Call(`_kdtools_kd_nn_dist_df`, df, idx, w, key, n)
 }
 
-#' Check if C++ 17 was available when building package
+#' Check if C++ 17 was available when building package.
 #'
+#' @return A logical indicating whether the build system supports the C++ 17 standard.
 #' @rdname utils
 #' @export
 has_cxx17 <- function() {

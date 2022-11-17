@@ -12,6 +12,11 @@ tuples_to_matrix(x)
 \arguments{
 \item{x}{object to be converted}
 }
+\value{
+\tabular{ll}{
+\code{matrix_to_tuples} \tab An external pointer to a C++ vector containing the rows of the matrix as array (tuple) objects. \cr
+\code{tuples_to_matrix} \tab A matrix with the tuples bound together as rows \cr}
+}
 \description{
 Convert a matrix to a vector of arrays
 }

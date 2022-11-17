@@ -219,8 +219,9 @@ IntegerVector kd_order__(List x, bool inplace, bool parallel)
 
 #endif // NO_CXX17
 
-//' Check if C++ 17 was available when building package
+//' Check if C++ 17 was available when building package.
 //'
+//' @return A logical indicating whether the build system supports the C++ 17 standard.
 //' @rdname utils
 //' @export
 // [[Rcpp::export]]

@@ -2,10 +2,13 @@
 % Please edit documentation in R/RcppExports.R
 \name{has_cxx17}
 \alias{has_cxx17}
-\title{Check if C++ 17 was available when building package}
+\title{Check if C++ 17 was available when building package.}
 \usage{
 has_cxx17()
 }
+\value{
+A logical indicating whether the build system supports the C++ 17 standard.
+}
 \description{
-Check if C++ 17 was available when building package
+Check if C++ 17 was available when building package.
 }

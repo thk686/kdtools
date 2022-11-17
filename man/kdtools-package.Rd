@@ -4,11 +4,9 @@
 \name{kdtools-package}
 \alias{kdtools}
 \alias{kdtools-package}
-\title{kdtools: Tools for Working with Multidimensional Data}
+\title{kdtools: Fast Sorting and Searching of Multidimensional Data}
 \description{
-Provides various tools for working with multidimensional
-  data in R and C++, including extremely fast nearest-neighbor- and range-
-  queries without the overhead of linked tree nodes.
+Sorted data can be searched in logarithmic time using divide-and-conquer schemes. Here, we extend this idea to k-dimensional data to allow rapid range-queries and exact and appriximate nearest-neighbor queries on data stored in matrices and data frames. A variant of the quick-sort algorithm rotates among dimensions to produce an implicit k-d tree ordering of the data. The package includes 'C++' code that can be used independently of R. Representation of a binary tree in a sorted list is a common technique in computer science \url{https://en.wikipedia.org/wiki/Implicit_data_structure}. The original presentation of k-d trees can be found in Bentley (1975) \doi{10.1145/361002.361007}.
 }
 \seealso{
 Useful links:

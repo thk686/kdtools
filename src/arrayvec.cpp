@@ -9,6 +9,10 @@
 //' an arrayvec object internally and the results are converted back to
 //' a matrix. For optimal performance, pre-convert matrices.
 //'
+//' @return \tabular{ll}{
+//' \code{matrix_to_tuples} \tab An external pointer to a C++ vector containing the rows of the matrix as array (tuple) objects. \cr
+//' \code{tuples_to_matrix} \tab A matrix with the tuples bound together as rows \cr}
+//'
 //' @examples
 //' if (has_cxx17()) {
 //' x = matrix(1:10, 5)
